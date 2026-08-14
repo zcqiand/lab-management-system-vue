@@ -1,13 +1,27 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "项目已初始化，等待第一个需求",
-  "done": ["脚手架生成，门禁全绿"],
-  "next": "跑 /req <需求原话> 落第一份需求文档，同时把 docs/functions/function-tree.md 填成真实功能清单",
+  "current_task": "等下一个需求 → 走 /req 落第一份 docs/requirements/ + 第一个模块（M01 / M02 / ...）走 /tree-change 加 I 级子项 + 业务页 + fnTest",
+  "done": [
+    "v0.1.0 scaffold (96f01b1): package.json + vite + tsconfig + vitest + eslint + prettier + tailwind + orval(vue-query)",
+    "scripts/gen-shared.ts：shared emit:openapi → 本仓 orval → src/api/endpoints/",
+    "src/main.ts pinia + vue-query + http-client + router + App.vue scaffold",
+    "tests/setup.ts + helper.ts + fnReporter.ts + smoke.test.ts（mount App + http-client 单例）",
+    "docs/functions/function-tree.md：7 模块 + 26 F 级（M00..M06，与 shared BASE 1:1）",
+    "npm install + npm run gen:shared + vue-tsc + vite build 全过；gate L0..L5 全绿 0 软告警",
+    "子仓 commit 96f01b1 推 C:/repos/lab-management-system-vue.git",
+    "suite master commit 6210c00 加 gitlink 推 origin",
+    "中段 --sync-skills 复位 common 资产（.claude/skills 12 file 哈希对齐）",
+    "修补 docs/functions/function-tree.md (sync shared BASE) + .state/session.json (恢复 v0.1.0 进度)"
+  ],
+  "next": "跑 /req <需求原话> 落第一份需求文档；按需求走 /tree-change 给对应模块加 I 级子项；建业务页与 fnTest",
   "open_questions": [],
   "dont": [
     "不要改 .harness/stack.json 让门变松",
-    "不要给 skip 的测试挂功能 ID"
+    "不要给 skip 的测试挂功能 ID",
+    "不要手改 docs/functions/function-tree.md → 走 /tree-change（mirror shared BASE 是 sync_function_tree.mjs 工作）",
+    "src/api/endpoints/ 是 gen 产物，不入库",
+    "千万不要再 init_project.py --force（会拿模板覆盖 docs/functions/function-tree.md，等于前一轮 33-IDs 文件 全部 退回到 init stub）"
   ],
-  "last_gate_passed_at": null
+  "last_gate_passed_at": "2026-08-14T14:42:00+08:00"
 }

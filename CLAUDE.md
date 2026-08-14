@@ -1,4 +1,4 @@
-# CLAUDE.md — 实验室管理系统Vue前端
+# CLAUDE.md — lab-management-system-vue
 
 > 入口，不是手册。只做三件事：声明技术栈 / 声明禁止事项 / 指向别处。
 > 超过 5 行的细则写进 `docs/conventions/`，由 skill 按需引用。L0 门强制上限 60 行。
