@@ -2,6 +2,10 @@
 
 > 实验室管理系统 — Vue 前端。consumes `lab-management-system-shared` TypeSpec SSOT。
 > F 级别镜像 shared BASE 26 功能（重标前端类型），向下加 I 级子项。全部 规划（待实现）。
+> **2026-08-17 sprint 0 起：前端 only 镜像仓。**
+> 镜像 `lab-management-system-react` 已交付的 26 页 UI（先 react 后 vue，react 是 source of truth），**不实现 `/api` route**。
+> 后端由 `lab-management-system-msw` / `lab-management-system-nextjs` 提供。
+> 状态推进路径：规划 → 开发中 → 已上线（每条子项挂 data-fn / @entry + fnTest）。
 
 ## 模块总览
 
