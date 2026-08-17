@@ -1,38 +1,20 @@
 {
   "schema": 1,
   "approved": true,
-  "base_sha": "14475d430a332b31",
-  "summary": "认证域收口（对齐 nextjs 2026-08-18 决策，与 react 仓同批）：登录全部委托 saas SSO，本地无用户名密码表单、无选租户页。LoginPage.vue 重写为纯 SSO orchestrator（三分支：?token= 直达 / ?code=&state= 换 token / authorize 跳 saas），删 SelectTenantPage.vue + /select-tenant 路由；auth.ts 补 setSession（镜像 react）。据此：4 个子项 规划→已上线（代码+fnTest+锚点三件套齐），1 个子项 规划→已废弃（表单登录废弃），M00.F01/F02 与 nextjs 一致保持规划（FSM 态保留、UI 入口移除）。",
+  "base_sha": "fefb0536dcc1e8b2",
+  "summary": "M06 两个关联按钮落地（与 react 仓同批镜像）：M06.F03.I02 参数↔标准关联（parameters 行内「关联标准」→ ParameterStandardLinkDialog.vue）+ M06.F07.I02 报告名称↔标准/参数关联（行内「关联」→ ReportNameLinkDialog.vue 两段列表，标准 role=TESTING）。代码+锚点+测试三件套齐，2 个子项 规划→已上线。",
   "changes": [
     {
-      "id": "M01.F04.I02",
+      "id": "M06.F03.I02",
       "action": "变更",
-      "name": "动态权限集",
-      "reason": "规划→已上线：state/auth.ts fetchPermissions（TTL 缓存）+ hasPermission；tests/auth-fsm.test.ts 2 个 fnTest"
+      "name": "参数↔标准关联",
+      "reason": "规划→已上线：src/features/inspection-capability/ParameterStandardLinkDialog.vue（// @entry M06.F03.I02 + data-fn）+ InspectionCapabilityList.vue parameters 行内入口；tests/features/inspection-capability/parameterStandardLink.dom.test.ts 2 个 fnTest（本批新增）"
     },
     {
-      "id": "M01.F04.I03",
+      "id": "M06.F07.I02",
       "action": "变更",
-      "name": "路由守卫",
-      "reason": "规划→已上线：src/state/require-auth.ts useRequireAuth（// @entry M01.F04.I03，awaiting_tenant→/login）；tests/features/auth/requireAuth.dom.test.ts 4 个 fnTest（本批新增：anonymous→/login、缺权→/403、权限齐放行、awaiting_tenant→/login）"
-    },
-    {
-      "id": "M01.F05.I02",
-      "action": "变更",
-      "name": "Token 注入与失效跳登录",
-      "reason": "规划→已上线：api/http-client.ts Authorization 注入 + auth.ts 401→refresh→anonymous；tests/auth-fsm.test.ts 3 个 fnTest"
-    },
-    {
-      "id": "M01.F05.I03",
-      "action": "变更",
-      "name": "SSO 授权码流",
-      "reason": "规划→已上线：LoginPage.vue 重写为纯 SSO orchestrator（2026-08-18 对齐 nextjs，砍用户名密码表单，@entry M01.F05.I03）；tests/features/auth/loginPageSso.dom.test.ts 3 个 fnTest 覆盖三阶段（本批新增）"
-    },
-    {
-      "id": "M01.F05.I01",
-      "action": "变更",
-      "name": "用户名+密码登录",
-      "reason": "规划→已废弃：2026-08-18 认证收口对齐 nextjs——登录全部委托 saas 身份平台，本仓不再有本地登录表单页；login 端点消费保留在 FSM（测试基建），UI 入口已删"
+      "name": "报告名称↔标准/参数关联",
+      "reason": "规划→已上线：src/features/report-names/ReportNameLinkDialog.vue（// @entry M06.F07.I02 + data-fn，标准 role=TESTING + 参数两段 toggle）+ ReportNameList.vue 行内入口；tests/features/report-names/reportNameLink.dom.test.ts 2 个 fnTest（本批新增）"
     }
   ],
   "sync_files": []

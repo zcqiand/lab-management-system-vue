@@ -6,11 +6,12 @@
 //
 // 功能 ID：
 //   M06.F07.I01 列表（行 data-fn + 新建/编辑按钮 data-fn）
-//   M06.F07.I02 关联（F07↔标准/参数）→ 暂留规划，下批补
+//   M06.F07.I02 关联（F07↔标准/参数）→ 行内「关联」→ ReportNameLinkDialog
 import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import ReportNameLinkDialog from "@/features/report-names/ReportNameLinkDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/inspection/inspection-report-name.ts）
 interface InspectionReportName {
@@ -54,6 +55,8 @@ const keyword = ref("");
 const mode = ref<Mode>({ kind: "idle" });
 const loading = ref(false);
 const deleteTarget = ref<InspectionReportName | null>(null);
+// M06.F07.I02 报告名称↔标准/参数关联弹窗
+const linking = ref<InspectionReportName | null>(null);
 const form = reactive<FormState>({ ...EMPTY_FORM });
 
 const editing = computed<InspectionReportName | null>(() => {
@@ -317,6 +320,13 @@ async function submitForm(): Promise<void> {
             <td class="px-4 py-2 text-right">
               <button
                 class="inline-flex items-center justify-center rounded-md border px-2 py-1 text-xs hover:bg-slate-50"
+                data-fn="M06.F07.I02"
+                @click="linking = r"
+              >
+                关联
+              </button>
+              <button
+                class="ml-2 inline-flex items-center justify-center rounded-md border px-2 py-1 text-xs hover:bg-slate-50"
                 @click="openEdit(r)"
               >
                 编辑
@@ -332,5 +342,15 @@ async function submitForm(): Promise<void> {
         </tbody>
       </table>
     </div>
+
+    <!-- M06.F07.I02 报告名称↔标准/参数关联弹窗 -->
+    <ReportNameLinkDialog
+      v-if="linking"
+      :open="linking !== null"
+      :report-name-code="linking.code"
+      :report-name-label="linking.name"
+      @update:open="(v: boolean) => { if (!v) linking = null; }"
+      @changed="load"
+    />
   </div>
 </template>

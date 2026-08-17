@@ -6,7 +6,7 @@
     "features": 29,
     "items": 63
   },
-  "warnings_total": 121,
+  "warnings_total": 125,
   "warnings": {
     "已上线但无设计映射": [
       "M01.F04.I02",
@@ -55,6 +55,7 @@
       "M06.F02.I01",
       "M06.F02.I02",
       "M06.F03.I01",
+      "M06.F03.I02",
       "M06.F04.I01",
       "M06.F04.I02",
       "M06.F05.I01",
@@ -62,6 +63,7 @@
       "M06.F06.I02",
       "M06.F06.I03",
       "M06.F07.I01",
+      "M06.F07.I02",
       "M06.F08.I01",
       "M98.F01.I01",
       "M98.F01.I02",
@@ -122,6 +124,7 @@
       "M06.F02.I01",
       "M06.F02.I02",
       "M06.F03.I01",
+      "M06.F03.I02",
       "M06.F04.I01",
       "M06.F04.I02",
       "M06.F05.I01",
@@ -129,6 +132,7 @@
       "M06.F06.I02",
       "M06.F06.I03",
       "M06.F07.I01",
+      "M06.F07.I02",
       "M06.F08.I01",
       "M98.F01.I01",
       "M98.F01.I02",
@@ -856,13 +860,19 @@
     },
     "M06.F03.I02": {
       "name": "参数↔标准关联",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F03.I02] toggle：未关联标准 → POST 后按钮翻「解除关联」",
+        "[M06.F03.I02] 关联弹窗：列出标准 + 已关联态（IP-0001 已关联 GB 175-2023）"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue",
+        "src\\features\\inspection-capability\\ParameterStandardLinkDialog.vue"
+      ]
     },
     "M06.F04.I01": {
       "name": "检测标准列表（状态过滤）",
@@ -969,13 +979,19 @@
     },
     "M06.F07.I02": {
       "name": "报告名称↔标准/参数关联",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F07.I02] toggle 参数：POST 后按钮翻「解除」",
+        "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）"
+      ],
+      "entry": [
+        "src\\features\\report-names\\ReportNameLinkDialog.vue",
+        "src\\features\\report-names\\ReportNameList.vue"
+      ]
     },
     "M06.F08.I01": {
       "name": "参数界面维护 + link",

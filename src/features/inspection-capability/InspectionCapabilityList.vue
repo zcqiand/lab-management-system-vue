@@ -8,6 +8,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import ParameterStandardLinkDialog from "@/features/inspection-capability/ParameterStandardLinkDialog.vue";
 
 type Resource = "specialties" | "objects" | "parameters" | "standards";
 
@@ -22,6 +23,7 @@ const props = defineProps<Props>();
 // @entry M06.F04.I01
 // @entry M06.F02.I02
 // @entry M06.F04.I02
+// @entry M06.F03.I02 参数↔标准关联（parameters 行内「关联标准」→ ParameterStandardLinkDialog）
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/inspection/*）
 interface ListItem {
@@ -118,6 +120,8 @@ const saveError = ref<string | null>(null);
 const deleteTarget = ref<ListItem | null>(null);
 const deleteError = ref<string | null>(null);
 const deleting = ref(false);
+// M06.F03.I02 参数↔标准关联弹窗（parameters 资源专属）
+const linkingParam = ref<ListItem | null>(null);
 
 // form 通用字段（多资源用 reactive 一次性管理）
 const form = reactive<Record<string, string | boolean | number>>({});
@@ -397,6 +401,15 @@ function cellOf(item: ListItem, idx: number): string {
           </td>
           <td class="px-4 py-2 text-xs whitespace-nowrap">
             <button
+              v-if="resource === 'parameters'"
+              class="text-primary hover:underline disabled:opacity-40 mr-3"
+              data-fn="M06.F03.I02"
+              :aria-label="`关联标准 ${item.code}`"
+              @click="linkingParam = item"
+            >
+              关联标准
+            </button>
+            <button
               class="text-primary hover:underline disabled:opacity-40 mr-3"
               :data-fn="fnCreate"
               :aria-label="`编辑 ${item.code}`"
@@ -557,5 +570,15 @@ function cellOf(item: ListItem, idx: number): string {
       </p>
       <p v-if="deleteError" role="alert" class="mt-2 text-red-600">{{ deleteError }}</p>
     </ConfirmDialog>
+
+    <!-- M06.F03.I02 参数↔标准关联弹窗（parameters 资源） -->
+    <ParameterStandardLinkDialog
+      v-if="resource === 'parameters' && linkingParam"
+      :open="linkingParam !== null"
+      :parameter-code="linkingParam.code"
+      :parameter-name="linkingParam.name"
+      @update:open="(v: boolean) => { if (!v) linkingParam = null; }"
+      @changed="load"
+    />
   </div>
 </template>
