@@ -66,6 +66,27 @@ export const router = createRouter({
           name: "data-entry",
           component: () => import("@/pages/DataEntryPage.vue"),
         },
+        // Sprint 2 Batch 2B-3：报告 4 阶段（review/approval/issuance/archived）
+        {
+          path: "report-review",
+          name: "report-review",
+          component: () => import("@/pages/ReportReviewPage.vue"),
+        },
+        {
+          path: "report-approve",
+          name: "report-approve",
+          component: () => import("@/pages/ReportApprovePage.vue"),
+        },
+        {
+          path: "report-issue",
+          name: "report-issue",
+          component: () => import("@/pages/ReportIssuePage.vue"),
+        },
+        {
+          path: "report-archive",
+          name: "report-archive",
+          component: () => import("@/pages/ReportArchivePage.vue"),
+        },
       ],
     },
     {

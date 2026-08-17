@@ -6,7 +6,7 @@
     "features": 29,
     "items": 62
   },
-  "warnings_total": 58,
+  "warnings_total": 74,
   "warnings": {
     "已上线但无设计映射": [
       "M02.F01.I01",
@@ -21,6 +21,14 @@
       "M03.F03.I01",
       "M03.F03.I02",
       "M03.F03.I03",
+      "M03.F05.I01",
+      "M03.F05.I02",
+      "M03.F06.I01",
+      "M03.F06.I02",
+      "M03.F07.I01",
+      "M03.F07.I02",
+      "M03.F08.I01",
+      "M03.F08.I02",
       "M03.F09.I01",
       "M03.F09.I02",
       "M03.F09.I03",
@@ -52,6 +60,14 @@
       "M03.F03.I01",
       "M03.F03.I02",
       "M03.F03.I03",
+      "M03.F05.I01",
+      "M03.F05.I02",
+      "M03.F06.I01",
+      "M03.F06.I02",
+      "M03.F07.I01",
+      "M03.F07.I02",
+      "M03.F08.I01",
+      "M03.F08.I02",
       "M03.F09.I01",
       "M03.F09.I02",
       "M03.F09.I03",
@@ -325,83 +341,115 @@
     },
     "M03.F05.I01": {
       "name": "审核队列（review 阶段）",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F05.I01] 报告审核：渲染标题 + 列表行（review 阶段 fixture 穿透）"
+      ],
+      "entry": [
+        "src\\pages\\ReportReviewPage.vue"
+      ]
     },
     "M03.F05.I02": {
       "name": "审核通过/驳回（submit/return）",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F05.I02] 报告审核：「审核通过」按钮 data-fn 可见"
+      ],
+      "entry": [
+        "src\\pages\\ReportReviewPage.vue"
+      ]
     },
     "M03.F06.I01": {
       "name": "批准队列（approval 阶段）",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F06.I01] 报告批准：渲染标题 + 列表行（approval 阶段 fixture 穿透）"
+      ],
+      "entry": [
+        "src\\pages\\ReportApprovePage.vue"
+      ]
     },
     "M03.F06.I02": {
       "name": "批准/驳回",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F06.I02] 报告批准：「批准」按钮 data-fn 可见"
+      ],
+      "entry": [
+        "src\\pages\\ReportApprovePage.vue"
+      ]
     },
     "M03.F07.I01": {
       "name": "发放队列（issuance 阶段）",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F07.I01] 报告发放：渲染标题 + 列表行（issuance 阶段 fixture 穿透）"
+      ],
+      "entry": [
+        "src\\pages\\ReportIssuePage.vue"
+      ]
     },
     "M03.F07.I02": {
       "name": "发放（生成报告编号）",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F07.I02] 报告发放：「发放」按钮 data-fn 可见"
+      ],
+      "entry": [
+        "src\\pages\\ReportIssuePage.vue"
+      ]
     },
     "M03.F08.I01": {
       "name": "归档队列（archived 阶段）",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F08.I01] 报告归档：渲染标题 + 列表行（archived 阶段 fixture 穿透）"
+      ],
+      "entry": [
+        "src\\pages\\ReportArchivePage.vue"
+      ]
     },
     "M03.F08.I02": {
       "name": "归档完成",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M03.F08.I02] 报告归档：「归档完成」按钮 data-fn 可见"
+      ],
+      "entry": [
+        "src\\pages\\ReportArchivePage.vue"
+      ]
     },
     "M03.F09.I01": {
       "name": "接样单详情页",

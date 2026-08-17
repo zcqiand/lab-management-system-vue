@@ -3,8 +3,11 @@
 // Sprint 1 只装配仪表盘；Sprint 2 Batch 1 加 M04 基础数据 4 码表。
 import { computed } from "vue";
 import {
+  Archive,
+  ClipboardCheck,
   ClipboardList,
   Database,
+  FileText,
   FlaskConical,
   LayoutDashboard,
   LogOut,
@@ -32,6 +35,10 @@ const NAV: NavItem[] = [
   { label: "接样管理", path: "/receipts", icon: "receipts" },
   { label: "任务分配", path: "/task-assignment", icon: "task-assignment" },
   { label: "数据录入", path: "/data-entry", icon: "data-entry" },
+  { label: "报告审核", path: "/report-review", icon: "report-review" },
+  { label: "报告批准", path: "/report-approve", icon: "report-approve" },
+  { label: "报告发放", path: "/report-issue", icon: "report-issue" },
+  { label: "报告归档", path: "/report-archive", icon: "report-archive" },
 ];
 
 const displayName = computed(() => {
@@ -70,6 +77,10 @@ function onAction(action: string): void {
         <template #receipts><FlaskConical class="size-4" /></template>
         <template #task-assignment><ClipboardList class="size-4" /></template>
         <template #data-entry><TestTube2 class="size-4" /></template>
+        <template #report-review><ClipboardCheck class="size-4" /></template>
+        <template #report-approve><ClipboardCheck class="size-4" /></template>
+        <template #report-issue><FileText class="size-4" /></template>
+        <template #report-archive><Archive class="size-4" /></template>
       </SidebarNav>
       <div class="mt-auto border-t p-3">
         <SidebarNav
