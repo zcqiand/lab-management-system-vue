@@ -1,29 +1,29 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "Sprint 2 Batch 2B-2 vue 镜像 react 双仓数据录入 + 2 模型卡 + ReportPreviewModal 升级完成；下一步 vue 跟 react 镜像 Sprint 2 Batch 2B-3 M03 报告 4 阶段",
+  "current_task": "Sprint 2 Batch 2B-3 vue 镜像 react M03 报告 4 阶段完成；M03 流程线 8 阶段全部落地，下一步 vue 跟 react 镜像 M06 检测能力 10 组件",
   "done": [
-    "Sprint 2 Batch 2B-2：src/features/data-entry/DataEntryPage.vue + src/pages/DataEntryPage.vue（Teleport 自实现 Dialog；M03.F03.I01 + I02 + I03 同 react 仓）",
-    "Sprint 2 Batch 2B-2：src/features/data-entry/models/{DefaultParamCard,CementCompressCard}.vue + cement-strength.ts + types.ts + registry.ts（12 模型卡落 1：CementCompressCard，镜像 react 仓算法）",
-    "Sprint 2 Batch 2B-2：src/features/data-entry/ReportPreviewModal.vue（升级 Batch 2B-1 占位）",
-    "Sprint 2 Batch 2B-2：src/features/receipts/ReceiptDetail.vue 升级引用 ReportPreviewModal",
-    "Sprint 2 Batch 2B-2：router.ts + AppShell.vue NAV 加数据录入菜单项 + TestTube2 图标",
-    "Sprint 2 Batch 2B-2：tests/features/data-entry/dataEntryPage.dom.test.ts 3 fnTest 全绿",
-    "Sprint 2 Batch 2B-2：function-tree.md M03.F03 + I01/I02/I03 共 1 F + 3 I 规划→已上线",
-    "Sprint 2 Batch 2B-2：gate L0-L5 全绿 99 功能条目 58 软告警（Batch 2B-1 52 + Batch 2B-2 新增 6）"
+    "Sprint 2 Batch 2B-3：src/features/reports/ReportPhasePage.vue（共享阶段页镜像 react 仓 Batch 2B-3）",
+    "Sprint 2 Batch 2B-3：src/pages/{ReportReview,ReportApprove,ReportIssue,ReportArchive}Page.vue（4 薄包装）",
+    "Sprint 2 Batch 2B-3：router.ts 4 路由 placeholder → lazy 真页 import",
+    "Sprint 2 Batch 2B-3：AppShell.vue NAV 加报告审核/批准/发放/归档 4 菜单项 + Archive/ClipboardCheck/FileText 图标",
+    "Sprint 2 Batch 2B-3：tests/features/reports/reportPhasePage.dom.test.ts 8 fnTest 全绿",
+    "Sprint 2 Batch 2B-3：function-tree.md M03.F05/F06/F07/F08 共 4 F + 8 I 规划→已上线",
+    "Sprint 2 Batch 2B-3：gate L0-L5 全绿 99 功能条目 74 软告警（Batch 2B-2 58 + Batch 2B-3 新增 16 — 同 4 条软告警持续滚动）",
+    "Sprint 2 Batch 2B-3：commit b6812c7（vue 指针 8e2d7e2 → b6812c7）"
   ],
-  "next": "1) Sprint 2 Batch 2B-3 vue 仓镜像 react M03 报告 4 阶段（review/approval/issuance/archived）；2) vue gate → 绿 → commit；3) vue-draggable-plus 拖拽 sortOrder 持久化随 M06 4 码表补 UI 时做",
+  "next": "1) Sprint 2 Batch 2B-4 vue 仓镜像 react M06 检测能力（specialties/objects/standards/parameters/calculation-rules/technical-requirements 共 6 F + 10 I）；2) vue-draggable-plus 拖拽 sortOrder 持久化随 M06 4 码表补 UI 时做",
   "open_questions": [
-    "vue 仓 template 用 MODEL_REGISTRY 引用对比组件会 TS2339（registry 在 setup 内不挂到 instance）；改为 template v-if/v-else-if 直接引组件（isCement computed 切换）",
-    "vue 模板表达式作用域不识别 window/globalThis — 提取 alertError() 函数到 script setup（Batch 2A 踩过继续沿用）"
+    "vue 仓 ReportPhasePage 的 PREV_STAGE mapping（review→data_entry 等）写在 script setup 内（reactive 表），不放 external const — 避免 Batch 2B-2 踩过的「template 引用 setup 外 const TS2339」坑",
+    "vue 仓 M03.F05/F06/F07/F08 共 8 I 都通过 i01DataFn/i02DataFn props 传，复用 ReportPhasePage（同 react 仓模式）"
   ],
   "dont": [
-    "vue 仓从 '@/types/...' import — vue 仓无 src/types/ 目录，跨 SFC 共享类型放 models/ 子目录",
-    "vue 模板用 window.alert / globalThis.alert",
-    "vue 测试用 mountWithProviders 传 initialRoute 跳详情页（push 异步未就绪）— 直接 createRouter + isReady",
-    "vue template 引用 setup 外的 const（如 MODEL_REGISTRY）— TypeScript 不识别；改 v-if 直接引组件"
+    "vue 仓从 '@/types/...' import — vue 仓无 src/types/ 目录",
+    "vue 模板用 window.alert / globalThis.alert — 提取 alertError() 函数到 script setup",
+    "vue 测试用 mountWithProviders 传 initialRoute 跳详情页（push 异步未就绪）",
+    "vue template 引用 setup 外的 const — 改 reactive 表放 script setup"
   ],
-  "last_gate_passed_at": "2026-08-17T24:35+08:00",
+  "last_gate_passed_at": "2026-08-17T25:35+08:00",
   "active_branch": "master",
   "ahead_of_origin": "0"
 }
