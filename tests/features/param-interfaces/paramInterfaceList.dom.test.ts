@@ -1,0 +1,111 @@
+// M06.F08.I01 — 参数界面维护 smoke
+import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { flushPromises } from "@vue/test-utils";
+import { fnTest } from "../../fn";
+import { mountWithProviders } from "../../helper";
+
+const PARAM_INTERFACES = [
+  {
+    code: "default",
+    componentPath: "@/features/data-entry/models/DefaultParamCard.vue",
+    sortOrder: 1,
+  },
+  {
+    code: "concrete-compress",
+    componentPath: "@/features/data-entry/models/ConcreteCompressCard.vue",
+    sortOrder: 2,
+  },
+  {
+    code: "rebar-mech-numeric",
+    componentPath: "@/features/data-entry/models/RebarMechNumericCard.vue",
+    sortOrder: 3,
+  },
+];
+
+function wrap(arr: unknown[]): { items: unknown[]; page: number; pageSize: number; total: number } {
+  return { items: arr, page: 1, pageSize: arr.length, total: arr.length };
+}
+
+vi.mock("axios", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
+
+import axios from "axios";
+
+function installAdapters(): void {
+  vi.mocked(axios.get).mockImplementation(async (url: string) => {
+    const u = String(url);
+    if (u.includes("/api/inspection-param-interfaces")) {
+      return { data: wrap(PARAM_INTERFACES) } as never;
+    }
+    return { data: wrap([]) } as never;
+  });
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  installAdapters();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+const MOUNT_GLOBAL = {
+  stubs: {
+    teleport: { template: "<div data-teleport-stub><slot /></div>" },
+  },
+};
+
+describe("M06.F08 参数界面维护", () => {
+  fnTest(["M06.F08.I01"], "参数界面：渲染标题 + 列表行（fixture 真数据穿透）", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    const wrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    expect(wrapper.text()).toContain("参数界面维护");
+    expect(wrapper.text()).toContain("default");
+    expect(wrapper.text()).toContain("concrete-compress");
+  });
+
+  fnTest(["M06.F08.I01"], "参数界面：新建按钮开弹窗", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    const wrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    const createBtn = wrapper.findAll("button").find((b) => b.text() === "新建参数界面");
+    expect(createBtn).toBeTruthy();
+    await createBtn!.trigger("click");
+    await flushPromises();
+    const h2 = wrapper.findAll("h2").find((h) => h.text().includes("新建参数界面"));
+    expect(h2).toBeTruthy();
+  });
+
+  fnTest(["M06.F08.I01"], "参数界面：行内删除按钮开确认弹窗", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    const wrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    const delBtn = wrapper.findAll("button").find((b) => b.text() === "删除");
+    expect(delBtn).toBeTruthy();
+    await delBtn!.trigger("click");
+    await flushPromises();
+    const dialog = wrapper.find('[data-testid="confirm-dialog"]');
+    expect(dialog.exists()).toBe(true);
+    expect(dialog.text()).toContain("删除参数界面");
+  });
+});

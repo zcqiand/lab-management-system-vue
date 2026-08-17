@@ -3,10 +3,13 @@
 // Sprint 1 只装配仪表盘；Sprint 2 Batch 1 加 M04 基础数据 4 码表。
 import { computed } from "vue";
 import {
+  ClipboardList,
   Database,
   FlaskConical,
   LayoutDashboard,
   LogOut,
+  ScrollText,
+  Wrench,
 } from "lucide-vue-next";
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
 import BackendSwitcher from "@/components/app/BackendSwitcher.vue";
@@ -14,14 +17,17 @@ import { useAuthStore, logout as authLogout } from "@/state/auth";
 
 const auth = useAuthStore();
 
-// Sprint 2 Batch 1：仪表盘 + M04 基础数据 4 码表菜单项。
-// 其他批次（M02/M03/M05/M06）菜单随对应批次落地，本仓不挂占位链接。
+// Sprint 2 Batch 1+2A：仪表盘 + M04 基础数据 4 码表 + M02.F01/M06.F07/F08 3 码表式页。
+// 后续 batch（M03 流程 / M05 汇总）随对应批次落地。
 const NAV: NavItem[] = [
   { label: "仪表盘", path: "/", icon: "dashboard" },
   { label: "型号维护", path: "/models", icon: "models" },
   { label: "规格维护", path: "/specifications", icon: "specs" },
   { label: "等级维护", path: "/grades", icon: "grades" },
   { label: "牌号维护", path: "/brands", icon: "brands" },
+  { label: "合同管理", path: "/contracts", icon: "contracts" },
+  { label: "报告名称维护", path: "/report-names", icon: "report-names" },
+  { label: "参数界面维护", path: "/param-interfaces", icon: "param-interfaces" },
 ];
 
 const displayName = computed(() => {
@@ -54,6 +60,9 @@ function onAction(action: string): void {
         <template #specs><Database class="size-4" /></template>
         <template #grades><Database class="size-4" /></template>
         <template #brands><Database class="size-4" /></template>
+        <template #contracts><ClipboardList class="size-4" /></template>
+        <template #report-names><ScrollText class="size-4" /></template>
+        <template #param-interfaces><Wrench class="size-4" /></template>
       </SidebarNav>
       <div class="mt-auto border-t p-3">
         <SidebarNav

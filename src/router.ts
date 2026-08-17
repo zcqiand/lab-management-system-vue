@@ -28,6 +28,22 @@ export const router = createRouter({
         },
         { path: "grades", name: "grades", component: () => import("@/pages/GradesPage.vue") },
         { path: "brands", name: "brands", component: () => import("@/pages/BrandsPage.vue") },
+        // Sprint 2 Batch 2A：合同 / 报告名称 / 参数界面（码表式页）
+        {
+          path: "contracts",
+          name: "contracts",
+          component: () => import("@/pages/ContractsPage.vue"),
+        },
+        {
+          path: "report-names",
+          name: "report-names",
+          component: () => import("@/pages/ReportNamesPage.vue"),
+        },
+        {
+          path: "param-interfaces",
+          name: "param-interfaces",
+          component: () => import("@/pages/ParamInterfacesPage.vue"),
+        },
       ],
     },
     {
