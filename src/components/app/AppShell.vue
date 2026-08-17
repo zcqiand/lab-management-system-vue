@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   LogOut,
   ScrollText,
+  TestTube2,
   Wrench,
 } from "lucide-vue-next";
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
@@ -30,6 +31,7 @@ const NAV: NavItem[] = [
   { label: "参数界面维护", path: "/param-interfaces", icon: "param-interfaces" },
   { label: "接样管理", path: "/receipts", icon: "receipts" },
   { label: "任务分配", path: "/task-assignment", icon: "task-assignment" },
+  { label: "数据录入", path: "/data-entry", icon: "data-entry" },
 ];
 
 const displayName = computed(() => {
@@ -67,6 +69,7 @@ function onAction(action: string): void {
         <template #param-interfaces><Wrench class="size-4" /></template>
         <template #receipts><FlaskConical class="size-4" /></template>
         <template #task-assignment><ClipboardList class="size-4" /></template>
+        <template #data-entry><TestTube2 class="size-4" /></template>
       </SidebarNav>
       <div class="mt-auto border-t p-3">
         <SidebarNav

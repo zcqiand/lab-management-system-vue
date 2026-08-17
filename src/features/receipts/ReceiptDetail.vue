@@ -1,16 +1,17 @@
 <script setup lang="ts">
-// M03.F09 接样单详情 — /receipts/:id 详情页（流程历史时间线 + 报告预览占位）
+// M03.F09 接样单详情 — /receipts/:id 详情页（流程历史时间线 + 报告预览 Batch 2B-2 升级版）
 //
 // 镜像 react 仓 src/features/receipts/ReceiptDetail.tsx
 //
 // 功能 ID：
 //   M03.F09.I01 接样单详情页
 //   M03.F09.I02 流程历史时间线
-//   M03.F09.I03 报告预览按钮（占位，Batch 2B-2 data-entry 镜像完整 ReportPreviewModal 时回填）
+//   M03.F09.I03 报告预览按钮（Batch 2B-2 升级为 ReportPreviewModal 真组件）
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import ReportPreviewModal from "@/features/data-entry/ReportPreviewModal.vue";
 
 type FlowStage =
   | "receiving"
@@ -197,33 +198,11 @@ function alertError(msg: string): void {
         </ol>
       </div>
 
-      <Teleport to="body">
-        <div
-          v-if="previewOpen"
-          class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-          @click.self="previewOpen = false"
-        >
-          <div class="bg-white rounded shadow-xl sm:max-w-md w-full p-6">
-            <h2 class="text-lg font-semibold">报告预览 — {{ receipt.commissionCode }}</h2>
-            <p class="text-sm text-slate-500 mb-3">
-              本弹窗为 M03.F09.I03 占位（Batch 2B-2 data-entry 镜像完整 ReportPreviewModal 时回填）。
-            </p>
-            <div class="text-sm text-slate-600">
-              当前流程阶段：{{ FLOW_STAGE_LABELS[receipt.flowStatus] }}<br />
-              报告类别编码：{{ receipt.categoryCode }}<br />
-              检测参数：{{ receipt.testParameters?.join("、") ?? "—" }}
-            </div>
-            <div class="mt-4 flex justify-end">
-              <button
-                class="px-4 py-2 bg-blue-600 text-white rounded text-sm"
-                @click="previewOpen = false"
-              >
-                关闭
-              </button>
-            </div>
-          </div>
-        </div>
-      </Teleport>
+      <ReportPreviewModal
+        :open="previewOpen"
+        :receipt="receipt"
+        @close="previewOpen = false"
+      />
     </template>
   </div>
 </template>

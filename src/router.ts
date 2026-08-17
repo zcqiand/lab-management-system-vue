@@ -60,6 +60,12 @@ export const router = createRouter({
           name: "task-assignment",
           component: () => import("@/pages/TaskAssignmentPage.vue"),
         },
+        // Sprint 2 Batch 2B-2：数据录入
+        {
+          path: "data-entry",
+          name: "data-entry",
+          component: () => import("@/pages/DataEntryPage.vue"),
+        },
       ],
     },
     {
