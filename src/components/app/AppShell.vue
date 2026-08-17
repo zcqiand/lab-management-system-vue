@@ -1,16 +1,28 @@
 <script setup lang="ts">
 // AppShell — 业务页统一骨架（sidebar + 顶栏 BackendSwitcher + 内容区）。
-// Sprint 1 只装配；sidebar 菜单内容 Sprint 2 随 26 页镜像填充。
+// Sprint 1 只装配仪表盘；Sprint 2 Batch 1 加 M04 基础数据 4 码表。
 import { computed } from "vue";
-import { FlaskConical, LayoutDashboard, LogOut } from "lucide-vue-next";
+import {
+  Database,
+  FlaskConical,
+  LayoutDashboard,
+  LogOut,
+} from "lucide-vue-next";
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
 import BackendSwitcher from "@/components/app/BackendSwitcher.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
 
 const auth = useAuthStore();
 
-// Sprint 1：只有仪表盘一项。菜单树数据源（GET /auth/menus）Sprint 2 接。
-const NAV: NavItem[] = [{ label: "仪表盘", path: "/", icon: "dashboard" }];
+// Sprint 2 Batch 1：仪表盘 + M04 基础数据 4 码表菜单项。
+// 其他批次（M02/M03/M05/M06）菜单随对应批次落地，本仓不挂占位链接。
+const NAV: NavItem[] = [
+  { label: "仪表盘", path: "/", icon: "dashboard" },
+  { label: "型号维护", path: "/models", icon: "models" },
+  { label: "规格维护", path: "/specifications", icon: "specs" },
+  { label: "等级维护", path: "/grades", icon: "grades" },
+  { label: "牌号维护", path: "/brands", icon: "brands" },
+];
 
 const displayName = computed(() => {
   const s = auth.authState;
@@ -38,6 +50,10 @@ function onAction(action: string): void {
       </div>
       <SidebarNav :items="NAV">
         <template #dashboard><LayoutDashboard class="size-4" /></template>
+        <template #models><Database class="size-4" /></template>
+        <template #specs><Database class="size-4" /></template>
+        <template #grades><Database class="size-4" /></template>
+        <template #brands><Database class="size-4" /></template>
       </SidebarNav>
       <div class="mt-auto border-t p-3">
         <SidebarNav

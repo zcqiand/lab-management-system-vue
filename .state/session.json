@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "Sprint 1 前端绑定契约镜像完成（react d643f21 → vue f3f8cc5）；下一步双仓 Sprint 2（镜像 nextjs 25 页）",
+  "current_task": "Sprint 2 Batch 1 双仓 4 码表页（models/specifications/grades/brands）翻译 + function-tree 翻 已上线；下一步 Batch 2 流程线 8 页翻译跟随 react",
   "done": [
     "orval.config.ts 加 input:{target,filters} exclude frontend-bind-meta（grep frontendBindMeta endpoints.ts = 0）",
     "src/api/contracts.ts：8 契约 schema re-export + TOKEN_STORAGE_KEYS + AuthContextActions + BACKEND_REGISTRY_DEFAULT（与 react 逐字段一致）",
@@ -14,15 +14,27 @@
     "vitest.config.ts 补 @ alias（react 同款坑）+ tests/fn.ts fnTest helper（vue 机制：ID 进测试名）",
     "tests/auth-fsm.test.ts 14 测全绿：挂 M00.F01/F02 + M01.F04.I02 + M01.F05.I01/I02/I04（同 react 批次）",
     "function-tree.md：镜像 react 62 条 I 级子项 + M98 工程设施段（F 级表未动，仍 26 F 规划）",
-    "gate L0-L5 全绿 99 条目 0 软告警；gate --all 13 仓全绿",
-    "commit f3f8cc5 推 origin；suite 指针 14142b7 推 origin"
+    "Sprint 1 gate L0-L5 全绿 99 条目 0 软告警；gate --all 13 仓全绿",
+    "commit f3f8cc5 推 origin；suite 指针 141 42b7 推 origin",
+    "Sprint 2 Batch 1：src/api/legacy-client.ts 镜像 react 版（API_ROUTES 1:1，跳过 react 的 apiClient 实例因为 vue 仓 axios 拦截器已装全局）",
+    "Sprint 2 Batch 1：src/components/app/ConfirmDialog.vue 通用确认弹窗（Teleport to body + ESC 关闭 + 镜像 react ConfirmModal API）",
+    "Sprint 2 Batch 1：src/features/dicts/CategoryDictList.vue 翻译 nextjs 仓（composition API + ref/watch/computed；axios 直连全局拦截器；拖拽 sortOrder 本批暂不装 vue-draggable-plus）",
+    "Sprint 2 Batch 1：4 码表页 BrandsPage/GradesPage/ModelsPage/SpecificationsPage 全部路由加进 router.ts（AppShell children）+ SidebarNav 4 菜单项（Database  图标插槽）",
+    "Sprint 2 Batch 1：tests/features/dicts/categoryDictPages.dom.test.ts 12 测全绿（fnTest 挂 M04.F06/F07/F08/F09.I01/I02/I03；vi.mock('axios') 拦截）",
+    "Sprint 2 Batch 1：tests/helper.ts 改 stub 默认顺序（用户 stubs override 默认 teleport:true）",
+    "Sprint 2 Batch 1：发现并修 CategoryDictList.vue 新建按钮漏绑 @click=\"openCreate\" bug（trigger 不触发 + 弹窗不开，4 个 I02 测试 FAIL 暴露）",
+    "Sprint 2 Batch 1：docs/functions/function-tree.md M04.F0[6-9] + I01-I03 16 行 规划→已上线（与代码同 commit）",
+    "Sprint 2 Batch 1：gate L0-L5 全绿 99 条目 24 软告警（同 react 仓，无设计映射 + 不在流程 12 + 12）"
   ],
-  "next": "1) Sprint 2 双仓（react 先行）：镜像 lab-nextjs 25 页业务页 + 仪表盘内容；vue 翻译跟随。2) react+vue 镜像完一起提 /tree-change：M00.F01/M01.F05 等 7 子项 规划→开发中/已上线。3) M01.F04.I03（路由守卫）fnTest Sprint 2 补（需组件树挂载环境）",
+  "next": "1) Sprint 2 Batch 2（vue 跟 react 同步翻译）镜像 react 流程线 8 页：contracts + report-names + param-interfaces + receipts(列表+详情) + task-assignment + data-entry；2) Batch 3 inspection 6 页翻译跟随；3) Batch 4 报告 4 + summary；4) 装 vue-draggable-plus 补 sortOrder 拖拽持久化（Batch 1 暂时只读显示）；5) 全 batch 收完后提 /tree-change 翻状态 + 设计/流程映射表补 4 码表映射",
   "open_questions": [
     "M01.F04.I03（路由守卫）无 fnTest — useRequireAuth 依赖 router 环境，Sprint 2 引入组件挂载测试时补（react 仓同款欠债）",
     "FSM 转移表已落 auth.ts 头部注释，shared decision-log open_question『是否需要契约定 FSM 转移表』仍未回填 shared 仓（react 仓同款欠债）",
     "手写 DropdownMenu family 是最小实现（trigger/label/item/separator + 点外关闭）；后续页面要 select/dialog 原语时再补，风格对齐 shadcn-vue",
-    "tools/rename-param-interface.mjs 是 V013 rename 的历史遗留未入库（untracked），无害"
+    "tools/rename-param-interface.mjs 是 V013 rename 的历史遗留未入库（untracked），无害",
+    "vue-draggable-plus 未引入（Batch 1 跳拖拽）；Batch 1 4 码表 sortOrder 字段只读显示，拖拽持久化留到 Batch 1+ 装库迭代",
+    "tests/helper.ts Teleport stub 顺序改后（用户 override 默认），auth-fsm.test.ts / smoke.test.ts 是否受影响未跑回归（gate 全绿覆盖）",
+    "ConfirmDialog 用 Teleport to=body 装弹窗，jsdom 测试需要 stub override；本批固定模式（自定义 stub template div+slot）写进 MOUNT_GLOBAL；后续 ConfirmDialog 用户需 per-test override 同款"
   ],
   "dont": [
     "orval filters 必须在 input:{target,filters} 里 — 写在 entry 顶层静默无效（v7.21 实测，react/vue 双仓验证）",
@@ -31,9 +43,10 @@
     "vue 仓 fnTest 机制与 react 不同：ID 写进测试名 `[M01.F05.I01] 描述`，fnReporter 正则提取；不是 TaskMeta.fn",
     "pinia store 外的模块级函数里调 useAuthStore() 需要 active pinia — 测试必须 setActivePinia(createPinia())（setup.ts afterEach 已做但 beforeEach 更稳）",
     "function-tree.md 镜像 react I 级行时注意：react 的 M98 工程设施行也会被抓进主表 — 要单独放工程设施段，否则 L5 报 ID 重复",
-    "storageOf() 探测裸 localStorage 全局；jsdom 下测试直接 localStorage API 可用（不需要 stubGlobal，与 react node 环境不同）"
+    "storageOf() 探测裸 localStorage 全局；jsdom 下测试直接 localStorage API 可用（不需要 stubGlobal，与 react node 环境不同）",
+    "vue Teleport 在测试里要 per-test 传 `global: { stubs: { teleport: { template: '<div><slot /></div>' } } }` 让内容渲染到 wrapper；传 false 解 stub 在 vue-test-utils 上对 Teleport 无效"
   ],
-  "last_gate_passed_at": "2026-08-17T11:45+08:00",
+  "last_gate_passed_at": "2026-08-17T22:50+08:00",
   "active_branch": "master",
   "ahead_of_origin": "0"
 }
