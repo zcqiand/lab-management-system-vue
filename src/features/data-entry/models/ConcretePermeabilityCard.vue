@@ -3,72 +3,15 @@
 // 6 试件 ×（渗水压力 MPa + 渗水情况）→ 抗渗等级（按 GB/T 50082-2009）。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
-
-/** 试件数（混凝土抗渗标准为 6 个圆台试件）。 */
-const SPECIMEN_COUNT = 6;
-
-type Permeation = "已渗" | "未渗";
-
-interface Specimen {
-  pressure: number; // MPa；0 = 未填
-  permeated: Permeation;
-}
-
-const EMPTY_SPECIMEN: Specimen = { pressure: 0, permeated: "未渗" };
-
-/**
- * 按 GB/T 50082-2009 计算抗渗等级：6 试件中第 3 个渗水试件的渗水压力。
- * 不足 3 个渗水 → grade=undefined。
- */
-function computeConcretePermeability(specimens: Specimen[]): {
-  grade: number | undefined;
-  gradeLabel: string;
-  reason: string | undefined;
-} {
-  const permeatedPressures: number[] = [];
-  for (const s of specimens) {
-    if (s.permeated === "已渗" && s.pressure > 0) permeatedPressures.push(s.pressure);
-  }
-  if (permeatedPressures.length >= 3) {
-    const grade = permeatedPressures[2]!;
-    return { grade, gradeLabel: `P${Math.round(grade * 10)}`, reason: undefined };
-  }
-  if (permeatedPressures.length === 0) {
-    const maxPressure = specimens.reduce((m, s) => Math.max(m, s.pressure), 0);
-    if (maxPressure > 0) {
-      return {
-        grade: undefined,
-        gradeLabel: `未达到 P${Math.round(maxPressure * 10)}`,
-        reason: "已渗试件 < 3，按国标记为未达到",
-      };
-    }
-    return { grade: undefined, gradeLabel: "—", reason: "尚未录入" };
-  }
-  const last = permeatedPressures[permeatedPressures.length - 1]!;
-  return {
-    grade: undefined,
-    gradeLabel: `未达到 P${Math.round(last * 10)}`,
-    reason: "已渗试件 < 3，按国标记为未达到",
-  };
-}
+import {
+  computeConcretePermeability,
+  parsePermeationResult,
+  type Specimen,
+  type Permeation,
+} from "./concrete-permeability";
 
 function parseRecordResult(raw: string | undefined): Specimen[] {
-  if (!raw) return Array.from({ length: SPECIMEN_COUNT }, () => ({ ...EMPTY_SPECIMEN }));
-  try {
-    const obj = JSON.parse(raw) as { specimens?: Array<{ pressure?: number; permeated?: Permeation }> };
-    const list = obj.specimens;
-    if (!Array.isArray(list))
-      return Array.from({ length: SPECIMEN_COUNT }, () => ({ ...EMPTY_SPECIMEN }));
-    return Array.from({ length: SPECIMEN_COUNT }, (_, i) => {
-      const s = list[i];
-      return {
-        pressure: typeof s?.pressure === "number" ? s.pressure : 0,
-        permeated: s?.permeated === "已渗" ? "已渗" : "未渗",
-      };
-    });
-  } catch {
-    return Array.from({ length: SPECIMEN_COUNT }, () => ({ ...EMPTY_SPECIMEN }));
-  }
+  return parsePermeationResult(raw);
 }
 
 const props = defineProps<ParamModelProps>();
