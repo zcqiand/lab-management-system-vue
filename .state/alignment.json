@@ -2,12 +2,645 @@
   "schema": 1,
   "project": "lab-management-system-vue",
   "functions": {
-    "modules": 7,
-    "features": 26,
-    "items": 0
+    "modules": 8,
+    "features": 29,
+    "items": 62
   },
   "warnings_total": 0,
   "warnings": {},
   "unreachable_shipped": [],
-  "function_map": {}
+  "function_map": {
+    "M01.F04.I01": {
+      "name": "动态菜单下发（GET /auth/menus）",
+      "status": "规划",
+      "type": "查询",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M01.F04.I02": {
+      "name": "动态权限集（GET /auth/permissions）",
+      "status": "规划",
+      "type": "查询",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "[M01.F04.I02] authenticated 态拉取 /auth/permissions 并供 hasPermission 判断",
+        "[M01.F04.I02] 非 authenticated 态 hasPermission 恒 false"
+      ],
+      "entry": []
+    },
+    "M01.F04.I03": {
+      "name": "路由守卫（未登录/无权限拦截）",
+      "status": "规划",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M01.F05.I01": {
+      "name": "用户名+密码登录",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "[M01.F05.I01] login 单租户 → 直进 authenticated + token 双 key 持久化",
+        "[M01.F05.I01] login 失败 → 停在 anonymous，ErrorResponse 返回"
+      ],
+      "entry": []
+    },
+    "M01.F05.I02": {
+      "name": "Token 注入与失效跳登录",
+      "status": "规划",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "[M01.F05.I02] TOKEN_STORAGE_KEYS 5 个 key 全部 lab.* 前缀且名字锁死",
+        "[M01.F05.I02] onChange 契约：状态转移触发订阅 + unsub 停止",
+        "[M01.F05.I02] token 失效（me 401 + refresh 401）→ 退 anonymous + 清 token"
+      ],
+      "entry": []
+    },
+    "M01.F05.I03": {
+      "name": "SSO 授权码流（authorize + callback）",
+      "status": "规划",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M01.F05.I04": {
+      "name": "登出",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "[M01.F05.I04] logout → anonymous + 全部持久化 key 清空"
+      ],
+      "entry": []
+    },
+    "M02.F01.I01": {
+      "name": "合同列表（三态过滤）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M02.F01.I02": {
+      "name": "新建/编辑合同",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M02.F01.I03": {
+      "name": "删除合同",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F01.I01": {
+      "name": "接样单列表（flowStatus 三态过滤）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F01.I02": {
+      "name": "新建/编辑接样单",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F01.I03": {
+      "name": "删除接样单",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F01.I04": {
+      "name": "提交接样单（receiving → task_assignment）",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F02.I01": {
+      "name": "任务分配队列",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F02.I02": {
+      "name": "安排/取消检测人员与计划日期",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F03.I01": {
+      "name": "样品 + 检测数据录入页",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F03.I02": {
+      "name": "保存检测记录",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F03.I03": {
+      "name": "人工改判 verdict",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F05.I01": {
+      "name": "审核队列（review 阶段）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F05.I02": {
+      "name": "审核通过/驳回（submit/return）",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F06.I01": {
+      "name": "批准队列（approval 阶段）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F06.I02": {
+      "name": "批准/驳回",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F07.I01": {
+      "name": "发放队列（issuance 阶段）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F07.I02": {
+      "name": "发放（生成报告编号）",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F08.I01": {
+      "name": "归档队列（archived 阶段）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F08.I02": {
+      "name": "归档完成",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F09.I01": {
+      "name": "接样单详情页",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F09.I02": {
+      "name": "流程历史时间线",
+      "status": "规划",
+      "type": "查询",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F09.I03": {
+      "name": "报告预览",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F06.I01": {
+      "name": "型号列表（按专项过滤 + 拖拽排序）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F06.I02": {
+      "name": "新建/编辑型号",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F06.I03": {
+      "name": "删除型号（引用保护）",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F07.I01": {
+      "name": "规格列表",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F07.I02": {
+      "name": "新建/编辑规格",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F07.I03": {
+      "name": "删除规格",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F08.I01": {
+      "name": "等级列表",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F08.I02": {
+      "name": "新建/编辑等级",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F08.I03": {
+      "name": "删除等级",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F09.I01": {
+      "name": "牌号列表",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F09.I02": {
+      "name": "新建/编辑牌号",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M04.F09.I03": {
+      "name": "删除牌号",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M05.F01.I01": {
+      "name": "报告汇总表（按报告类别汇总）",
+      "status": "规划",
+      "type": "查询",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M05.F01.I02": {
+      "name": "仪表盘统计",
+      "status": "规划",
+      "type": "查询",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F01.I01": {
+      "name": "检测专项列表 + CRUD",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F02.I01": {
+      "name": "检测项目列表（按专项过滤）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F02.I02": {
+      "name": "项目↔专项/参数关联",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F03.I01": {
+      "name": "检测参数列表 + CRUD",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F03.I02": {
+      "name": "参数↔标准关联",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F04.I01": {
+      "name": "检测标准列表（状态过滤）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F04.I02": {
+      "name": "标准 CRUD",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F05.I01": {
+      "name": "计算规则维护",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F06.I01": {
+      "name": "技术要求列表（多维过滤）",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F06.I02": {
+      "name": "新建/编辑技术要求",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F06.I03": {
+      "name": "删除技术要求（引用保护）",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F07.I01": {
+      "name": "报告名称列表 + extFields 模板",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F07.I02": {
+      "name": "报告名称↔标准/参数关联",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F08.I01": {
+      "name": "参数界面维护 + link",
+      "status": "规划",
+      "type": "页面",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M98.F01.I01": {
+      "name": "BackendSwitcher 下拉（4-backend：msw/aspnetcore/springboot/nextjs）",
+      "status": "规划",
+      "type": "按钮",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M98.F01.I02": {
+      "name": "持久化 baseUrl 到 localStorage",
+      "status": "规划",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M98.F02.I01": {
+      "name": "axios 拦截器（baseUrl + Authorization）注入",
+      "status": "规划",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M98.F03.I01": {
+      "name": "orval 生成的 endpoints 函数存在性校验（endpoints-smoke.test.ts）",
+      "status": "规划",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    }
+  }
 }

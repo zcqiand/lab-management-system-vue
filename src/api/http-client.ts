@@ -1,25 +1,51 @@
-import axios, { type AxiosInstance } from "axios";
+// HTTP client — axios + 1:1 endpoint mapping via local orval codegen.
+//
+// 端点 1:1 映射由 src/api/endpoints/endpoints.ts 提供（orval 从
+// ../lab-management-system-shared/generated/openapi/openapi.yaml 生成，
+// 产物直接 import 全局 axios — 所以拦截器也装在全局 axios 上，与 react 仓同构）。
+// 本文件做两件事：
+//   1) 装 axios 拦截器：每次请求从运行时配置（backend-config）拿 baseUrl，
+//      从 getToken callback 拿 token，写进 Authorization 头
+//   2) 提供 ApiError 封装（错误统一走 toApiError）
 
-// v0.1.0 scaffold: 单实例 axios + 内存级 baseURL。
-// 后续 /tree-change 加 M00 登录态时，会引入 getAccessToken callback + tenant
-// interceptor，与 saas-vue 同款（lab-shared/spawn backend 模式）。
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
+import { getBaseUrl } from "./backend-config";
 
-let httpInstance: AxiosInstance | null = null;
-
-export function installHttpClient(): AxiosInstance {
-  if (httpInstance) return httpInstance;
-
-  httpInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL ?? "/api",
-    timeout: 15000,
-  });
-
-  return httpInstance;
+export class ApiError extends Error {
+  status: number;
+  body: unknown;
+  constructor(status: number, body: unknown, message?: string) {
+    super(message ?? `API ${status}`);
+    this.status = status;
+    this.body = body;
+  }
 }
 
-export function getHttpClient(): AxiosInstance {
-  if (!httpInstance) {
-    throw new Error("http-client not installed — call installHttpClient() at bootstrap");
+/** 从 axios 错误构造 ApiError（响应体里的 ErrorResponse 直接透传） */
+export function toApiError(err: unknown): ApiError {
+  if (axios.isAxiosError(err)) {
+    const axErr = err as AxiosError<unknown>;
+    return new ApiError(axErr.response?.status ?? 0, axErr.response?.data ?? null, axErr.message);
   }
-  return httpInstance;
+  if (err instanceof ApiError) return err;
+  if (err instanceof Error) return new ApiError(0, null, err.message);
+  return new ApiError(0, null, String(err));
+}
+
+/**
+ * 注入运行时 baseUrl + Bearer token。
+ * 在 main.ts 启动时调一次；getToken 用 callback 形式避免循环依赖。
+ */
+export function installHttpClient(getToken: () => string | null): void {
+  axios.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    // 4-backend 切换：msw/nextjs 时 baseUrl 为 ""（同源），其他为 localhost:<port>
+    if (!config.baseURL) {
+      config.baseURL = getBaseUrl();
+    }
+    const token = getToken();
+    if (token) {
+      config.headers.set("Authorization", `Bearer ${token}`);
+    }
+    return config;
+  });
 }
