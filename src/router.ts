@@ -44,6 +44,22 @@ export const router = createRouter({
           name: "param-interfaces",
           component: () => import("@/pages/ParamInterfacesPage.vue"),
         },
+        // Sprint 2 Batch 2B-1：流程线 3 页（接样/详情/任务分配）
+        {
+          path: "receipts",
+          name: "receipts",
+          component: () => import("@/pages/ReceiptsPage.vue"),
+        },
+        {
+          path: "receipts/:id",
+          name: "receipt-detail",
+          component: () => import("@/pages/ReceiptDetailPage.vue"),
+        },
+        {
+          path: "task-assignment",
+          name: "task-assignment",
+          component: () => import("@/pages/TaskAssignmentPage.vue"),
+        },
       ],
     },
     {

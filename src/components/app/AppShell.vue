@@ -17,8 +17,8 @@ import { useAuthStore, logout as authLogout } from "@/state/auth";
 
 const auth = useAuthStore();
 
-// Sprint 2 Batch 1+2A：仪表盘 + M04 基础数据 4 码表 + M02.F01/M06.F07/F08 3 码表式页。
-// 后续 batch（M03 流程 / M05 汇总）随对应批次落地。
+// Sprint 2 Batch 1+2A+2B-1：仪表盘 + M04 4 码表 + M02.F01/M06.F07/F08 3 码表式页 + M03 流程线 3 页。
+// 后续 batch（M05 汇总 / M03 数据录入 / M03 报告 4 阶段）随对应批次落地。
 const NAV: NavItem[] = [
   { label: "仪表盘", path: "/", icon: "dashboard" },
   { label: "型号维护", path: "/models", icon: "models" },
@@ -28,6 +28,8 @@ const NAV: NavItem[] = [
   { label: "合同管理", path: "/contracts", icon: "contracts" },
   { label: "报告名称维护", path: "/report-names", icon: "report-names" },
   { label: "参数界面维护", path: "/param-interfaces", icon: "param-interfaces" },
+  { label: "接样管理", path: "/receipts", icon: "receipts" },
+  { label: "任务分配", path: "/task-assignment", icon: "task-assignment" },
 ];
 
 const displayName = computed(() => {
@@ -63,6 +65,8 @@ function onAction(action: string): void {
         <template #contracts><ClipboardList class="size-4" /></template>
         <template #report-names><ScrollText class="size-4" /></template>
         <template #param-interfaces><Wrench class="size-4" /></template>
+        <template #receipts><FlaskConical class="size-4" /></template>
+        <template #task-assignment><ClipboardList class="size-4" /></template>
       </SidebarNav>
       <div class="mt-auto border-t p-3">
         <SidebarNav
