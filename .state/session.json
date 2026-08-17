@@ -1,29 +1,32 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "Sprint 2 Batch 2B-3 vue 镜像 react M03 报告 4 阶段完成；M03 流程线 8 阶段全部落地，下一步 vue 跟 react 镜像 M06 检测能力 10 组件",
+  "current_task": "Sprint 2 Batch 2B-4 vue 镜像 react M06 检测能力 10 组件（specialty/object/parameter/standard/calculation-rule/technical-requirement 共 6 F + 10 I）完成；M06 模块全功能上线 + 5 路由 + 复合键路由全链路镜像；下一步走 Batch 2B-5 / 3A 之类的 M05 仪表盘/统计或其他 11 个模型卡",
   "done": [
-    "Sprint 2 Batch 2B-3：src/features/reports/ReportPhasePage.vue（共享阶段页镜像 react 仓 Batch 2B-3）",
-    "Sprint 2 Batch 2B-3：src/pages/{ReportReview,ReportApprove,ReportIssue,ReportArchive}Page.vue（4 薄包装）",
-    "Sprint 2 Batch 2B-3：router.ts 4 路由 placeholder → lazy 真页 import",
-    "Sprint 2 Batch 2B-3：AppShell.vue NAV 加报告审核/批准/发放/归档 4 菜单项 + Archive/ClipboardCheck/FileText 图标",
-    "Sprint 2 Batch 2B-3：tests/features/reports/reportPhasePage.dom.test.ts 8 fnTest 全绿",
-    "Sprint 2 Batch 2B-3：function-tree.md M03.F05/F06/F07/F08 共 4 F + 8 I 规划→已上线",
-    "Sprint 2 Batch 2B-3：gate L0-L5 全绿 99 功能条目 74 软告警（Batch 2B-2 58 + Batch 2B-3 新增 16 — 同 4 条软告警持续滚动）",
-    "Sprint 2 Batch 2B-3：commit b6812c7（vue 指针 8e2d7e2 → b6812c7）"
+    "Sprint 2 Batch 2B-4：src/features/inspection-capability/InspectionCapabilityList.vue（多资源 4 字典通用页镜像 react 仓：Teleport 弹窗 + 内联样式 + vue 仓 @entry 4 I 顶挂）",
+    "Sprint 2 Batch 2B-4：src/features/inspection-capability/CalculationRuleList.vue（M06.F05 镜像 react 仓：复合主键 + 6 算法 + Teleport 编辑）",
+    "Sprint 2 Batch 2B-4：src/features/inspection-capability/TechnicalRequirementList.vue（M06.F06 镜像 react 仓：4 维筛选 client 端 + Teleport）",
+    "Sprint 2 Batch 2B-4：src/pages/{Specialties,Objects,Standards,Parameters,CalculationRules,TechnicalRequirements}Page.vue（6 薄包装）",
+    "Sprint 2 Batch 2B-4：router.ts 6 路由 placeholder → lazy 真页 import",
+    "Sprint 2 Batch 2B-4：tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts 12 fnTest 全绿（vi.mock('axios') + 6 fixture wrap + flushPromises 触发 reactive 渲染）",
+    "Sprint 2 Batch 2B-4：function-tree.md M06.F01/F02/F03/F04/F05/F06 共 6 F + 10 I 规划→已上线（与 react 仓同 commit 落地）",
+    "Sprint 2 Batch 2B-4：gate L0-L5 全绿 99 功能条目 94 软告警（与 react 仓对齐）",
+    "Sprint 2 Batch 2B-4：commit 02c1ef7（vue 指针 b6812c7 → 02c1ef7）"
   ],
-  "next": "1) Sprint 2 Batch 2B-4 vue 仓镜像 react M06 检测能力（specialties/objects/standards/parameters/calculation-rules/technical-requirements 共 6 F + 10 I）；2) vue-draggable-plus 拖拽 sortOrder 持久化随 M06 4 码表补 UI 时做",
+  "next": "1) Sprint 2 Batch 2B-5 / 3A 走 M05 仪表盘/统计（summaryGetReportSummary）— 11 个剩余模型卡（concrete-compress / concrete-permeability / cement-flexural / rebar-welding-tensile / rebar-welding-bend / rebar-mech-numeric / particle-gradation / soil-compaction / soil-compaction-degree + 综合比值卡）随 M06 落地一并下沉；2) vue-draggable-plus 拖拽 sortOrder 持久化随 M06 4 码表补 UI 时做",
   "open_questions": [
-    "vue 仓 ReportPhasePage 的 PREV_STAGE mapping（review→data_entry 等）写在 script setup 内（reactive 表），不放 external const — 避免 Batch 2B-2 踩过的「template 引用 setup 外 const TS2339」坑",
-    "vue 仓 M03.F05/F06/F07/F08 共 8 I 都通过 i01DataFn/i02DataFn props 传，复用 ReportPhasePage（同 react 仓模式）"
+    "vue 仓 InspectionCapabilityList 多资源模式（resource prop）— vue 仓用 reactive 表存 form + Teleport 弹窗（vs react 仓 shadcn Dialog + form 状态）",
+    "vue 仓 fnTest 走 fnReporter from 测试名提取（[M06.F01.I01] 前缀）— react 仓走 TaskMeta.fn，两侧机制不同但对齐矩阵等价",
+    "vue 仓 fnTest 不挂 data-fn 注入（react 仓用 i01DataFn/i02DataFn props 透传）— vue 仓直接 prop + template data-fn 静态字符串"
   ],
   "dont": [
-    "vue 仓从 '@/types/...' import — vue 仓无 src/types/ 目录",
-    "vue 模板用 window.alert / globalThis.alert — 提取 alertError() 函数到 script setup",
+    "vue 仓从 '@/types/...' import — vue 仓无 src/types/ 目录，类型全部内联",
+    "vue 模板用 window.alert / globalThis.alert — 提取 alertError() 函数到 script setup（避免 template 表达式作用域不识别）",
     "vue 测试用 mountWithProviders 传 initialRoute 跳详情页（push 异步未就绪）",
-    "vue template 引用 setup 外的 const — 改 reactive 表放 script setup"
+    "vue template 引用 setup 外的 const — 改 reactive 表放 script setup（避免 TS2339 编译失败）",
+    "vue @entry 注释放 HTML 注释 <!-- @entry Mxx.Fxx.Ixx -->（L5 静态扫不到）— 必须放 // @entry 在 <script setup> 段 JS 注释"
   ],
-  "last_gate_passed_at": "2026-08-17T25:35+08:00",
+  "last_gate_passed_at": "2026-08-17T26:00+08:00",
   "active_branch": "master",
   "ahead_of_origin": "0"
 }
