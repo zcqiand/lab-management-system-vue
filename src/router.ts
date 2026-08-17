@@ -87,6 +87,38 @@ export const router = createRouter({
           name: "report-archive",
           component: () => import("@/pages/ReportArchivePage.vue"),
         },
+        // Sprint 2 Batch 2B-4：M06 检测能力 6 薄页（specialty/object/parameter/
+        // standard/calculation-rule/technical-requirement）
+        {
+          path: "inspection-specialties",
+          name: "inspection-specialties",
+          component: () => import("@/pages/SpecialtiesPage.vue"),
+        },
+        {
+          path: "inspection-objects",
+          name: "inspection-objects",
+          component: () => import("@/pages/ObjectsPage.vue"),
+        },
+        {
+          path: "inspection-parameters",
+          name: "inspection-parameters",
+          component: () => import("@/pages/ParametersPage.vue"),
+        },
+        {
+          path: "inspection-standards",
+          name: "inspection-standards",
+          component: () => import("@/pages/StandardsPage.vue"),
+        },
+        {
+          path: "inspection-calculation-rules",
+          name: "inspection-calculation-rules",
+          component: () => import("@/pages/CalculationRulesPage.vue"),
+        },
+        {
+          path: "inspection-technical-requirements",
+          name: "inspection-technical-requirements",
+          component: () => import("@/pages/TechnicalRequirementsPage.vue"),
+        },
       ],
     },
     {

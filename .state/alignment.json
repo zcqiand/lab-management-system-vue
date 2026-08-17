@@ -6,7 +6,7 @@
     "features": 29,
     "items": 62
   },
-  "warnings_total": 74,
+  "warnings_total": 94,
   "warnings": {
     "已上线但无设计映射": [
       "M02.F01.I01",
@@ -44,6 +44,16 @@
       "M04.F09.I01",
       "M04.F09.I02",
       "M04.F09.I03",
+      "M06.F01.I01",
+      "M06.F02.I01",
+      "M06.F02.I02",
+      "M06.F03.I01",
+      "M06.F04.I01",
+      "M06.F04.I02",
+      "M06.F05.I01",
+      "M06.F06.I01",
+      "M06.F06.I02",
+      "M06.F06.I03",
       "M06.F07.I01",
       "M06.F08.I01"
     ],
@@ -83,6 +93,16 @@
       "M04.F09.I01",
       "M04.F09.I02",
       "M04.F09.I03",
+      "M06.F01.I01",
+      "M06.F02.I01",
+      "M06.F02.I02",
+      "M06.F03.I01",
+      "M06.F04.I01",
+      "M06.F04.I02",
+      "M06.F05.I01",
+      "M06.F06.I01",
+      "M06.F06.I02",
+      "M06.F06.I03",
       "M06.F07.I01",
       "M06.F08.I01"
     ]
@@ -683,43 +703,61 @@
     },
     "M06.F01.I01": {
       "name": "检测专项列表 + CRUD",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F01.I01] F01 新建按钮 + SP01 编码可见",
+        "[M06.F01.I01] F01 渲染标题 + 列表行（fixtures 穿透）"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
     },
     "M06.F02.I01": {
       "name": "检测项目列表（按专项过滤）",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F02.I01] F02 渲染标题 + 检测专项筛选下拉",
+        "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
     },
     "M06.F02.I02": {
       "name": "项目↔专项/参数关联",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
     },
     "M06.F03.I01": {
       "name": "检测参数列表 + CRUD",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F03.I01] F03 渲染标题 + 3 级筛选下拉（专项/项目/标准）"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
     },
     "M06.F03.I02": {
       "name": "参数↔标准关联",
@@ -733,63 +771,90 @@
     },
     "M06.F04.I01": {
       "name": "检测标准列表（状态过滤）",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F04.I01] F04 渲染标题 + 列表行（GB 175-2023）",
+        "[M06.F04.I01][M06.F04.I02] F04 新建按钮 + 编辑按钮"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
     },
     "M06.F04.I02": {
       "name": "标准 CRUD",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F04.I01][M06.F04.I02] F04 新建按钮 + 编辑按钮"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
     },
     "M06.F05.I01": {
       "name": "计算规则维护",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F05.I01] F05 新建 + 删除按钮",
+        "[M06.F05.I01] F05 渲染标题 + 复合主键列表行"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\CalculationRuleList.vue"
+      ]
     },
     "M06.F06.I01": {
       "name": "技术要求列表（多维过滤）",
-      "status": "规划",
+      "status": "已上线",
       "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F06.I01] F06 渲染标题 + 4 维筛选（牌号/型号/等级/规格）",
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+      ]
     },
     "M06.F06.I02": {
       "name": "新建/编辑技术要求",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+      ]
     },
     "M06.F06.I03": {
       "name": "删除技术要求（引用保护）",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
+      ],
+      "entry": [
+        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+      ]
     },
     "M06.F07.I01": {
       "name": "报告名称列表 + extFields 模板",
