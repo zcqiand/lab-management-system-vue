@@ -48,17 +48,9 @@ const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
   completed: "已归档",
 };
 
+import type { TestRecord } from "@/api/endpoints/endpoints.schemas";
 interface Sample { id: string; sampleCode: string }
 interface InspectionParameter { code: string; name: string; canonicalName?: string; unit?: string }
-interface TestRecord {
-  id?: string;
-  sampleId: string;
-  parameterCode: string;
-  result?: string;
-  verdict?: string;
-  standardCode?: string;
-  requirement?: string;
-}
 
 const items = ref<SampleReceipt[]>([]);
 const total = ref(0);

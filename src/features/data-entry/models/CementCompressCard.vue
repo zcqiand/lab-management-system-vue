@@ -1,33 +1,61 @@
 <script setup lang="ts">
-// 水泥胶砂抗压强度卡（vue 仓镜像 react 仓 Batch 2B-2）。
-// 6 试件破坏荷载 (kN) → 抗压强度 (MPa) → 平均值。简版算法不带 ±10% 剔除均值。
-import { computed } from "vue";
+// 水泥胶砂抗压强度卡（Sprint 2 Batch 2B-8 镜像 react 仓 full 版）。
+// 6 试件破坏荷载 (kN) → 抗压强度 (MPa) → ±10% 剔除均值 → 单项评定。
+// 镜像 react/src/features/data-entry/models/CementCompressCard.tsx（72 行）。
+import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
-import { computeCementCompress } from "./cement-strength";
+import {
+  computeCementCompress,
+  parseStrengthRecord,
+  autoVerdict,
+  type StrengthResult,
+} from "./cement-strength";
 
 const props = defineProps<ParamModelProps>();
-const { parameter: p, record: rec, onChange, readOnly = false, config } = props;
+const { parameter: p, record: rec, onChange, readOnly = false, config, sampleId } = props;
 
-const specimenCount = 6;
+const specimenCount = (config?.["specimenCount"] as number) ?? 6;
 const area = (config?.["area"] as number) ?? 1600;
 
-const loads = computed(() => {
-  const out = new Array<number>(specimenCount).fill(0);
-  if (!rec?.result) return out;
-  const parts = rec.result.split(/[,;\n]+/).map((s) => parseFloat(s.trim()));
-  for (let i = 0; i < specimenCount && i < parts.length; i++) {
-    out[i] = Number.isFinite(parts[i]) ? (parts[i] as number) : 0;
-  }
-  return out;
+const initial = computed(() => parseStrengthRecord(rec?.result));
+
+const loads = ref<number[]>(
+  Array.from({ length: specimenCount }, (_, i) => initial.value.loads[i] ?? 0),
+);
+
+// 切换样品时（sampleId 变了）→ 重置 loads 到新样品的初始值
+watch(
+  () => [sampleId, rec?.result, specimenCount],
+  () => {
+    loads.value = Array.from({ length: specimenCount }, (_, i) => initial.value.loads[i] ?? 0);
+  },
+);
+
+const result = computed<StrengthResult>(() => computeCementCompress(loads.value, area));
+
+const matchedReq = computed(() => {
+  // 简化：取第一条同 IP 的 techReq；完整实现见 react 仓镜像版本
+  return props.techReqs.find((r) => r.inspectionParameterCode === p.code);
 });
 
-const result = computed(() => computeCementCompress(loads.value, area));
+const verdict = computed(() => autoVerdict(result.value.mean, matchedReq.value as never));
 
 function updateLoad(i: number, v: string) {
-  const num = parseFloat(v);
+  if (readOnly) return;
+  const num = v === "" ? 0 : parseFloat(v);
   const next = [...loads.value];
-  next[i] = Number.isFinite(num) ? num : 0;
-  onChange({ result: next.join(",") });
+  next[i] = Number.isFinite(num) ? (num as number) : 0;
+  loads.value = next;
+  const computed2 = computeCementCompress(next, area);
+  onChange({
+    result: JSON.stringify({
+      loads: next,
+      strengths: computed2.strengths,
+      mean: computed2.mean,
+      invalid: computed2.invalid,
+    }),
+    verdict: verdict.value || undefined,
+  });
 }
 </script>
 
@@ -37,7 +65,10 @@ function updateLoad(i: number, v: string) {
       <span class="text-sm font-medium">
         {{ p.canonicalName || p.name }}（{{ p.unit ?? "MPa" }}）
       </span>
-      <span class="text-xs text-slate-500">平均：{{ result.average.toFixed(2) }} MPa</span>
+      <span class="text-xs text-slate-500">
+        代表值：{{ result.mean ?? '—' }} MPa
+        <span v-if="result.invalid" class="text-red-600">（作废）</span>
+      </span>
     </div>
     <div class="grid grid-cols-6 gap-1">
       <div v-for="(_, i) in loads" :key="i">
@@ -52,9 +83,10 @@ function updateLoad(i: number, v: string) {
           @input="updateLoad(i, ($event.target as HTMLInputElement).value)"
         />
         <div class="text-xs text-slate-400 text-center mt-0.5">
-          {{ result.strengths[i] ? result.strengths[i]!.toFixed(2) : "—" }}
+          {{ result.strengths[i] ? Number(result.strengths[i]).toFixed(2) : "—" }}
         </div>
       </div>
     </div>
+    <div v-if="verdict" class="text-xs text-gray-600">评定：{{ verdict }}</div>
   </div>
 </template>
