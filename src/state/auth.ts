@@ -131,6 +131,7 @@ function invalidatePermissions(): void {
   writeKey(TOKEN_STORAGE_KEYS.permissionsCache, null);
 }
 
+// @entry M01.F04.I02
 async function fetchPermissions(token: string): Promise<string[]> {
   if (permissionsCache && Date.now() - permissionsCache.fetchedAt < PERMISSIONS_TTL_MS) {
     return permissionsCache.value;
@@ -192,6 +193,28 @@ async function doLogin(req: LoginRequest): Promise<LoginResponse | ErrorResponse
 /** LoginPage 等组件消费的 login 入口（契约行为） */
 export const login = doLogin;
 
+/** SSO 场景直接落会话（镜像 react 仓 setSession；token 直达时只带 token+user） */
+async function doSetSession(partial: {
+  accessToken: string;
+  refreshToken?: string;
+  user?: LoginResponse["user"];
+  tenants?: LoginResponse["tenants"];
+}): Promise<void> {
+  const refreshToken =
+    partial.refreshToken ?? readKey(TOKEN_STORAGE_KEYS.refreshToken);
+  if (!refreshToken || !partial.user) {
+    throw new Error("setSession requires accessToken + user + refreshToken");
+  }
+  await settleLogin({
+    token: partial.accessToken,
+    refreshToken,
+    user: partial.user,
+    tenants: partial.tenants ?? [],
+  });
+}
+
+export const setSession = doSetSession;
+
 async function doLogout(): Promise<void> {
   const token = readKey(TOKEN_STORAGE_KEYS.accessToken);
   if (token) {
@@ -244,7 +267,7 @@ function currentState(): AuthState {
   return useAuthStore().authState;
 }
 
-/** SelectTenantPage 等组件消费的 switchTenant 入口（契约行为） */
+/** switchTenant 入口（契约行为；选租户页已移除，M00.F02 保持规划态由测试消费） */
 export const switchTenant = doSwitchTenant;
 
 function doHasPermission(perm: string): boolean {

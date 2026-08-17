@@ -4,11 +4,15 @@
   "functions": {
     "modules": 8,
     "features": 29,
-    "items": 62
+    "items": 63
   },
-  "warnings_total": 110,
+  "warnings_total": 121,
   "warnings": {
     "已上线但无设计映射": [
+      "M01.F04.I02",
+      "M01.F04.I03",
+      "M01.F05.I02",
+      "M01.F05.I03",
       "M02.F01.I01",
       "M02.F01.I02",
       "M02.F01.I03",
@@ -16,6 +20,7 @@
       "M03.F01.I02",
       "M03.F01.I03",
       "M03.F01.I04",
+      "M03.F01.I07",
       "M03.F02.I01",
       "M03.F02.I02",
       "M03.F03.I01",
@@ -64,12 +69,17 @@
       "M98.F03.I01"
     ],
     "已上线但无测试引用": [
+      "M03.F01.I07",
       "M98.F01.I01",
       "M98.F01.I02",
       "M98.F02.I01",
       "M98.F03.I01"
     ],
     "已上线但不在任何流程且非孤儿白名单": [
+      "M01.F04.I02",
+      "M01.F04.I03",
+      "M01.F05.I02",
+      "M01.F05.I03",
       "M02.F01.I01",
       "M02.F01.I02",
       "M02.F01.I03",
@@ -77,6 +87,7 @@
       "M03.F01.I02",
       "M03.F01.I03",
       "M03.F01.I04",
+      "M03.F01.I07",
       "M03.F02.I01",
       "M03.F02.I02",
       "M03.F03.I01",
@@ -139,7 +150,7 @@
     },
     "M01.F04.I02": {
       "name": "动态权限集（GET /auth/permissions）",
-      "status": "规划",
+      "status": "已上线",
       "type": "查询",
       "requirements": [],
       "flows": [],
@@ -148,21 +159,30 @@
         "[M01.F04.I02] authenticated 态拉取 /auth/permissions 并供 hasPermission 判断",
         "[M01.F04.I02] 非 authenticated 态 hasPermission 恒 false"
       ],
-      "entry": []
+      "entry": [
+        "src\\state\\auth.ts"
+      ]
     },
     "M01.F04.I03": {
       "name": "路由守卫（未登录/无权限拦截）",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M01.F04.I03] anonymous 访问受守卫路由 → 跳 /login",
+        "[M01.F04.I03] authenticated 权限齐 → allowed=true 留在原地",
+        "[M01.F04.I03] authenticated 缺权限 → 拦在 /403",
+        "[M01.F04.I03] awaiting_tenant 访问受守卫路由 → 拦在 /login（选租户页已移除，M00.F02 保持规划）"
+      ],
+      "entry": [
+        "src\\state\\require-auth.ts"
+      ]
     },
     "M01.F05.I01": {
       "name": "用户名+密码登录",
-      "status": "规划",
+      "status": "已废弃",
       "type": "页面",
       "requirements": [],
       "flows": [],
@@ -175,7 +195,7 @@
     },
     "M01.F05.I02": {
       "name": "Token 注入与失效跳登录",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -189,13 +209,19 @@
     },
     "M01.F05.I03": {
       "name": "SSO 授权码流（authorize + callback）",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [],
-      "entry": []
+      "tests": [
+        "[M01.F05.I03] 阶段 1：?token= 直达 → 存 localStorage + /me 建会话 → 进业务页",
+        "[M01.F05.I03] 阶段 2：?code=&state= → POST sso/callback 换 token → setSession 进业务页",
+        "[M01.F05.I03] 阶段 3：无回调参数 → authorize 拿 authorizeUrl → 跳 saas"
+      ],
+      "entry": [
+        "src\\pages\\LoginPage.vue"
+      ]
     },
     "M01.F05.I04": {
       "name": "登出",
@@ -307,6 +333,19 @@
         "src\\features\\receipts\\ReceiptsList.vue"
       ]
     },
+    "M03.F01.I07": {
+      "name": "接样单 ext 字段补录",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": [
+        "src\\features\\data-entry\\ReportPreviewModal.vue",
+        "src\\features\\data-entry\\SampleExtFieldsModal.vue"
+      ]
+    },
     "M03.F02.I01": {
       "name": "任务分配队列",
       "status": "已上线",
@@ -343,7 +382,27 @@
       "flows": [],
       "designs": [],
       "tests": [
-        "[M03.F03.I01] 数据录入：渲染标题 + 列表行（fixture 真数据穿透）"
+        "[M03.F03.I01] CementCompressCard readOnly：输入吞掉 onChange",
+        "[M03.F03.I01] CementCompressCard 渲染 6 个破坏荷载输入框",
+        "[M03.F03.I01] CementFlexuralCard 渲染 3 个破坏荷载 + 抗折强度列",
+        "[M03.F03.I01] ConcreteCompressCard 渲染 3 个破坏荷载输入框",
+        "[M03.F03.I01] ConcretePermeabilityCard 渲染 6 个渗水压力输入",
+        "[M03.F03.I01] ParticleGradationCard 渲染砂 7 筛孔 + 平均行",
+        "[M03.F03.I01] RebarMechNumericCard tensile_strength：2 组 + 公称直径输入",
+        "[M03.F03.I01] RebarWeldingBendCard 渲染 3 行弯曲角度 + 整体评定",
+        "[M03.F03.I01] RebarWeldingTensileCard 渲染 3 行 + 共享规格 Φ22",
+        "[M03.F03.I01] SoilCompactionCard 渲染 5 组 + GB/T 50123-2019 标识",
+        "[M03.F03.I01] SoilCompactionDegreeCard 渲染 6 行 + 最大干密度输入",
+        "[M03.F03.I01] concrete-permeability：3 件已渗 → grade = 第3件压力",
+        "[M03.F03.I01] concrete-permeability：6 件全未渗 → grade undefined",
+        "[M03.F03.I01] rebar-mechanics：tensile_strength 算子",
+        "[M03.F03.I01] rebar-mechanics：强屈比",
+        "[M03.F03.I01] rebar-welding：抗拉 Rm=4000·F/(π·d²)（Φ22 硬编码）",
+        "[M03.F03.I01] soil-compaction-degree：干密度 + 压实度 + 评定",
+        "[M03.F03.I01] soil-compaction：二次拟合峰值",
+        "[M03.F03.I01] 数据录入：渲染标题 + 列表行（fixture 真数据穿透）",
+        "[M03.F03.I01] 水泥胶砂强度：抗压 Rc=F/A（16kN → 10.0；80kN → 50.0 MPa）",
+        "[M03.F03.I01] 水泥胶砂强度：抗折 Rf=1.5·F·L/b³（2kN → 4.7 MPa）"
       ],
       "entry": [
         "src\\features\\data-entry\\DataEntryPage.vue"
@@ -357,6 +416,9 @@
       "flows": [],
       "designs": [],
       "tests": [
+        "[M03.F03.I02] CementCompressCard 有技术要求：录入均值达标 → 自动判合格",
+        "[M03.F03.I02] ConcreteCompressCard 录入荷载 → 上报代表值 JSON",
+        "[M03.F03.I02] ParticleGradationCard gravel=true 切换到 12 筛孔",
         "[M03.F03.I02] 数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）"
       ],
       "entry": [
@@ -371,10 +433,14 @@
       "flows": [],
       "designs": [],
       "tests": [
+        "[M03.F03.I03] CementCompressCard 无技术要求：标注「评定」前缀",
         "[M03.F03.I03] 数据录入：行内「录入结果」按钮（人工改判 verdict 入口）"
       ],
       "entry": [
-        "src\\features\\data-entry\\DataEntryPage.vue"
+        "src\\features\\data-entry\\DataEntryPage.vue",
+        "src\\features\\data-entry\\models\\ParticleGradationCard.vue",
+        "src\\features\\data-entry\\models\\SoilCompactionCard.vue",
+        "src\\features\\data-entry\\models\\SoilCompactionDegreeCard.vue"
       ]
     },
     "M03.F05.I01": {

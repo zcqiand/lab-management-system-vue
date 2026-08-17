@@ -2,18 +2,17 @@ import { createRouter, createWebHistory } from "vue-router";
 import AppShell from "@/components/app/AppShell.vue";
 import EmptyState from "@/components/app/EmptyState.vue";
 
-// 路由入口（Sprint 2 Batch 1 增 M04 4 码表）。
-//   /login, /select-tenant     公共页（不带 AppShell）
+// 路由入口（Sprint 2 Batch 1 增 M04 4 码表；2026-08-18 认证收口删选租户页）。
+//   /login                     公共页（SSO orchestrator，不带 AppShell）
 //   /                          AppShell + 守卫业务页（含 dashboard + M04 4 码表）
 //   *                          兜底 404
 // 守卫：DashboardPage 内 useRequireAuth（M01.F04.I03）— idle 挂起、
-// anonymous → /login、awaiting_tenant → /select-tenant、缺权 → 拦截。
+// anonymous / awaiting_tenant → /login、缺权 → 拦截。
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/login", component: () => import("@/pages/LoginPage.vue") },
-    { path: "/select-tenant", component: () => import("@/pages/SelectTenantPage.vue") },
     {
       path: "/",
       component: AppShell,

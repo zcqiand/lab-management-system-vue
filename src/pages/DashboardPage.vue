@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // DashboardPage — Sprint 1 仪表盘空壳（sprint-roadmap：内容 Sprint 2 加）。
 // 路由守卫 M01.F04.I03 在此挂载：idle 挂起、anonymous → /login、
-// awaiting_tenant → /select-tenant、缺权 → 拦截（react 仓 GuardedDashboard 镜像）。
+// awaiting_tenant → /login（选租户页已移除）、缺权 → 拦截（react 仓镜像）。
 import { LayoutDashboard } from "lucide-vue-next";
 import PageHeader from "@/components/app/PageHeader.vue";
 import EmptyState from "@/components/app/EmptyState.vue";
