@@ -1,31 +1,29 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "Sprint 2 Batch 2B-1 vue 镜像 react 双仓 3 流程页完成；下一步 vue 跟 react 镜像 Batch 2B-2 data-entry（M03.F03，nextjs REF 12 个模型卡 + 报告预览）",
+  "current_task": "Sprint 2 Batch 2B-2 vue 镜像 react 双仓数据录入 + 2 模型卡 + ReportPreviewModal 升级完成；下一步 vue 跟 react 镜像 Sprint 2 Batch 2B-3 M03 报告 4 阶段",
   "done": [
-    "Sprint 2 Batch 2B-1：src/features/receipts/ReceiptsList.vue + src/pages/ReceiptsPage.vue（Dialog Teleport 自实现 + ConfirmDialog 删除；flowStatus 三态过滤 + keyword；类型内联 SampleReceipt/FlowStage；axios 直全局 API_ROUTES；data-fn M03.F01.I01-I04 + @entry I01/I02）",
-    "Sprint 2 Batch 2B-1：src/features/receipts/ReceiptDetail.vue + src/pages/ReceiptDetailPage.vue（vue-router useRoute/useRouter；详情字段表 + 流程历史时间线 + 报告预览占位弹窗；data-fn M03.F09.I01-I03 + @entry I01/I02）",
-    "Sprint 2 Batch 2B-1：src/features/task-assignment/TaskAssignmentList.vue + src/pages/TaskAssignmentPage.vue（按 flowStatus=task_assignment 过滤；安排 Dialog 走 assigneeName + plannedTestDate → PUT /receipts/:id；data-fn M03.F02.I01/I02 + @entry I01）",
-    "Sprint 2 Batch 2B-1：tests/features/{receipts,task-assignment}/* 9 fnTest 全绿（vi.mock('axios') + 内联 fixtures；ReceiptDetail 直接 createRouter + push + isReady 避免 helper 异步未就绪）",
-    "Sprint 2 Batch 2B-1：router.ts 3 路由 placeholder → lazy 真页 import；AppShell.vue NAV 加接样管理 + 任务分配 2 菜单项（FlaskConical + ClipboardList 图标插槽）",
-    "Sprint 2 Batch 2B-1：function-tree.md M03.F01/F02/F09 共 3 F + 9 I 规划→已上线",
-    "Sprint 2 Batch 2B-1：gate L0-L5 全绿 99 功能条目 52 软告警（同 react 仓）",
-    "Sprint 2 Batch 2B-1：vue 仓具体 commit hash 略（镜像 react 44e5788）"
+    "Sprint 2 Batch 2B-2：src/features/data-entry/DataEntryPage.vue + src/pages/DataEntryPage.vue（Teleport 自实现 Dialog；M03.F03.I01 + I02 + I03 同 react 仓）",
+    "Sprint 2 Batch 2B-2：src/features/data-entry/models/{DefaultParamCard,CementCompressCard}.vue + cement-strength.ts + types.ts + registry.ts（12 模型卡落 1：CementCompressCard，镜像 react 仓算法）",
+    "Sprint 2 Batch 2B-2：src/features/data-entry/ReportPreviewModal.vue（升级 Batch 2B-1 占位）",
+    "Sprint 2 Batch 2B-2：src/features/receipts/ReceiptDetail.vue 升级引用 ReportPreviewModal",
+    "Sprint 2 Batch 2B-2：router.ts + AppShell.vue NAV 加数据录入菜单项 + TestTube2 图标",
+    "Sprint 2 Batch 2B-2：tests/features/data-entry/dataEntryPage.dom.test.ts 3 fnTest 全绿",
+    "Sprint 2 Batch 2B-2：function-tree.md M03.F03 + I01/I02/I03 共 1 F + 3 I 规划→已上线",
+    "Sprint 2 Batch 2B-2：gate L0-L5 全绿 99 功能条目 58 软告警（Batch 2B-1 52 + Batch 2B-2 新增 6）"
   ],
-  "next": "1) Batch 2B-2 vue 仓镜像 react data-entry（1 个 DefaultParamCard + 1 个 CementCompressCard 做样本）；2) vue gate → 绿 → commit；3) vue-draggable-plus 拖拽 sortOrder 持久化（Batch 1 留的债）随 M06 4 码表补 UI 时一起做，本批没做",
+  "next": "1) Sprint 2 Batch 2B-3 vue 仓镜像 react M03 报告 4 阶段（review/approval/issuance/archived）；2) vue gate → 绿 → commit；3) vue-draggable-plus 拖拽 sortOrder 持久化随 M06 4 码表补 UI 时做",
   "open_questions": [
-    "vue 仓 ReceiptDetail 测试不能复用 mountWithProviders 的 router.initialRoute 机制（push 异步未就绪，onMounted 时 route.params 为空）— 必须直接 createRouter + push + isReady；该模式应收进 helper.ts（不动全局 helper，本批按需逐测覆盖）",
-    "vue 仓 ReceiptsList 新建弹窗内 contractId 写死 'placeholder-contract' + receivedBy='current-user' 是占位（同 react 仓）",
-    "data-fn 撞名模式（每行 提交 + 编辑 + 删除 三 data-fn）继续保留"
+    "vue 仓 template 用 MODEL_REGISTRY 引用对比组件会 TS2339（registry 在 setup 内不挂到 instance）；改为 template v-if/v-else-if 直接引组件（isCement computed 切换）",
+    "vue 模板表达式作用域不识别 window/globalThis — 提取 alertError() 函数到 script setup（Batch 2A 踩过继续沿用）"
   ],
   "dont": [
-    "vue 仓从 '@/types/...' import — vue 仓无 src/types/ 目录，类型内联进 SFC 顶部",
-    "vue 模板用 window.alert / globalThis.alert — 模板作用域是组件实例，不识别 globals；提取 alertError() 函数到 script setup 让模板走函数代理（Batch 2A 踩过）",
-    "vue helper.ts Teleport stub 用 false 解 stub — vue-test-utils 对 Teleport 的 false 不真正解 stub，必须传自定义组件 { template: '<div data-teleport-stub><slot /></div>' }；tag 名小写 teleport 才能匹配",
-    "vue 测试用 mountWithProviders 传 initialRoute 跳带 route.params 的详情页 — push 异步未就绪，onMounted 时拿不到 params；该场景直接 createRouter + isReady",
-    "M03.F02.I03 / I04（取消任务/批量提交）跳 I-level 不实现 — function tree 没列"
+    "vue 仓从 '@/types/...' import — vue 仓无 src/types/ 目录，跨 SFC 共享类型放 models/ 子目录",
+    "vue 模板用 window.alert / globalThis.alert",
+    "vue 测试用 mountWithProviders 传 initialRoute 跳详情页（push 异步未就绪）— 直接 createRouter + isReady",
+    "vue template 引用 setup 外的 const（如 MODEL_REGISTRY）— TypeScript 不识别；改 v-if 直接引组件"
   ],
-  "last_gate_passed_at": "2026-08-17T23:55+08:00",
+  "last_gate_passed_at": "2026-08-17T24:35+08:00",
   "active_branch": "master",
   "ahead_of_origin": "0"
 }
