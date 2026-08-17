@@ -3,6 +3,10 @@
 //
 // Lab family 比 saas 多一个 nextjs 模式（命中 ../lab-management-system-nextjs 的
 // Next.js API routes）。设计沿 saas：dropdown 选，可改 baseUrl（react 仓镜像）。
+
+// @entry M98.F01.I01
+// @entry M98.F01.I02
+// @entry M98.F02.I01
 import { ref } from "vue";
 import { Server } from "lucide-vue-next";
 import Button from "@/components/ui/Button.vue";
