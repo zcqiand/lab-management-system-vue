@@ -1,27 +1,39 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "等下一个需求 → 走 /req 落第一份 docs/requirements/ + 第一个模块（M01 / M02 / ...）走 /tree-change 加 I 级子项 + 业务页 + fnTest",
+  "current_task": "Sprint 1 前端绑定契约镜像完成（react d643f21 → vue f3f8cc5）；下一步双仓 Sprint 2（镜像 nextjs 25 页）",
   "done": [
-    "v0.1.0 scaffold (96f01b1): package.json + vite + tsconfig + vitest + eslint + prettier + tailwind + orval(vue-query)",
-    "scripts/gen-shared.ts：shared emit:openapi → 本仓 orval → src/api/endpoints/",
-    "src/main.ts pinia + vue-query + http-client + router + App.vue scaffold",
-    "tests/setup.ts + helper.ts + fnReporter.ts + smoke.test.ts（mount App + http-client 单例）",
-    "docs/functions/function-tree.md：7 模块 + 26 F 级（M00..M06，与 shared BASE 1:1）",
-    "npm install + npm run gen:shared + vue-tsc + vite build 全过；gate L0..L5 全绿 0 软告警",
-    "子仓 commit 96f01b1 推 C:/repos/lab-management-system-vue.git",
-    "suite master commit 6210c00 加 gitlink 推 origin",
-    "中段 --sync-skills 复位 common 资产（.claude/skills 12 file 哈希对齐）",
-    "修补 docs/functions/function-tree.md (sync shared BASE) + .state/session.json (恢复 v0.1.0 进度)"
+    "orval.config.ts 加 input:{target,filters} exclude frontend-bind-meta（grep frontendBindMeta endpoints.ts = 0）",
+    "src/api/contracts.ts：8 契约 schema re-export + TOKEN_STORAGE_KEYS + AuthContextActions + BACKEND_REGISTRY_DEFAULT（与 react 逐字段一致）",
+    "src/api/backend-config.ts 模块级单例 + http-client.ts 改全局 axios 拦截器版（orval 产物直连全局 axios，旧单实例版废弃）",
+    "src/state/auth.ts：FSM 动作模块级函数 + pinia defineStore('auth') 视图层（decision-log §2.2 的 pinia 选型落地）；login/logout/switchTenant 公开导出供组件用",
+    "src/state/backend.ts pinia store（lab.backend 持久化）+ require-auth.ts useRequireAuth（watch immediate）",
+    "手写 ui 原语：Button/Input/Label + DropdownMenu family（不引 reka-ui，点外关闭+Esc）；lib/utils.ts cn()",
+    "AppShell/SidebarNav/BackendSwitcher/PageHeader/EmptyState + LoginPage/SelectTenantPage/DashboardPage（守卫挂 Dashboard）",
+    "router.ts 路由骨架（/login /select-tenant / AppShell children / 404）+ main.ts 装 pinia + installHttpClient(getToken) + hydrateAuth",
+    "vitest.config.ts 补 @ alias（react 同款坑）+ tests/fn.ts fnTest helper（vue 机制：ID 进测试名）",
+    "tests/auth-fsm.test.ts 14 测全绿：挂 M00.F01/F02 + M01.F04.I02 + M01.F05.I01/I02/I04（同 react 批次）",
+    "function-tree.md：镜像 react 62 条 I 级子项 + M98 工程设施段（F 级表未动，仍 26 F 规划）",
+    "gate L0-L5 全绿 99 条目 0 软告警；gate --all 13 仓全绿",
+    "commit f3f8cc5 推 origin；suite 指针 14142b7 推 origin"
   ],
-  "next": "跑 /req <需求原话> 落第一份需求文档；按需求走 /tree-change 给对应模块加 I 级子项；建业务页与 fnTest",
-  "open_questions": [],
+  "next": "1) Sprint 2 双仓（react 先行）：镜像 lab-nextjs 25 页业务页 + 仪表盘内容；vue 翻译跟随。2) react+vue 镜像完一起提 /tree-change：M00.F01/M01.F05 等 7 子项 规划→开发中/已上线。3) M01.F04.I03（路由守卫）fnTest Sprint 2 补（需组件树挂载环境）",
+  "open_questions": [
+    "M01.F04.I03（路由守卫）无 fnTest — useRequireAuth 依赖 router 环境，Sprint 2 引入组件挂载测试时补（react 仓同款欠债）",
+    "FSM 转移表已落 auth.ts 头部注释，shared decision-log open_question『是否需要契约定 FSM 转移表』仍未回填 shared 仓（react 仓同款欠债）",
+    "手写 DropdownMenu family 是最小实现（trigger/label/item/separator + 点外关闭）；后续页面要 select/dialog 原语时再补，风格对齐 shadcn-vue",
+    "tools/rename-param-interface.mjs 是 V013 rename 的历史遗留未入库（untracked），无害"
+  ],
   "dont": [
-    "不要改 .harness/stack.json 让门变松",
-    "不要给 skip 的测试挂功能 ID",
-    "不要手改 docs/functions/function-tree.md → 走 /tree-change（mirror shared BASE 是 sync_function_tree.mjs 工作）",
-    "src/api/endpoints/ 是 gen 产物，不入库",
-    "千万不要再 init_project.py --force（会拿模板覆盖 docs/functions/function-tree.md，等于前一轮 33-IDs 文件 全部 退回到 init stub）"
+    "orval filters 必须在 input:{target,filters} 里 — 写在 entry 顶层静默无效（v7.21 实测，react/vue 双仓验证）",
+    "vitest.config.ts 必须显式配 @ alias — vitest 不走 vite.config.ts（react/vue 双仓踩过）",
+    "orval vue-query 产物直接 import 全局 axios（不是实例）— 拦截器必须装全局 axios.interceptors，旧单实例 installHttpClient() 会静默失效",
+    "vue 仓 fnTest 机制与 react 不同：ID 写进测试名 `[M01.F05.I01] 描述`，fnReporter 正则提取；不是 TaskMeta.fn",
+    "pinia store 外的模块级函数里调 useAuthStore() 需要 active pinia — 测试必须 setActivePinia(createPinia())（setup.ts afterEach 已做但 beforeEach 更稳）",
+    "function-tree.md 镜像 react I 级行时注意：react 的 M98 工程设施行也会被抓进主表 — 要单独放工程设施段，否则 L5 报 ID 重复",
+    "storageOf() 探测裸 localStorage 全局；jsdom 下测试直接 localStorage API 可用（不需要 stubGlobal，与 react node 环境不同）"
   ],
-  "last_gate_passed_at": "2026-08-14T14:42:00+08:00"
+  "last_gate_passed_at": "2026-08-17T11:45+08:00",
+  "active_branch": "master",
+  "ahead_of_origin": "0"
 }
