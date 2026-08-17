@@ -52,6 +52,7 @@ export interface ParamTechReq {
   targetValue?: string | number | null;
   expression?: string;
   remark?: string;
+  verificationStatus?: string;
 }
 
 /** 所有参数界面模型组件的统一契约。 */
