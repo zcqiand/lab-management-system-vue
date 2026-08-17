@@ -119,6 +119,12 @@ export const router = createRouter({
           name: "inspection-technical-requirements",
           component: () => import("@/pages/TechnicalRequirementsPage.vue"),
         },
+        // Sprint 2 Batch 2B-5：M05 报告汇总 + 仪表盘统计
+        {
+          path: "summary",
+          name: "summary",
+          component: () => import("@/pages/SummaryPage.vue"),
+        },
       ],
     },
     {
