@@ -1,21 +1,25 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "2026-08-18 认证域收口 + M06 两关联按钮镜像（commit 0ad20b9 认证 / 2dbf356 M06），与 react 仓同批收口",
+  "current_task": "2026-08-18 M01.F05.I04 登出收尾（commit b2ebded）——vue 仓认证域真欠账清零，与 react 仓认证状态完全对齐",
   "done": [
     "认证收口对齐 nextjs：LoginPage.vue 重写纯 SSO orchestrator + 删 SelectTenantPage.vue + /select-tenant 路由；auth.ts 补 setSession；contracts.ts msw slot sso:true；gate 全绿",
     "tree-change（已批）：M01.F04.I02-I03/M01.F05.I02-I03 规划→已上线；M01.F05.I01→已废弃；M00.F01/F02 保持规划（与 nextjs 一致）",
     "新 fnTest：requireAuth.dom.test.ts 4 测（M01.F04.I03，本仓首个守卫测试）+ loginPageSso.dom.test.ts 3 测（M01.F05.I03）",
     "M06.F03.I02 + M06.F07.I02 关联弹窗镜像 react（ParameterStandardLinkDialog.vue / ReportNameLinkDialog.vue + Teleport + axios mock 测 4 个）",
-    "gate L0-L5 全绿（--all 14 仓验证）"
+    "gate L0-L5 全绿（--all 14 仓验证）",
+    "M01.F05.I04 登出收尾：AppShell 侧栏底部按钮 data-fn 锚点（SidebarNav NavItem 加 dataFn 通道 + @entry 顶挂）+ 登出后 replace /login + appShellLogout.dom.test.ts 2 fnTest",
+    "tree-change 已批：M01.F05.I04 规划→已上线；gate L0-L5 全绿"
   ],
-  "next": "下批：① M01.F05.I04 登出按钮——本仓唯一认证真欠账（auth.ts doLogout 已有、无 AppShell 无按钮 UI；react 在 app-shell.tsx 有 data-fn=M01.F05.I04 可镜像）② Sprint 3 M05 仪表盘统计增量",
+  "next": "无认证欠账。下批：① Sprint 3 M05 仪表盘统计增量（src/features/summary/SummaryList.tsx 加按月度/报告类别维度）② lab 后端双仓 springboot/aspnetcore 补建（init 级工作量，专门 session）",
   "open_questions": [
     "M01.F05.I04 登出按钮落地时机：与 AppShell 改造同批做还是单独做，需人定"
   ],
   "dont": [
     "mountWithProviders 自建 router+pinia：测路由跳转必须裸 mount + getActivePinia()（不是 activePinia）+ 自建 router 传 global.plugins；helper 内 createPinia 会换实例让守卫读到 idle",
     "mountWithProviders 里传 global.plugins:[pinia,router] 会与 helper 自建 router 冲突报 Cannot redefine property: $route",
-    "tree 状态列禁止括号注释（L5 hard-fail）"
+    "tree 状态列禁止括号注释（L5 hard-fail）",
+    "template 动态绑定 :data-fn=\"item.dataFn\" L5 静态扫描吃不到 —— 必须同时在 script 段 // @entry 顶挂（AppShell.vue 已踩）",
+    "@vue/test-utils mount 挂独立容器不进 document.body —— 查元素用 wrapper.element.querySelector 不是 document.querySelector"
   ]
 }
