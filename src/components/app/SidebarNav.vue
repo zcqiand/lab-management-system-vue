@@ -11,6 +11,8 @@ export interface NavItem {
   action?: string;
   /** 图标 key（icons 插槽内容由消费方传入，避免组件库绑死 lucide 全集） */
   icon?: string;
+  /** 功能 ID 锚点（L5 扫描用，如 M01.F05.I04；路由项一般不需要） */
+  dataFn?: string;
 }
 
 defineProps<{
@@ -53,6 +55,8 @@ function navigate(item: NavItem): void {
       <button
         v-else
         type="button"
+        :data-fn="item.dataFn"
+        :aria-label="item.label"
         class="text-muted-foreground hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 text-sm"
         @click="item.action && emit('action', item.action)"
       >

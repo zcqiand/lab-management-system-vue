@@ -1,7 +1,12 @@
 <script setup lang="ts">
+// @entry M01.F05.I04
 // AppShell — 业务页统一骨架（sidebar + 顶栏 BackendSwitcher + 内容区）。
 // Sprint 1 只装配仪表盘；Sprint 2 Batch 1 加 M04 基础数据 4 码表。
+// M01.F05.I04 登出：侧栏底部「退出登录」按钮（镜像 react app-shell.tsx header
+// 登出按钮），logout() 清 token 后 replace /login（守卫只在 DashboardPage，
+// 这里显式跳转保证任意页面登出都回登录页）。
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 import {
   Archive,
   ClipboardCheck,
@@ -20,6 +25,7 @@ import BackendSwitcher from "@/components/app/BackendSwitcher.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
 
 const auth = useAuthStore();
+const router = useRouter();
 
 // Sprint 2 Batch 1+2A+2B-1：仪表盘 + M04 4 码表 + M02.F01/M06.F07/F08 3 码表式页 + M03 流程线 3 页。
 // 后续 batch（M05 汇总 / M03 数据录入 / M03 报告 4 阶段）随对应批次落地。
@@ -54,7 +60,12 @@ const tenantName = computed(() => {
 });
 
 function onAction(action: string): void {
-  if (action === "logout") void authLogout();
+  if (action === "logout") {
+    // M01.F05.I04：logout 清 token/permissions → 落 anonymous → 回登录页
+    void authLogout().finally(() => {
+      router.replace("/login");
+    });
+  }
 }
 </script>
 
@@ -84,7 +95,7 @@ function onAction(action: string): void {
       </SidebarNav>
       <div class="mt-auto border-t p-3">
         <SidebarNav
-          :items="[{ label: '退出登录', action: 'logout', icon: 'logout' }]"
+          :items="[{ label: '退出登录', action: 'logout', icon: 'logout', dataFn: 'M01.F05.I04' }]"
           @action="onAction"
         >
           <template #logout><LogOut class="size-4" /></template>

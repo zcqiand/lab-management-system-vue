@@ -6,13 +6,14 @@
     "features": 29,
     "items": 63
   },
-  "warnings_total": 125,
+  "warnings_total": 127,
   "warnings": {
     "已上线但无设计映射": [
       "M01.F04.I02",
       "M01.F04.I03",
       "M01.F05.I02",
       "M01.F05.I03",
+      "M01.F05.I04",
       "M02.F01.I01",
       "M02.F01.I02",
       "M02.F01.I03",
@@ -82,6 +83,7 @@
       "M01.F04.I03",
       "M01.F05.I02",
       "M01.F05.I03",
+      "M01.F05.I04",
       "M02.F01.I01",
       "M02.F01.I02",
       "M02.F01.I03",
@@ -229,15 +231,19 @@
     },
     "M01.F05.I04": {
       "name": "登出",
-      "status": "规划",
+      "status": "已上线",
       "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
       "tests": [
-        "[M01.F05.I04] logout → anonymous + 全部持久化 key 清空"
+        "[M01.F05.I04] AppShell 侧栏底部渲染「退出登录」按钮 + data-fn 锚点",
+        "[M01.F05.I04] logout → anonymous + 全部持久化 key 清空",
+        "[M01.F05.I04] 点击登出 → POST /api/auth/logout + 落 anonymous + 跳 /login"
       ],
-      "entry": []
+      "entry": [
+        "src\\components\\app\\AppShell.vue"
+      ]
     },
     "M02.F01.I01": {
       "name": "合同列表（三态过滤）",

@@ -1,20 +1,14 @@
 {
   "schema": 1,
   "approved": true,
-  "base_sha": "fefb0536dcc1e8b2",
-  "summary": "M06 两个关联按钮落地（与 react 仓同批镜像）：M06.F03.I02 参数↔标准关联（parameters 行内「关联标准」→ ParameterStandardLinkDialog.vue）+ M06.F07.I02 报告名称↔标准/参数关联（行内「关联」→ ReportNameLinkDialog.vue 两段列表，标准 role=TESTING）。代码+锚点+测试三件套齐，2 个子项 规划→已上线。",
+  "base_sha": "dac717e84d2d66a4",
+  "summary": "M01.F05.I04 登出收尾（vue 仓认证域最后一条真欠账）：AppShell 侧栏底部「退出登录」按钮补 data-fn=M01.F05.I04 锚点（SidebarNav NavItem 加 dataFn 通道）+ 登出后 router.replace('/login')（守卫只在 DashboardPage，显式跳转保证任意页登出都回登录页）+ 2 个 fnTest。规划→已上线。",
   "changes": [
     {
-      "id": "M06.F03.I02",
+      "id": "M01.F05.I04",
       "action": "变更",
-      "name": "参数↔标准关联",
-      "reason": "规划→已上线：src/features/inspection-capability/ParameterStandardLinkDialog.vue（// @entry M06.F03.I02 + data-fn）+ InspectionCapabilityList.vue parameters 行内入口；tests/features/inspection-capability/parameterStandardLink.dom.test.ts 2 个 fnTest（本批新增）"
-    },
-    {
-      "id": "M06.F07.I02",
-      "action": "变更",
-      "name": "报告名称↔标准/参数关联",
-      "reason": "规划→已上线：src/features/report-names/ReportNameLinkDialog.vue（// @entry M06.F07.I02 + data-fn，标准 role=TESTING + 参数两段 toggle）+ ReportNameList.vue 行内入口；tests/features/report-names/reportNameLink.dom.test.ts 2 个 fnTest（本批新增）"
+      "name": "登出",
+      "reason": "规划→已上线：AppShell.vue 侧栏底部「退出登录」（data-fn=M01.F05.I04，经 SidebarNav dataFn 通道）→ authLogout() 清 token/permissions 落 anonymous → replace /login；tests/features/auth/appShellLogout.dom.test.ts 2 个 fnTest（锚点渲染 + 点击全链路）"
     }
   ],
   "sync_files": []
