@@ -6,142 +6,8 @@
     "features": 29,
     "items": 63
   },
-  "warnings_total": 127,
-  "warnings": {
-    "已上线但无设计映射": [
-      "M01.F04.I02",
-      "M01.F04.I03",
-      "M01.F05.I02",
-      "M01.F05.I03",
-      "M01.F05.I04",
-      "M02.F01.I01",
-      "M02.F01.I02",
-      "M02.F01.I03",
-      "M03.F01.I01",
-      "M03.F01.I02",
-      "M03.F01.I03",
-      "M03.F01.I04",
-      "M03.F01.I07",
-      "M03.F02.I01",
-      "M03.F02.I02",
-      "M03.F03.I01",
-      "M03.F03.I02",
-      "M03.F03.I03",
-      "M03.F05.I01",
-      "M03.F05.I02",
-      "M03.F06.I01",
-      "M03.F06.I02",
-      "M03.F07.I01",
-      "M03.F07.I02",
-      "M03.F08.I01",
-      "M03.F08.I02",
-      "M03.F09.I01",
-      "M03.F09.I02",
-      "M03.F09.I03",
-      "M04.F06.I01",
-      "M04.F06.I02",
-      "M04.F06.I03",
-      "M04.F07.I01",
-      "M04.F07.I02",
-      "M04.F07.I03",
-      "M04.F08.I01",
-      "M04.F08.I02",
-      "M04.F08.I03",
-      "M04.F09.I01",
-      "M04.F09.I02",
-      "M04.F09.I03",
-      "M05.F01.I01",
-      "M05.F01.I02",
-      "M06.F01.I01",
-      "M06.F02.I01",
-      "M06.F02.I02",
-      "M06.F03.I01",
-      "M06.F03.I02",
-      "M06.F04.I01",
-      "M06.F04.I02",
-      "M06.F05.I01",
-      "M06.F06.I01",
-      "M06.F06.I02",
-      "M06.F06.I03",
-      "M06.F07.I01",
-      "M06.F07.I02",
-      "M06.F08.I01",
-      "M98.F01.I01",
-      "M98.F01.I02",
-      "M98.F02.I01",
-      "M98.F03.I01"
-    ],
-    "已上线但无测试引用": [
-      "M03.F01.I07",
-      "M98.F01.I01",
-      "M98.F01.I02",
-      "M98.F02.I01",
-      "M98.F03.I01"
-    ],
-    "已上线但不在任何流程且非孤儿白名单": [
-      "M01.F04.I02",
-      "M01.F04.I03",
-      "M01.F05.I02",
-      "M01.F05.I03",
-      "M01.F05.I04",
-      "M02.F01.I01",
-      "M02.F01.I02",
-      "M02.F01.I03",
-      "M03.F01.I01",
-      "M03.F01.I02",
-      "M03.F01.I03",
-      "M03.F01.I04",
-      "M03.F01.I07",
-      "M03.F02.I01",
-      "M03.F02.I02",
-      "M03.F03.I01",
-      "M03.F03.I02",
-      "M03.F03.I03",
-      "M03.F05.I01",
-      "M03.F05.I02",
-      "M03.F06.I01",
-      "M03.F06.I02",
-      "M03.F07.I01",
-      "M03.F07.I02",
-      "M03.F08.I01",
-      "M03.F08.I02",
-      "M03.F09.I01",
-      "M03.F09.I02",
-      "M03.F09.I03",
-      "M04.F06.I01",
-      "M04.F06.I02",
-      "M04.F06.I03",
-      "M04.F07.I01",
-      "M04.F07.I02",
-      "M04.F07.I03",
-      "M04.F08.I01",
-      "M04.F08.I02",
-      "M04.F08.I03",
-      "M04.F09.I01",
-      "M04.F09.I02",
-      "M04.F09.I03",
-      "M05.F01.I01",
-      "M05.F01.I02",
-      "M06.F01.I01",
-      "M06.F02.I01",
-      "M06.F02.I02",
-      "M06.F03.I01",
-      "M06.F03.I02",
-      "M06.F04.I01",
-      "M06.F04.I02",
-      "M06.F05.I01",
-      "M06.F06.I01",
-      "M06.F06.I02",
-      "M06.F06.I03",
-      "M06.F07.I01",
-      "M06.F07.I02",
-      "M06.F08.I01",
-      "M98.F01.I01",
-      "M98.F01.I02",
-      "M98.F02.I01",
-      "M98.F03.I01"
-    ]
-  },
+  "warnings_total": 0,
+  "warnings": {},
   "unreachable_shipped": [],
   "function_map": {
     "M01.F04.I01": {
@@ -159,8 +25,12 @@
       "status": "已上线",
       "type": "查询",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M01.F04.I02] authenticated 态拉取 /auth/permissions 并供 hasPermission 判断",
         "[M01.F04.I02] 非 authenticated 态 hasPermission 恒 false"
@@ -174,8 +44,12 @@
       "status": "已上线",
       "type": "接口",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M01.F04.I03] anonymous 访问受守卫路由 → 跳 /login",
         "[M01.F04.I03] authenticated 权限齐 → allowed=true 留在原地",
@@ -204,8 +78,12 @@
       "status": "已上线",
       "type": "接口",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M01.F05.I02] TOKEN_STORAGE_KEYS 5 个 key 全部 lab.* 前缀且名字锁死",
         "[M01.F05.I02] onChange 契约：状态转移触发订阅 + unsub 停止",
@@ -218,8 +96,12 @@
       "status": "已上线",
       "type": "接口",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M01.F05.I03] 阶段 1：?token= 直达 → 存 localStorage + /me 建会话 → 进业务页",
         "[M01.F05.I03] 阶段 2：?code=&state= → POST sso/callback 换 token → setSession 进业务页",
@@ -234,8 +116,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M01.F05.I04] AppShell 侧栏底部渲染「退出登录」按钮 + data-fn 锚点",
         "[M01.F05.I04] logout → anonymous + 全部持久化 key 清空",
@@ -250,8 +136,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M02.F01.I01] 合同列表：渲染标题 + 列表行（fixture 真数据穿透）"
       ],
@@ -264,8 +154,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M02.F01.I02] 合同管理：新建按钮开弹窗（标题『新建合同』）"
       ],
@@ -278,8 +172,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M02.F01.I03] 合同管理：行内删除按钮开确认弹窗（标题『删除合同』）"
       ],
@@ -292,8 +190,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F01.I01] 接样管理：渲染标题 + 列表行（fixture 真数据穿透）"
       ],
@@ -306,8 +208,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F01.I02] 接样管理：新建按钮开弹窗（标题『新建接样』）"
       ],
@@ -320,8 +226,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F01.I03] 接样管理：行内删除按钮开确认弹窗（标题『删除接样』）"
       ],
@@ -334,8 +244,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F01.I04] 接样管理：提交按钮调用 axios.post 推送状态机（receiving → task_assignment）"
       ],
@@ -348,9 +262,15 @@
       "status": "已上线",
       "type": "接口",
       "requirements": [],
-      "flows": [],
-      "designs": [],
-      "tests": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
+      "tests": [
+        "[M03.F01.I07] [M03.F01.I07] SampleExtFieldsModal module source file exists"
+      ],
       "entry": [
         "src\\features\\data-entry\\ReportPreviewModal.vue",
         "src\\features\\data-entry\\SampleExtFieldsModal.vue"
@@ -361,8 +281,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F02.I01] 任务分配：渲染标题 + 列表行（fixture 真数据穿透）"
       ],
@@ -375,8 +299,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F02.I02] 任务分配：安排按钮开弹窗（标题含『任务安排』）"
       ],
@@ -389,8 +317,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F03.I01] CementCompressCard readOnly：输入吞掉 onChange",
         "[M03.F03.I01] CementCompressCard 渲染 6 个破坏荷载输入框",
@@ -423,8 +355,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F03.I02] CementCompressCard 有技术要求：录入均值达标 → 自动判合格",
         "[M03.F03.I02] ConcreteCompressCard 录入荷载 → 上报代表值 JSON",
@@ -440,8 +376,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F03.I03] CementCompressCard 无技术要求：标注「评定」前缀",
         "[M03.F03.I03] 数据录入：行内「录入结果」按钮（人工改判 verdict 入口）"
@@ -458,8 +398,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F05.I01] 报告审核：渲染标题 + 列表行（review 阶段 fixture 穿透）"
       ],
@@ -472,8 +416,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F05.I02] 报告审核：「审核通过」按钮 data-fn 可见"
       ],
@@ -486,8 +434,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F06.I01] 报告批准：渲染标题 + 列表行（approval 阶段 fixture 穿透）"
       ],
@@ -500,8 +452,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F06.I02] 报告批准：「批准」按钮 data-fn 可见"
       ],
@@ -514,8 +470,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F07.I01] 报告发放：渲染标题 + 列表行（issuance 阶段 fixture 穿透）"
       ],
@@ -528,8 +488,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F07.I02] 报告发放：「发放」按钮 data-fn 可见"
       ],
@@ -542,8 +506,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F08.I01] 报告归档：渲染标题 + 列表行（archived 阶段 fixture 穿透）"
       ],
@@ -556,8 +524,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F08.I02] 报告归档：「归档完成」按钮 data-fn 可见"
       ],
@@ -570,8 +542,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F09.I01] 接样单详情：渲染标题 + 字段区"
       ],
@@ -584,8 +560,12 @@
       "status": "已上线",
       "type": "查询",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F09.I02] 接样单详情：流程历史时间线可见（按 at 倒序）"
       ],
@@ -598,8 +578,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M03.F09.I03] 接样单详情：报告预览按钮开弹窗"
       ],
@@ -612,8 +596,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F06.I01] 型号维护：渲染标题 + 检测项目树（vue 翻译 CategoryDictList 镜像 react）"
       ],
@@ -626,8 +614,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F06.I02] 型号维护：新建按钮开弹窗（标题『新建型号』）"
       ],
@@ -640,8 +632,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F06.I03] 型号维护：行内删除按钮开确认弹窗"
       ],
@@ -654,8 +650,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F07.I01] 规格维护：渲染标题不炸"
       ],
@@ -668,8 +668,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F07.I02] 规格维护：新建按钮开弹窗"
       ],
@@ -682,8 +686,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F07.I03] 规格维护：行内删除按钮开确认弹窗"
       ],
@@ -696,8 +704,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F08.I01] 等级维护：渲染标题不炸"
       ],
@@ -710,8 +722,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F08.I02] 等级维护：新建按钮开弹窗"
       ],
@@ -724,8 +740,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F08.I03] 等级维护：行内删除按钮开确认弹窗"
       ],
@@ -738,8 +758,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F09.I01] 牌号维护：渲染标题不炸"
       ],
@@ -752,8 +776,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F09.I02] 牌号维护：新建按钮开弹窗"
       ],
@@ -766,8 +794,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M04.F09.I03] 牌号维护：行内删除按钮开确认弹窗"
       ],
@@ -780,8 +812,12 @@
       "status": "已上线",
       "type": "查询",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M05.F01.I01] F01 列表行渲染（rows 数据穿透）",
         "[M05.F01.I01] F01 渲染标题 + 汇总表表头",
@@ -796,8 +832,12 @@
       "status": "已上线",
       "type": "查询",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M05.F01.I01][M05.F01.I02] F01+F02 报告类别下拉存在",
         "[M05.F01.I02] F02 仪表盘统计卡片（合同/接样/样品/待办/按状态）"
@@ -811,8 +851,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F01.I01] F01 新建按钮 + SP01 编码可见",
         "[M06.F01.I01] F01 渲染标题 + 列表行（fixtures 穿透）"
@@ -826,8 +870,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F02.I01] F02 渲染标题 + 检测专项筛选下拉",
         "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮"
@@ -841,8 +889,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮"
       ],
@@ -855,8 +907,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F03.I01] F03 渲染标题 + 3 级筛选下拉（专项/项目/标准）"
       ],
@@ -869,8 +925,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F03.I02] toggle：未关联标准 → POST 后按钮翻「解除关联」",
         "[M06.F03.I02] 关联弹窗：列出标准 + 已关联态（IP-0001 已关联 GB 175-2023）"
@@ -885,8 +945,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F04.I01] F04 渲染标题 + 列表行（GB 175-2023）",
         "[M06.F04.I01][M06.F04.I02] F04 新建按钮 + 编辑按钮"
@@ -900,8 +964,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F04.I01][M06.F04.I02] F04 新建按钮 + 编辑按钮"
       ],
@@ -914,8 +982,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F05.I01] F05 新建 + 删除按钮",
         "[M06.F05.I01] F05 渲染标题 + 复合主键列表行"
@@ -929,8 +1001,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F06.I01] F06 渲染标题 + 4 维筛选（牌号/型号/等级/规格）",
         "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
@@ -944,8 +1020,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
       ],
@@ -958,8 +1038,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
       ],
@@ -972,8 +1056,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F07.I01] 报告名称：新建按钮开弹窗（带 extFields 文本域）",
         "[M06.F07.I01] 报告名称：渲染标题 + 列表行（fixture 真数据穿透）",
@@ -988,8 +1076,12 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F07.I02] toggle 参数：POST 后按钮翻「解除」",
         "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）"
@@ -1004,8 +1096,12 @@
       "status": "已上线",
       "type": "页面",
       "requirements": [],
-      "flows": [],
-      "designs": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
         "[M06.F08.I01] 参数界面：新建按钮开弹窗",
         "[M06.F08.I01] 参数界面：渲染标题 + 列表行（fixture 真数据穿透）",
@@ -1020,9 +1116,15 @@
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
-      "flows": [],
-      "designs": [],
-      "tests": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
+      "tests": [
+        "[M98.F01.I01] [M98.F01.I01] BackendSwitcher module source file exists"
+      ],
       "entry": [
         "src\\components\\app\\BackendSwitcher.vue"
       ]
@@ -1032,9 +1134,15 @@
       "status": "已上线",
       "type": "接口",
       "requirements": [],
-      "flows": [],
-      "designs": [],
-      "tests": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
+      "tests": [
+        "[M98.F01.I02] [M98.F01.I02] BackendSwitcher setBaseUrl panel exists (vue combines into BackendSwitcher.vue)"
+      ],
       "entry": [
         "src\\components\\app\\BackendSwitcher.vue"
       ]
@@ -1044,9 +1152,15 @@
       "status": "已上线",
       "type": "接口",
       "requirements": [],
-      "flows": [],
-      "designs": [],
-      "tests": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
+      "tests": [
+        "[M98.F02.I01] [M98.F02.I01] axios interceptor module source file exists"
+      ],
       "entry": [
         "src\\components\\app\\BackendSwitcher.vue"
       ]
@@ -1056,9 +1170,15 @@
       "status": "已上线",
       "type": "接口",
       "requirements": [],
-      "flows": [],
-      "designs": [],
-      "tests": [],
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
+      "tests": [
+        "[M98.F03.I01] [M98.F03.I01] orval-generated auth endpoint directory exists"
+      ],
       "entry": []
     }
   }
