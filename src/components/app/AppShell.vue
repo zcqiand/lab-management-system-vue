@@ -30,7 +30,7 @@ import {
   Wrench,
 } from "lucide-vue-next";
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
-import BackendSwitcher from "@/components/app/BackendSwitcher.vue";
+import BackendBadge from "@/components/app/BackendBadge.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
 import { useSaasMenus, type MenuNode } from "@/composables/use-saas-menus";
 
@@ -150,7 +150,7 @@ function onAction(action: string): void {
         <div class="text-muted-foreground text-sm">
           {{ tenantName ? `${tenantName} · ${displayName}` : displayName }}
         </div>
-        <BackendSwitcher />
+        <BackendBadge />
       </header>
       <main class="flex-1 overflow-auto p-6">
         <router-view />

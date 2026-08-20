@@ -16,8 +16,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { FlaskConical } from "lucide-vue-next";
 import { useAuthStore, setSession } from "@/state/auth";
-import { useBackendStore } from "@/state/backend";
-import { BACKEND_REGISTRY_DEFAULT } from "@/api/contracts";
+import { getApiBaseUrl, getApiMode } from "@/api/backend-config";
 import { authSsoAuthorize, authSsoCallback } from "@/api/endpoints/endpoints";
 import type { LoginResponse, OAuthGrantType, OAuthResponseType } from "@/api/endpoints/endpoints.schemas";
 
@@ -44,7 +43,6 @@ function computeRedirectUri(from: string | null): string {
 }
 
 const auth = useAuthStore();
-const backendStore = useBackendStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -58,12 +56,11 @@ function sanitizeRedirect(target: string | null): string {
   return "/";
 }
 
-const backend = computed(() => backendStore.backend);
-const baseUrl = computed(() => backendStore.baseUrl);
-const ssoEnabled = computed(
-  () =>
-    BACKEND_REGISTRY_DEFAULT.available.find((b) => b.id === backend.value)?.features.sso === true,
-);
+// ADR-0014：后端塌缩到单 URL 后不再有 backend 切换概念；SSO 是否可用仅取决于
+// 是否配了后端（baseUrl 或 MSW），4-backend 时代的 aspnetcore=false 等特例已废。
+const apiMode = getApiMode();
+const baseUrl = getApiBaseUrl();
+const ssoEnabled = true;
 
 onMounted(() => {
   void (async () => {
@@ -73,8 +70,8 @@ onMounted(() => {
       void router.replace(sanitizeRedirect(from.value));
       return;
     }
-    if (!ssoEnabled.value) {
-      status.value = `当前 backend（${backend.value}）未启用 SSO，请切到 msw / nextjs 后端`;
+    if (!ssoEnabled) {
+      status.value = `当前 backend（${apiMode}）未启用 SSO，请检查 VITE_API_BASE_URL`;
       return;
     }
     if (st.kind !== "anonymous" && st.kind !== "idle") return;
@@ -126,7 +123,7 @@ onMounted(() => {
     }
 
     // 阶段 2：无回调参数 → 调 authorize 让 saas 跳过来
-    status.value = `未登录，正在跳 saas 身份平台（backend=${backend.value}）…`;
+    status.value = `未登录，正在跳 saas 身份平台（backend=${apiMode}）…`;
     const fromParam = from.value;
     const csrfState = generateOauthState();
     sessionStorage.setItem(SSO_STATE_STORAGE_KEY, csrfState);
@@ -165,7 +162,7 @@ onMounted(() => {
       <p class="text-muted-foreground/70 text-xs">
         流程：lab /login → saas /authorize → saas 登录 → 带 code 回 lab /login → lab 后端换 token
       </p>
-      <p class="text-muted-foreground/70 text-xs">demo 后端：{{ backend }} · saas 端口：3000</p>
+      <p class="text-muted-foreground/70 text-xs">demo 后端：{{ apiMode }} · saas 端口：3000</p>
     </div>
   </div>
 </template>

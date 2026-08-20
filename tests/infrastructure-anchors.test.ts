@@ -22,24 +22,10 @@ describe("Infrastructure anchor registration", () => {
 
   fnTest(
     ["M98.F01.I01"],
-    "[M98.F01.I01] BackendSwitcher module source file exists",
+    "[M98.F01.I01] BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)",
     () => {
       expect(
-        fs.existsSync(
-          path.join(SRC, "src/components/app/BackendSwitcher.vue"),
-        ),
-      ).toBe(true);
-    },
-  );
-
-  fnTest(
-    ["M98.F01.I02"],
-    "[M98.F01.I02] BackendSwitcher setBaseUrl panel exists (vue combines into BackendSwitcher.vue)",
-    () => {
-      expect(
-        fs.existsSync(
-          path.join(SRC, "src/components/app/BackendSwitcher.vue"),
-        ),
+        fs.existsSync(path.join(SRC, "src/components/app/BackendBadge.vue")),
       ).toBe(true);
     },
   );

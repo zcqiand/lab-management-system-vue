@@ -1111,9 +1111,9 @@
       ]
     },
     "M98.F01.I01": {
-      "name": "BackendSwitcher 下拉（4-backend：msw/aspnetcore/springboot/nextjs）",
+      "name": "BackendBadge 后端模式显示（env: apiMode + baseUrl；ADR-0014 替代旧 BackendSwitcher）",
       "status": "已上线",
-      "type": "按钮",
+      "type": null,
       "requirements": [],
       "flows": [
         "docs\\design\\flow-function-map.md"
@@ -1122,15 +1122,13 @@
         "docs\\design\\design-function-map.md"
       ],
       "tests": [
-        "[M98.F01.I01] [M98.F01.I01] BackendSwitcher module source file exists"
+        "[M98.F01.I01] [M98.F01.I01] BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)"
       ],
-      "entry": [
-        "src\\components\\app\\BackendSwitcher.vue"
-      ]
+      "entry": []
     },
     "M98.F01.I02": {
       "name": "持久化 baseUrl 到 localStorage",
-      "status": "已上线",
+      "status": "已废弃",
       "type": "接口",
       "requirements": [],
       "flows": [
@@ -1139,12 +1137,8 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M98.F01.I02] [M98.F01.I02] BackendSwitcher setBaseUrl panel exists (vue combines into BackendSwitcher.vue)"
-      ],
-      "entry": [
-        "src\\components\\app\\BackendSwitcher.vue"
-      ]
+      "tests": [],
+      "entry": []
     },
     "M98.F02.I01": {
       "name": "axios 拦截器（baseUrl + Authorization）注入",
@@ -1160,9 +1154,7 @@
       "tests": [
         "[M98.F02.I01] [M98.F02.I01] axios interceptor module source file exists"
       ],
-      "entry": [
-        "src\\components\\app\\BackendSwitcher.vue"
-      ]
+      "entry": []
     },
     "M98.F03.I01": {
       "name": "orval 生成的 endpoints 函数存在性校验（endpoints-smoke.test.ts）",

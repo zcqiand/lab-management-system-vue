@@ -25,6 +25,8 @@ lab 自己写组件，不复用 saas 仓组件。详细 sprint 路线见 `docs/c
 - 禁止各功能页各写标题栏/分页/空态；用 src/components/app/
 - 禁止用 window.confirm / window.alert；危险操作走 ConfirmDialog
 - npm 依赖一律走 registry.npmmirror.com
+- **跨仓后端约定**（env 驱动）：react 仓 → springboot (:8080)；vue 仓 → aspnetcore (:5000)
+- **env 三层**：`.env.example`（committed 模板）/ `.env.local`（gitignored，dev 真后端）/ `.env.test`（committed，vitest MSW 隔离）
 - 禁止直接修改 `docs/functions/function-tree.md`；走 `/tree-change` 提案
 - 禁止先改代码后补功能清单；改功能与改功能清单必须同一个 commit
 - 禁止删除功能清单里的行来消除告警；废弃只改状态，编号永不复用
@@ -33,6 +35,8 @@ lab 自己写组件，不复用 saas 仓组件。详细 sprint 路线见 `docs/c
 - **禁止本仓加 `src/api/*/route.ts` 类后端 route** — 数据走 lab-msw 或 lab-nextjs
 - **禁止从 `@lab/management-system-shared` import TS 客户端** — shared 仓只产 OpenAPI.yaml
 - **禁止复制 saas-identity-platform-vue 的 src/components/app/* 源码** — lab 自己写
+- **禁止运行时切后端 / 禁止恢复 useBackendStore / BackendSwitcher / localStorage["lab.backend"]**（**v0.x 已废弃 — ADR-0014**）
+- **必须**把 `VITE_API_BASE_URL` / `VITE_ENABLE_MSW` / `VITE_API_MODE` 写到 `.env.example`，部署平台覆盖
 
 ## 3. 指向别处
 

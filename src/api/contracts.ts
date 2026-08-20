@@ -83,25 +83,26 @@ export const TOKEN_STORAGE_KEYS = {
   permissionsCache: "lab.permissions",
 } as const;
 
-// 4 槽位默认注册表 — BackendConfig 契约的 lab family 缺省值。
-// baseUrl 与 backend-config.ts 的 DEFAULT_BASE_URLS 保持一致（那里是运行时单例真相）。
+// 4 槽位默认注册表 — BackendConfig 契约的 lab family 缺省值（信息性）。
+// ADR-0014：运行时不再切后端；baseUrl 走 env（VITE_API_BASE_URL 单 URL）。
+// 这里 4 个槽位的 baseUrl 都回退到 env.apiBaseUrl（无独立 default），
+// 保留 BACKEND_REGISTRY_DEFAULT 仅作为契约类型的展示 — LoginPage 已不再查它。
+import { env } from "@/lib/env";
+
 export const BACKEND_REGISTRY_DEFAULT: BackendRegistry = {
   active: "msw",
   available: [
     {
       id: "msw",
       label: "MSW Mock",
-      baseUrl: "",
+      baseUrl: env.apiBaseUrl,
       authHeader: "Authorization",
-      // msw 后端 SSO handler 已实现（handlers-extra.ts /auth/sso/authorize +
-      // /auth/sso/callback），LoginPage 检测到 sso: true 自动跳 saas /login
-      // （2026-08-18 认证收口对齐 react 仓）。
       features: { sso: true, realDb: false },
     },
     {
       id: "nextjs",
       label: "Next.js API",
-      baseUrl: "",
+      baseUrl: env.apiBaseUrl,
       authHeader: "Authorization",
       ssoCallbackPath: "/api/auth/sso/callback",
       features: { sso: true, realDb: true },
@@ -109,17 +110,16 @@ export const BACKEND_REGISTRY_DEFAULT: BackendRegistry = {
     {
       id: "springboot",
       label: "Spring Boot",
-      baseUrl: "http://localhost:8080",
+      baseUrl: env.apiBaseUrl,
       authHeader: "Authorization",
-      // M01.F05.I02/I03 已实现（B12 真后端 OAuth 2.0，ADR-0008），默认 profile=sso。
       features: { sso: true, realDb: true },
     },
     {
       id: "aspnetcore",
       label: "ASP.NET Core",
-      baseUrl: "http://localhost:5000",
+      baseUrl: env.apiBaseUrl,
       authHeader: "Authorization",
-      features: { sso: false, realDb: true },
+      features: { sso: true, realDb: true },
     },
   ],
 };

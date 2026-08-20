@@ -1,54 +1,25 @@
-// Runtime backend-switching singleton (module-level, not Pinia).
-// Lab family: msw / aspnetcore / springboot / nextjs 四模式运行时切换，不进 env / vite proxy。
-// Pinia store 只是它的视图层：mount 时 hydrate，change 时 snapshot 写 localStorage。
-// 契约：BackendId 来自 shared frontend-bind.tsp（src/api/contracts.ts re-export）。
+// 后端配置：env-driven 单 URL（ADR-0014 — 完全镜像 saas-identity-platform-nextjs）。
+//
+// 旧 4-backend 运行时切换（msw / nextjs / aspnetcore / springboot）+ localStorage 持久化
+// + 模块单例 + Pinia store 已废弃。改用：
+//
+//   VITE_API_BASE_URL    后端 base URL（默认 "" = 同源）
+//   VITE_ENABLE_MSW      MSW Service Worker 启动开关（dev=true / prod=false）
+//   VITE_API_MODE        显示标签（默认 "msw"），仅 UI 显示
+//
+// 所有调用方从 `getBaseUrl()` / `getBackend()` 切到 `getApiBaseUrl()` /
+// `getApiMode()` / `isMswEnabled()`。
 
-import type { BackendId } from "@/api/contracts";
+import { env } from "@/lib/env";
 
-/** 旧名兼容别名 — 契约正名是 BackendId */
-export type BackendMode = BackendId;
-
-const DEFAULT_BASE_URLS: Readonly<Record<BackendMode, string>> = {
-  msw: "", // 同源，service worker 拦截
-  aspnetcore: "http://localhost:5000",
-  springboot: "http://localhost:8080",
-  nextjs: "", // 同源，lab-management-system-nextjs 的 Next.js API routes
-};
-
-let currentBackend: BackendMode = "msw";
-let baseUrls: Record<BackendMode, string> = { ...DEFAULT_BASE_URLS };
-
-export function getBackend(): BackendMode {
-  return currentBackend;
-}
-export function setBackend(mode: BackendMode): void {
-  currentBackend = mode;
-}
-export function getBaseUrl(): string {
-  return baseUrls[currentBackend];
-}
-export function getBaseUrlFor(mode: BackendMode): string {
-  return baseUrls[mode];
-}
-export function setBaseUrlFor(mode: BackendMode, url: string): void {
-  baseUrls[mode] = url;
+export function getApiBaseUrl(): string {
+  return env.apiBaseUrl || "";
 }
 
-/** hydrate from localStorage — Pinia store 在 mount 时调用 */
-export function hydrateBackendConfig(persisted: {
-  backend?: BackendMode;
-  baseUrls?: Partial<Record<BackendMode, string>>;
-}): void {
-  if (persisted.backend) currentBackend = persisted.backend;
-  if (persisted.baseUrls) baseUrls = { ...baseUrls, ...persisted.baseUrls };
+export function getApiMode(): string {
+  return env.apiMode || "msw";
 }
 
-/** 单一真相快照 — 写 localStorage 用 */
-export function snapshotBackendConfig(): {
-  backend: BackendMode;
-  baseUrls: Record<BackendMode, string>;
-} {
-  return { backend: currentBackend, baseUrls: { ...baseUrls } };
+export function isMswEnabled(): boolean {
+  return env.enableMsw;
 }
-
-export const BACKEND_DEFAULT_BASE_URLS = DEFAULT_BASE_URLS;
