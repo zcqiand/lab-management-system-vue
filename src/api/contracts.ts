@@ -111,7 +111,8 @@ export const BACKEND_REGISTRY_DEFAULT: BackendRegistry = {
       label: "Spring Boot",
       baseUrl: "http://localhost:8080",
       authHeader: "Authorization",
-      features: { sso: false, realDb: true },
+      // M01.F05.I02/I03 已实现（B12 真后端 OAuth 2.0，ADR-0008），默认 profile=sso。
+      features: { sso: true, realDb: true },
     },
     {
       id: "aspnetcore",

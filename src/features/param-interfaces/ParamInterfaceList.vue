@@ -10,6 +10,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import { unwrapListResponse } from "@/lib/responses";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/common/inspection-param-interface.ts）
 interface ParamInterfaceRow {
@@ -50,18 +51,16 @@ const editing = computed<ParamInterfaceRow | null>(() => {
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    const res = await axios.get<{ items: ParamInterfaceRow[]; total: number }>(
-      API_ROUTES["/inspection-param-interfaces"],
-      {
-        params: {
-          ...(keyword.value ? { keyword: keyword.value } : {}),
-          page: 1,
-          pageSize: 50,
-        },
+    const res = await axios.get<unknown>(API_ROUTES["/inspection-param-interfaces"], {
+      params: {
+        ...(keyword.value ? { keyword: keyword.value } : {}),
+        page: 1,
+        pageSize: 50,
       },
-    );
-    items.value = Array.isArray(res.data?.items) ? res.data.items : [];
-    total.value = typeof res.data?.total === "number" ? res.data.total : 0;
+    });
+    const { items: listItems, total: listTotal } = unwrapListResponse<ParamInterfaceRow>(res);
+    items.value = listItems;
+    total.value = listTotal;
   } finally {
     loading.value = false;
   }

@@ -1,6 +1,12 @@
 <script setup lang="ts">
-// SidebarNav — 侧边导航原语。菜单项数据源由消费方传入（Sprint 2 接 GET /auth/menus）。
+// SidebarNav — 侧边导航原语。菜单项数据源由消费方传入（Sprint 2 接 GET /auth/menus，
+// Sprint 2 Batch 2 起 lab-vue 改用 /api/saas/me/menus 由 lab-msw 兜底）。
+//
+// icon 渲染三段式：slot 优先 → iconMap fallback → 空。saas 拉来的菜单树 icon 是
+// 字符串（如 "LayoutDashboard"），消费方在 AppShell 传 iconMap 即可；旧的 slot
+// 模式（每个图标单独 <template #xxx>）保留给希望显式控制的场景。
 import { useRoute, useRouter } from "vue-router";
+import type { Component } from "vue";
 import { cn } from "@/lib/utils";
 
 export interface NavItem {
@@ -15,9 +21,15 @@ export interface NavItem {
   dataFn?: string;
 }
 
-defineProps<{
-  items: NavItem[];
-}>();
+withDefaults(
+  defineProps<{
+    items: NavItem[];
+    /** 图标字符串 → 组件的映射（如 { LayoutDashboard }）。来自 saas 的 icon
+     *  字段按这里查表；查不到则 fallback 到空（不报错）。 */
+    iconMap?: Record<string, Component>;
+  }>(),
+  { iconMap: () => ({}) },
+);
 
 const emit = defineEmits<{ action: [key: string] }>();
 
@@ -49,7 +61,13 @@ function navigate(item: NavItem): void {
           )
         "
       >
-        <slot :name="item.icon ?? 'none'" />
+        <slot :name="item.icon ?? 'none'">
+          <component
+            :is="item.icon ? iconMap[item.icon] : undefined"
+            v-if="item.icon && iconMap[item.icon]"
+            class="size-4"
+          />
+        </slot>
         {{ item.label }}
       </component>
       <button
@@ -60,7 +78,13 @@ function navigate(item: NavItem): void {
         class="text-muted-foreground hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 text-sm"
         @click="item.action && emit('action', item.action)"
       >
-        <slot :name="item.icon ?? 'none'" />
+        <slot :name="item.icon ?? 'none'">
+          <component
+            :is="item.icon ? iconMap[item.icon] : undefined"
+            v-if="item.icon && iconMap[item.icon]"
+            class="size-4"
+          />
+        </slot>
         {{ item.label }}
       </button>
     </template>

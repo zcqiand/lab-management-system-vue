@@ -55,11 +55,15 @@ function commitEdit(): void {
 <template>
   <DropdownMenu>
     <template #trigger>
+      <!-- 显式 text-slate-900：本组件嵌在浅色 header（bg-white）下，vue 仓
+          BackendSwitcher 放在 header 里而不是侧栏里，但 outline 按钮的 bg-background
+          在 light mode 下也是白底，若不显式字色会随父级语义 token 走而看不清。
+          镜像 react 仓 backend-switcher.tsx 同款写法。 -->
       <Button
         variant="outline"
         size="sm"
         data-testid="backend-switcher-trigger"
-        class="gap-2"
+        class="gap-2 bg-white text-slate-900 border-slate-300 hover:bg-slate-100 hover:text-slate-900"
         :title="`当前后端：${LABELS[store.backend]}`"
       >
         <Server class="h-4 w-4" />

@@ -28,6 +28,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES, type ApiRouteKey } from "@/api/legacy-client";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import { unwrapListResponse } from "@/lib/responses";
 
 interface DictItem {
   id: string;
@@ -92,10 +93,10 @@ async function fetchList(): Promise<void> {
   loading.value = true;
   errorMsg.value = null;
   try {
-    const res = await axios.get<{ items: DictItem[] }>(base.value, {
+    const res = await axios.get<unknown>(base.value, {
       params: { page: "1", pageSize: "200", inspectionObjectCode: selectedCode.value },
     });
-    const items = [...(Array.isArray(res.data?.items) ? res.data.items : [])];
+    const items = [...unwrapListResponse<DictItem>(res).items];
     items.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     list.value = items;
   } catch (e) {
@@ -110,11 +111,10 @@ async function fetchList(): Promise<void> {
 
 onMounted(async () => {
   try {
-    const r = await axios.get<{ items: InspectionObject[] }>(
-      API_ROUTES["/inspection-objects"],
-      { params: { page: 1, pageSize: "200" } },
-    );
-    const items = Array.isArray(r.data?.items) ? r.data.items : [];
+    const r = await axios.get<unknown>(API_ROUTES["/inspection-objects"], {
+      params: { page: 1, pageSize: "200" },
+    });
+    const items = unwrapListResponse<InspectionObject>(r).items;
     items.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     objects.value = items;
     if (!selectedCode.value) selectedCode.value = items[0]?.code ?? null;

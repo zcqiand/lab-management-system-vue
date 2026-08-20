@@ -5,10 +5,17 @@
 // setup 组件 + props.resource 翻译。msw 数据形状由 installShapeAdapters wrapDict 兜底
 // （id=code + keyword 过滤 + junction 反查）。
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ParameterStandardLinkDialog from "@/features/inspection-capability/ParameterStandardLinkDialog.vue";
+import { normalizeListResponse, unwrapListResponse } from "@/lib/responses";
+
+// 失败兜底：axios catch 需要一个 AxiosResponse 形态的对象占位；
+// unwrapListResponse 只读 .data，所以这个 stub 仅 .data 字段被消费。
+function emptyListResponse(): AxiosResponse<unknown> {
+  return { data: { items: [], total: 0 } } as AxiosResponse<unknown>;
+}
 
 type Resource = "specialties" | "objects" | "parameters" | "standards";
 
@@ -166,9 +173,10 @@ async function load(): Promise<void> {
       if (objectFilter.value) params.inspectionObjectCode = objectFilter.value;
       if (standardFilter.value) params.inspectionStandardCode = standardFilter.value;
     }
-    const res = await axios.get<{ items: ListItem[]; total: number }>(route.value, { params });
-    items.value = Array.isArray(res.data?.items) ? res.data.items : [];
-    total.value = typeof res.data?.total === "number" ? res.data.total : 0;
+    const res = await axios.get<unknown>(route.value, { params });
+    const { items: listItems, total: listTotal } = unwrapListResponse<ListItem>(res);
+    items.value = listItems;
+    total.value = listTotal;
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载失败";
     items.value = [];
@@ -180,23 +188,31 @@ async function load(): Promise<void> {
 
 async function loadOptions(): Promise<void> {
   if (props.resource === "specialties") return;
-  const spRes = await axios.get<{ items: Opt[] }>(ROUTES.specialties, { params: { page: 1, pageSize: 100 } }).catch(() => ({ data: { items: [] } }));
-  specialtyOptions.value = Array.isArray(spRes.data?.items) ? spRes.data.items : [];
+  const spRes = await axios
+    .get<unknown>(ROUTES.specialties, { params: { page: 1, pageSize: 100 } })
+    .catch(() => emptyListResponse());
+  specialtyOptions.value = normalizeListResponse<Opt>(spRes.data).items;
   if (props.resource === "standards" || props.resource === "parameters") {
     const objParams: Record<string, string | number> = { page: 1, pageSize: 200 };
     if (specialtyFilter.value) objParams.inspectionSpecialtyCode = specialtyFilter.value;
-    const objRes = await axios.get<{ items: Opt[] }>(ROUTES.objects, { params: objParams }).catch(() => ({ data: { items: [] } }));
-    objectOptions.value = Array.isArray(objRes.data?.items) ? objRes.data.items : [];
+    const objRes = await axios
+      .get<unknown>(ROUTES.objects, { params: objParams })
+      .catch(() => emptyListResponse());
+    objectOptions.value = normalizeListResponse<Opt>(objRes.data).items;
   }
   if (props.resource === "parameters") {
     const stdParams: Record<string, string | number> = { page: 1, pageSize: 200 };
     if (objectFilter.value) stdParams.inspectionObjectCode = objectFilter.value;
-    const stdRes = await axios.get<{ items: Opt[] }>(ROUTES.standards, { params: stdParams }).catch(() => ({ data: { items: [] } }));
-    standardOptions.value = Array.isArray(stdRes.data?.items) ? stdRes.data.items : [];
+    const stdRes = await axios
+      .get<unknown>(ROUTES.standards, { params: stdParams })
+      .catch(() => emptyListResponse());
+    standardOptions.value = normalizeListResponse<Opt>(stdRes.data).items;
   }
   if (props.resource === "objects") {
-    const pRes = await axios.get<{ items: Opt[] }>(ROUTES.parameters, { params: { page: 1, pageSize: 200 } }).catch(() => ({ data: { items: [] } }));
-    parameterOptions.value = Array.isArray(pRes.data?.items) ? pRes.data.items : [];
+    const pRes = await axios
+      .get<unknown>(ROUTES.parameters, { params: { page: 1, pageSize: 200 } })
+      .catch(() => emptyListResponse());
+    parameterOptions.value = normalizeListResponse<Opt>(pRes.data).items;
   }
 }
 

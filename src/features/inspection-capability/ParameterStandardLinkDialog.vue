@@ -7,6 +7,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import { unwrapListResponse } from "@/lib/responses";
 
 // 内联类型（vue 仓类型内联惯例）
 interface StdRow {
@@ -49,17 +50,13 @@ async function load(): Promise<void> {
   loading.value = true;
   try {
     const [stdRes, linkRes] = await Promise.all([
-      axios.get<{ items: StdRow[] }>(API_ROUTES["/inspection-standards"], {
+      axios.get<unknown>(API_ROUTES["/inspection-standards"], {
         params: { page: 1, pageSize: 500 },
       }),
-      axios.get<StdParamLink[] | { items: StdParamLink[] }>(
-        API_ROUTES["/inspection-standard-parameters"],
-      ),
+      axios.get<unknown>(API_ROUTES["/inspection-standard-parameters"]),
     ]);
-    const linkList = Array.isArray(linkRes.data)
-      ? linkRes.data
-      : ((linkRes.data as { items?: StdParamLink[] })?.items ?? []);
-    standards.value = stdRes.data.items ?? [];
+    const linkList = unwrapListResponse<StdParamLink>(linkRes).items;
+    standards.value = unwrapListResponse<StdRow>(stdRes).items;
     linked.value = new Set(
       linkList
         .filter((l) => l.inspectionParameterCode === props.parameterCode)

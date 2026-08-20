@@ -5,47 +5,107 @@
 // M01.F05.I04 登出：侧栏底部「退出登录」按钮（镜像 react app-shell.tsx header
 // 登出按钮），logout() 清 token 后 replace /login（守卫只在 DashboardPage，
 // 这里显式跳转保证任意页面登出都回登录页）。
-import { computed } from "vue";
+//
+// 菜单数据源（Sprint 2 Batch 2）：useSaasMenus() 拉 /api/saas/me/menus，本仓
+// 无 /api route，由 lab-msw saasMenusExtraHandlers 兜底；拉取失败回退静态 NAV。
+import { computed, type Component } from "vue";
 import { useRouter } from "vue-router";
 import {
+  Activity,
   Archive,
+  Beaker,
   ClipboardCheck,
   ClipboardList,
   Database,
   FileText,
   FlaskConical,
   LayoutDashboard,
+  ListChecks,
   LogOut,
+  PackageSearch,
   ScrollText,
+  Settings,
+  Shield,
   TestTube2,
   Wrench,
 } from "lucide-vue-next";
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
 import BackendSwitcher from "@/components/app/BackendSwitcher.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
+import { useSaasMenus, type MenuNode } from "@/composables/use-saas-menus";
 
 const auth = useAuthStore();
 const router = useRouter();
 
-// Sprint 2 Batch 1+2A+2B-1：仪表盘 + M04 4 码表 + M02.F01/M06.F07/F08 3 码表式页 + M03 流程线 3 页。
-// 后续 batch（M05 汇总 / M03 数据录入 / M03 报告 4 阶段）随对应批次落地。
-const NAV: NavItem[] = [
-  { label: "仪表盘", path: "/", icon: "dashboard" },
-  { label: "型号维护", path: "/models", icon: "models" },
-  { label: "规格维护", path: "/specifications", icon: "specs" },
-  { label: "等级维护", path: "/grades", icon: "grades" },
-  { label: "牌号维护", path: "/brands", icon: "brands" },
-  { label: "合同管理", path: "/contracts", icon: "contracts" },
-  { label: "报告名称维护", path: "/report-names", icon: "report-names" },
-  { label: "参数界面维护", path: "/param-interfaces", icon: "param-interfaces" },
-  { label: "接样管理", path: "/receipts", icon: "receipts" },
-  { label: "任务分配", path: "/task-assignment", icon: "task-assignment" },
-  { label: "数据录入", path: "/data-entry", icon: "data-entry" },
-  { label: "报告审核", path: "/report-review", icon: "report-review" },
-  { label: "报告批准", path: "/report-approve", icon: "report-approve" },
-  { label: "报告发放", path: "/report-issue", icon: "report-issue" },
-  { label: "报告归档", path: "/report-archive", icon: "report-archive" },
+// 图标字符串 → lucide 组件映射。saas 菜单 icon 字段是 PascalCase 字符串名，
+// SidebarNav.vue 接受 iconMap prop 后用 <component :is> 动态渲染。
+const ICON_MAP: Record<string, Component> = {
+  Activity,
+  Beaker,
+  ClipboardCheck,
+  ClipboardList,
+  Database,
+  FileText,
+  FlaskConical,
+  LayoutDashboard,
+  ListChecks,
+  PackageSearch,
+  ScrollText,
+  Settings,
+  Shield,
+  TestTube2,
+  Wrench,
+};
+
+// 静态 fallback（saas 拉失败或加载中时使用，与 saas 菜单 1:1 对齐）。
+const FALLBACK_NAV: NavItem[] = [
+  { label: "仪表盘", path: "/", icon: "LayoutDashboard" },
+  { label: "型号维护", path: "/models", icon: "Database" },
+  { label: "规格维护", path: "/specifications", icon: "Database" },
+  { label: "等级维护", path: "/grades", icon: "Database" },
+  { label: "牌号维护", path: "/brands", icon: "Database" },
+  { label: "合同管理", path: "/contracts", icon: "ClipboardList" },
+  { label: "报告名称维护", path: "/report-names", icon: "ScrollText" },
+  { label: "参数界面维护", path: "/param-interfaces", icon: "Wrench" },
+  { label: "接样管理", path: "/receipts", icon: "FlaskConical" },
+  { label: "任务分配", path: "/task-assignment", icon: "ClipboardList" },
+  { label: "数据录入", path: "/data-entry", icon: "TestTube2" },
+  { label: "报告审核", path: "/report-review", icon: "ClipboardCheck" },
+  { label: "报告批准", path: "/report-approve", icon: "ClipboardCheck" },
+  { label: "报告发放", path: "/report-issue", icon: "FileText" },
+  { label: "报告归档", path: "/report-archive", icon: "Archive" },
+  { label: "检测专项", path: "/inspection-specialties", icon: "Beaker" },
+  { label: "检测标准", path: "/inspection-standards", icon: "ScrollText" },
+  { label: "检测参数", path: "/inspection-parameters", icon: "Activity" },
+  { label: "检测项目", path: "/inspection-objects", icon: "PackageSearch" },
+  { label: "技术要求", path: "/inspection-technical-requirements", icon: "Shield" },
+  { label: "计算规则", path: "/inspection-calculation-rules", icon: "Settings" },
+  { label: "报告汇总", path: "/summary", icon: "ListChecks" },
 ];
+
+// 拉 saas 菜单；树 → 平铺 NavItem[]（保留 group 节点作废：vue 仓 sidebar 是
+// 平铺布局，不渲染分组头；nextjs/react 的分组树 UI 不镜像）。
+const { data: saasMenus } = useSaasMenus();
+function flattenToNavItems(tree: MenuNode[] | null): NavItem[] {
+  if (!tree) return [];
+  const out: NavItem[] = [];
+  for (const g of tree) {
+    for (const leaf of g.children) {
+      if (!leaf.path) continue;
+      out.push({
+        label: leaf.name,
+        path: leaf.path === "" ? "/" : leaf.path,
+        icon: leaf.icon,
+      });
+    }
+  }
+  return out;
+}
+const navItems = computed<NavItem[]>(() => {
+  const tree = saasMenus();
+  if (tree && tree.length > 0) return flattenToNavItems(tree);
+  return FALLBACK_NAV;
+});
 
 const displayName = computed(() => {
   const s = auth.authState;
@@ -76,30 +136,13 @@ function onAction(action: string): void {
         <FlaskConical class="text-primary size-5" />
         <span class="font-semibold">实验室管理系统</span>
       </div>
-      <SidebarNav :items="NAV">
-        <template #dashboard><LayoutDashboard class="size-4" /></template>
-        <template #models><Database class="size-4" /></template>
-        <template #specs><Database class="size-4" /></template>
-        <template #grades><Database class="size-4" /></template>
-        <template #brands><Database class="size-4" /></template>
-        <template #contracts><ClipboardList class="size-4" /></template>
-        <template #report-names><ScrollText class="size-4" /></template>
-        <template #param-interfaces><Wrench class="size-4" /></template>
-        <template #receipts><FlaskConical class="size-4" /></template>
-        <template #task-assignment><ClipboardList class="size-4" /></template>
-        <template #data-entry><TestTube2 class="size-4" /></template>
-        <template #report-review><ClipboardCheck class="size-4" /></template>
-        <template #report-approve><ClipboardCheck class="size-4" /></template>
-        <template #report-issue><FileText class="size-4" /></template>
-        <template #report-archive><Archive class="size-4" /></template>
-      </SidebarNav>
+      <SidebarNav :items="navItems" :icon-map="ICON_MAP" />
       <div class="mt-auto border-t p-3">
         <SidebarNav
           :items="[{ label: '退出登录', action: 'logout', icon: 'logout', dataFn: 'M01.F05.I04' }]"
+          :icon-map="ICON_MAP"
           @action="onAction"
-        >
-          <template #logout><LogOut class="size-4" /></template>
-        </SidebarNav>
+        />
       </div>
     </aside>
     <div class="flex flex-1 flex-col">

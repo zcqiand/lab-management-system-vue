@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "approved": true,
-  "base_sha": "dac717e84d2d66a4",
-  "summary": "M01.F05.I04 登出收尾（vue 仓认证域最后一条真欠账）：AppShell 侧栏底部「退出登录」按钮补 data-fn=M01.F05.I04 锚点（SidebarNav NavItem 加 dataFn 通道）+ 登出后 router.replace('/login')（守卫只在 DashboardPage，显式跳转保证任意页登出都回登录页）+ 2 个 fnTest。规划→已上线。",
+  "base_sha": "6439bc859146b5fa73be023b8f2e33c85767fd7c",
+  "summary": "vue LoginPage OAuth 2.0 改造（M01.F05.I03 变更）。删 ?token= shortcut；改 authSsoAuthorize→OAuth 2.0 字段；改 sso/callback body {grant_type,code,redirect_uri}；加 state 生成与一次性校验（防 CSRF）。同步 design/flow-function-map 描述。状态 规划→开发中。镜像 react 仓 OAuth 2.0 改法。",
   "changes": [
     {
-      "id": "M01.F05.I04",
+      "id": "M01.F05.I03",
       "action": "变更",
-      "name": "登出",
-      "reason": "规划→已上线：AppShell.vue 侧栏底部「退出登录」（data-fn=M01.F05.I04，经 SidebarNav dataFn 通道）→ authLogout() 清 token/permissions 落 anonymous → replace /login；tests/features/auth/appShellLogout.dom.test.ts 2 个 fnTest（锚点渲染 + 点击全链路）"
+      "name": "SSO OAuth 2.0 授权码流（client_secret 后端持 + state CSRF 防护）",
+      "reason": "原实现：(a) URL 带 ?token= 直接存 localStorage + GET /me 建会话（token 经 URL 泄漏 + 首登缺 refreshToken 必抛错，与 React 仓同根因）；(b) authSsoAuthorize 走 {redirect} 自定义字段（不是 OAuth 2.0 redirect_uri）；(c) authSsoCallback 走 {code, state}（缺 grant_type/redirect_uri/client_secret）。改后：完全按 OAuth 2.0 RFC 6749；authorize 端点收 response_type=code/client_id=lab/redirect_uri/state；callback body {grant_type:authorization_code, code, redirect_uri}；state 走 sessionStorage「lab.sso.state」一次性校验。镜像 react 仓 LoginPage.tsx 的 OAuth 2.0 改法（react + lab-msw 已落地，vue 同步进行中）。"
     }
   ],
   "sync_files": []

@@ -92,7 +92,7 @@
       "entry": []
     },
     "M01.F05.I03": {
-      "name": "SSO 授权码流（authorize + callback）",
+      "name": "SSO OAuth 2.0 授权码流（client_secret 后端持 + state CSRF 防护）",
       "status": "已上线",
       "type": "接口",
       "requirements": [],
@@ -103,9 +103,8 @@
         "docs\\design\\design-function-map.md"
       ],
       "tests": [
-        "[M01.F05.I03] 阶段 1：?token= 直达 → 存 localStorage + /me 建会话 → 进业务页",
-        "[M01.F05.I03] 阶段 2：?code=&state= → POST sso/callback 换 token → setSession 进业务页",
-        "[M01.F05.I03] 阶段 3：无回调参数 → authorize 拿 authorizeUrl → 跳 saas"
+        "[M01.F05.I03] 阶段 1：?code=&state= → POST sso/callback 换 token → setSession 进业务页",
+        "[M01.F05.I03] 阶段 2：无回调参数 → authorize 拿 authorizeUrl → 跳 saas"
       ],
       "entry": [
         "src\\pages\\LoginPage.vue"
