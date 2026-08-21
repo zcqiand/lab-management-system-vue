@@ -23,10 +23,13 @@ jobs:
           node-version: "24"
           cache: "npm"
           registry-url: https://registry.npmmirror.com/
-      # shared 仓作为 sibling 被 checkout (gen:shared 读 ../lab-management-system-shared/...)
+      # shared + msw 仓作为 sibling 被 checkout
       # multi-repo-family.md §2 强制 sibling 引用,不以包依赖 import
+      # msw 是 file: 依赖,没有 ../<family>-msw/package.json npm ci 直接 ENOENT
       - name: Checkout shared sibling
         run: git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/zcqiand/lab-management-system-shared.git ../lab-management-system-shared
+      - name: Checkout msw sibling
+        run: git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/zcqiand/lab-management-system-msw.git ../lab-management-system-msw
       - name: Install dependencies
         run: npm ci
       - name: gen:shared
