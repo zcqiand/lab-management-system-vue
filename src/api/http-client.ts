@@ -51,4 +51,4 @@ export function installHttpClient(getToken: () => string | null): void {
   });
 }
 
-export { getApiBaseUrl, getApiMode, isMswEnabled } from "./backend-config";
+export { getApiBaseUrl, getApiMode } from "./backend-config";
