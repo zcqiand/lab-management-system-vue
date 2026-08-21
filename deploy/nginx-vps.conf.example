@@ -1,0 +1,35 @@
+# lab-management-system-vue — VPS nginx vhost 模板
+# 部署时被 setup-vps.sh sed 替换 <domain> 占位符。
+# 容器内 nginx 监听 :80,本 VPS nginx 反代到 127.0.0.1:8010。
+
+server {
+    listen 80;
+    server_name <domain>;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name <domain>;
+
+    ssl_certificate     /etc/nginx/ssl/<domain>.crt;
+    ssl_certificate_key /etc/nginx/ssl/<domain>.key;
+
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+
+    location / {
+        # SPA:容器内 nginx:alpine 监听 :80;HOST_PORT 由 deploy/<repo>.sh 决定
+        proxy_pass http://127.0.0.1:8010;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
