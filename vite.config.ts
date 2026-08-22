@@ -35,10 +35,4 @@ export default defineConfig({
       },
     },
   },
-  optimizeDeps: {
-    // msw v2 has unresolvable @mswjs/interceptors exports conditions for
-    // ClientRequest in browser; exclude from pre-bundling so it loads at
-    // runtime via esm rather than being bundled by esbuild.
-    exclude: ["@lab/management-system-msw", "msw", "@mswjs/interceptors"],
-  },
 });
