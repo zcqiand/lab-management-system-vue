@@ -1,27 +1,22 @@
 {
-  "schema": 1,
+  "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "B7：vue 镜像 react — 5 个 page 改 unwrapListResponse",
+  "current_task": "Post-Phase-3 frontend 集成收尾：删 ajv dead devDep + CLAUDE.md §3 注释澄清",
+  "last_session_at": "2026-08-22",
+  "last_session_summary": "ajv 从 devDependencies 删除（src/ 零 import，orval 透传已够）；CLAUDE.md §3 改写 lab-msw 是外部 sibling HTTP server（:5173）非本仓 dep；commit 472c2f6 + tag v0.3.10-20260822 pushed",
   "done": [
-    "src/lib/responses.ts:镜像 react (normalizeListResponse<T> + unwrapListResponse<T> 3-形态归一)",
-    "src/features/inspection-capability/InspectionCapabilityList.tsx:5 处 axios.get 改 unwrapListResponse(2 load + 4 useEffect 已在 springboot session 详述)",
-    "src/features/inspection-capability/ParameterStandardLinkDialog.tsx:link list 改 unwrapListResponse<{inspectionStandardCode,inspectionParameterCode}>",
-    "src/features/dicts/CategoryDictList.vue:2 处 axios.get 改 unwrapListResponse + catch fallback emptyListResponse() helper 让 AxiosResponse 类型匹配",
-    "src/features/report-names/ReportNameList.vue:load 改 unwrapListResponse<InspectionReportName>",
-    "src/features/param-interfaces/ParamInterfaceList.vue:load 改 unwrapListResponse<ParamInterfaceRow>",
-    "vue 仓 gate L0-L5 全绿 100 条目 0 软告警"
+    "ajv 从 devDependencies 删除（gate L0/L1/L2/L3/L4/L5 全绿 exit 0；100 功能条目 0 软告警）",
+    "CLAUDE.md §3 改写为'lab-msw 是外部 sibling HTTP server（:5173），本仓 package.json 不挂 dep'",
+    "commit 472c2f6 + tag v0.3.10-20260822 + push origin/master"
   ],
   "next": [
-    "git add -A + commit（src/lib/responses.ts + 4 个 features 文件改）",
-    "Optional: axios.get 失败 fallback 用 emptyListResponse() stub（{data:{items:[],total:0}} as AxiosResponse<unknown>）— 此 helper 是为了让 TS 类型过 catch fallback 分支,不是真实错误响应;若未来想统一错误 UX 可改成 throw AxiosError"
+    "无（本批原子收尾）"
   ],
   "open_questions": [],
   "dont": [
-    "不要用 <script setup> 之外的 Options API（CLAUDE.md §2 硬约束）",
-    "不要用 any / @ts-ignore（CLAUDE.md §2 硬约束）",
-    "不要从 saas-identity-platform-vue 复制 src/components/app/* 源码（CLAUDE.md §2 硬约束 'lab 自己写'）",
-    "不要给 vue 仓加 vue-query 依赖 — 当前维持手动 fetch + axios，与 react 仓镜像走同 src/api/legacy-client（CLAUDE.md §4 'vue-query 适合 list 组件,本批暂不引入,避免新依赖'）",
-    "不要在 unwrapListResponse 之前 catch 空数组 — emptyListResponse() 是 fallback,不是替代"
+    "不要把 ajv 加回 devDeps —— orval 通过 transitive 已拿到，独立声明只是污染",
+    "不要在 CLAUDE.md §3 把 lab-msw 描述为'本仓 devDep' —— 它走 vite fetch :5173，不打包",
+    "不要在 vue 仓加 vue-query 依赖 —— 当前维持手动 fetch + axios，与 react 仓镜像走同 src/api/legacy-client（旧 schema 1 既有约束保留）"
   ],
   "active_branch": "master"
 }
