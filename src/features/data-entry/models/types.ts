@@ -64,7 +64,7 @@ export interface ParamModelProps {
   stdParams: ParamStandardParam[];
   techReqs: ParamTechReq[];
   config: Record<string, unknown> | undefined;
-  /** 该参数的计算规则（M06.F05）；仅取 specimenCount 驱动「做几组数据」。 */
+  /** 该参数的计算方法（M06.F05）；仅取 specimenCount 驱动「做几组数据」。 */
   calcRule?: { specimenCount: number };
   /** 比值卡（强屈比/超强比）的跨记录联立入参；非比值卡忽略。 */
   crossRecord?: CrossRecordInput;

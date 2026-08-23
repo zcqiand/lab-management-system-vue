@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// M06.F05 计算规则维护 — 列表 + Dialog 弹窗（镜像 react 仓）。
+// M06.F05 计算方法维护 — 列表 + Dialog 弹窗（镜像 react 仓）。
 //
 // 复合主键：(inspectionObjectCode, inspectionParameterCode)；
 // 主键由 tests 端 shape adapter 兜底生成 id=cr-… 。
@@ -22,7 +22,10 @@ interface CalcRule {
   parameterName?: string;
 }
 
-interface Opt { code: string; name: string }
+interface Opt {
+  code: string;
+  name: string;
+}
 
 const ALGORITHMS: Array<{ value: string; label: string }> = [
   { value: "simple_avg", label: "简单平均" },
@@ -66,7 +69,10 @@ async function load(): Promise<void> {
   try {
     const params: Record<string, string | number> = { page: 1, pageSize: 100 };
     if (keyword.value.trim()) params.keyword = keyword.value.trim();
-    const res = await axios.get<{ items: CalcRule[]; total: number }>(API_ROUTES["/inspection-calculation-rules"], { params });
+    const res = await axios.get<{ items: CalcRule[]; total: number }>(
+      API_ROUTES["/inspection-calculation-methods"],
+      { params },
+    );
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载失败";
@@ -78,9 +84,21 @@ async function load(): Promise<void> {
 
 async function loadOptions(): Promise<void> {
   const [oRes, pRes, sRes] = await Promise.all([
-    axios.get<{ items: Opt[] }>(API_ROUTES["/inspection-objects"], { params: { page: 1, pageSize: 200 } }).catch(() => ({ data: { items: [] } })),
-    axios.get<{ items: Opt[] }>(API_ROUTES["/inspection-parameters"], { params: { page: 1, pageSize: 200 } }).catch(() => ({ data: { items: [] } })),
-    axios.get<{ items: Opt[] }>(API_ROUTES["/inspection-standards"], { params: { page: 1, pageSize: 200 } }).catch(() => ({ data: { items: [] } })),
+    axios
+      .get<{ items: Opt[] }>(API_ROUTES["/inspection-objects"], {
+        params: { page: 1, pageSize: 200 },
+      })
+      .catch(() => ({ data: { items: [] } })),
+    axios
+      .get<{ items: Opt[] }>(API_ROUTES["/inspection-parameters"], {
+        params: { page: 1, pageSize: 200 },
+      })
+      .catch(() => ({ data: { items: [] } })),
+    axios
+      .get<{ items: Opt[] }>(API_ROUTES["/inspection-standards"], {
+        params: { page: 1, pageSize: 200 },
+      })
+      .catch(() => ({ data: { items: [] } })),
   ]);
   objects.value = Array.isArray(oRes.data?.items) ? oRes.data.items : [];
   parameters.value = Array.isArray(pRes.data?.items) ? pRes.data.items : [];
@@ -133,15 +151,16 @@ async function submitForm(): Promise<void> {
   };
   try {
     if (mode.value.kind === "create") {
-      await axios.post(API_ROUTES["/inspection-calculation-rules"], payload);
+      await axios.post(API_ROUTES["/inspection-calculation-methods"], payload);
     } else if (mode.value.kind === "edit") {
       const id = mode.value.item.id;
-      await axios.put(`${API_ROUTES["/inspection-calculation-rules"]}/${id}`, payload);
+      await axios.put(`${API_ROUTES["/inspection-calculation-methods"]}/${id}`, payload);
     }
     closeDialog();
     await load();
   } catch (e: unknown) {
-    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "保存失败";
+    const msg =
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "保存失败";
     saveError.value = msg;
   }
 }
@@ -155,11 +174,12 @@ async function confirmDelete(): Promise<void> {
   deleting.value = true;
   deleteError.value = null;
   try {
-    await axios.delete(`${API_ROUTES["/inspection-calculation-rules"]}/${deleteTarget.value.id}`);
+    await axios.delete(`${API_ROUTES["/inspection-calculation-methods"]}/${deleteTarget.value.id}`);
     deleteTarget.value = null;
     await load();
   } catch (e: unknown) {
-    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "删除失败";
+    const msg =
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "删除失败";
     deleteError.value = msg;
   } finally {
     deleting.value = false;
@@ -168,13 +188,13 @@ async function confirmDelete(): Promise<void> {
 </script>
 
 <template>
-  <!-- @entry M06.F05.I01 计算规则维护列表 -->
+  <!-- @entry M06.F05.I01 计算方法维护列表 -->
   <div data-fn="M06.F05.I01" class="space-y-4">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold">计算规则维护</h1>
+        <h1 class="text-2xl font-semibold">计算方法维护</h1>
         <p class="text-sm text-slate-500">
-          M06.F05 计算规则（复合主键：检测项目 + 检测参数）——算法类型 + 试件数量 + 修约规则
+          M06.F05 计算方法（复合主键：检测项目 + 检测参数）——算法类型 + 试件数量 + 修约规则
         </p>
       </div>
       <button
@@ -182,7 +202,7 @@ async function confirmDelete(): Promise<void> {
         data-fn="M06.F05.I01"
         @click="openCreate"
       >
-        新建计算规则
+        新建计算方法
       </button>
     </div>
 
@@ -194,10 +214,12 @@ async function confirmDelete(): Promise<void> {
       />
     </div>
 
-    <div v-if="error" role="alert" class="text-sm text-red-600 bg-red-50 p-2 rounded">{{ error }}</div>
+    <div v-if="error" role="alert" class="text-sm text-red-600 bg-red-50 p-2 rounded">
+      {{ error }}
+    </div>
 
     <div v-if="!loading && items.length === 0" class="text-sm text-slate-400 text-center py-8">
-      暂无计算规则
+      暂无计算方法
     </div>
 
     <table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
@@ -220,11 +242,15 @@ async function confirmDelete(): Promise<void> {
           </td>
           <td class="px-4 py-2 align-top">
             <div class="font-mono text-xs">{{ row.inspectionParameterCode }}</div>
-            <div v-if="row.parameterName" class="text-xs text-slate-500">{{ row.parameterName }}</div>
+            <div v-if="row.parameterName" class="text-xs text-slate-500">
+              {{ row.parameterName }}
+            </div>
           </td>
           <td class="px-4 py-2 font-mono text-xs">{{ row.testingStandardCode ?? "-" }}</td>
           <td class="px-4 py-2">
-            <span class="inline-flex items-center rounded border px-2 py-0.5 text-xs">{{ ALGO_LABEL[row.algorithmType] ?? row.algorithmType }}</span>
+            <span class="inline-flex items-center rounded border px-2 py-0.5 text-xs">{{
+              ALGO_LABEL[row.algorithmType] ?? row.algorithmType
+            }}</span>
           </td>
           <td class="px-4 py-2">{{ row.specimenCount }}</td>
           <td class="px-4 py-2 text-xs text-slate-500">{{ row.remark ?? "-" }}</td>
@@ -260,53 +286,88 @@ async function confirmDelete(): Promise<void> {
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-xl">
           <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold">{{ mode.kind === "create" ? "新建计算规则" : "编辑计算规则" }}</h2>
+            <h2 class="text-lg font-semibold">
+              {{ mode.kind === "create" ? "新建计算方法" : "编辑计算方法" }}
+            </h2>
             <p class="text-sm text-slate-500">复合主键：检测项目 + 检测参数</p>
           </div>
           <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-            <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
+            <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">
+              {{ saveError }}
+            </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="text-sm font-medium">检测项目</label>
-                <select v-model="form.inspectionObjectCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
+                <select
+                  v-model="form.inspectionObjectCode"
+                  class="border rounded h-9 px-2 text-sm bg-white w-full"
+                >
                   <option value="">未选择</option>
-                  <option v-for="o in objects" :key="o.code" :value="o.code">{{ o.code }} {{ o.name }}</option>
+                  <option v-for="o in objects" :key="o.code" :value="o.code">
+                    {{ o.code }} {{ o.name }}
+                  </option>
                 </select>
               </div>
               <div>
                 <label class="text-sm font-medium">检测参数</label>
-                <select v-model="form.inspectionParameterCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
+                <select
+                  v-model="form.inspectionParameterCode"
+                  class="border rounded h-9 px-2 text-sm bg-white w-full"
+                >
                   <option value="">未选择</option>
-                  <option v-for="p in parameters" :key="p.code" :value="p.code">{{ p.code }} {{ p.name }}</option>
+                  <option v-for="p in parameters" :key="p.code" :value="p.code">
+                    {{ p.code }} {{ p.name }}
+                  </option>
                 </select>
               </div>
             </div>
             <div>
               <label class="text-sm font-medium">判定标准（可选）</label>
-              <select v-model="form.testingStandardCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
+              <select
+                v-model="form.testingStandardCode"
+                class="border rounded h-9 px-2 text-sm bg-white w-full"
+              >
                 <option value="">不指定</option>
-                <option v-for="s in standards" :key="s.code" :value="s.code">{{ s.code }} {{ s.name }}</option>
+                <option v-for="s in standards" :key="s.code" :value="s.code">
+                  {{ s.code }} {{ s.name }}
+                </option>
               </select>
             </div>
             <div class="grid grid-cols-3 gap-3">
               <div>
                 <label class="text-sm font-medium">算法类型</label>
-                <select v-model="form.algorithmType" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option v-for="a in ALGORITHMS" :key="a.value" :value="a.value">{{ a.label }}</option>
+                <select
+                  v-model="form.algorithmType"
+                  class="border rounded h-9 px-2 text-sm bg-white w-full"
+                >
+                  <option v-for="a in ALGORITHMS" :key="a.value" :value="a.value">
+                    {{ a.label }}
+                  </option>
                 </select>
               </div>
               <div>
                 <label class="text-sm font-medium">试件数量</label>
-                <input v-model="form.specimenCount" type="number" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <input
+                  v-model="form.specimenCount"
+                  type="number"
+                  class="border rounded h-9 px-2 text-sm bg-white w-full"
+                />
               </div>
               <div>
                 <label class="text-sm font-medium">修约规则</label>
-                <input v-model="form.roundingRule" class="border rounded h-9 px-2 text-sm bg-white w-full" placeholder="如 修约到 0.1" />
+                <input
+                  v-model="form.roundingRule"
+                  class="border rounded h-9 px-2 text-sm bg-white w-full"
+                  placeholder="如 修约到 0.1"
+                />
               </div>
             </div>
             <div>
               <label class="text-sm font-medium">备注</label>
-              <input v-model="form.remark" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+              <input
+                v-model="form.remark"
+                class="border rounded h-9 px-2 text-sm bg-white w-full"
+              />
             </div>
           </div>
           <div class="px-6 py-3 flex justify-end gap-2 border-t">
@@ -330,7 +391,7 @@ async function confirmDelete(): Promise<void> {
 
     <ConfirmDialog
       :open="deleteTarget !== null"
-      title="删除计算规则"
+      title="删除计算方法"
       :loading="deleting"
       @confirm="confirmDelete"
       @cancel="deleteTarget = null"
@@ -338,8 +399,9 @@ async function confirmDelete(): Promise<void> {
       <p>
         确定删除
         <span class="font-mono">
-          {{ deleteTarget?.inspectionObjectCode }} / {{ deleteTarget?.inspectionParameterCode }}
-        </span>？
+          {{ deleteTarget?.inspectionObjectCode }} /
+          {{ deleteTarget?.inspectionParameterCode }} </span
+        >？
       </p>
       <p v-if="deleteError" role="alert" class="mt-2 text-red-600">{{ deleteError }}</p>
     </ConfirmDialog>

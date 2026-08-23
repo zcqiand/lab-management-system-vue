@@ -87,7 +87,7 @@ export const router = createRouter({
           component: () => import("@/pages/ReportArchivePage.vue"),
         },
         // Sprint 2 Batch 2B-4：M06 检测能力 6 薄页（specialty/object/parameter/
-        // standard/calculation-rule/technical-requirement）
+        // standard/calculation-method/technical-requirement）
         {
           path: "inspection-specialties",
           name: "inspection-specialties",
@@ -109,9 +109,9 @@ export const router = createRouter({
           component: () => import("@/pages/StandardsPage.vue"),
         },
         {
-          path: "inspection-calculation-rules",
-          name: "inspection-calculation-rules",
-          component: () => import("@/pages/CalculationRulesPage.vue"),
+          path: "inspection-calculation-methods",
+          name: "inspection-calculation-methods",
+          component: () => import("@/pages/CalculationMethodsPage.vue"),
         },
         {
           path: "inspection-technical-requirements",

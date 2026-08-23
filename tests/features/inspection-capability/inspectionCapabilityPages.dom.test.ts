@@ -2,14 +2,14 @@
 //
 // 镜像 react 仓 tests/features/inspection-capability/inspectionCapabilityPages.dom.test.tsx。
 // vue 仓不挂 msw（deps 未引入），用 vi.mock('axios') 拦截；fixture 数据走
-// 内联字面量（与 react 仓 inspection-specialty / inspection-calculation-rule /
+// 内联字面量（与 react 仓 inspection-specialty / inspection-calculation-method /
 // inspection-technical-requirement 同构）。
 import { describe, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 import InspectionCapabilityList from "@/features/inspection-capability/InspectionCapabilityList.vue";
-import CalculationRuleList from "@/features/inspection-capability/CalculationRuleList.vue";
+import CalculationMethodList from "@/features/inspection-capability/CalculationMethodList.vue";
 import TechnicalRequirementList from "@/features/inspection-capability/TechnicalRequirementList.vue";
 
 const SPECIALTIES = [
@@ -75,7 +75,7 @@ function installAdapters(): void {
     if (u.includes("/api/inspection/objects")) return { data: wrap(OBJECTS) } as never;
     if (u.includes("/api/inspection/parameters")) return { data: wrap(PARAMETERS) } as never;
     if (u.includes("/api/inspection/standards")) return { data: wrap(STANDARDS) } as never;
-    if (u.includes("/api/calculation-rules")) return { data: wrap(CALC_RULES) } as never;
+    if (u.includes("/api/calculation-methods")) return { data: wrap(CALC_RULES) } as never;
     if (u.includes("/api/technical-requirements")) return { data: wrap(TECH_REQS) } as never;
     return { data: wrap([]) } as never;
   });
@@ -166,20 +166,20 @@ describe("M06.F04 检测标准维护", () => {
   });
 });
 
-describe("M06.F05 计算规则维护", () => {
+describe("M06.F05 计算方法维护", () => {
   fnTest(["M06.F05.I01"], "F05 渲染标题 + 复合主键列表行", async () => {
-    const wrapper = mountWithProviders(CalculationRuleList);
+    const wrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
-    expect(wrapper.text()).toContain("计算规则维护");
+    expect(wrapper.text()).toContain("计算方法维护");
     expect(wrapper.findAll("tbody tr").length).toBeGreaterThan(0);
     expect(wrapper.text()).toContain("OBJ-1");
     expect(wrapper.text()).toContain("P-1");
   });
 
   fnTest(["M06.F05.I01"], "F05 新建 + 删除按钮", async () => {
-    const wrapper = mountWithProviders(CalculationRuleList);
+    const wrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
-    expect(wrapper.text()).toContain("新建计算规则");
+    expect(wrapper.text()).toContain("新建计算方法");
     const delBtns = wrapper.findAll('button[aria-label^="删除 "]');
     expect(delBtns.length).toBeGreaterThan(0);
   });

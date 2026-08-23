@@ -79,7 +79,7 @@ const FALLBACK_NAV: NavItem[] = [
   { label: "检测参数", path: "/inspection-parameters", icon: "Activity" },
   { label: "检测项目", path: "/inspection-objects", icon: "PackageSearch" },
   { label: "技术要求", path: "/inspection-technical-requirements", icon: "Shield" },
-  { label: "计算规则", path: "/inspection-calculation-rules", icon: "Settings" },
+  { label: "计算方法", path: "/inspection-calculation-methods", icon: "Settings" },
   { label: "报告汇总", path: "/summary", icon: "ListChecks" },
 ];
 
