@@ -103,6 +103,9 @@ onMounted(() => {
           grant_type: "authorization_code" satisfies OAuthGrantType,
           code,
           redirect_uri: computeRedirectUri(from.value),
+          // RFC 6749 §4.1.4：state 必须回传（shared 契约 SsoCallbackRequest 必填，
+          // 后端验 body.state == HttpOnly cookie 里的签名 state）
+          state: stateParam,
         });
         const data = resp.data;
         if (data.token) {
