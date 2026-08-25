@@ -992,7 +992,7 @@
         "[M06.F05.I01] F05 渲染标题 + 复合主键列表行"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\CalculationRuleList.vue"
+        "src\\features\\inspection-capability\\CalculationMethodList.vue"
       ]
     },
     "M06.F06.I01": {
