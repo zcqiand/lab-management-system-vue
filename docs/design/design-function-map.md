@@ -8,6 +8,7 @@
 
 | 功能子项 ID | 页面/组件 | 接口 | 数据表 | 权限码 | 设计稿 | 状态 |
 |---|---|---|---|---|---|---|
+| M01.F04.I01 | src/composables/use-backend-menus.ts (useBackendMenus) + src/components/app/AppShell.vue | GET /api/auth/menus | – | M01.F04.I01 | – | 已上线 |
 | M01.F04.I02 | src/state/auth.ts (fetchPermissions) | GET /api/auth/permissions | – | M01.F04.I02 | – | 已上线 |
 | M01.F04.I03 | src/state/require-auth.ts (useRequireAuth) | – (客户端守卫，无 API) | – | M01.F04.I03 | – | 已上线 |
 | M01.F05.I02 | src/api/legacy-client.ts + src/api/http-client.ts | – (axios Bearer 拦截器) | – | M01.F05.I02 | – | 已上线 |

@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "approved": true,
-  "base_sha": "6439bc859146b5fa73be023b8f2e33c85767fd7c",
-  "summary": "vue LoginPage OAuth 2.0 改造（M01.F05.I03 变更）。删 ?token= shortcut；改 authSsoAuthorize→OAuth 2.0 字段；改 sso/callback body {grant_type,code,redirect_uri}；加 state 生成与一次性校验（防 CSRF）。同步 design/flow-function-map 描述。状态 规划→开发中。镜像 react 仓 OAuth 2.0 改法。",
+  "base_sha": "56bae3b6a492c139",
+  "summary": "M01.F04.I01 动态菜单下发 状态 规划→已上线：useSaasMenus（前端直连 saas /api/saas/me/menus）切换为 useBackendMenus（orval authGetMenus 拉 lab 后端 /api/auth/menus），ADR-0009 同链迁移。新增 use-backend-menus.ts + backendMenus.dom.test.ts；删除 use-saas-menus.ts。",
   "changes": [
     {
-      "id": "M01.F05.I03",
+      "id": "M01.F04.I01",
       "action": "变更",
-      "name": "SSO OAuth 2.0 授权码流（client_secret 后端持 + state CSRF 防护）",
-      "reason": "原实现：(a) URL 带 ?token= 直接存 localStorage + GET /me 建会话（token 经 URL 泄漏 + 首登缺 refreshToken 必抛错，与 React 仓同根因）；(b) authSsoAuthorize 走 {redirect} 自定义字段（不是 OAuth 2.0 redirect_uri）；(c) authSsoCallback 走 {code, state}（缺 grant_type/redirect_uri/client_secret）。改后：完全按 OAuth 2.0 RFC 6749；authorize 端点收 response_type=code/client_id=lab/redirect_uri/state；callback body {grant_type:authorization_code, code, redirect_uri}；state 走 sessionStorage「lab.sso.state」一次性校验。镜像 react 仓 LoginPage.tsx 的 OAuth 2.0 改法（react + lab-msw 已落地，vue 同步进行中）。"
+      "name": "动态菜单下发（GET /auth/menus）",
+      "reason": "ADR-0009 菜单数据源切换：vue 仓与 react v0.2.13 同链 — useBackendMenus 拉 lab 后端 /api/auth/menus（springboot saas 快照缓存 → demo 兜底），失败回退静态 FALLBACK_NAV。旧 use-saas-menus.ts（vite proxy → saas /api/v1/me/menus）删除。测试 backendMenus.dom.test.ts 挂 M01.F04.I01。"
     }
   ],
   "sync_files": []

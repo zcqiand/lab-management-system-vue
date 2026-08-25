@@ -28,6 +28,7 @@ flowchart TD
 
 | 功能 ID | 为什么合法 |
 |---|---|
+| M01.F04.I01 | 动态菜单下发：useBackendMenus 拉 lab 后端 /api/auth/menus（ADR-0009），AppShell sidebar 数据源 |
 | M01.F04.I02 | 动态权限集；路由守卫前置 (M01.F04.I03) |
 | M01.F04.I03 | 客户端路由守卫（composable；无 token 时跳 /login） |
 | M01.F05.I02 | axios 拦截器：在 baseURL = getBaseUrl() 上自动跑；注入 Bearer token |

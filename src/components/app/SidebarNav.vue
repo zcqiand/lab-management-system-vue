@@ -1,8 +1,8 @@
 <script setup lang="ts">
-// SidebarNav — 侧边导航原语。菜单项数据源由消费方传入（Sprint 2 接 GET /auth/menus，
-// Sprint 2 Batch 2 起 lab-vue 改用 /api/saas/me/menus 由 lab-msw 兜底）。
+// SidebarNav — 侧边导航原语。菜单项数据源由消费方传入（2026-08-25 起
+// AppShell 走 useBackendMenus 拉 lab 后端 /api/auth/menus，ADR-0009）。
 //
-// icon 渲染三段式：slot 优先 → iconMap fallback → 空。saas 拉来的菜单树 icon 是
+// icon 渲染三段式：slot 优先 → iconMap fallback → 空。后端拉来的菜单树 icon 是
 // 字符串（如 "LayoutDashboard"），消费方在 AppShell 传 iconMap 即可；旧的 slot
 // 模式（每个图标单独 <template #xxx>）保留给希望显式控制的场景。
 import { useRoute, useRouter } from "vue-router";

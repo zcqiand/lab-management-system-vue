@@ -6,8 +6,9 @@
 // 登出按钮），logout() 清 token 后 replace /login（守卫只在 DashboardPage，
 // 这里显式跳转保证任意页面登出都回登录页）。
 //
-// 菜单数据源（Sprint 2 Batch 2）：useSaasMenus() 拉 /api/saas/me/menus，本仓
-// 无 /api route，由 lab-msw saasMenusExtraHandlers 兜底；拉取失败回退静态 NAV。
+// 菜单数据源（2026-08-25 起，ADR-0009）：useBackendMenus() 拉 lab 后端
+// /api/auth/menus（orval authGetMenus；springboot 侧 saas 快照缓存 → demo
+// 兜底）；拉取失败回退静态 NAV。
 import { computed, type Component } from "vue";
 import { useRouter } from "vue-router";
 import {
@@ -32,7 +33,7 @@ import {
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
 import BackendBadge from "@/components/app/BackendBadge.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
-import { useSaasMenus, type MenuNode } from "@/composables/use-saas-menus";
+import { useBackendMenus, type MenuNode } from "@/composables/use-backend-menus";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -83,9 +84,9 @@ const FALLBACK_NAV: NavItem[] = [
   { label: "报告汇总", path: "/summary", icon: "ListChecks" },
 ];
 
-// 拉 saas 菜单；树 → 平铺 NavItem[]（保留 group 节点作废：vue 仓 sidebar 是
+// 拉后端菜单；树 → 平铺 NavItem[]（保留 group 节点作废：vue 仓 sidebar 是
 // 平铺布局，不渲染分组头；nextjs/react 的分组树 UI 不镜像）。
-const { data: saasMenus } = useSaasMenus();
+const { data: backendMenus } = useBackendMenus();
 function flattenToNavItems(tree: MenuNode[] | null): NavItem[] {
   if (!tree) return [];
   const out: NavItem[] = [];
@@ -102,7 +103,7 @@ function flattenToNavItems(tree: MenuNode[] | null): NavItem[] {
   return out;
 }
 const navItems = computed<NavItem[]>(() => {
-  const tree = saasMenus();
+  const tree = backendMenus();
   if (tree && tree.length > 0) return flattenToNavItems(tree);
   return FALLBACK_NAV;
 });

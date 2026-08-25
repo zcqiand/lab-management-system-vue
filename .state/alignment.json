@@ -12,13 +12,22 @@
   "function_map": {
     "M01.F04.I01": {
       "name": "动态菜单下发（GET /auth/menus）",
-      "status": "规划",
+      "status": "已上线",
       "type": "查询",
       "requirements": [],
-      "flows": [],
-      "designs": [],
-      "tests": [],
-      "entry": []
+      "flows": [
+        "docs\\design\\flow-function-map.md"
+      ],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
+      "tests": [
+        "[M01.F04.I01] 失败：data=null，AppShell 回退静态 FALLBACK_NAV",
+        "[M01.F04.I01] 成功：/api/auth/menus 契约树 → AppShell 平铺渲染叶子菜单"
+      ],
+      "entry": [
+        "src\\composables\\use-backend-menus.ts"
+      ]
     },
     "M01.F04.I02": {
       "name": "动态权限集（GET /auth/permissions）",
