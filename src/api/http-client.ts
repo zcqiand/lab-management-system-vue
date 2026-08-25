@@ -47,6 +47,11 @@ export function installHttpClient(getToken: () => string | null): void {
     if (token) {
       config.headers.set("Authorization", `Bearer ${token}`);
     }
+    // 跨源后端（aspnetcore/springboot）的 SSO state cookie 依赖 withCredentials：
+    // cookie 是跨源 HttpOnly（lab-aspnetcore 域），XHR 默认不携带；
+    // 后端 CORS 已配 AllowCredentials（labFrontend policy）。
+    // 镜像 lab-react src/api/http-client.ts 同款。
+    config.withCredentials = true;
     return config;
   });
 }
