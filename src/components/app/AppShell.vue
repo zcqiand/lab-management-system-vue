@@ -135,7 +135,7 @@ function onAction(action: string): void {
     <aside class="border-r bg-sidebar flex w-60 flex-col">
       <div class="flex items-center gap-2 border-b px-4 py-4">
         <FlaskConical class="text-primary size-5" />
-        <span class="font-semibold">实验室管理系统</span>
+        <span class="font-semibold">建筑工程实验室管理系统</span>
       </div>
       <SidebarNav :items="navItems" :icon-map="ICON_MAP" />
       <div class="mt-auto border-t p-3">

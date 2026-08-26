@@ -27,7 +27,7 @@
 
 **lab-management-system-vue 是 lab 家族的 *前端仓 2/3***：
 
-- lab 家族 = 「实验室检测业务」（合同 / 接样 / 样品 / 检测项 / 记录 / 报告），由 7 个 sibling 仓同构组成（见 [父仓 §2.2](../../../docs/ARCHITECTURE.md#22-14-个子仓的角色矩阵)）；
+- lab 家族 = 「建筑工程实验室管理系统」（合同 / 接样 / 样品 / 检测项 / 记录 / 报告），由 7 个 sibling 仓同构组成（见 [父仓 §2.2](../../../docs/ARCHITECTURE.md#22-14-个子仓的角色矩阵)）；
 - vue 仓与 `lab-management-system-react` **镜像同构**：相同 M/F/I 编号、相同 UI 设计、相同 OpenAPI 契约；区别只在框架（react vs vue）与状态库（zustand vs Pinia）；
 - vue 仓与 `lab-management-system-nextjs` 的关系：**不兼全栈后端**（nextjs 是 front+back+DB 同仓，vue 纯前端）；
 - 后端由 `lab-management-system-msw`（dev/prod）/ `lab-management-system-springboot`（:8080）/ `lab-management-system-aspnetcore`（:5000）/ 未来 `lab-management-system-nextjs-self` 提供，**vue 仓不实现 `/api` route**。

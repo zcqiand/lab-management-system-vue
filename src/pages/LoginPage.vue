@@ -18,7 +18,11 @@ import { FlaskConical } from "lucide-vue-next";
 import { useAuthStore, setSession } from "@/state/auth";
 import { getApiBaseUrl, getApiMode } from "@/api/backend-config";
 import { authSsoAuthorize, authSsoCallback } from "@/api/endpoints/endpoints";
-import type { LoginResponse, OAuthGrantType, OAuthResponseType } from "@/api/endpoints/endpoints.schemas";
+import type {
+  LoginResponse,
+  OAuthGrantType,
+  OAuthResponseType,
+} from "@/api/endpoints/endpoints.schemas";
 
 // OAuth 2.0 client_id：契约必填参数，但真 client_id 由 lab 后端 env 权威持有
 // （springboot LAB_SAAS_CLIENT_ID=UUID V014 seed；nextjs SAAS_OAUTH_CLIENT_ID），
@@ -159,7 +163,7 @@ onMounted(() => {
     <div class="bg-background w-full max-w-sm rounded-lg border p-8 shadow-sm">
       <div class="mb-6 flex flex-col items-center gap-2">
         <FlaskConical class="text-primary size-8" />
-        <h1 class="text-xl font-semibold">实验室管理系统</h1>
+        <h1 class="text-xl font-semibold">建筑工程实验室管理系统</h1>
         <p class="text-muted-foreground text-sm">SSO 登录（OAuth 2.0 授权码模式）</p>
       </div>
       <p class="text-muted-foreground mb-4 text-sm" data-testid="login-status">{{ status }}</p>

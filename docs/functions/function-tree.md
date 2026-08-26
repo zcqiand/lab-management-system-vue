@@ -1,6 +1,6 @@
 # lab-management-system-vue 功能树
 
-> 实验室管理系统 — Vue 前端。consumes `lab-management-system-shared` TypeSpec SSOT。
+> 建筑工程实验室管理系统 — Vue 前端。consumes `lab-management-system-shared` TypeSpec SSOT。
 > F 级别镜像 shared BASE 26 功能（重标前端类型），向下加 I 级子项。全部 规划（待实现）。
 > **2026-08-17 sprint 0 起：前端 only 镜像仓。**
 > 镜像 `lab-management-system-react` 已交付的 26 页 UI（先 react 后 vue，react 是 source of truth），**不实现 `/api` route**。
