@@ -1,52 +1,32 @@
 <script setup lang="ts">
-// DropdownMenu 原语 — 轻量手写版（react 仓用 radix，Vue 侧不引 reka-ui：
-// 只覆盖 BackendSwitcher 需要的 trigger/label/item/separator + 点外关闭）。
-import { onBeforeUnmount, onMounted, provide, ref } from "vue";
+// DropdownMenu 原语 — reka-ui（shadcn-vue primitive 底座，2026-08-27 起）。
+// 早期是手写点外关闭版；迁移到 reka-ui 的 DropdownMenuRoot/Trigger/Portal/
+// Content，键盘导航 / 焦点陷阱 / ESC / 点外关闭由库提供。
+// 公共接口不变：trigger 插槽 + 默认插槽（菜单体）。
+import { DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuPortal, DropdownMenuContent } from "reka-ui";
 import { cn } from "@/lib/utils";
 
-const open = ref(false);
-const rootEl = ref<HTMLElement | null>(null);
-
-provide("dropdown-close", () => {
-  open.value = false;
-});
-
-function onDocClick(e: MouseEvent) {
-  if (open.value && rootEl.value && !rootEl.value.contains(e.target as Node)) {
-    open.value = false;
-  }
-}
-function onEsc(e: KeyboardEvent) {
-  if (e.key === "Escape") open.value = false;
-}
-
-onMounted(() => {
-  document.addEventListener("mousedown", onDocClick);
-  document.addEventListener("keydown", onEsc);
-});
-onBeforeUnmount(() => {
-  document.removeEventListener("mousedown", onDocClick);
-  document.removeEventListener("keydown", onEsc);
-});
-
-defineExpose({ open });
+defineProps<{ contentClass?: string }>();
+// open 受控可选（不传 = 非受控，reka-ui 自管开关态）
+const open = defineModel<boolean>("open");
 </script>
 
 <template>
-  <div ref="rootEl" class="relative inline-block text-left">
-    <div @click="open = !open">
+  <DropdownMenuRoot v-model:open="open">
+    <DropdownMenuTrigger as-child>
       <slot name="trigger" />
-    </div>
-    <div
-      v-if="open"
-      :class="
-        cn(
-          'bg-popover text-popover-foreground absolute right-0 z-50 mt-2 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md',
-        )
-      "
-      :style="{ minWidth: '20rem' }"
-    >
-      <slot :close="() => (open = false)" />
-    </div>
-  </div>
+    </DropdownMenuTrigger>
+    <DropdownMenuPortal>
+      <DropdownMenuContent
+        :class="
+          cn(
+            'bg-popover text-popover-foreground absolute right-0 z-50 mt-2 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md',
+            contentClass,
+          )
+        "
+      >
+        <slot />
+      </DropdownMenuContent>
+    </DropdownMenuPortal>
+  </DropdownMenuRoot>
 </template>
