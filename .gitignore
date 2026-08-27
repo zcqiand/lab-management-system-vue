@@ -14,8 +14,7 @@ src/api/endpoints/
 .env.local
 .env.*.local
 
-# Claude 临时文件
+# Claude 临时文件（CLAUDE.md 2026-08-27 起落库 — 模板融合批补遗；.mcp.json 仍属个人工具配置）
 .claude/
 .superpowers/
-CLAUDE.md
 .mcp.json
