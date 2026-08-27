@@ -2,11 +2,13 @@
 // useBackendMenus —— 镜像 lab-react sidebar-nav.tsx useBackendMenus（ADR-0009）。
 //
 // 拉后端 `GET /api/auth/menus`（orval authGetMenus，axios 拦截器自动注
-// baseURL + Bearer lab JWT）。后端数据链（lab-springboot v0.1.7 起）：
-// SSO/refresh 时缓存的 saas 菜单快照 → miss 回退 demo 菜单，端点永不 5xx。
+// baseURL + Bearer lab JWT）。后端数据链：SSO/refresh 时缓存的 saas 菜单
+// 快照；miss（503 MENUS_UNAVAILABLE，2026-08-27 demo 兜底删除）→ 抛错
+// 上抛 ErrorBoundary 兜，**不再静默回退静态 FALLBACK_NAV**（前端兜底会让
+// 真问题隐形，与 demo 兜底删除的家族语义一致）。
 //
 // 契约 MenuNode{id,label,path?,icon?,children?} 在此适配成本地渲染 MenuNode
-// （appId/code/type/sortOrder）。失败 data=null，消费方回退静态 FALLBACK_NAV。
+// （appId/code/type/sortOrder）。失败抛 Error，AppShell onErrorCaptured 兜。
 // 取代 use-saas-menus.ts（前端直连 saas /api/saas/me/menus 旧链路）。
 //
 // path 归一化（2026-08-27）：两条数据链的 path 形态不一 ——
@@ -16,7 +18,7 @@
 //             "/receipts?stage=task_assignment"）与本仓 router 不匹配
 // normalizeMenuPath 统一收口：别名映射 → 去 query → 补斜杠。
 
-import { onMounted, onUnmounted, ref } from "vue";
+import { onErrorCaptured, onMounted, onUnmounted, ref } from "vue";
 import { authGetMenus } from "@/api/endpoints/endpoints";
 import type { MenuNode as ContractMenuNode } from "@/api/endpoints/endpoints.schemas";
 
@@ -38,11 +40,11 @@ const APP_CODE = "lab-management";
 export function useBackendMenus(): {
   data: () => MenuNode[] | null;
   loading: () => boolean;
-  error: () => string | null;
+  error: () => Error | null;
 } {
   const data = ref<MenuNode[] | null>(null);
   const loading = ref(true);
-  const error = ref<string | null>(null);
+  const error = ref<Error | null>(null);
   let cancelled = false;
 
   onMounted(() => {
@@ -53,9 +55,9 @@ export function useBackendMenus(): {
         data.value = resp.data.map(adaptContractMenu);
         loading.value = false;
       })
-      .catch((err: unknown) => {
+      .catch((cause: unknown) => {
         if (cancelled) return;
-        error.value = err instanceof Error ? err.message : String(err);
+        error.value = cause instanceof Error ? cause : new Error(String(cause));
         loading.value = false;
       });
   });
@@ -65,6 +67,26 @@ export function useBackendMenus(): {
   });
 
   return { data: () => data.value, loading: () => loading.value, error: () => error.value };
+}
+
+/**
+ * 注册全局错误捕获：useBackendMenus 拉取失败时把错误抛到 AppShell 的
+ * errorHandler 上抛链路。Vue 3 没有 React ErrorBoundary 内置组件，
+ * 用 onErrorCaptured 在 AppShell setup 内捕获，回填到 error ref，
+ * template 渲染 MenuLoadError 错误态。
+ */
+export function useMenuErrorHandler(): {
+  capture: (err: unknown) => void;
+} {
+  const lastError = ref<Error | null>(null);
+  onErrorCaptured((err) => {
+    lastError.value = err instanceof Error ? err : new Error(String(err));
+    // 返回 false 阻止继续向上传播（避免 console.error 噪音 + 组件树全崩）
+    return false;
+  });
+  return { capture: (err: unknown) => {
+    lastError.value = err instanceof Error ? err : new Error(String(err));
+  }};
 }
 
 /** 契约 MenuNode（shared tsp：id/label/path?/icon?/children?）→ 本地渲染 MenuNode。 */

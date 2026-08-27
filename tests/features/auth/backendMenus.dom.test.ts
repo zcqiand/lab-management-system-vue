@@ -2,9 +2,9 @@
 //
 // 2026-08-25 起（ADR-0009）菜单数据源从 saas /api/saas/me/menus 切到 lab
 // 后端 /api/auth/menus（orval authGetMenus；springboot 侧 saas 快照缓存 →
-// demo 兜底）。镜像 react backend-menus.dom.test.tsx 三条链路：
+// miss 503，2026-08-27 起 demo 兜底删除）。镜像 react backend-menus.dom.test.tsx 三条链路：
 //   1. 拉取成功 → 契约 MenuNode 适配为本地渲染树 → AppShell 平铺渲染
-//   2. 请求失败 → data=null，AppShell 回退静态 FALLBACK_NAV
+//   2. 请求失败 → 抛错上抛（不静默回退静态 FALLBACK_NAV；demo 兜底删除语义对齐）
 //   3. hook 确实走 /api/auth/menus 端点（防回退到旧 saas 路径）
 // axios 在 orval 生成层被 vi.mock 拦截（appShellLogout.dom.test 同款队列模式）。
 
@@ -111,13 +111,16 @@ describe("M01.F04.I01 useBackendMenus", () => {
     expect(calls.some((c) => c.url.includes("/api/saas/"))).toBe(false);
   });
 
-  fnTest(["M01.F04.I01"], "失败：data=null，AppShell 回退静态 FALLBACK_NAV", async () => {
+  fnTest(["M01.F04.I01"], "失败：抛错上抛，AppShell 渲染错误态（demo 兜底删除）", async () => {
     queue.push({ status: 500, data: { message: "boom" } });
     const wrapper = await mountShell();
 
-    // FALLBACK_NAV 首项是「型号维护」（静态树；后端树里没有这项）
-    expect(wrapper.text()).toContain("型号维护");
-    // 后端树的叶子不应出现（证明不是适配后的数据）
+    // 错误态（不再是 FALLBACK_NAV 的「型号维护」等静态叶子）
+    expect(wrapper.text()).toContain("菜单加载失败");
+    expect(wrapper.text()).toMatch(/HTTP 500/);
+    // 静态 FALLBACK_NAV 不应漏出
+    expect(wrapper.text()).not.toContain("型号维护");
+    // 后端树的叶子不应出现
     expect(wrapper.text()).not.toContain("独有菜单X");
   });
 

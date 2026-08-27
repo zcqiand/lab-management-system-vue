@@ -24,7 +24,7 @@
       "tests": [
         "[M01.F04.I01] demo 兜底旧 path 别名映射到真实路由",
         "[M01.F04.I01] saas 快照 path（无斜杠）归一化为绝对路由",
-        "[M01.F04.I01] 失败：data=null，AppShell 回退静态 FALLBACK_NAV",
+        "[M01.F04.I01] 失败：抛错上抛，AppShell 渲染错误态（demo 兜底删除）",
         "[M01.F04.I01] 成功：/api/auth/menus 契约树 → AppShell 平铺渲染叶子菜单"
       ],
       "entry": [

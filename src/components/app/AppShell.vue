@@ -7,9 +7,10 @@
 // 这里显式跳转保证任意页面登出都回登录页）。
 //
 // 菜单数据源（2026-08-25 起，ADR-0009）：useBackendMenus() 拉 lab 后端
-// /api/auth/menus（orval authGetMenus；springboot 侧 saas 快照缓存 → demo
-// 兜底）；拉取失败回退静态 NAV。
-import { computed, type Component } from "vue";
+// /api/auth/menus（orval authGetMenus；2026-08-27 起 miss 503 上抛错误，
+// AppShell 渲染错误态；不再静默回退静态 FALLBACK_NAV——demo 兜底删除后，
+// 前端兜底同样让真问题隐形，与家族语义一致）。
+import { computed, onErrorCaptured, ref, watch, type Component } from "vue";
 import { useRouter } from "vue-router";
 import {
   Activity,
@@ -58,37 +59,10 @@ const ICON_MAP: Record<string, Component> = {
   Wrench,
 };
 
-// 静态 fallback（saas 拉失败或加载中时使用，与 saas 菜单 1:1 对齐）。
-const FALLBACK_NAV: NavItem[] = [
-  { label: "仪表盘", path: "/", icon: "LayoutDashboard" },
-  { label: "型号维护", path: "/models", icon: "Database" },
-  { label: "规格维护", path: "/specifications", icon: "Database" },
-  { label: "等级维护", path: "/grades", icon: "Database" },
-  { label: "牌号维护", path: "/brands", icon: "Database" },
-  { label: "合同管理", path: "/contracts", icon: "ClipboardList" },
-  { label: "报告名称维护", path: "/report-names", icon: "ScrollText" },
-  { label: "参数界面维护", path: "/param-interfaces", icon: "Wrench" },
-  { label: "接样管理", path: "/receipts", icon: "FlaskConical" },
-  { label: "任务分配", path: "/task-assignment", icon: "ClipboardList" },
-  { label: "数据录入", path: "/data-entry", icon: "TestTube2" },
-  { label: "报告审核", path: "/report-review", icon: "ClipboardCheck" },
-  { label: "报告批准", path: "/report-approve", icon: "ClipboardCheck" },
-  { label: "报告发放", path: "/report-issue", icon: "FileText" },
-  { label: "报告归档", path: "/report-archive", icon: "Archive" },
-  { label: "检测专项", path: "/inspection-specialties", icon: "Beaker" },
-  { label: "检测标准", path: "/inspection-standards", icon: "ScrollText" },
-  { label: "检测参数", path: "/inspection-parameters", icon: "Activity" },
-  { label: "检测项目", path: "/inspection-objects", icon: "PackageSearch" },
-  { label: "技术要求", path: "/inspection-technical-requirements", icon: "Shield" },
-  { label: "计算方法", path: "/inspection-calculation-methods", icon: "Settings" },
-  { label: "报告汇总", path: "/summary", icon: "ListChecks" },
-];
-
 // 拉后端菜单；树 → 平铺 NavItem[]（保留 group 节点作废：vue 仓 sidebar 是
 // 平铺布局，不渲染分组头；nextjs/react 的分组树 UI 不镜像）。
-const { data: backendMenus } = useBackendMenus();
-function flattenToNavItems(tree: MenuNode[] | null): NavItem[] {
-  if (!tree) return [];
+const { data: backendMenus, error: menuError } = useBackendMenus();
+function flattenToNavItems(tree: MenuNode[]): NavItem[] {
   const out: NavItem[] = [];
   for (const g of tree) {
     for (const leaf of g.children) {
@@ -104,8 +78,19 @@ function flattenToNavItems(tree: MenuNode[] | null): NavItem[] {
 }
 const navItems = computed<NavItem[]>(() => {
   const tree = backendMenus();
-  if (tree && tree.length > 0) return flattenToNavItems(tree);
-  return FALLBACK_NAV;
+  return tree ? flattenToNavItems(tree) : [];
+});
+
+// 菜单加载错误（demo 兜底删除后不再静默回退）。
+const menuLoadError = ref<Error | null>(null);
+// 捕获 useBackendMenus 拉取失败的抛错（hook 内通过 error ref 暴露）。
+watch(menuError, (e) => {
+  if (e) menuLoadError.value = e;
+});
+// 兜底：子组件 / 插件渲染抛错也接住，渲染错误态而非静默崩。
+onErrorCaptured((err) => {
+  menuLoadError.value = err instanceof Error ? err : new Error(String(err));
+  return false;
 });
 
 const displayName = computed(() => {
@@ -132,7 +117,36 @@ function onAction(action: string): void {
 
 <template>
   <div class="flex h-screen">
-    <aside class="border-r bg-sidebar flex w-60 flex-col">
+    <aside
+      v-if="menuLoadError"
+      class="border-r bg-sidebar flex w-60 flex-col"
+      data-testid="appshell-menu-error-aside"
+    >
+      <div class="flex items-center gap-2 border-b px-4 py-4">
+        <FlaskConical class="text-primary size-5" />
+        <span class="font-semibold">建筑工程实验室管理系统</span>
+      </div>
+      <div class="flex flex-1 flex-col items-center justify-center p-6 text-center">
+        <h2 class="text-rose-700 mb-2 font-semibold">菜单加载失败</h2>
+        <p
+          class="text-muted-foreground mb-4 break-all text-xs"
+          data-testid="appshell-menu-error-msg"
+        >
+          {{ menuLoadError.message }}
+        </p>
+        <p class="text-muted-foreground text-xs">
+          后端 /api/auth/menus miss（503 MENUS_UNAVAILABLE）；demo 兜底已删除，请重登或联系管理员。
+        </p>
+      </div>
+      <div class="mt-auto border-t p-3">
+        <SidebarNav
+          :items="[{ label: '退出登录', action: 'logout', icon: 'logout', dataFn: 'M01.F05.I04' }]"
+          :icon-map="ICON_MAP"
+          @action="onAction"
+        />
+      </div>
+    </aside>
+    <aside v-else class="border-r bg-sidebar flex w-60 flex-col">
       <div class="flex items-center gap-2 border-b px-4 py-4">
         <FlaskConical class="text-primary size-5" />
         <span class="font-semibold">建筑工程实验室管理系统</span>
