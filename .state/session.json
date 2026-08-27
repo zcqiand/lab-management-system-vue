@@ -1,22 +1,29 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "Post-Phase-3 frontend 集成收尾：删 ajv dead devDep + CLAUDE.md §3 注释澄清",
-  "last_session_at": "2026-08-22",
-  "last_session_summary": "ajv 从 devDependencies 删除（src/ 零 import，orval 透传已够）；CLAUDE.md §3 改写 lab-msw 是外部 sibling HTTP server（:5173）非本仓 dep；commit 472c2f6 + tag v0.3.10-20260822 pushed",
+  "current_task": "菜单 path 归一化 + reka-ui 接入收尾（tag v0.3.12-20260827 已打，未 push）",
+  "last_session_at": "2026-08-27",
+  "last_session_summary": "修左侧菜单两条数据链 path 与 router 不匹配（normalizeMenuPath 收口）+ reka-ui ^2.10.4 接入迁移 DropdownMenu 族；全家族 14 仓 CLAUDE.md 落库补遗（cf7da15 遗留）；commits 2517c59 + 934e16d + tag v0.3.12-20260827",
   "done": [
-    "ajv 从 devDependencies 删除（gate L0/L1/L2/L3/L4/L5 全绿 exit 0；100 功能条目 0 软告警）",
-    "CLAUDE.md §3 改写为'lab-msw 是外部 sibling HTTP server（:5173），本仓 package.json 不挂 dep'",
-    "commit 472c2f6 + tag v0.3.10-20260822 + push origin/master"
+    "use-backend-menus.ts 加 normalizeMenuPath：saas 快照无斜杠 path（'models' → router-link 相对解析 bug）与 demo 兜底旧 path（/dashboard、/catalog/*、/receipts?stage=*）统一归一化（gate 全绿验证）",
+    "backendMenus.dom.test.ts 补 2 用例 TDD 红→绿；mountShell 支持深层路由初始路径（/receipts/123）暴露相对解析 bug",
+    "reka-ui ^2.10.4 入 deps + version-lock.json；DropdownMenu 族 4 组件从手写点外关闭版迁移 reka-ui（L2/L3/L4 全绿）",
+    "CLAUDE.md 落库（.gitignore 删 CLAUDE.md 行，.mcp.json 仍 ignore）— cf7da15 模板融合批补遗，家族 14 仓同款",
+    "tag v0.3.12-20260827"
   ],
   "next": [
-    "无（本批原子收尾）"
+    "push：git push origin master --tags（tag v0.3.12-20260827 未推）",
+    "若要从源头修 demo 兜底菜单 path（而非前端适配）：lab-msw handlers-extra.ts / lab-springboot AuthService.FALLBACK_MENUS / lab-nextjs api/auth/menus/route.ts 三处同款旧 path，跨 3 仓变更建议单独批次"
   ],
-  "open_questions": [],
+  "open_questions": [
+    "demo 兜底菜单旧 path 是否值得从后端源头修（3 仓 FALLBACK_MENUS），还是永久保持前端 normalizeMenuPath 适配层"
+  ],
   "dont": [
-    "不要把 ajv 加回 devDeps —— orval 通过 transitive 已拿到，独立声明只是污染",
-    "不要在 CLAUDE.md §3 把 lab-msw 描述为'本仓 devDep' —— 它走 vite fetch :5173，不打包",
-    "不要在 vue 仓加 vue-query 依赖 —— 当前维持手动 fetch + axios，与 react 仓镜像走同 src/api/legacy-client（旧 schema 1 既有约束保留）"
+    "不要把 .mcp.json 提交进库 —— 个人工具配置（deepwiki MCP），.gitignore 行保留",
+    "不要照抄 saas-vue 组件源码 —— 铁律禁止；reka-ui 迁移时基于库 API 用本仓接口重写",
+    "不要在 Vue SFC 里用裸 class 作 prop 名表达式（cn(..., class) 是语法错）—— 用 props.class",
+    "reka-ui 组件导入名与文件名同名时模板自引用会解析失败（DropdownMenuItem inside DropdownMenuItem.vue）—— 导入改别名 RekaItem",
+    "不要删 .npmrc 的 install-links=true —— msw file: 依赖 Windows 下 symlink 会挂"
   ],
   "active_branch": "master"
 }
