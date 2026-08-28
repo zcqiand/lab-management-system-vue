@@ -28,6 +28,12 @@ COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps --no-audit --no-fund
 
 COPY . .
+# VITE_* build-time 烘焙(2026-08-28 起 .env.production gitignored,Docker build
+# context 里没有它):prod 值在此显式声明,语义与原 .env.production 完全一致。
+# 跨仓约定:vue→aspnetcore :5000(react→springboot)。公开 URL 非 secret。
+ENV VITE_API_BASE_URL=https://lab-aspnetcore.xiangru.uk
+ENV VITE_SAAS_BASE_URL=https://saas-nextjs.xiangru.uk
+ENV VITE_API_MODE=aspnetcore
 # prebuild hook (gen:shared) 自动跑;需要 ../lab-management-system-shared 存在
 # CI 通过 git clone ../lab-management-system-shared 提供;本地 docker build 用户自负责
 RUN npm run build
