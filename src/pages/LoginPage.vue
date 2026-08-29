@@ -26,8 +26,12 @@ import type {
 
 // OAuth 2.0 client_id：契约必填参数，但真 client_id 由 lab 后端 env 权威持有
 // （springboot LAB_SAAS_CLIENT_ID=UUID V014 seed；nextjs SAAS_OAUTH_CLIENT_ID），
-// 前端传的值会被后端忽略。此处只为满足 OpenAPI required 字段，勿当配置源。
-const OAUTH_CLIENT_ID = "lab";
+// 前端传的值会被后端忽略，但 saas-aspnetcore authorize 端点会查 apps.client_id，
+// V014/V015 收敛为固定 UUID '11111111-1111-1111-1111-111111111111' ——
+// 前端必须发同一 UUID，否则 saas 返 401。
+// （2026-08-29 修 prod 401：lab-vue 之前硬编码 "lab" → 改 env 读；与 lab-nextjs 同款。）
+const OAUTH_CLIENT_ID =
+  import.meta.env.VITE_SAAS_CLIENT_ID ?? "11111111-1111-1111-1111-111111111111";
 const SSO_STATE_STORAGE_KEY = "lab.sso.state";
 
 // 生成 OAuth 2.0 state 字符串（防 CSRF，RFC 6749 §10.12）。
