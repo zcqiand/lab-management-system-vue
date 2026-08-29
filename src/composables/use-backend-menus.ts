@@ -92,12 +92,19 @@ export function useMenuErrorHandler(): {
 /** 契约 MenuNode（shared tsp：id/label/path?/icon?/children?）→ 本地渲染 MenuNode。 */
 function adaptContractMenu(node: ContractMenuNode, index: number): MenuNode {
   const children = node.children ?? [];
+  // 2026-08-29 修 prod 'Cannot read properties of null (reading indexOf)':
+  // 后端 MenuNode.path JSON 反序列化为 null/空串时 (saas 快照无 path 的菜单,
+  // 如分组节点),normalizeMenuPath 直接调 path.indexOf('?') 抛错。
+  // null/undefined/"" 都跳过归一化 → undefined → router-link 渲染时跳过。
+  const rawPath = node.path !== undefined && node.path !== null && node.path !== ""
+    ? normalizeMenuPath(node.path)
+    : undefined;
   return {
     id: node.id,
     appId: APP_CODE,
     code: node.id,
     name: node.label,
-    path: node.path !== undefined ? normalizeMenuPath(node.path) : undefined,
+    path: rawPath,
     icon: node.icon,
     // 契约无 type 字段：有子节点即 group，否则 page
     type: children.length > 0 ? "group" : "page",
@@ -131,6 +138,9 @@ const STAGE_ALIASES: Record<string, string> = {
 /** path 归一化：别名映射（含 ?stage= query 形态）→ 补前导斜杠。
  *  输入已是本仓真实路由（saas 快照 "models"）时只补斜杠，直通。 */
 export function normalizeMenuPath(path: string): string {
+  // 2026-08-29 修 prod 'Cannot read properties of null (reading indexOf)':
+  // 兜底 — 调用方虽然加了 null check,但 TS string 注解 + JSON 反序列化可能给 null。
+  if (path === null || path === undefined || path === "") return "";
   // ?stage=xxx 形态：demo 兜底树的单页多态 → 独立路由别名
   const queryIdx = path.indexOf("?");
   if (queryIdx >= 0) {
