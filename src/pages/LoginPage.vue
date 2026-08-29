@@ -12,7 +12,7 @@
 //      （response_type=code, client_id, redirect_uri, state）→ window.location 跳 saas
 // 旧的 ?token= shortcut 已删除：不符合 OAuth 2.0 + 首登缺 refreshToken 必抛错。
 
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { FlaskConical } from "lucide-vue-next";
 import { useAuthStore, setSession } from "@/state/auth";
@@ -71,8 +71,17 @@ const apiMode = getApiMode();
 const baseUrl = getApiBaseUrl();
 const ssoEnabled = true;
 
-onMounted(() => {
-  void (async () => {
+// 2026-08-29 修 prod 卡 "检查登录态...":
+// main.ts fire-and-forget hydrateAuth(),onMounted 跑时 auth.authState 可能还是
+// idle → 阶段 2 异步 (authSsoAuthorize) 200 → 跳 saas。但若 hydrateAuth 在
+// onMounted 之后完成,state 变 ANON,LoginPage 不再重新触发 → 用户卡在登录页。
+// 修: 把 SSO 跳转逻譬掐出成函数,onMounted 跑一次 + watch auth.authState
+// 后续 state 变 idle→ANON 时再跑一次 (确保用户最终都会走完 OAuth)。
+let ssoFlowStarted = false;
+async function startSsoFlow(): Promise<void> {
+  if (ssoFlowStarted) return;
+  ssoFlowStarted = true;
+  try {
     const st = auth.authState;
     // 已登录访问 /login → 直接回业务页
     if (st.kind === "authenticated") {
@@ -157,9 +166,27 @@ onMounted(() => {
     } catch (err) {
       status.value = `SSO 跳转失败（${(err as Error).message ?? "unknown"}）`;
       sessionStorage.removeItem(SSO_STATE_STORAGE_KEY);
+      // 失败后允许重新触发 (清掉 guard)
+      ssoFlowStarted = false;
     }
-  })();
+  } catch {
+    // 兜底: 任何未捕获的异常 → 重置 guard 允许下次重试
+    ssoFlowStarted = false;
+    throw new Error("sso flow uncaught");
+  }
+}
+
+onMounted(() => {
+  void startSsoFlow();
 });
+
+// hydrateAuth 完成后状态 idle → ANON 重新触发 (2026-08-29 修 prod 卡 "检查登录态...")
+watch(
+  () => auth.authState.kind,
+  (kind) => {
+    if (kind === "anonymous") void startSsoFlow();
+  },
+);
 </script>
 
 <template>
