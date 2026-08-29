@@ -80,19 +80,22 @@ const ssoEnabled = true;
 let ssoFlowStarted = false;
 async function startSsoFlow(): Promise<void> {
   if (ssoFlowStarted) return;
+  // 2026-08-29 watch bug fix: ssoFlowStarted = true 推迟到真正进入 anonymous 状态分支前。
+  // 之前在 try 块开头立即设 true,state=idle 时 early return,guard 阻止后续 watch 重试
+  // → 用户卡 '检查登录态...'。修: 把 ssoFlowStarted 设值挪到 anonymous 分支前。
+  const st = auth.authState;
+  // 已登录访问 /login → 直接回业务页
+  if (st.kind === "authenticated") {
+    void router.replace(sanitizeRedirect(from.value));
+    return;
+  }
+  if (!ssoEnabled) {
+    status.value = `当前 backend（${apiMode}）未启用 SSO，请检查 VITE_API_BASE_URL`;
+    return;
+  }
+  if (st.kind !== "anonymous" && st.kind !== "idle") return;
   ssoFlowStarted = true;
   try {
-    const st = auth.authState;
-    // 已登录访问 /login → 直接回业务页
-    if (st.kind === "authenticated") {
-      void router.replace(sanitizeRedirect(from.value));
-      return;
-    }
-    if (!ssoEnabled) {
-      status.value = `当前 backend（${apiMode}）未启用 SSO，请检查 VITE_API_BASE_URL`;
-      return;
-    }
-    if (st.kind !== "anonymous" && st.kind !== "idle") return;
 
     // 阶段 1：OAuth 2.0 授权码模式（RFC 6749 §4.1）
     // saas 回跳带 ?code=&state= → 验 state（防 CSRF）→ POST sso/callback 换 lab JWT
