@@ -7,7 +7,7 @@
 > 4. 哪些决策（ADR）和 lint 禁令决定了"为什么不像 react/nextjs 那样写"。
 
 > **范围**：本文档只描述 *架构*（结构 / 边界 / 数据流 / 决策）。
-> 编码细则见 [docs/conventions/](../conventions/)，流程/设计见 [docs/design/](../design/)，
+> 编码细则见 [docs/conventions/](conventions/)，流程/设计见 [docs/design/](design/)，
 > 决策索引见 [§6](#6-决策索引) 与 [父仓 ADR 目录](../../../docs/adr/)。
 
 ---
@@ -17,8 +17,8 @@
 | 你是… | 直接看 |
 |---|---|
 | 新人，要 20 分钟搞懂本仓 | §1 → §2.1 → §4 流程图 |
-| 想加一个功能页 / 加一个 I 子项 | §3.4 pages/ → function-tree M 列 → [父仓 §4.3](../../ARCHITECTURE.md#43-前端仓reactvuenextjs--6-仓) |
-| 想调试 dev 请求跨不过去 | §4 → §5（CORS + 端口表）→ [父仓 §6.2 CORS 白名单矩阵](../../ARCHITECTURE.md#62-cors-白名单矩阵) |
+| 想加一个功能页 / 加一个 I 子项 | §3.4 pages/ → function-tree M 列 → [父仓 §4.3](../../../docs/ARCHITECTURE.md#43-前端仓reactvuenextjs--6-仓) |
+| 想调试 dev 请求跨不过去 | §4 → §5（CORS + 端口表）→ [父仓 §6.2 CORS 白名单矩阵](../../../docs/ARCHITECTURE.md#62-cors-白名单矩阵) |
 | 想问"为什么这样设计" | §6（决策索引）→ 对应 ADR（[0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) / [0012](../../../docs/adr/0012-msw-as-http-server.md) / [0014](#64-隐含-adr)） |
 
 ---
@@ -30,7 +30,7 @@
 - lab 家族 = 「建筑工程实验室管理系统」（合同 / 接样 / 样品 / 检测项 / 记录 / 报告），由 7 个 sibling 仓同构组成（见 [父仓 §2.2](../../../docs/ARCHITECTURE.md#22-14-个子仓的角色矩阵)）；
 - vue 仓与 `lab-management-system-react` **镜像同构**：相同 M/F/I 编号、相同 UI 设计、相同 OpenAPI 契约；区别只在框架（react vs vue）与状态库（zustand vs Pinia）；
 - vue 仓与 `lab-management-system-nextjs` 的关系：**不兼全栈后端**（nextjs 是 front+back+DB 同仓，vue 纯前端）；
-- 后端由 `lab-management-system-msw`（dev/prod）/ `lab-management-system-springboot`（:8080）/ `lab-management-system-aspnetcore`（:5000）/ 未来 `lab-management-system-nextjs-self` 提供，**vue 仓不实现 `/api` route**。
+- 后端由 `lab-management-system-msw`（dev/prod，:5200）/ `lab-management-system-springboot`（:5205）/ `lab-management-system-aspnetcore`（:5204）/ 未来 `lab-management-system-nextjs-self` 提供，**vue 仓不实现 `/api` route**。
 
 **一句话**：Vue 3.5 + Vite + Pinia + Vue Query 前端仓，orval (`vue-query` client) 消费 `lab-management-system-shared` 的 `openapi.yaml`，env-driven 单 URL 配置（[ADR-0014 §6.4](#64-隐含-adr)）。
 
@@ -46,7 +46,7 @@
 | 后端 route | 不实现 | 不实现 | 实现（saas nextjs 兼全栈；lab nextjs 不兼） |
 | 默认端口 | 5203（vue dev） | 5202（react dev） | 5201（nextjs） |
 
-**核心约束**（来自 [CLAUDE.md §2](../../CLAUDE.md)）：
+**核心约束**（来自 [CLAUDE.md §2](../CLAUDE.md)）：
 
 - 禁止本仓加 `src/api/*/route.ts` 类后端 route；
 - 禁止从 `@lab/management-system-shared` import TS 客户端（shared 只产 OpenAPI.yaml）；
@@ -146,7 +146,7 @@ lab-management-system-vue/
 |---|---|---|---|
 | `env.ts` | 删，移至 `src/lib/env.ts` | — | — |
 | `backend-config.ts` | env-driven 后端配置 | `getApiBaseUrl()`、`getApiMode()` | [ADR-0014 §6.4](#64-隐含-adr) |
-| `http-client.ts` | axios 拦截器 + `ApiError` 封装 + `installHttpClient(getToken)` | `installHttpClient`、`toApiError`、`ApiError` | [memory: orval-axios-baseurl-must-be-installed](../../../memory/orval-axios-baseurl-must-be-installed.md) |
+| `http-client.ts` | axios 拦截器 + `ApiError` 封装 + `installHttpClient(getToken)` | `installHttpClient`、`toApiError`、`ApiError` | memory: orval-axios-baseurl-must-be-installed |
 | `endpoints/endpoints.ts` | **orval 产物**：`vue-query` client 具名函数（如 `authLogin`、`authGetPermissions`、`getContractsList`） | 26 资源 × N actions | [ADR-0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) (M98.F03) |
 | `endpoints/endpoints.schemas.ts` | **orval 产物**：TS 类型（DTO / LoginRequest / ErrorResponse / AuthState / BackendRegistry / 等） | 同上 | [ADR-0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) (M98.F03) |
 | `contracts.ts` | 把 `endpoints.schemas` re-export + 派生行为签名（`AuthContextActions`、`SwitchBackendFn`、`UnsubscribeFn`）+ 持久化 key 常量 + `BACKEND_REGISTRY_DEFAULT` 信息性示例 | `AuthContext` 类型、`TOKEN_STORAGE_KEYS`、`BACKEND_REGISTRY_DEFAULT` | shared `frontend-bind.tsp` SSOT |
@@ -186,7 +186,7 @@ authLogin() 等 → axios.request({ baseURL: getApiBaseUrl() })
 | `ConfirmDialog.vue` | 危险操作确认（取代 `window.confirm`） | — |
 | `BackendBadge.vue` | 后端模式显示（读 env `apiMode + baseUrl`） | M98.F01.I01 |
 
-**禁用**：每个功能页不得自己写标题栏 / 分页 / 空态 / `window.confirm` —— 必须调 `PageHeader` / `EmptyState` / `ConfirmDialog`（[CLAUDE.md §2 强制项](../../CLAUDE.md)）。
+**禁用**：每个功能页不得自己写标题栏 / 分页 / 空态 / `window.confirm` —— 必须调 `PageHeader` / `EmptyState` / `ConfirmDialog`（[CLAUDE.md §2 强制项](../CLAUDE.md)）。
 
 ### 3.3 src/components/ui/ — shadcn-vue 原语
 
@@ -196,7 +196,7 @@ authLogin() 等 → axios.request({ baseURL: getApiBaseUrl() })
 | `Input.vue` / `Label.vue` | 表单输入与标签 |
 | `DropdownMenu.vue` + 子组件（Item/Label/Separator） | 下拉菜单容器 |
 
-封装基于 `class-variance-authority` + `clsx` + `tailwind-merge`，与 react 仓 `src/components/ui/*` 1:1 形态对齐但**禁止源码复制**（[CLAUDE.md §2 §38](../../CLAUDE.md)）。
+封装基于 `class-variance-authority` + `clsx` + `tailwind-merge`，与 react 仓 `src/components/ui/*` 1:1 形态对齐但**禁止源码复制**（[CLAUDE.md §2 §38](../CLAUDE.md)）。
 
 ### 3.4 src/pages/ — 路由叶子（26 个 F.I 子项展开）
 
@@ -296,24 +296,24 @@ idle → anonymous → awaiting_tenant → authenticated
    → msw 拦截 → handler 走 in-memory fixture
    → 返回 JSON
 
-5. dev 切真后端（springboot :8080 / aspnetcore :5000）:
-   .env.local 改 VITE_API_BASE_URL=http://localhost:5000
+5. dev 切真后端（springboot :5205 / aspnetcore :5204）:
+   .env.local 改 VITE_API_BASE_URL=http://localhost:5204
    → 重启 vite → 拦截器拿新 baseUrl → axios 走绝对 URL 直连 aspnetcore
    → 后端 TenantGuard 校验 HS256 真签 JWT（prod 走 JWKS，dev 走对称密钥）
 ```
 
-### 4.2 dev：浏览器 → 真实后端（lab-aspnetcore :5000）
+### 4.2 dev：浏览器 → 真实后端（lab-aspnetcore :5204）
 
 ```
 .env.local:
-  VITE_API_BASE_URL=http://localhost:5000
+  VITE_API_BASE_URL=http://localhost:5204
   VITE_API_MODE=real
   VITE_SAAS_BASE_URL=http://localhost:5101  （SSO 跳板保留独立 env）
 
 1. 启动 lab-aspnetcore (cd ../lab-management-system-aspnetcore && dotnet run)
 2. 启动 vue (npm run dev)
 3. 浏览器进入 /contracts
-   → axios baseURL = http://localhost:5000
+   → axios baseURL = http://localhost:5204
    → .NET 端 NimbusJwtDecoder HS256 真验签 (Phase 2B 后无 dev 兜底分支)
    → TenantGuard 校验 token.tenant_id vs path.tenantId
    → 业务返回
@@ -396,7 +396,7 @@ useRequireAuth() (DashboardPage 内)
 | 层 | 文件 | git | 用途 |
 |---|---|---|---|
 | 模板 | `.env.example` | committed | 部署平台/新人看 VITE_* 变量 |
-| 本地 | `.env.local` | **gitignored** | dev 真后端（aspnetcore :5000、springboot :8080） |
+| 本地 | `.env.local` | **gitignored** | dev 真后端（aspnetcore :5204、springboot :5205） |
 | 测试 | `.env.test` | committed | vitest MSW 隔离（react/vue/nextjs 共用同一组） |
 
 **`.env.example` 必须含**：VITE_API_BASE_URL / VITE_API_MODE / VITE_SAAS_BASE_URL / VITE_DEV_PORT（实际部署平台覆盖）。
@@ -431,7 +431,7 @@ useRequireAuth() (DashboardPage 内)
 |---|---|---|---|
 | M98 接线层 8 ID 白名单 | lab-react a9d6d99 | ADR-0011 | 2026-08-18 |
 
-### 6.4 隐含 ADR（[multi-repo-family.md §4](../../../../docs/conventions/multi-repo-family.md)）
+### 6.4 隐含 ADR（[multi-repo-family.md §4](../../../docs/conventions/multi-repo-family.md)）
 
 | 编号 | 主题 | 本仓落地 |
 |---|---|---|
@@ -464,13 +464,13 @@ useRequireAuth() (DashboardPage 内)
 
 | 想看… | 跳到 |
 |---|---|
-| 功能清单（BASE 镜像 + I 子项） | [docs/functions/function-tree.md](../functions/function-tree.md) |
-| 项目入口（技术栈 + 禁令） | [CLAUDE.md](../../CLAUDE.md) |
-| Sprint 路线（0/1/2） | [docs/conventions/sprint-roadmap.md](../conventions/sprint-roadmap.md) |
-| 流程/设计（人评审） | [docs/design/](../design/) |
-| 编码细则（不入主上下文） | [docs/conventions/README.md](../conventions/README.md) |
-| 父仓架构总览 | [docs/ARCHITECTURE.md](../../../../docs/ARCHITECTURE.md) |
-| 父仓 ADR 索引（12 份） | [docs/adr/](../../../../docs/adr/) |
+| 功能清单（BASE 镜像 + I 子项） | [docs/functions/function-tree.md](functions/function-tree.md)) |
+| 项目入口（技术栈 + 禁令） | [CLAUDE.md](../CLAUDE.md) |
+| Sprint 路线（0/1/2） | [docs/conventions/sprint-roadmap.md](conventions/sprint-roadmap.md) |
+| 流程/设计（人评审） | [docs/design/](design/) |
+| 编码细则（不入主上下文） | [docs/conventions/README.md](conventions/README.md) |
+| 父仓架构总览 | [docs/ARCHITECTURE.md](../../../docs/ARCHITECTURE.md) |
+| 父仓 ADR 索引（12 份） | [docs/adr/](../../../docs/adr/) |
 | 跨仓经验教训（不入仓） | `~/.claude/projects/d--qiand-life-1-projects-xr-code-suite/memory/`（含 11 条 memory） |
 | Lab 管理家族契约 SSOT | `../lab-management-system-shared/tsp/main.tsp` |
 | Lab mock 后端 HTTP 服务 | `../lab-management-system-msw/src/server.ts` |

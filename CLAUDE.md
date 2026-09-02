@@ -6,7 +6,7 @@
 ## 1. 项目定位
 
 实验室管理系统的 Vue 前端（前端 only 镜像仓）：react 仓先实现、vue 仓翻译，**不实现 `/api` route**。
-后端由 msw / nextjs / springboot / aspnetcore 提供（跨仓约定：react→springboot :8080，vue→aspnetcore :5000）。
+后端由 msw / nextjs / springboot / aspnetcore 提供（跨仓约定：react→springboot :5205，vue→aspnetcore :5204）。
 
 ## 2. 铁律
 
@@ -31,7 +31,7 @@ Vue 3.5 + TypeScript 5.7 + Vite + Vitest + Pinia + Vue Query + Tailwind v4 + sha
 ## 4. 验收
 
 - suite 根目录跑 `python scripts/gate.py -p lab-management-system-vue`
-- mock 后端是 sibling HTTP server（:5173），不是本仓 dep
+- mock 后端是 sibling HTTP server（:5200），不是本仓 dep
 
 ## 5. 指向别处
 
