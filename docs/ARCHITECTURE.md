@@ -44,7 +44,7 @@
 | http 客户端 | axios（全局，拦截器一次安装） | axios（独立实例） | fetch（Server Actions） |
 | M98（前端接线层） | ADR-0011 8 ID 白名单镜像（[0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md)） | 同 | 同 |
 | 后端 route | 不实现 | 不实现 | 实现（saas nextjs 兼全栈；lab nextjs 不兼） |
-| 默认端口 | 5173（同源 SPA） | 5173 | 3000 |
+| 默认端口 | 5203（vue dev） | 5202（react dev） | 5201（nextjs） |
 
 **核心约束**（来自 [CLAUDE.md §2](../../CLAUDE.md)）：
 
@@ -165,7 +165,7 @@ src/api/endpoints/endpoints.schemas.ts  ← TS 类型
 authLogin() 等 → axios.request({ baseURL: getApiBaseUrl() })
        │
        ▼
-后端（dev 默认 msw-http://localhost:5173 / prod 部署平台 env 覆盖）
+后端（dev 默认 msw-http://localhost:5200 / prod 部署平台 env 覆盖）
 ```
 
 **关键不变量**：
@@ -273,11 +273,11 @@ idle → anonymous → awaiting_tenant → authenticated
 ```
 1. 启动 mock 后端:
    cd ../lab-management-system-msw && npm start
-   → http://localhost:5173  ← GET /healthz → { ok: true, mode: "msw" }
+   → http://localhost:5200  ← GET /healthz → { ok: true, mode: "msw" }
 
 2. 启动 vue:
    npm run dev
-   → http://localhost:5173（Vite 默认端口；.env 默认 VITE_API_BASE_URL=http://localhost:5173）
+   → http://localhost:5200（Vite 默认端口；.env 默认 VITE_API_BASE_URL=http://localhost:5200）
 
 3. main.ts bootstrap:
    createApp(App)
@@ -292,7 +292,7 @@ idle → anonymous → awaiting_tenant → authenticated
    <ContractsPage> 调 contractsListKey = useQuery(() => getContractsList({ ... }))
    → orval 具名函数 → axios.request({ url: "/api/contracts", baseURL: getApiBaseUrl() })
    → 拦截器置 Authorization: Bearer <token> (从 localStorage)
-   → axios 发到 http://localhost:5173/api/contracts
+   → axios 发到 http://localhost:5200/api/contracts
    → msw 拦截 → handler 走 in-memory fixture
    → 返回 JSON
 
@@ -308,7 +308,7 @@ idle → anonymous → awaiting_tenant → authenticated
 .env.local:
   VITE_API_BASE_URL=http://localhost:5000
   VITE_API_MODE=real
-  VITE_SAAS_BASE_URL=http://localhost:3000  （SSO 跳板保留独立 env）
+  VITE_SAAS_BASE_URL=http://localhost:5101  （SSO 跳板保留独立 env）
 
 1. 启动 lab-aspnetcore (cd ../lab-management-system-aspnetcore && dotnet run)
 2. 启动 vue (npm run dev)
@@ -318,7 +318,7 @@ idle → anonymous → awaiting_tenant → authenticated
    → TenantGuard 校验 token.tenant_id vs path.tenantId
    → 业务返回
 
-CORS：lab-aspnetcore 必须 allow 5173（react/vue origin）+ 3000（nextjs origin）
+CORS：lab-aspnetcore 必须 allow 5202/5203（react/vue origin）+ 5201（nextjs origin；端口分段 conventions §6）
 漏配 → preflight 失败 + 浏览器误报 CORS（详见父仓 §6.2）
 ```
 
@@ -412,7 +412,7 @@ useRequireAuth() (DashboardPage 内)
 | ADR | 主题 | 与本仓的关联 |
 |---|---|---|
 | [0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) | lab-vue M98 白名单镜像 | vue 仓镜像 react 仓的 8 个 M98 ID 进 `LAB_VUE_EXTRA`，避免 L5 红 |
-| [0012](../../../docs/adr/0012-msw-as-http-server.md) | msw 仓升级为独立 HTTP 服务（B 强度） | 本仓 dev 默认 baseUrl = `http://localhost:5173`（lab-msw HTTP 服务），不再用 Service Worker |
+| [0012](../../../docs/adr/0012-msw-as-http-server.md) | msw 仓升级为独立 HTTP 服务（B 强度） | 本仓 dev 默认 baseUrl = `http://localhost:5200`（lab-msw HTTP 服务），不再用 Service Worker |
 
 ### 6.2 通用（所有 6 个前端仓对称）
 
@@ -452,7 +452,7 @@ useRequireAuth() (DashboardPage 内)
 | **M98.F01.I02 已废弃** | 持久化 baseUrl 到 localStorage | env-driven 落地后，作废；禁止复活 |
 | **legacy-client** | 旧路由字面量表 `API_ROUTES` | 镜像 nextjs；features 层面向 msw `/api/catalog/*` 路由消费；新代码走 orval |
 | **5 文件接线** | env / backend-config / http-client / contracts / orval.config | 与 saas-vue 完全同构；vue 独有 legacy-client 不在此列 |
-| **msw-http** | ADR-0012 v0.3.0 dev 默认模式 | msw 仓升级为独立 Express 服务，本仓 baseUrl 默认 `http://localhost:5173` |
+| **msw-http** | ADR-0012 v0.3.0 dev 默认模式 | msw 仓升级为独立 Express 服务，本仓 baseUrl 默认 `http://localhost:5200` |
 | **shadcn-vue** | UI 原语风格 | 基于 CVA + clsx + tailwind-merge；与 react 仓 shadcn/ui 1:1 形态，禁止源码复制 |
 | **trace.json** | 测试命中 fn-ID 的清单 | 由 suite 提供 `trace_cmd` 产物，禁止手写 |
 | **fnTest** | 测试嵌入 fn-ID 模式 | `fnTest(["M0x.F0y.I0y"], "desc", () => ...)` |
@@ -501,7 +501,7 @@ useRequireAuth() (DashboardPage 内)
 | 没调 `installHttpClient()` | prod 永远走同 origin 被 nginx 405；bundle grep 看 URL 又正确 | main.ts bootstrap 调 `installHttpClient(getTokenCallback)` | `memory/orval-axios-baseurl-must-be-installed.md` |
 | `baseURL` 含 `/api/v1` | path 前缀重复 → 404 | baseURL 是 root URL；path 自带 `/api/v1` 前缀 | `memory/axios-baseurl-no-path-prefix.md` |
 | orval 不显式钉 `openapi-types` | npm install 不动；npm ci EUSAGE | devDeps 显式钉 `openapi-types` 版本 | `memory/orval-openapi-types-lockfile-trap.md` |
-| 把 `enableMsw` 留着当 SW 拦截 | v0.3.0 后 SW 已删除；`isMswEnabled()` 也删除 | msw-http 是唯一 dev 模式；baseUrl 默认 `http://localhost:5173` | ADR-0012 v0.3.0 |
+| 把 `enableMsw` 留着当 SW 拦截 | v0.3.0 后 SW 已删除；`isMswEnabled()` 也删除 | msw-http 是唯一 dev 模式；baseUrl 默认 `http://localhost:5200` | ADR-0012 v0.3.0 |
 | 复活 `BackendSwitcher` / `useBackendStore` | 违反 ADR-0014；L5 红 | 改 `BackendBadge` 只展示 env | ADR-0014 |
 | 跨源后端没 enable `withCredentials` | SSO state cookie 不带 → 401 | http-client.ts 拦截器统一定 `config.withCredentials = true` | 本仓 §4.1 |
 | 给 skip/xfail 测试挂 fn-ID | L5 红（fnTest 无对应表行） | 测试须真跑通才能挂 ID | [父仓 §5.4](../../../docs/ARCHITECTURE.md#54-门禁链) |

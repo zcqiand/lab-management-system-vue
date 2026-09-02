@@ -8,18 +8,18 @@
 //
 // 规则：
 //   - 所有值都有默认值（dev 离线也能跑）
-//   - VITE_API_BASE_URL 默认 http://localhost:5173（msw-http，ADR-0012）
+//   - VITE_API_BASE_URL 默认 http://localhost:5200（msw-http，ADR-0012；端口分段 §6）
 //   - 单元测试可通过 vitest 的 import.meta.env stub 注入
 
 export const env = {
-  devPort: Number(readEnv("VITE_DEV_PORT", "5173")) || 5173,
+  devPort: Number(readEnv("VITE_DEV_PORT", "5203")) || 5203,
 
   // === 后端（ADR-0014：单 URL + ADR-0012 msw-http 默认）===
-  apiBaseUrl: readEnv("VITE_API_BASE_URL", "http://localhost:5173"),
+  apiBaseUrl: readEnv("VITE_API_BASE_URL", "http://localhost:5200"),
   apiMode: readEnv("VITE_API_MODE", "msw-http"),
 
   // === saas（SSO 跳板仍需独立 env）===
-  saasBaseUrl: readEnv("VITE_SAAS_BASE_URL", "http://localhost:3000"),
+  saasBaseUrl: readEnv("VITE_SAAS_BASE_URL", "http://localhost:5101"),
 } as const;
 
 function readEnv(key: string, fallback: string): string {
