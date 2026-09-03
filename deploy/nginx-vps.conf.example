@@ -1,6 +1,7 @@
 # lab-management-system-vue — VPS nginx vhost 模板
 # 部署时被 setup-vps.sh sed 替换 <domain> 占位符。
-# 容器内 nginx 监听 :80,本 VPS nginx 反代到 127.0.0.1:8010。
+# 容器内 nginx 监听 :80(nginx:alpine 默认 privileged),本 VPS nginx 反代到 127.0.0.1:5203
+# (lab 家族 X03 段；ADR-0018 SPA partial 双层：host 走 family 段、容器内 :80)。
 
 server {
     listen 80;
@@ -23,8 +24,8 @@ server {
     add_header Strict-Transport-Security "max-age=31536000" always;
 
     location / {
-        # SPA:容器内 nginx:alpine 监听 :80;HOST_PORT 由 deploy/<repo>.sh 决定
-        proxy_pass http://127.0.0.1:8010;
+        # SPA:容器内 nginx:alpine 监听 :80;HOST_PORT=5203 (lab 家族 X03) 由 deploy/<repo>.sh 决定
+        proxy_pass http://127.0.0.1:5203;
 
         proxy_http_version 1.1;
         proxy_set_header Host              $host;

@@ -6,7 +6,8 @@
 #                    && sh lab-management-system-vue.sh $DOCKER_USERNAME $DOCKER_PASSWORD $VERSION
 #
 # Vite SPA (nginx:alpine 静态托管):无 runtime env,无数据库,无 health-wait 循环。
-# 容器内监听 :80;VPS nginx 反代到 127.0.0.1:8010 (lab-vue.xiangru.uk)。
+# 容器内 nginx 监听 :80(privileged);VPS nginx 反代到 127.0.0.1:5203 (lab 家族 X03 段,
+# ADR-0018 SPA partial 双层：host 走 family 段,容器内 :80) → lab-vue.xiangru.uk。
 # v0.2.8 起补 nginx vhost 自举段（照 saas-react 同款）—— 之前精简版从不创建
 # /etc/nginx/sites-available/<domain>，首次部署后站点 404。
 
@@ -18,7 +19,8 @@ VERSION="${3:-latest}"
 IMAGE="${USERNAME}/lab-management-system-vue:${VERSION}"
 BASE="/home/deploy/lab-management-system-vue"
 CONTAINER_NAME="lab-management-system-vue"
-HOST_PORT=8010
+# lab-vue:容器内 nginx:alpine 监听 :80(privileged),host 端口走 family 段 5203(ADR-0018)
+HOST_PORT=5203
 
 # nginx domain (vue SPA 没有 CORS / cross-origin runtime env, 但 deploy 脚本
 # 自举 nginx vhost 时仍要用到, 提前到 bootstrap 块之前)
