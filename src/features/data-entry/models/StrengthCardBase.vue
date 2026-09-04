@@ -7,6 +7,7 @@ import { computed, ref, watch } from "vue";
 import type { ParamModelProps, ParamTechReq } from "./types";
 import type { TestRecord } from "@/api/endpoints/endpoints.schemas";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import { autoVerdict, parseStrengthRecord, type StrengthResult } from "./cement-strength";
 
 const MANUAL_VERDICTS = ["合格", "不合格"] as const;
@@ -188,7 +189,7 @@ const verdictClass = computed(() =>
       <span v-if="computed2.invalid" class="ml-2 text-red-500">（离群值超 ±10%，按 GB/T 17671 结果作废）</span>
     </div>
     <div v-if="reqOptions.length > 0" class="text-xs">
-      <label class="text-gray-500 mr-1">技术要求</label>
+      <Label class="text-xs text-gray-500 mr-1">技术要求</Label>
       <select
         :value="reqId"
         :disabled="readOnly"
@@ -201,7 +202,7 @@ const verdictClass = computed(() =>
       </select>
     </div>
     <div v-else class="text-xs">
-      <label class="text-gray-500 mr-1">单项评定</label>
+      <Label class="text-xs text-gray-500 mr-1">单项评定</Label>
       <select
         :value="record?.verdict ?? ''"
         :disabled="readOnly"
