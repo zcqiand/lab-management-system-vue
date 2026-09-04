@@ -17,6 +17,12 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/resources/contract.ts）
@@ -326,43 +332,43 @@ async function submitForm(): Promise<void> {
         </div>
         <div v-if="loading" class="text-xs text-slate-400">加载中…</div>
       </div>
-      <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
-          <tr>
-            <th class="px-4 py-2 text-left">合同编号</th>
-            <th class="px-4 py-2 text-left">项目名称</th>
-            <th class="px-4 py-2 text-left">委托单位</th>
-            <th class="px-4 py-2 text-left">见证人</th>
-            <th class="px-4 py-2 text-left">状态</th>
-            <th class="px-4 py-2 text-left">委托日期</th>
-            <th class="px-4 py-2 text-right">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="items.length === 0 && !loading">
-            <td colspan="7" class="px-4 py-8 text-center text-slate-400">
+      <Table class="w-full text-sm">
+        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+          <TableRow>
+            <TableHead class="px-4 py-2 text-left">合同编号</TableHead>
+            <TableHead class="px-4 py-2 text-left">项目名称</TableHead>
+            <TableHead class="px-4 py-2 text-left">委托单位</TableHead>
+            <TableHead class="px-4 py-2 text-left">见证人</TableHead>
+            <TableHead class="px-4 py-2 text-left">状态</TableHead>
+            <TableHead class="px-4 py-2 text-left">委托日期</TableHead>
+            <TableHead class="px-4 py-2 text-right">操作</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-if="items.length === 0 && !loading">
+            <TableCell colspan="7" class="px-4 py-8 text-center text-slate-400">
               （无数据）
-            </td>
-          </tr>
-          <tr
+            </TableCell>
+          </TableRow>
+          <TableRow
             v-for="c in items"
             :key="c.id"
             data-fn="M02.F01.I01"
             class="border-t hover:bg-slate-50"
           >
-            <td class="px-4 py-2 font-mono text-xs">{{ c.contractCode }}</td>
-            <td class="px-4 py-2">{{ c.projectName }}</td>
-            <td class="px-4 py-2">{{ c.clientUnit }}</td>
-            <td class="px-4 py-2">{{ c.witness }}</td>
-            <td class="px-4 py-2">
+            <TableCell class="px-4 py-2 font-mono text-xs">{{ c.contractCode }}</TableCell>
+            <TableCell class="px-4 py-2">{{ c.projectName }}</TableCell>
+            <TableCell class="px-4 py-2">{{ c.clientUnit }}</TableCell>
+            <TableCell class="px-4 py-2">{{ c.witness }}</TableCell>
+            <TableCell class="px-4 py-2">
               <span :class="statusBadgeClass(c.status)">
                 {{ c.status === "active" ? "在用" : "已归档" }}
               </span>
-            </td>
-            <td class="px-4 py-2 text-xs text-slate-500">
+            </TableCell>
+            <TableCell class="px-4 py-2 text-xs text-slate-500">
               {{ c.entrustedDate ?? "—" }}
-            </td>
-            <td class="px-4 py-2 text-right">
+            </TableCell>
+            <TableCell class="px-4 py-2 text-right">
               <Button size="sm" variant="outline" @click="openEdit(c)">
                 编辑
               </Button>
@@ -374,10 +380,10 @@ async function submitForm(): Promise<void> {
               >
                 删除
               </Button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
   </div>
 </template>
