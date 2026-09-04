@@ -2,6 +2,76 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.45] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2a-3**（5 个 list pages / modals / dialogs 表格 raw
+`<table>` → `<Table>` 家族原语迁移，含 2 张内嵌表 + 1 张 Teleport 弹窗内关联表）。
+
+**5 个文件迁移**（共 7 张表，每页 7 个 import：`Table` / `TableHeader` /
+`TableBody` / `TableRow` / `TableHead` / `TableCell` + 既有的 `Button` /
+`Input` / `Label`；视觉零变更 — Tailwind class 全保留）：
+
+- `src/features/report-names/ReportNameList.vue` — M06.F07 报告名称维护（1 张表
+  6 列 × 2 fixture 行；行级 `data-fn="M06.F07.I01"` 落真实 `div[role="row"]`）
+- `src/features/reports/ReportPhasePage.vue` — M03.F05/F06/F07/F08 4 阶段报告页
+  共用 1 张表（6 列含全选 checkbox columnheader + 委托书编号 router-link +
+  检测结果 / 流程状态 / 操作；行级 `data-fn` 由 `i01DataFn` prop 注入）
+- `src/features/receipts/ReceiptsList.vue` — M03.F01 接样管理（1 张表 7 列 ×
+  2 fixture 行；行级 `data-fn="M03.F01.I01"`；Phase 1.4 跳过的 14 处 label
+  包 select/input 留 Phase 2d 不动）
+- `src/features/data-entry/ReportPreviewModal.vue` — M03.F09.I03 报告预览弹窗
+  内 2 张只读表：基础信息 4 列 × 2 行（无 header 标签+值结构）+ 检测参数结果
+  4 列（项目/技术要求/检测结果/单项评定，空 records）
+- `src/features/inspection-capability/ParameterStandardLinkDialog.vue` —
+  M06.F03.I02 参数↔标准关联弹窗（Teleport 内 1 张关联表 5 列；行内 raw
+  button `data-fn="M06.F03.I02"` 嵌套在 TableCell 内而非被吞）
+
+**Phase 2a-3 Table 回归锚新增**（不挂功能 ID，工程设施测试；5 文件钉 4 件事 —
+`<Table>` 渲染 `div[role="table"]` / `<TableHead>` 文本顺序 / 行 `data-fn` 落
+rowgroup[1] 内 `div[role="row"]` / TableCell class 经 `cn()` 合并）：
+
+- `tests/features/report-names/reportNameList.dom.test.ts` — 4 case：
+  6 columnheader 文本顺序（编码/简称/全称/模板/排序/操作）+ 2 fixture 行
+  `data-fn="M06.F07.I01"` 落 `div[role="row"]` + 编码 cell `font-mono text-xs`
+  - 行内「关联」按钮嵌套在 cell 内
+- `tests/features/reports/reportPhasePage.dom.test.ts` — 4 case：
+  6 columnheader 文本顺序（含 checkbox 列头）+ 1 fixture 行 `data-fn=i01DataFn`
+  - 委托书编号 cell `font-mono text-xs` + checkbox / 「退回」按钮嵌套在 cell 内
+- `tests/features/receipts/receiptsList.dom.test.ts` — 4 case：
+  7 columnheader 文本顺序（委托书编号/工程名称/委托单位/检测类别/流程状态/
+  创建时间/操作）+ 2 fixture 行 `data-fn="M03.F01.I01"` + 委托书编号 cell
+  `font-mono text-xs` + 「提交/编辑/删除」按钮嵌套在 cell 内且流程状态徽章
+  span 仍在 cell 内
+- `tests/features/data-entry/extFieldsPreviewModalsButtons.dom.test.ts` — 4 case：
+  2 张 `div[role="table"]` 同时渲染（基础信息表 + 检测参数结果表）+ 第 2 张
+  4 columnheader 文本顺序（项目/技术要求/检测结果/单项评定）+ 第 1 张 2 行 4 cell
+  无 header 结构 + 第 2 张 TableHead `border + px-2 + py-1 + text-left` 保留
+- `tests/features/inspection-capability/parameterStandardLink.dom.test.ts` —
+  4 case：5 columnheader 文本顺序（标准编码/名称/版本/状态/操作）+ 2 fixture 行
+  无 `data-fn`（data-fn 挂在行内 button）+ 行内 button 嵌套在 cell 内 + 标准编码
+  cell `font-mono text-xs`
+
+**踩坑 / 教训**：
+
+- `parameterStandardLink.dom.test.ts` 原始只 `import { describe, expect, ... }`
+  无 `it`；加 `Phase 2a-3` `describe` 块里用 `it(...)` 报 `ReferenceError: it is
+  not defined`。补 `it` 进 vitest 导入一行修好，**不要靠 defineGlobals** — 显式
+  import 走 vitest ESM 是稳态
+- `ReportPhasePage` 行内 `<input type="checkbox">` + `<Button>` 嵌套在
+  `<TableCell>` 里不能被吞掉 — 这两个元素本身不是 TableCell 后代的标准用例
+  （shadcn-vue TableCell 的 `cn('p-2 align-middle')` 不会改 DOM 结构），回归锚
+  显式断言 `parentElement.getAttribute('role') === 'cell'` 是物理证明
+- `ReportPreviewModal` 第 1 张表是 4 列 × 2 行的「标签 + 值 + 标签 + 值」结构，
+  没有 header — 回归锚要先扫 `[role="table"]` 数组下标 0 找 rowgroup，**不要
+  假设每张表都有 TableHeader**
+
+**验证**：
+
+- vitest: 258 case / 27 文件全绿（Phase 2a-2 基线 238 + 新 Table 回归锚 20）
+- gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5
+  全 PASS
+- 100 个功能条目，引用完整；L5 无断裂
+
 ## [0.3.44] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 2a-2**（6 个 list pages 表格 raw `<table>` →

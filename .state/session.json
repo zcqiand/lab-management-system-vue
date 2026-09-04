@@ -1,26 +1,25 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "Phase 2a-2 Table 迁 6 个 list pages → tag v0.3.44-20260905",
+  "current_task": "Phase 2a-3 Table 迁 5 文件 7 张表 → tag v0.3.45-20260905",
   "last_session_at": "2026-09-05",
-  "last_session_summary": "Phase 2a-2 完成：6 个 list pages 表格 raw <table>/<thead>/<tbody>/<tr>/<th>/<td> 全部迁到 shadcn-vue Table 6 原语（div-based + role 属性）。文件：ContractsList（M02.F01 7 列）/ InspectionCapabilityList（M06.F01-F04 多资源 6 列）/ CalculationMethodList（M06.F05 7 列含算法类型徽章）/ TechnicalRequirementList（M06.F06 11 列）/ ParamInterfaceList（M06.F08 4 列）/ TaskAssignmentList（M03.F02 6 列含 router-link）。每文件 7 个新 import（Table/Header/Body/Row/Head/Cell + 既有）；视觉零变更（Tailwind class 全保留，data-fn 经 $attrs 落到真实 <div>）。测试 selector 同步：inspectionCapabilityPages 3 处 findAll('tbody tr') → rowgroup[1].findAll('[role=row]')；其他 4 个文件 selector 不涉及原生 tag（只查 button/input/label/div），零迁移。Phase 2a-2 Table 回归锚共 14 case（不挂功能 ID）：6 文件各 2-3 case 钉 <Table> div[role=table] + <TableHead> 文本顺序 + TableCell class 经 cn() 合并 + 行 data-fn/data-fn 行内按钮 落真实 DOM。vitest 238/27 全绿（基线 223 + Table 回归锚 15）；gate exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整。",
+  "last_session_summary": "Phase 2a-3 完成：5 文件 7 张表 raw <table>/<thead>/<tbody>/<tr>/<th>/<td> 全部迁到 shadcn-vue Table 6 原语（div-based + role 属性）。文件：ReportNameList（M06.F07 1 张 6 列 × 2 行，行 data-fn=M06.F07.I01）/ ReportPhasePage（M03.F05-F08 共用 1 张 6 列含全选 checkbox 列头，行 data-fn=i01DataFn prop 注入）/ ReceiptsList（M03.F01 1 张 7 列 × 2 行含流程状态徽章 + 提交/编辑/删除按钮，行 data-fn=M03.F01.I01；Phase 1.4 跳过的 14 处 label 包 select/input 留 Phase 2d 不动）/ ReportPreviewModal（M03.F09.I03 报告预览弹窗内 2 张只读表：基础信息 4 列 2 行 + 检测参数结果 4 列）/ ParameterStandardLinkDialog（M06.F03.I02 关联弹窗内 1 张 5 列，行内 raw button data-fn=M06.F03.I02 嵌套在 TableCell 内而非被吞）。每文件 7 个新 import（Table/Header/Body/Row/Head/Cell + 既有 Button/Input/Label）；视觉零变更（Tailwind class 全保留，data-fn 经 $attrs 落到真实 <div>）。测试 selector 同步：parameterStandardLink.dom.test.ts 加 `it` 进 vitest import（原始只 describe/expect/vi/afterEach）；其余 4 文件无 raw tag selector（只查 button/input/label/div），零迁移。Phase 2a-3 Table 回归锚共 20 case（不挂功能 ID）：5 文件各 4 case 钉 <Table> div[role=table] + <TableHead> 文本顺序 + rowgroup[1] 行 data-fn 落真实 DOM + TableCell class 经 cn() 合并 + 行内元素（button / checkbox / 徽章 span）嵌套在 cell 内而非被吞。vitest 258/27 全绿（基线 238 + Table 回归锚 20）；gate exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整。",
   "done": [
-    "ContractsList.vue raw <table> → <Table> 6 原语（M02.F01 7 列 × 3 行，行 data-fn=M02.F01.I01）",
-    "InspectionCapabilityList.vue raw <table> → <Table> 6 原语（M06.F01-F04 多资源 4 视图 6 列）",
-    "CalculationMethodList.vue raw <table> → <Table> 6 原语（M06.F05 7 列含算法类型徽章）",
-    "TechnicalRequirementList.vue raw <table> → <Table> 6 原语（M06.F06 11 列）",
-    "ParamInterfaceList.vue raw <table> → <Table> 6 原语（M06.F08 4 列 × 3 行）",
-    "TaskAssignmentList.vue raw <table> → <Table> 6 原语（M03.F02 6 列含 router-link）",
-    "测试 selector 同步：inspectionCapabilityPages 3 处 findAll('tbody tr') → rowgroup[1].findAll('[role=row]')",
-    "Phase 2a-2 Table 回归锚 14 case：contractsList 3 / inspectionCapability 5 / paramInterface 3 / taskAssignment 3",
-    "vitest 238/27 全绿（基线 223 + 锚 15）",
+    "ReportNameList.vue raw <table> → <Table> 6 原语（M06.F07 6 列 × 2 行，行 data-fn=M06.F07.I01）",
+    "ReportPhasePage.vue raw <table> → <Table> 6 原语（M03.F05-F08 共用 6 列含全选 checkbox 列头 + 委托书编号 router-link，行 data-fn=i01DataFn）",
+    "ReceiptsList.vue raw <table> → <Table> 6 原语（M03.F01 7 列 × 2 行含流程状态徽章 + 行内 提交/编辑/删除 按钮）",
+    "ReportPreviewModal.vue 内嵌 2 张 raw <table> → <Table> 6 原语（M03.F09.I03 只读表：基础信息 4 列 2 行 + 检测参数结果 4 列）",
+    "ParameterStandardLinkDialog.vue raw <table> → <Table> 6 原语（M06.F03.I02 5 列关联表，行内 raw button data-fn=M06.F03.I02 嵌套在 TableCell）",
+    "测试 selector 同步：parameterStandardLink.dom.test.ts 加 `it` 进 vitest import",
+    "Phase 2a-3 Table 回归锚 20 case：reportNameList 4 / reportPhasePage 4 / receiptsList 4 / extFieldsPreviewModalsButtons 4 / parameterStandardLink 4",
+    "vitest 258/27 全绿（基线 238 + 锚 20）",
     "gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS",
-    "CHANGELOG 0.3.44 条目（6 list pages + selector 同步 + Table 回归锚 + 踩坑 + 验证）"
+    "CHANGELOG 0.3.45 条目（5 文件 7 张表 + selector 同步 + Table 回归锚 + 踩坑 + 验证）",
+    "session.json handoff（current_task 指向 Phase 2a-4）"
   ],
   "next": [
-    "Phase 2a-3：迁 list pages 第二批（ReportNameList / ReceiptsList / ReportPreviewModal / ParameterStandardLinkDialog）",
     "Phase 2a-4：迁 data-entry 卡片（SoilCompactionDegreeCard / SoilCompactionCard / RebarWeldingTensileCard / RebarWeldingBendCard / RebarMechNumericCard / ParticleGradationCard / ConcretePermeabilityCard / ConcreteCompressCard / DataEntryPage）",
-    "deploy：推 tag v0.3.44-20260905 → CI docker build + VPS pull + restart（实际功能变更，需要 deploy）",
+    "deploy：推 tag v0.3.45-20260905 → CI docker build + VPS pull + restart（实际功能变更，需要 deploy）",
     "Phase 2b: Checkbox 原语（InspectionCapabilityList 5 个 type=checkbox + ReportPhasePage 全选/行选 + ReceiptsList 全选/单选）",
     "Phase 2c: Textarea 原语（ReportNameList extFields + ReceiptsList 备注）",
     "Phase 2d: Select 原语 + ReceiptsList 14 处 label 包 select/input 一并重构",
@@ -39,7 +38,8 @@
     "不要在 <Input>/TableCell/TableHead/TableRow 单值 class prop 上用 :class=\"[]\" 数组（class 是 string 不是 string[]，要拼接；与 Phase 1.4 同源）",
     "不要 <Input @change=\"(e) => ...\"> 省略 Event 类型注解（L3 TS7006）",
     "不要在 Phase 2b 之前提前把 find('.text-green-600') 改了（class 字面量 → semantic token 走 Phase 2f 全家族一起收敛）",
-    "不要在 Phase 2a-3 之前提前迁 ReceiptsList / ReportPhasePage / 其他剩余 14 表格文件（按 pilot 节奏 5-7 个/批，逐批更新对应 selector，避免 selector 散落同时改）"
+    "不要在 Phase 2a-4 之前提前迁 data-entry 卡片（按 pilot 节奏 5-7 个/批，逐批更新对应 selector，避免 selector 散落同时改）",
+    "不要给 Markdown 加 `+` 列表项（MD004 ul-style 期望 dash，本批 PHASE 2a-3 CHANGELOG 36/39 行踩坑，已统一为 `-` 缩进续行）"
   ],
   "active_branch": "master"
 }
