@@ -2,6 +2,54 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.42] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.5**（test selector 审计）。原计划担心 Phase 0 / 1.0–1.4
+的 `<Button>` / `<Input>` / `<Label>` 原语替换会破坏 `findAll("button")` /
+`find('input[type=…]')` / `find('label[for=…]')` 这类基于 native HTML 标签名的
+DOM selector，所以留 Phase 1.5 做专项审计。
+
+**结论：所有 26 个 `*.dom.test.ts` / 215 个 case 仍然全绿。无 selector 需要迁移。**
+
+shadcn-vue 三个原语都直接渲染 native HTML element（`v-bind="$attrs"` 落到真实
+`<button>` / `<input>` / `<label>`），所以「按 tag 名查」和「按 `type` /
+`aria-label` / `placeholder` / `data-fn` 属性查」都保持有效。
+
+Selector 类型分布与风险评估（详见
+[`docs/conventions/phase-1-5-selector-audit.md`](docs/conventions/phase-1-5-selector-audit.md)）：
+
+- `findAll("button")` + 按 text 过滤：28 处，全安全（slot 落在 native button 内）
+- `find('button[data-fn=…]')`：19 处，全安全（$attrs 透传）
+- `find('input[aria-label=…]')` / `input[placeholder=…]`：35 处，全安全
+- `find('input[type=…]')`：8 处，全安全（`type` prop 显式 bind）
+- `findAll("label")` / `find('label[for=…]')` / `find("#…")`：10 处，全安全
+- `findAll("h2")` 弹窗标题：4 处，全安全（Dialog 标题在 source 仍是 raw `<h2>`）
+- `findAll("aside button")` 结构化选择：3 处，全安全（aside 是布局容器）
+
+**已知脆弱 selector（不修，留 Phase 2f 处理）**：
+
+- `tests/features/data-entry/cardsAll.dom.test.ts:188` 用 `find(".text-green-600")`
+  断言 `RebarWeldingBendCard` 整体评定文字 = "合格"。判定 class 写在
+  `RebarWeldingBendCard.vue:70-76`，Phase 1.2 没动这个字面量，**所以当前仍绿**。
+  - 不修原因：Phase 1.5 范围只覆盖「shadcn 迁移造成的破损」，「class 字面量 →
+    semantic token」属于 Phase 2f 主题收敛
+  - 同源的 `RebarMechNumericCard` / `RebarWeldingTensileCard` /
+    `StrengthCardBase` / `ParticleGradationCard` / `SoilCompactionDegreeCard` /
+    `CementCompressCard` 也都用 `text-green-600` / `text-red-600` 写判定字样，
+    但**只有 BendCard 被测试断言**，其他 6 个「未测的脆弱 class」同样不属本阶段
+
+**给 Phase 2 的提醒**（写在 audit §6）：
+
+- 2b Checkbox / 2c Textarea / 2d Select 落地时，要么保 native 标签，要么把测试
+  selector 同步迁到 `role="checkbox"` / `role="combobox"` 等
+- 2d Select 落到 `ReceiptsList` 「label 包 select」结构时，现有 `find("select")`
+  要同步改
+
+**新增文件**：
+
+- `docs/conventions/phase-1-5-selector-audit.md` — 审计报告（含 26 个测试文件
+  selector 分类矩阵、Phase 0 $attrs 契约回放、脆弱 selector 处置、Phase 2 提示）
+
 ## [0.3.41] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.4**（15 个文件 raw `<label>` → `<Label>` 原语，共迁移 79 处；
