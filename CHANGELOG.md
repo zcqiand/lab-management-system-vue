@@ -2,6 +2,62 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.41] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.4**（15 个文件 raw `<label>` → `<Label>` 原语，共迁移 79 处；
+`ReceiptsList` 的 14 处「label 包 select/input」按计划排除，留 Phase 2d 与 Select 原语一起改）。
+
+- **ContractsList**（contracts）：17 处。表单全字段 label，原 `class="text-sm font-medium"`
+  与 Label 基类重复 → 直接去掉，由原语提供
+- **InspectionCapabilityList**（inspection-capability）：17 处。12 处 `text-sm font-medium`
+  表单 label + 5 处 checkbox 旁的裸 `<label>`（官方 / 启用 / 资质可选），
+  裸 label 迁移后统一拿到 Label 基类；`<input type=checkbox>` 仍 raw（Phase 2b）
+- **TechnicalRequirementList**（inspection-capability）：11 处表单 label
+- **CalculationMethodList**（inspection-capability）：7 处表单 label
+- **ReportNameList**（report-names）：7 处表单 label（含 extFields `<textarea>` 的 label）
+- **ParamInterfaceList**（param-interfaces）：3 处表单 label
+- **CategoryDictList**（dicts）：3 处弹窗 label，`mb-1 block text-xs text-gray-600` 保留，
+  冗余 `font-medium` 去掉（基类已有）
+- **DataEntryPage**（data-entry）：2 处 **wrapping** label（`<Label>` 包 raw `<select>`），
+  select 留 Phase 2d
+- **TaskAssignmentList**（task-assignment）：2 处 **wrapping** label（`<Label>` 包 `<Input>`）
+- **ReportPhasePage**（reports）：1 处 **wrapping** label（退回原因）
+- **DefaultParamCard**（data-entry）：4 处，迁移时补 `text-xs`（基类 `text-sm` 会放大卡片字号）
+- **StrengthCardBase**（data-entry）：2 处（技术要求 / 单项评定），补 `text-xs`
+- **CementCompressCard**（data-entry）：1 处（v-for × 6 试件）
+- **SoilCompactionDegreeCard**（data-entry）：1 处 **wrapping** label（包最大干密度 `<Input>`）
+- **SummaryList**（summary）：1 处 **显式 for/id 配对** label，`for="categoryCode"` 经
+  Label `props.for` 转发，仍指向 raw `<select id="categoryCode">`
+
+迁移规则：
+
+- 冗余基类（`text-sm` / `font-medium`）去掉，由 Label 原语提供
+- 卡片小字号（原本靠父级 `text-xs` 继承）迁移后必须显式写 `text-xs`，
+  否则基类 `text-sm` 会放大字号 —— tailwind-merge 保证调用方 `text-xs` 压过基类
+- **wrapping 模式保留**：`<Label>` 包 `<Input>` / `<select>` 的隐式关联不改结构
+- 不引入 variant —— Label.vue 是手写原语，不是 CVA
+
+新增 15 个 Label 原语回归锚（不挂功能 ID，regression-anchor 模式）：
+
+- contracts：17 label + 基类 4 token + 末尾「状态」label 与 raw select 同级
+- inspection-capability：IC（编码 label + checkbox 裸 label 拿到基类）/ TechReq 11 / CalcMethod 7
+- report-names 7 / param-interfaces 3（文本序列全等断言）
+- dicts：`text-xs` 压过 `text-sm` + `mb-1 block` 保留
+- task-assignment / reports / data-entry：wrapping 断言（`<input>` / `<select>` 是 `<label>` 后代）
+- cardsAll：SoilCompactionDegreeCard wrapping + StrengthCardBase + CementCompressCard 6 试件
+  + DefaultParamCard 4 label 文本序列
+- summary：`label[for=categoryCode]` 与 `#categoryCode` 配对不断
+
+红→绿分界：迁移前 raw `<label class="text-sm font-medium">` 没有 `peer-disabled:` 前缀，
+所有锚点都断言 `peer-disabled:opacity-70` 在真实 `<label>` 的 class 上。
+
+**不回归**：
+
+- 全量 215 case（26 文件）全绿（v0.3.40 = 200 case，本次 +15）
+- `for` / `id` / `data-fn` / 调用方 class 全经 `$attrs` + `cn()` 落到真实 `<label>`
+- 仍是 raw 的：`ReceiptsList` 14 处 label（Phase 2d）、所有 `<select>`（2d）、
+  `<input type=checkbox>`（2b）、`<textarea>`（2c）
+
 ## [0.3.40] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.3c**（12 个 data-entry card / page 文件 raw `<input>` → `<Input>`
