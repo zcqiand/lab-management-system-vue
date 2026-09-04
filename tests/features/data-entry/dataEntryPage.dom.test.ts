@@ -218,3 +218,44 @@ describe("Phase 1.4 — DataEntryPage 录入弹窗 <Label> 原语回归", () => 
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
   });
 });
+
+// Phase 2a-4 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：待录入接样单表 raw <table> → <Table> 6 原语后 role 语义齐全、
+// 6 列头顺序不变、行内 router-link / 「录入结果」按钮仍嵌在 cell 内、
+// 空态行 colspan 保留在真实 div 上。
+describe("Phase 2a-4 — DataEntryPage <Table> 原语回归", () => {
+  it("待录入接样单表：div[role=table] + 6 列头 + 行内按钮嵌在 cell 内", async () => {
+    const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
+    lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+    expect(table.element.tagName).toBe("DIV");
+
+    expect(lastWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "委托书编号",
+      "工程名称",
+      "检测人员",
+      "计划日期",
+      "流程状态",
+      "操作",
+    ]);
+
+    const rowgroups = lastWrapper.findAll('[role="rowgroup"]');
+    expect(rowgroups.length).toBe(2);
+    const bodyRows = rowgroups[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(1);
+    const cells = bodyRows[0]!.findAll('[role="cell"]');
+    expect(cells.length).toBe(6);
+    // 委托书编号 cell 里仍是 router-link（<a>），没被 slot 吞
+    expect(cells[0]!.find("a").exists()).toBe(true);
+    expect(cells[0]!.text()).toContain("WT-2026-003");
+    // 「录入结果」按钮的 data-fn 落到真实 <button>，且嵌在最后一个 cell 内
+    const btn = cells[5]!.find('button[data-fn="M03.F03.I03"]');
+    expect(btn.exists()).toBe(true);
+    expect(btn.text()).toBe("录入结果");
+  });
+});

@@ -501,3 +501,173 @@ describe("Phase 1.4 — 模型卡 <Label> 原语回归", () => {
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
   });
 });
+
+// Phase 2a-4 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：8 张数据录入卡的 raw <table>/<thead>/<tbody>/<tr>/<th>/<td> 迁到 shadcn-vue
+// Table 6 原语后，div-based role 语义齐全、列头顺序不变、行/单元格数不变、
+// 行内 <Input>/<select> 仍嵌在 cell 内而非被吞、data-testid / rowspan 等
+// $attrs 落到真实 <div>、TableCell class 经 cn() 与调用方 class 合并。
+describe("Phase 2a-4 — 数据录入卡 <Table> 原语回归", () => {
+  it("ConcreteCompressCard：role 语义齐全，3 列头 + 3 体行 × 3 单元格，输入嵌在 cell 内", () => {
+    lastCardWrapper = mount(ConcreteCompressCard, { props: makeProps() });
+
+    const table = lastCardWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+    expect(table.element.tagName).toBe("DIV");
+
+    expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "#",
+      "破坏荷载 (kN)",
+      "抗压强度 (MPa)",
+    ]);
+
+    const rowgroups = lastCardWrapper.findAll('[role="rowgroup"]');
+    expect(rowgroups.length).toBe(2);
+    const bodyRows = rowgroups[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(3);
+    expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(3);
+    // <Input> 渲染出的真实 <input> 是 cell 的后代（没被 slot 吞掉）
+    expect(
+      bodyRows[0]!.find('[role="cell"] input[placeholder="破坏荷载 (kN)"]').exists(),
+    ).toBe(true);
+  });
+
+  it("ConcretePermeabilityCard：6 体行，raw <select> 嵌在 cell 内（Phase 2d 才换原语）", () => {
+    lastCardWrapper = mount(ConcretePermeabilityCard, {
+      props: makeProps({ parameter: param("IP-0190", "抗渗性能") }),
+    });
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(6);
+    expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(3);
+    expect(
+      bodyRows[0]!.find('[role="cell"] select[aria-label="试件 1 渗水情况"]').exists(),
+    ).toBe(true);
+  });
+
+  it("RebarWeldingTensileCard：5 列头顺序不变，3 体行，序号 cell 文本 1/2/3", () => {
+    lastCardWrapper = mount(RebarWeldingTensileCard, { props: makeProps() });
+    expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "#",
+      "最大荷重 (kN)",
+      "抗拉强度 (MPa)",
+      "断口距 (mm)",
+      "断裂特征",
+    ]);
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(3);
+    expect(bodyRows.map((r) => r.findAll('[role="cell"]')[0]!.text())).toEqual(["1", "2", "3"]);
+  });
+
+  it("RebarWeldingBendCard：3 列头，3 体行，TableCell class 与 cn() 基类合并", () => {
+    lastCardWrapper = mount(RebarWeldingBendCard, { props: makeProps() });
+    expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "#",
+      "弯曲角度 (°)",
+      "弯曲结果",
+    ]);
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(3);
+    const firstCell = bodyRows[0]!.findAll('[role="cell"]')[0]!;
+    // TableCell 是 inheritAttrs:false + v-bind="$attrs"，`class` 走 $attrs 通道
+    // 与 :class="cn(...)" 的基类**拼接**（不是 twMerge 二选一），
+    // 所以基类 p-2 仍在 class 串里；靠 Tailwind 样式表里 py-* 排在 p-* 之后取胜。
+    expect(firstCell.classes()).toContain("py-1");
+    expect(firstCell.classes()).toContain("align-middle");
+    expect(firstCell.classes()).toContain("p-2");
+    expect(firstCell.classes().indexOf("py-1")).toBeGreaterThan(
+      firstCell.classes().indexOf("p-2"),
+    );
+  });
+
+  it("RebarMechNumericCard：条件列 v-if 在 TableHead/TableCell 上仍生效", () => {
+    // 默认 passthrough：只有 # + 数值 两列
+    lastCardWrapper = mount(RebarMechNumericCard, { props: makeProps() });
+    expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "#",
+      "数值",
+    ]);
+    lastCardWrapper.unmount();
+
+    // tensile_strength + needsDiameter：多出「强度 (MPa)」列，行内单元格同步 +1
+    lastCardWrapper = mount(RebarMechNumericCard, {
+      props: makeProps({
+        config: { formulaKey: "tensile_strength", specimenCount: 2, needsDiameter: true },
+      }),
+    });
+    expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "#",
+      "数值",
+      "强度 (MPa)",
+    ]);
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(2);
+    expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(3);
+  });
+
+  it("SoilCompactionCard：列头 = 序号 + 5 组，2 体行（含水率 / 干密度）", () => {
+    lastCardWrapper = mount(SoilCompactionCard, {
+      props: makeProps({ parameter: param("IP-0201", "击实") }),
+    });
+    expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "序号",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+    ]);
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(2);
+    // 每行 = 1 个标题 cell + 5 个输入 cell
+    expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(6);
+    expect(bodyRows[0]!.findAll('[role="cell"]')[0]!.text()).toBe("含水率（%）");
+    expect(bodyRows[1]!.findAll('[role="cell"]')[0]!.text()).toBe("干密度（g/cm³）");
+  });
+
+  it("SoilCompactionDegreeCard：评定列 :class 数组改单串后仍是条件色 + data-testid 落真实 div", () => {
+    lastCardWrapper = mount(SoilCompactionDegreeCard, {
+      props: makeProps({ parameter: param("IP-0200", "压实度") }),
+    });
+    // 默认 6 行 × 9 列（showMaxDensityColumn 未开 → 无「最大干密度」列）
+    expect(lastCardWrapper.findAll('[role="columnheader"]').length).toBe(9);
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(6);
+    expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(9);
+
+    // :data-testid 经 $attrs 落到真实 div[role=cell]（不是被吞进组件）
+    const verdict = lastCardWrapper.find('[data-testid="verdict-0"]');
+    expect(verdict.exists()).toBe(true);
+    expect(verdict.attributes("role")).toBe("cell");
+    // verdictCls() 拼成单个 string：cellCls + 条件色 一起过 cn()，
+    // 而不是走 :class="[...]" 数组（TableCell 的 class prop 是 string 不是 string[]）
+    expect(verdict.classes()).toContain("text-gray-400");
+    expect(verdict.classes()).toContain("border");
+    expect(verdict.classes()).toContain("text-center");
+    expect(lastCardWrapper.find('[data-testid="dry-density-0"]').attributes("role")).toBe("cell");
+    expect(lastCardWrapper.find('[data-testid="degree-0"]').attributes("role")).toBe("cell");
+  });
+
+  it("ParticleGradationCard：每样品 3 子行 + 平均行，序号 cell 的 rowspan 落到真实 div", () => {
+    lastCardWrapper = mount(ParticleGradationCard, {
+      props: makeProps({ parameter: param("IP-0300", "颗粒级配") }),
+    });
+    // 砂 7 档筛：序号 + 项目 + 7 档 + 分筛前总量 = 10 列头
+    expect(lastCardWrapper.findAll('[role="columnheader"]').length).toBe(10);
+
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    // 默认 2 个样品 × 3 子行 + 1 平均行
+    expect(bodyRows.length).toBe(7);
+    // 子行 1 带序号 cell（10 格），子行 2/3 无序号 cell（9 格）
+    expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(10);
+    expect(bodyRows[1]!.findAll('[role="cell"]').length).toBe(9);
+    expect(bodyRows[2]!.findAll('[role="cell"]').length).toBe(9);
+
+    // rowspan 经 $attrs 落到真实 div[role=cell]（div 上是惰性属性，
+    // 保留是为了和 ContractsList 等已迁文件的 colspan 处理一致）
+    const seq = bodyRows[0]!.findAll('[role="cell"]')[0]!;
+    expect(seq.attributes("rowspan")).toBe("3");
+    expect(seq.text()).toBe("1");
+    // 平均行文本仍在第 2 格
+    expect(bodyRows[6]!.findAll('[role="cell"]')[1]!.text()).toBe("平均值(%):");
+  });
+});
