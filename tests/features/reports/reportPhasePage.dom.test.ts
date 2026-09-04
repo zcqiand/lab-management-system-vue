@@ -310,3 +310,84 @@ describe("Phase 1.4 — ReportPhasePage 退回弹窗 <Label> 原语回归", () =
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
   });
 });
+
+// Phase 2a-3 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：<Table> 渲染为 div[role=table] / 6 个 columnheader 文本顺序 /
+// 行 data-fn=i01DataFn 落 rowgroup[1] 内 div[role=row] / TableCell 类经合并保留。
+describe("Phase 2a-3 — ReportPhasePage 列表 <Table> 原语回归", () => {
+  beforeEach(() => installAdapters("review"));
+
+  it("<Table> 渲染为 div[role=table]；6 个 <TableHead> 文本顺序 含全选/委托书编号/工程名称/检测结果/流程状态/操作", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(6);
+    // 全选 columnheader 文本为空（含 input checkbox），其余按顺序
+    expect(heads[1].text()).toBe("委托书编号");
+    expect(heads[2].text()).toBe("工程名称");
+    expect(heads[3].text()).toBe("检测结果");
+    expect(heads[4].text()).toBe("流程状态");
+    expect(heads[5].text()).toBe("操作");
+    // 全选 checkbox 仍在 columnheader 内（不被 <TableHead> 吞）
+    expect(heads[0].find('input[type="checkbox"][aria-label="全选"]').exists()).toBe(true);
+  });
+
+  it("1 行 fixture：data-fn=i01DataFn 落 rowgroup[1] 内 div[role=row]", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const rowgroups = lastWrapper.findAll('[role="rowgroup"]');
+    expect(rowgroups.length).toBe(2);
+
+    const bodyRows = rowgroups[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(1);
+    expect(bodyRows[0]!.attributes("data-fn")).toBe("M03.F05.I01");
+  });
+
+  it("TableCell 调用方 class 经 tailwind-merge 合并（font-mono + text-xs 落委托书编号 cell）", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const cells = lastWrapper.findAll('[role="cell"]');
+    expect(cells.length).toBeGreaterThan(0);
+    // 委托书编号 cell 含 WT-RV-001 + font-mono + text-xs
+    const codeCell = cells.find((c) => c.text().includes("WT-RV-001"));
+    expect(codeCell).toBeTruthy();
+    expect(codeCell!.classes()).toContain("font-mono");
+    expect(codeCell!.classes()).toContain("text-xs");
+  });
+
+  it("行内 checkbox / 「退回」按钮都落在 cell 内（不被 <TableCell> 吞）", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const back = lastWrapper.findAll("button").find((b) => b.text() === "退回");
+    expect(back).toBeTruthy();
+    const cell = back!.element.parentElement;
+    expect(cell).not.toBeNull();
+    expect(cell!.getAttribute("role")).toBe("cell");
+
+    // 行 checkbox 也在 cell 内
+    const rowCheckbox = lastWrapper.find('input[type="checkbox"][aria-label*="选择"]');
+    expect(rowCheckbox.exists()).toBe(true);
+    const rowCell = rowCheckbox.element.parentElement;
+    expect(rowCell).not.toBeNull();
+    expect(rowCell!.getAttribute("role")).toBe("cell");
+  });
+});

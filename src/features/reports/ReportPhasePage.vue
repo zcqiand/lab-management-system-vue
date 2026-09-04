@@ -13,6 +13,12 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 
 type FlowStage =
   | "receiving"
@@ -204,45 +210,45 @@ function alertError(msg: string): void {
         <h3 class="text-base font-semibold">{{ title }}（{{ total || "…" }}）</h3>
         <span v-if="loading" class="text-xs text-slate-400">加载中…</span>
       </div>
-      <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
-          <tr>
-            <th class="px-4 py-2 text-left">
+      <Table class="w-full text-sm">
+        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+          <TableRow>
+            <TableHead class="px-4 py-2 text-left">
               <input type="checkbox" :checked="allSelected()" @change="toggleAll()" aria-label="全选" />
-            </th>
-            <th class="px-4 py-2 text-left">委托书编号</th>
-            <th class="px-4 py-2 text-left">工程名称</th>
-            <th class="px-4 py-2 text-left">检测结果</th>
-            <th class="px-4 py-2 text-left">流程状态</th>
-            <th class="px-4 py-2 text-right">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="rows.length === 0 && !loading">
-            <td colspan="6" class="px-4 py-8 text-center text-slate-400">（无数据）</td>
-          </tr>
-          <tr v-for="r in rows" :key="r.id" :data-fn="i01DataFn" class="border-t hover:bg-slate-50">
-            <td class="px-4 py-2">
+            </TableHead>
+            <TableHead class="px-4 py-2 text-left">委托书编号</TableHead>
+            <TableHead class="px-4 py-2 text-left">工程名称</TableHead>
+            <TableHead class="px-4 py-2 text-left">检测结果</TableHead>
+            <TableHead class="px-4 py-2 text-left">流程状态</TableHead>
+            <TableHead class="px-4 py-2 text-right">操作</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-if="rows.length === 0 && !loading">
+            <TableCell colspan="6" class="px-4 py-8 text-center text-slate-400">（无数据）</TableCell>
+          </TableRow>
+          <TableRow v-for="r in rows" :key="r.id" :data-fn="i01DataFn" class="border-t hover:bg-slate-50">
+            <TableCell class="px-4 py-2">
               <input
                 type="checkbox"
                 :checked="selected.has(r.id)"
                 :aria-label="`选择 ${r.commissionCode}`"
                 @change="toggleOne(r.id)"
               />
-            </td>
-            <td class="px-4 py-2 font-mono text-xs">
+            </TableCell>
+            <TableCell class="px-4 py-2 font-mono text-xs">
               <router-link :to="`/receipts/${r.id}`" class="text-blue-600 hover:underline">
                 {{ r.commissionCode }}
               </router-link>
-            </td>
-            <td class="px-4 py-2">{{ r.projectName ?? "—" }}</td>
-            <td class="px-4 py-2">
+            </TableCell>
+            <TableCell class="px-4 py-2">{{ r.projectName ?? "—" }}</TableCell>
+            <TableCell class="px-4 py-2">
               {{ r.result === 'pass' ? '合格' : r.result === 'fail' ? '不合格' : '—' }}
-            </td>
-            <td class="px-4 py-2 text-xs">
+            </TableCell>
+            <TableCell class="px-4 py-2 text-xs">
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
-            </td>
-            <td class="px-4 py-2 text-right">
+            </TableCell>
+            <TableCell class="px-4 py-2 text-right">
               <Button
                 variant="link"
                 class="text-destructive hover:underline text-xs"
@@ -250,10 +256,10 @@ function alertError(msg: string): void {
               >
                 退回
               </Button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
 
     <Teleport to="body">
