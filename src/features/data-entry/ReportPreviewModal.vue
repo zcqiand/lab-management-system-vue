@@ -8,6 +8,7 @@
 // 数据获取走 vue-query（@/api/legacy-client 或 orval endpoints）。
 import { computed, ref, watch } from "vue";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 
 interface SampleReceiptLike {
   id: string;
@@ -134,19 +135,19 @@ const categoryName = computed(() => {
           </table>
         </div>
         <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-gray-50">
-          <button
-            type="button"
-            class="px-4 py-1.5 text-sm border rounded hover:bg-gray-100"
+          <Button
+            variant="outline"
+            class="px-4 py-1.5 text-sm rounded"
             @click="onClose"
           >
             关闭
-          </button>
-          <button
-            type="button"
-            class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+          </Button>
+          <Button
+            variant="default"
+            class="bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm rounded"
           >
             打印
-          </button>
+          </Button>
         </footer>
       </div>
     </div>
