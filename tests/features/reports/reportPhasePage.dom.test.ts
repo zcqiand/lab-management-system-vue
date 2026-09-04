@@ -240,3 +240,44 @@ describe("Phase 1.2b — ReportPhasePage <Button> 原语回归", () => {
     expect(selectAll.element.tagName).toBe("INPUT");
   });
 });
+
+// Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：搜索 <Input class=max-w-sm> @keyup.enter 落到真实 DOM；
+// 退回弹窗 <Input> v-model 双向写回。
+describe("Phase 1.3b — ReportPhasePage 搜索/退回弹窗 <Input> 原语回归", () => {
+  beforeEach(() => installAdapters("review"));
+
+  it("搜索框 <Input class=max-w-sm>：渲染 <input>，v-model 双向写回", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="按委托书编号搜索"]');
+    expect(search.exists()).toBe(true);
+    expect(search.classes()).toContain("max-w-sm");
+    expect(search.classes()).toContain("h-9");
+    await search.setValue("WT-RV-001");
+    expect((search.element as HTMLInputElement).value).toBe("WT-RV-001");
+  });
+
+  it("退回弹窗 <Input>：v-model 写回 returnReason", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 开退回弹窗
+    const back = lastWrapper.findAll("button").find((b) => b.text() === "退回");
+    await back!.trigger("click");
+    await flushPromises();
+
+    const reasonInput = lastWrapper.find('input[placeholder="如：数据待补正"]');
+    expect(reasonInput.exists()).toBe(true);
+    expect(reasonInput.classes()).toContain("h-9");
+    await reasonInput.setValue("数据待补正");
+    expect((reasonInput.element as HTMLInputElement).value).toBe("数据待补正");
+  });
+});

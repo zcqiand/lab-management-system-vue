@@ -11,6 +11,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 
 type FlowStage =
   | "receiving"
@@ -178,10 +179,10 @@ function alertError(msg: string): void {
     </div>
 
     <div class="mb-4 flex gap-2">
-      <input
+      <Input
         v-model="keyword"
         placeholder="按委托书编号搜索"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         @keyup.enter="load()"
       />
       <Button variant="outline" @click="load()">搜索</Button>
@@ -266,10 +267,10 @@ function alertError(msg: string): void {
             退回后该接样单回到上一环节（{{ FLOW_STAGE_LABELS[PREV_STAGE[stage]] }}）。
           </p>
           <label class="text-xs block mb-2">退回原因（可选）
-            <input
+            <Input
               v-model="returnReason"
               placeholder="如：数据待补正"
-              class="border rounded h-9 px-2 text-sm w-full mt-1"
+              class="mt-1"
             />
           </label>
           <div class="mt-4 flex justify-end gap-2">
