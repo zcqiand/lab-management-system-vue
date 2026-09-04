@@ -17,6 +17,12 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 import DefaultParamCard from "@/features/data-entry/models/DefaultParamCard.vue";
 import CementCompressCard from "@/features/data-entry/models/CementCompressCard.vue";
 
@@ -206,34 +212,34 @@ function onParamChange(patch: Partial<TestRecord>): void {
         <h3 class="text-base font-semibold">待录入接样单（{{ total || "…" }}）</h3>
         <span v-if="loading" class="text-xs text-slate-400">加载中…</span>
       </div>
-      <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
-          <tr>
-            <th class="px-4 py-2 text-left">委托书编号</th>
-            <th class="px-4 py-2 text-left">工程名称</th>
-            <th class="px-4 py-2 text-left">检测人员</th>
-            <th class="px-4 py-2 text-left">计划日期</th>
-            <th class="px-4 py-2 text-left">流程状态</th>
-            <th class="px-4 py-2 text-right">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="items.length === 0 && !loading">
-            <td colspan="6" class="px-4 py-8 text-center text-slate-400">（无待录入接样单）</td>
-          </tr>
-          <tr v-for="r in items" :key="r.id" class="border-t hover:bg-slate-50">
-            <td class="px-4 py-2 font-mono text-xs">
+      <Table class="w-full text-sm">
+        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+          <TableRow>
+            <TableHead class="px-4 py-2 text-left">委托书编号</TableHead>
+            <TableHead class="px-4 py-2 text-left">工程名称</TableHead>
+            <TableHead class="px-4 py-2 text-left">检测人员</TableHead>
+            <TableHead class="px-4 py-2 text-left">计划日期</TableHead>
+            <TableHead class="px-4 py-2 text-left">流程状态</TableHead>
+            <TableHead class="px-4 py-2 text-right">操作</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-if="items.length === 0 && !loading">
+            <TableCell colspan="6" class="px-4 py-8 text-center text-slate-400">（无待录入接样单）</TableCell>
+          </TableRow>
+          <TableRow v-for="r in items" :key="r.id" class="border-t hover:bg-slate-50">
+            <TableCell class="px-4 py-2 font-mono text-xs">
               <router-link :to="`/receipts/${r.id}`" class="text-blue-600 hover:underline">
                 {{ r.commissionCode }}
               </router-link>
-            </td>
-            <td class="px-4 py-2">{{ r.projectName ?? "—" }}</td>
-            <td class="px-4 py-2">{{ r.assigneeName ?? "—" }}</td>
-            <td class="px-4 py-2">{{ r.plannedTestDate ?? "—" }}</td>
-            <td class="px-4 py-2 text-xs">
+            </TableCell>
+            <TableCell class="px-4 py-2">{{ r.projectName ?? "—" }}</TableCell>
+            <TableCell class="px-4 py-2">{{ r.assigneeName ?? "—" }}</TableCell>
+            <TableCell class="px-4 py-2">{{ r.plannedTestDate ?? "—" }}</TableCell>
+            <TableCell class="px-4 py-2 text-xs">
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
-            </td>
-            <td class="px-4 py-2 text-right">
+            </TableCell>
+            <TableCell class="px-4 py-2 text-right">
               <Button
                 variant="outline"
                 size="sm"
@@ -242,10 +248,10 @@ function onParamChange(patch: Partial<TestRecord>): void {
               >
                 录入结果
               </Button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
 
     <Teleport to="body">
