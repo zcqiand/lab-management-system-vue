@@ -267,7 +267,7 @@ describe("Phase 1.2a — InspectionCapabilityList <Button> 原语回归", () => 
 });
 
 describe("Phase 1.2a — TechnicalRequirementList <Button> 原语回归", () => {
-  it("新建技术要求：<Button variant=default> 渲染 <button>，data-fn M06.F06.I02 落到真实 DOM", async () => {
+  it("新建技术要求：<Button variant=default> 渲染 <button>，data-fn 落到真实 DOM", async () => {
     lastWrapper = mountWithProviders(TechnicalRequirementList);
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -294,7 +294,7 @@ describe("Phase 1.2a — TechnicalRequirementList <Button> 原语回归", () => 
 });
 
 describe("Phase 1.2a — CalculationMethodList <Button> 原语回归", () => {
-  it("新建计算方法：<Button variant=default> 渲染 <button>，data-fn M06.F05.I01 落到真实 DOM", async () => {
+  it("新建计算方法：<Button variant=default> 渲染 <button>，data-fn 落到真实 DOM", async () => {
     lastWrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));

@@ -135,7 +135,7 @@ describe("Phase 1.2a — ReportNameList 列表 <Button> 原语回归", () => {
     expect(create.classes()).toContain("bg-primary");
   });
 
-  it("行内关联按钮：size=sm variant=outline，CVA h-8 活着，data-fn M06.F07.I02 落到真实 DOM", async () => {
+  it("行内关联按钮：size=sm variant=outline，CVA h-8 活着，data-fn 落到真实 DOM", async () => {
     const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
     lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
     await flushPromises();

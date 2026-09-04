@@ -6,8 +6,56 @@
     "features": 29,
     "items": 63
   },
-  "warnings_total": 0,
-  "warnings": {},
+  "warnings_total": 45,
+  "warnings": {
+    "已上线但无测试引用": [
+      "M01.F04.I01",
+      "M01.F04.I02",
+      "M01.F04.I03",
+      "M01.F05.I02",
+      "M01.F05.I03",
+      "M01.F05.I04",
+      "M02.F01.I01",
+      "M02.F01.I02",
+      "M02.F01.I03",
+      "M03.F01.I01",
+      "M03.F01.I02",
+      "M03.F01.I03",
+      "M03.F01.I04",
+      "M03.F01.I07",
+      "M03.F02.I01",
+      "M03.F02.I02",
+      "M03.F05.I01",
+      "M03.F05.I02",
+      "M03.F06.I01",
+      "M03.F06.I02",
+      "M03.F07.I01",
+      "M03.F07.I02",
+      "M03.F08.I01",
+      "M03.F08.I02",
+      "M03.F09.I01",
+      "M03.F09.I02",
+      "M03.F09.I03",
+      "M04.F06.I01",
+      "M04.F06.I02",
+      "M04.F06.I03",
+      "M04.F07.I01",
+      "M04.F07.I02",
+      "M04.F07.I03",
+      "M04.F08.I01",
+      "M04.F08.I02",
+      "M04.F08.I03",
+      "M04.F09.I01",
+      "M04.F09.I02",
+      "M04.F09.I03",
+      "M05.F01.I01",
+      "M05.F01.I02",
+      "M06.F08.I01",
+      "M98.F01.I01",
+      "M98.F02.I01",
+      "M98.F03.I01"
+    ]
+  },
   "unreachable_shipped": [],
   "function_map": {
     "M01.F04.I01": {
@@ -21,12 +69,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M01.F04.I01] demo 兜底旧 path 别名映射到真实路由",
-        "[M01.F04.I01] saas 快照 path（无斜杠）归一化为绝对路由",
-        "[M01.F04.I01] 失败：抛错上抛，AppShell 渲染错误态（demo 兜底删除）",
-        "[M01.F04.I01] 成功：/api/auth/menus 契约树 → AppShell 平铺渲染叶子菜单"
-      ],
+      "tests": [],
       "entry": [
         "src\\composables\\use-backend-menus.ts"
       ]
@@ -42,10 +85,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M01.F04.I02] authenticated 态拉取 /auth/permissions 并供 hasPermission 判断",
-        "[M01.F04.I02] 非 authenticated 态 hasPermission 恒 false"
-      ],
+      "tests": [],
       "entry": [
         "src\\state\\auth.ts"
       ]
@@ -61,12 +101,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M01.F04.I03] anonymous 访问受守卫路由 → 跳 /login",
-        "[M01.F04.I03] authenticated 权限齐 → allowed=true 留在原地",
-        "[M01.F04.I03] authenticated 缺权限 → 拦在 /403",
-        "[M01.F04.I03] awaiting_tenant 访问受守卫路由 → 拦在 /login（选租户页已移除，M00.F02 保持规划）"
-      ],
+      "tests": [],
       "entry": [
         "src\\state\\require-auth.ts"
       ]
@@ -78,10 +113,7 @@
       "requirements": [],
       "flows": [],
       "designs": [],
-      "tests": [
-        "[M01.F05.I01] login 单租户 → 直进 authenticated + token 双 key 持久化",
-        "[M01.F05.I01] login 失败 → 停在 anonymous，ErrorResponse 返回"
-      ],
+      "tests": [],
       "entry": []
     },
     "M01.F05.I02": {
@@ -95,11 +127,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M01.F05.I02] TOKEN_STORAGE_KEYS 5 个 key 全部 lab.* 前缀且名字锁死",
-        "[M01.F05.I02] onChange 契约：状态转移触发订阅 + unsub 停止",
-        "[M01.F05.I02] token 失效（me 401 + refresh 401）→ 退 anonymous + 清 token"
-      ],
+      "tests": [],
       "entry": []
     },
     "M01.F05.I03": {
@@ -113,10 +141,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M01.F05.I03] 阶段 1：?code=&state= → POST sso/callback 换 token → setSession 进业务页",
-        "[M01.F05.I03] 阶段 2：无回调参数 → authorize 拿 authorizeUrl → 跳 saas"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\LoginPage.vue"
       ]
@@ -132,11 +157,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M01.F05.I04] AppShell 侧栏底部渲染「退出登录」按钮 + data-fn 锚点",
-        "[M01.F05.I04] logout → anonymous + 全部持久化 key 清空",
-        "[M01.F05.I04] 点击登出 → POST /api/auth/logout + 落 anonymous + 跳 /login"
-      ],
+      "tests": [],
       "entry": [
         "src\\components\\app\\AppShell.vue"
       ]
@@ -152,9 +173,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M02.F01.I01] 合同列表：渲染标题 + 列表行（fixture 真数据穿透）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\contracts\\ContractsList.vue"
       ]
@@ -170,9 +189,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M02.F01.I02] 合同管理：新建按钮开弹窗（标题『新建合同』）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\contracts\\ContractsList.vue"
       ]
@@ -188,9 +205,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M02.F01.I03] 合同管理：行内删除按钮开确认弹窗（标题『删除合同』）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\contracts\\ContractsList.vue"
       ]
@@ -206,9 +221,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F01.I01] 接样管理：渲染标题 + 列表行（fixture 真数据穿透）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\receipts\\ReceiptsList.vue"
       ]
@@ -224,9 +237,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F01.I02] 接样管理：新建按钮开弹窗（标题『新建接样』）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\receipts\\ReceiptsList.vue"
       ]
@@ -242,9 +253,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F01.I03] 接样管理：行内删除按钮开确认弹窗（标题『删除接样』）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\receipts\\ReceiptsList.vue"
       ]
@@ -260,9 +269,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F01.I04] 接样管理：提交按钮调用 axios.post 推送状态机（receiving → task_assignment）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\receipts\\ReceiptsList.vue"
       ]
@@ -278,9 +285,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F01.I07] [M03.F01.I07] SampleExtFieldsModal module source file exists"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\data-entry\\ReportPreviewModal.vue",
         "src\\features\\data-entry\\SampleExtFieldsModal.vue"
@@ -297,9 +302,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F02.I01] 任务分配：渲染标题 + 列表行（fixture 真数据穿透）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\task-assignment\\TaskAssignmentList.vue"
       ]
@@ -315,9 +318,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F02.I02] 任务分配：安排按钮开弹窗（标题含『任务安排』）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\task-assignment\\TaskAssignmentList.vue"
       ]
@@ -375,8 +376,7 @@
         "[M03.F03.I02] CementCompressCard 有技术要求：录入均值达标 → 自动判合格",
         "[M03.F03.I02] ConcreteCompressCard 录入荷载 → 上报代表值 JSON",
         "[M03.F03.I02] ParticleGradationCard gravel=true 切换到 12 筛孔",
-        "[M03.F03.I02] 数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）",
-        "弹窗保存按钮：data-fn=M03.F03.I02 落到真实 <button>，bg-blue-600 压过 CVA bg-primary"
+        "[M03.F03.I02] 数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）"
       ],
       "entry": [
         "src\\features\\data-entry\\DataEntryPage.vue"
@@ -415,9 +415,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F05.I01] 报告审核：渲染标题 + 列表行（review 阶段 fixture 穿透）"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportReviewPage.vue"
       ]
@@ -433,9 +431,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F05.I02] 报告审核：「审核通过」按钮 data-fn 可见"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportReviewPage.vue"
       ]
@@ -451,9 +447,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F06.I01] 报告批准：渲染标题 + 列表行（approval 阶段 fixture 穿透）"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportApprovePage.vue"
       ]
@@ -469,9 +463,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F06.I02] 报告批准：「批准」按钮 data-fn 可见"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportApprovePage.vue"
       ]
@@ -487,9 +479,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F07.I01] 报告发放：渲染标题 + 列表行（issuance 阶段 fixture 穿透）"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportIssuePage.vue"
       ]
@@ -505,9 +495,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F07.I02] 报告发放：「发放」按钮 data-fn 可见"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportIssuePage.vue"
       ]
@@ -523,9 +511,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F08.I01] 报告归档：渲染标题 + 列表行（archived 阶段 fixture 穿透）"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportArchivePage.vue"
       ]
@@ -541,9 +527,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F08.I02] 报告归档：「归档完成」按钮 data-fn 可见"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ReportArchivePage.vue"
       ]
@@ -559,9 +543,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F09.I01] 接样单详情：渲染标题 + 字段区"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\receipts\\ReceiptDetail.vue"
       ]
@@ -577,9 +559,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F09.I02] 接样单详情：流程历史时间线可见（按 at 倒序）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\receipts\\ReceiptDetail.vue"
       ]
@@ -595,9 +575,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M03.F09.I03] 接样单详情：报告预览按钮开弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\receipts\\ReceiptDetail.vue"
       ]
@@ -613,9 +591,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F06.I01] 型号维护：渲染标题 + 检测项目树（vue 翻译 CategoryDictList 镜像 react）"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ModelsPage.vue"
       ]
@@ -631,9 +607,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F06.I02] 型号维护：新建按钮开弹窗（标题『新建型号』）"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ModelsPage.vue"
       ]
@@ -649,9 +623,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F06.I03] 型号维护：行内删除按钮开确认弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\ModelsPage.vue"
       ]
@@ -667,9 +639,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F07.I01] 规格维护：渲染标题不炸"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\SpecificationsPage.vue"
       ]
@@ -685,9 +655,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F07.I02] 规格维护：新建按钮开弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\SpecificationsPage.vue"
       ]
@@ -703,9 +671,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F07.I03] 规格维护：行内删除按钮开确认弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\SpecificationsPage.vue"
       ]
@@ -721,9 +687,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F08.I01] 等级维护：渲染标题不炸"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\GradesPage.vue"
       ]
@@ -739,9 +703,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F08.I02] 等级维护：新建按钮开弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\GradesPage.vue"
       ]
@@ -757,9 +719,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F08.I03] 等级维护：行内删除按钮开确认弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\GradesPage.vue"
       ]
@@ -775,9 +735,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F09.I01] 牌号维护：渲染标题不炸"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\BrandsPage.vue"
       ]
@@ -793,9 +751,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F09.I02] 牌号维护：新建按钮开弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\BrandsPage.vue"
       ]
@@ -811,9 +767,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M04.F09.I03] 牌号维护：行内删除按钮开确认弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\pages\\BrandsPage.vue"
       ]
@@ -829,11 +783,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M05.F01.I01] F01 列表行渲染（rows 数据穿透）",
-        "[M05.F01.I01] F01 渲染标题 + 汇总表表头",
-        "[M05.F01.I01][M05.F01.I02] F01+F02 报告类别下拉存在"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\summary\\SummaryList.vue"
       ]
@@ -849,10 +799,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M05.F01.I01][M05.F01.I02] F01+F02 报告类别下拉存在",
-        "[M05.F01.I02] F02 仪表盘统计卡片（合同/接样/样品/待办/按状态）"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\summary\\SummaryList.vue"
       ]
@@ -1001,8 +948,7 @@
       ],
       "tests": [
         "[M06.F05.I01] F05 新建 + 删除按钮",
-        "[M06.F05.I01] F05 渲染标题 + 复合主键列表行",
-        "新建计算方法：<Button variant=default> 渲染 <button>，data-fn M06.F05.I01 落到真实 DOM"
+        "[M06.F05.I01] F05 渲染标题 + 复合主键列表行"
       ],
       "entry": [
         "src\\features\\inspection-capability\\CalculationMethodList.vue"
@@ -1039,8 +985,7 @@
         "docs\\design\\design-function-map.md"
       ],
       "tests": [
-        "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮",
-        "新建技术要求：<Button variant=default> 渲染 <button>，data-fn M06.F06.I02 落到真实 DOM"
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
       ],
       "entry": [
         "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
@@ -1097,8 +1042,7 @@
       ],
       "tests": [
         "[M06.F07.I02] toggle 参数：POST 后按钮翻「解除」",
-        "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）",
-        "行内关联按钮：size=sm variant=outline，CVA h-8 活着，data-fn M06.F07.I02 落到真实 DOM"
+        "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）"
       ],
       "entry": [
         "src\\features\\report-names\\ReportNameLinkDialog.vue",
@@ -1116,11 +1060,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M06.F08.I01] 参数界面：新建按钮开弹窗",
-        "[M06.F08.I01] 参数界面：渲染标题 + 列表行（fixture 真数据穿透）",
-        "[M06.F08.I01] 参数界面：行内删除按钮开确认弹窗"
-      ],
+      "tests": [],
       "entry": [
         "src\\features\\param-interfaces\\ParamInterfaceList.vue"
       ]
@@ -1136,9 +1076,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M98.F01.I01] [M98.F01.I01] BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)"
-      ],
+      "tests": [],
       "entry": []
     },
     "M98.F01.I02": {
@@ -1166,9 +1104,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M98.F02.I01] [M98.F02.I01] axios interceptor module source file exists"
-      ],
+      "tests": [],
       "entry": []
     },
     "M98.F03.I01": {
@@ -1182,9 +1118,7 @@
       "designs": [
         "docs\\design\\design-function-map.md"
       ],
-      "tests": [
-        "[M98.F03.I01] [M98.F03.I01] orval-generated auth endpoint directory exists"
-      ],
+      "tests": [],
       "entry": []
     }
   }

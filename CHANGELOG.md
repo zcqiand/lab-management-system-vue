@@ -2,6 +2,23 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.36] — 2026-09-05
+
+Phase 1.2b hotfix — regression-anchor `it()` 标题去 fn ID 字面。
+`tests/fnReporter.ts:35-37` 的 `extractFns(t.name)` 正则会把 `it()` 标题里
+嵌入的 `Mxx.Fxx.Ixx` 字面吸进 `.state/trace.json`，gate 又漂移到
+`alignment.json` 当成 functional coverage。regression-anchor 只验
+CVA class 合成（红 → 迁移 → 绿），不验用户行为，不能挂 fn ID。
+
+- `tests/features/data-entry/dataEntryPage.dom.test.ts:142` 去 `M03.F03.I02`
+- `tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts:270` 去 `M06.F06.I02`
+- `tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts:297` 去 `M06.F05.I01`
+- `tests/features/report-names/reportNameList.dom.test.ts:138` 去 `M06.F07.I02`
+
+regen `trace.json` 后 4 个目标 fn ID 只被真实 `fnTest` 块引用；
+`alignment.json` 回归锚声明清零。`receiptDetail.dom.test.ts:138` 注释里
+的 `M03.F09.I03` 不动 —— fnReporter 只扫 `it()` 标题不扫 source text。
+
 ## [0.3.35] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.2b**（5 个中量页 raw `<button>` → `<Button>` 原语）。

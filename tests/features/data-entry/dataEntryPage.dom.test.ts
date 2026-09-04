@@ -139,7 +139,7 @@ describe("Phase 1.2b — DataEntryPage <Button> 原语回归", () => {
     expect(entry.classes()).toContain("border");
   });
 
-  it("弹窗保存按钮：data-fn=M03.F03.I02 落到真实 <button>，bg-blue-600 压过 CVA bg-primary", async () => {
+  it("弹窗保存按钮：data-fn 落到真实 <button>，bg-blue-600 压过 CVA bg-primary", async () => {
     const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
     lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
     await flushPromises();
