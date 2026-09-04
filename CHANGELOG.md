@@ -2,6 +2,57 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.35] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.2b**（5 个中量页 raw `<button>` → `<Button>` 原语）。
+5 个独立 commit（按文件粒度回滚），共迁移 18 处按钮；全量回归 165 case 全绿。
+TDD：每个文件先加失败回归锚（红）→ 迁移 → 绿 → commit。
+
+- **CategoryDictList** 3 处（4 码表页 M04.F06-F09 共用）：新建（`bg-blue-600` 定制）/
+  行内编辑 `variant=link text-primary` / 行内删除 `variant=link text-destructive`
+- **TaskAssignmentList** 4 处：搜索 outline / 行内安排 `outline size=sm` /
+  弹窗取消 outline / 弹窗保存 `bg-blue-600`
+- **DataEntryPage** 4 处：搜索 outline / 行内录入结果 `outline size=sm` /
+  弹窗取消 outline / 弹窗保存 `bg-blue-600`（data-fn M03.F03.I02）
+- **ReportPhasePage** 5 处（报告 4 阶段共用）：搜索 outline / 批量提交 outline
+  （`:data-fn=i02DataFn`）/ 行内退回 `variant=link text-destructive` /
+  弹窗取消 outline / 弹窗确认退回 `bg-red-600`
+- **ReceiptDetail** 2 处：报告预览 `outline size=sm text-primary`（data-fn M03.F09.I03）/
+  返回 `outline size=sm text-muted-foreground`
+
+**class 映射规则**（沿用 Phase 1.2a + hotfix 结论）：
+
+- 顶部/弹窗主操作 → `<Button variant="default">`，蓝/红定制用
+  `class="bg-blue-600 hover:bg-blue-700"` / `class="bg-red-600 hover:bg-red-700"`
+  经 tailwind-merge 压过 CVA 的 `bg-primary`
+- 搜索 / 取消 / 带边框行内操作 → `<Button variant="outline">`（行内加 `size="sm"`）
+- **行内 link 风格操作一律 `variant="link"`**，不再用 `variant=ghost size=sm`
+  （后者会带 `h-8 px-3` 高度回归，Phase 1.2a hotfix B1 的教训）
+- 删除/退回一律 `text-destructive` 设计 token，不写 `text-red-600`
+
+**未迁移（有意保留 raw `<button>`，1 处）**：CategoryDictList 左侧检测项目树选择项。
+它是 `flex w-full` 块级树导航 + 条件 `:class` 着色，迁移需 7 个 class override
+（`w-full/justify-start/h-auto/rounded-none/border-l-2/px-3 py-2/text-left`），
+且调用方 `flex` 会被 tailwind-merge 吃掉 CVA 的 `inline-flex` —— 超出 Phase 1.2b
+「>3 个 override 就停」阈值，留给后续 nav 专项（与 SidebarNav 同型）。
+ReportPhasePage 的「全选」/ 行选择是 `<input type=checkbox>`，属 Phase 1.3 范围，本 Phase 不动。
+
+**L5 不动**：`M03.F02.I02` / `M03.F03.I02` / `M03.F03.I03` / `M03.F09.I03` /
+`i02DataFn` / `createDataFn` / `editDataFn` / `deleteDataFn` 全部经 `$attrs`
+转发到真实 `<button>`，原测试 selector（`findAll("button")` / `find('button[data-fn=…]')` /
+`findAll("aside button")`）零回归。
+
+**测试新增 11 条 Phase 1.2b 回归锚**（不挂功能 ID，工程设施测试）：
+
+- CategoryDictList 2：新建 `inline-flex` + `bg-blue-600` 压过 `bg-primary`；
+  行内 link 无 `h-8/px-3` + 删除 `text-destructive`
+- TaskAssignmentList 2：安排按钮 `tagName=BUTTON` + data-fn；保存 `disabled` 落到真实 DOM
+- DataEntryPage 2：录入结果 outline border；保存 data-fn + `bg-blue-600`
+- ReportPhasePage 3：批量提交 data-fn + 空选中 `disabled`；行内退回 link 且
+  `text-destructive`、点击开弹窗；**「全选」仍是 `<input type=checkbox>`**
+  （防 Button 迁移顺手动 checkbox）
+- ReceiptDetail 2：预览 data-fn + `text-primary` + 点击开 ReportPreviewModal；返回 `text-muted-foreground`
+
 ## [0.3.32] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.2a**（7 个 list 页 raw `<button>` → `<Button>` 原语）。

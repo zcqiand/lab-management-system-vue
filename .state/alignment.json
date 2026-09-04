@@ -375,7 +375,8 @@
         "[M03.F03.I02] CementCompressCard 有技术要求：录入均值达标 → 自动判合格",
         "[M03.F03.I02] ConcreteCompressCard 录入荷载 → 上报代表值 JSON",
         "[M03.F03.I02] ParticleGradationCard gravel=true 切换到 12 筛孔",
-        "[M03.F03.I02] 数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）"
+        "[M03.F03.I02] 数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）",
+        "弹窗保存按钮：data-fn=M03.F03.I02 落到真实 <button>，bg-blue-600 压过 CVA bg-primary"
       ],
       "entry": [
         "src\\features\\data-entry\\DataEntryPage.vue"
