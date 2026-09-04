@@ -2,6 +2,67 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.46] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2a-4**（数据录入页 + 8 张检测模型卡的 raw `<table>` →
+`<Table>` 家族原语迁移）。本批收尾 **Phase 2a**：`src/features/**` 下已无
+raw `<table>` / `<thead>` / `<tbody>` / `<tr>` / `<th>` / `<td>`。
+
+**9 个文件迁移**（共 9 张表，每文件 6 个新 import：`Table` / `TableHeader` /
+`TableBody` / `TableRow` / `TableHead` / `TableCell`；视觉零变更 —
+Tailwind class 全保留，卡片 `bg-white` / `border rounded p-3` 外壳不动）：
+
+- `src/features/data-entry/DataEntryPage.vue` — M03.F03 待录入接样单表
+  （6 列 × 1 fixture 行；行内 router-link + `data-fn="M03.F03.I03"` 按钮；
+  空态行 `colspan="6"` 保留）
+- `src/features/data-entry/models/ConcreteCompressCard.vue` — 3 列 × N 试件
+- `src/features/data-entry/models/ConcretePermeabilityCard.vue` — 3 列 × 6 试件
+- `src/features/data-entry/models/RebarWeldingTensileCard.vue` — 5 列 × 3 试件
+- `src/features/data-entry/models/RebarWeldingBendCard.vue` — 3 列 × 3 试件
+- `src/features/data-entry/models/RebarMechNumericCard.vue` — 2~4 列（`isStrength`
+  / `isRatio` / `connectionMode` 条件列）× N 组
+- `src/features/data-entry/models/SoilCompactionCard.vue` — 转置表（列头 = 序号 +
+  5 组点位，2 体行 = 含水率 / 干密度），`v-for` 同时在 TableHead 与 TableCell 上
+- `src/features/data-entry/models/SoilCompactionDegreeCard.vue` — 9~10 列
+  （`showMaxDensityColumn` 条件列）× 6 行，评定列条件色
+- `src/features/data-entry/models/ParticleGradationCard.vue` — 本批最大表
+  （砂 10 列 / 碎石 15 列；每样品 3 子行 + 末尾平均行；`<template v-for>` 包
+  3 个 `<TableRow>`；序号 cell 带 `rowspan="3"`）
+
+**Phase 2a-4 Table 回归锚新增 9 case**（不挂功能 ID，工程设施测试）：
+
+- `tests/features/data-entry/cardsAll.dom.test.ts` — 8 case，每张卡钉
+  `div[role="table"]` 语义、列头文本顺序、rowgroup[1] 体行数与每行 cell 数、
+  行内 `<Input>` / raw `<select>` 嵌在 cell 内而非被吞
+- `tests/features/data-entry/dataEntryPage.dom.test.ts` — 1 case，钉 6 列头顺序，
+  以及行内 router-link `<a>` 与 `data-fn` 按钮嵌在 cell 内
+
+**踩坑 / 教训**：
+
+- `SoilCompactionDegreeCard` 评定列原本是 `:class="[cellCls, 条件色]"` 数组绑定。
+  `TableCell` 的 `class` prop 类型是 `string` 不是 `string[]`，数组会被
+  Vue 当 `$attrs.class` 直接 stringify — 改成脚本侧 `verdictCls(verdict)` 拼成
+  单个字符串（与 Phase 1.4 的 `<Input>` `:class` 数组陷阱同源）
+- `TableCell` 是 `inheritAttrs:false` + `v-bind="$attrs"`，调用方 `class` 走
+  `$attrs` 通道，与 `:class="cn(...)"` 的基类是**拼接**不是 twMerge 二选一 —
+  基类 `p-2` 仍留在 class 串里，靠 Tailwind 样式表里 `py-*` 排在 `p-*` 之后取胜。
+  回归锚断言的是 `indexOf("py-1") > indexOf("p-2")`，不是 `not.toContain("p-2")`
+- `CementCompressCard` **本来就没有 `<table>`**（它是 `grid grid-cols-6` 布局），
+  Phase 2a-4 原定 10 文件实际只有 9 张表；该卡零改动
+- `ParticleGradationCard` 序号 cell 的 `rowspan="3"` 在 div-based Table 上是
+  惰性属性（div 不支持跨行合并）。保留它是为了和 `ContractsList` 等已迁文件
+  保留 `colspan` 的处理一致；跨行视觉留 Phase 2f 主题收敛时按 grid 一并处理
+- `SoilCompactionDegreeCard` 默认 config 下是 **9 列**不是 10 列
+  （`showMaxDensityColumn` 未开 → 无「最大干密度」列），写回归锚别照抄模板列数
+
+**验证**：
+
+- vitest: 267 case / 27 文件全绿（Phase 2a-3 基线 258 + 新 Table 回归锚 9）
+- gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5
+  全 PASS
+- 100 个功能条目，引用完整；L5 无断裂
+- `grep -rn "<table" src/features/` 零命中（Phase 2a 收尾自检）
+
 ## [0.3.45] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 2a-3**（5 个 list pages / modals / dialogs 表格 raw

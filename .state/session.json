@@ -1,29 +1,30 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "Phase 2a-3 Table 迁 5 文件 7 张表 → tag v0.3.45-20260905",
+  "current_task": "Phase 2a-4 Table 迁 9 文件 9 张表（Phase 2a 收尾）→ tag v0.3.46-20260905",
   "last_session_at": "2026-09-05",
-  "last_session_summary": "Phase 2a-3 完成：5 文件 7 张表 raw <table>/<thead>/<tbody>/<tr>/<th>/<td> 全部迁到 shadcn-vue Table 6 原语（div-based + role 属性）。文件：ReportNameList（M06.F07 1 张 6 列 × 2 行，行 data-fn=M06.F07.I01）/ ReportPhasePage（M03.F05-F08 共用 1 张 6 列含全选 checkbox 列头，行 data-fn=i01DataFn prop 注入）/ ReceiptsList（M03.F01 1 张 7 列 × 2 行含流程状态徽章 + 提交/编辑/删除按钮，行 data-fn=M03.F01.I01；Phase 1.4 跳过的 14 处 label 包 select/input 留 Phase 2d 不动）/ ReportPreviewModal（M03.F09.I03 报告预览弹窗内 2 张只读表：基础信息 4 列 2 行 + 检测参数结果 4 列）/ ParameterStandardLinkDialog（M06.F03.I02 关联弹窗内 1 张 5 列，行内 raw button data-fn=M06.F03.I02 嵌套在 TableCell 内而非被吞）。每文件 7 个新 import（Table/Header/Body/Row/Head/Cell + 既有 Button/Input/Label）；视觉零变更（Tailwind class 全保留，data-fn 经 $attrs 落到真实 <div>）。测试 selector 同步：parameterStandardLink.dom.test.ts 加 `it` 进 vitest import（原始只 describe/expect/vi/afterEach）；其余 4 文件无 raw tag selector（只查 button/input/label/div），零迁移。Phase 2a-3 Table 回归锚共 20 case（不挂功能 ID）：5 文件各 4 case 钉 <Table> div[role=table] + <TableHead> 文本顺序 + rowgroup[1] 行 data-fn 落真实 DOM + TableCell class 经 cn() 合并 + 行内元素（button / checkbox / 徽章 span）嵌套在 cell 内而非被吞。vitest 258/27 全绿（基线 238 + Table 回归锚 20）；gate exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整。",
+  "last_session_summary": "Phase 2a-4 完成，Phase 2a 整体收尾：src/features/** 下已无 raw <table>/<thead>/<tbody>/<tr>/<th>/<td>（grep 零命中）。原定 10 文件，实测只有 9 张表 —— CementCompressCard 本来就没有 <table>（它是 grid grid-cols-6 布局），零改动。迁移文件：DataEntryPage（M03.F03 待录入接样单 6 列 × 1 fixture 行，行内 router-link + data-fn=M03.F03.I03 按钮，空态行 colspan=6 保留）/ ConcreteCompressCard（3 列 × N 试件）/ ConcretePermeabilityCard（3 列 × 6 试件，行内 raw select 留 Phase 2d）/ RebarWeldingTensileCard（5 列 × 3 试件）/ RebarWeldingBendCard（3 列 × 3 试件）/ RebarMechNumericCard（2~4 列，isStrength/isRatio/connectionMode 条件列 v-if 挂在 TableHead+TableCell 上）/ SoilCompactionCard（转置表：列头 = 序号 + 5 组点位，2 体行 = 含水率/干密度，v-for 同时在 TableHead 与 TableCell 上）/ SoilCompactionDegreeCard（9~10 列，showMaxDensityColumn 条件列 × 6 行，评定列条件色）/ ParticleGradationCard（本批最大表，砂 10 列 / 碎石 15 列，每样品 3 子行 + 末尾平均行，<template v-for> 包 3 个 TableRow，序号 cell 带 rowspan=3）。每文件 6 个新 import（Table/TableHeader/TableBody/TableRow/TableHead/TableCell）；视觉零变更（Tailwind class 全保留，卡片 border rounded p-3 外壳不动）。测试 selector 迁移：**零改动** —— data-entry 4 个测试文件本来就没有 raw tag selector（只查 input[aria-label]/label/button），全仓 grep findAll(\"tr\")/findAll(\"td\") 等也零命中。Phase 2a-4 Table 回归锚新增 9 case（不挂功能 ID）：cardsAll 8 case（8 张卡各钉 div[role=table] 语义 + 列头文本顺序 + rowgroup[1] 体行数与每行 cell 数 + 行内 Input/select 嵌在 cell 内）+ dataEntryPage 1 case（6 列头顺序 + 行内 router-link <a> 与 data-fn 按钮嵌在 cell 内）。vitest 267/27 全绿（基线 258 + 锚 9）；gate exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整。",
   "done": [
-    "ReportNameList.vue raw <table> → <Table> 6 原语（M06.F07 6 列 × 2 行，行 data-fn=M06.F07.I01）",
-    "ReportPhasePage.vue raw <table> → <Table> 6 原语（M03.F05-F08 共用 6 列含全选 checkbox 列头 + 委托书编号 router-link，行 data-fn=i01DataFn）",
-    "ReceiptsList.vue raw <table> → <Table> 6 原语（M03.F01 7 列 × 2 行含流程状态徽章 + 行内 提交/编辑/删除 按钮）",
-    "ReportPreviewModal.vue 内嵌 2 张 raw <table> → <Table> 6 原语（M03.F09.I03 只读表：基础信息 4 列 2 行 + 检测参数结果 4 列）",
-    "ParameterStandardLinkDialog.vue raw <table> → <Table> 6 原语（M06.F03.I02 5 列关联表，行内 raw button data-fn=M06.F03.I02 嵌套在 TableCell）",
-    "测试 selector 同步：parameterStandardLink.dom.test.ts 加 `it` 进 vitest import",
-    "Phase 2a-3 Table 回归锚 20 case：reportNameList 4 / reportPhasePage 4 / receiptsList 4 / extFieldsPreviewModalsButtons 4 / parameterStandardLink 4",
-    "vitest 258/27 全绿（基线 238 + 锚 20）",
+    "DataEntryPage.vue raw <table> → <Table> 6 原语（M03.F03 6 列，行内 router-link + data-fn=M03.F03.I03 按钮，空态 colspan=6）",
+    "ConcreteCompressCard.vue / ConcretePermeabilityCard.vue raw <table> → <Table> 6 原语（3 列 × N 试件 / 6 试件）",
+    "RebarWeldingTensileCard.vue / RebarWeldingBendCard.vue raw <table> → <Table> 6 原语（5 列 / 3 列 × 3 试件）",
+    "RebarMechNumericCard.vue raw <table> → <Table> 6 原语（条件列 v-if 挂 TableHead + TableCell）",
+    "SoilCompactionCard.vue raw <table> → <Table> 6 原语（转置表，v-for 同时在 TableHead 与 TableCell 上）",
+    "SoilCompactionDegreeCard.vue raw <table> → <Table> 6 原语 + 评定列 :class 数组 → verdictCls() 单串",
+    "ParticleGradationCard.vue raw <table> → <Table> 6 原语（<template v-for> 包 3 TableRow，rowspan=3 保留）",
+    "确认 CementCompressCard 无 <table>（grid grid-cols-6 布局），Phase 2a-4 实际 9 文件 9 张表",
+    "Phase 2a-4 Table 回归锚 9 case：cardsAll 8 / dataEntryPage 1",
+    "vitest 267/27 全绿（基线 258 + 锚 9）",
     "gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS",
-    "CHANGELOG 0.3.45 条目（5 文件 7 张表 + selector 同步 + Table 回归锚 + 踩坑 + 验证）",
-    "session.json handoff（current_task 指向 Phase 2a-4）"
+    "CHANGELOG 0.3.46 条目（9 文件 9 张表 + 回归锚 + 5 条踩坑 + 验证）",
+    "Phase 2a 收尾自检：grep -rn \"<table\" src/features/ 零命中"
   ],
   "next": [
-    "Phase 2a-4：迁 data-entry 卡片（SoilCompactionDegreeCard / SoilCompactionCard / RebarWeldingTensileCard / RebarWeldingBendCard / RebarMechNumericCard / ParticleGradationCard / ConcretePermeabilityCard / ConcreteCompressCard / DataEntryPage）",
-    "deploy：推 tag v0.3.45-20260905 → CI docker build + VPS pull + restart（实际功能变更，需要 deploy）",
+    "deploy：推 tag v0.3.46-20260905 → CI docker build + VPS pull + restart",
     "Phase 2b: Checkbox 原语（InspectionCapabilityList 5 个 type=checkbox + ReportPhasePage 全选/行选 + ReceiptsList 全选/单选）",
     "Phase 2c: Textarea 原语（ReportNameList extFields + ReceiptsList 备注）",
-    "Phase 2d: Select 原语 + ReceiptsList 14 处 label 包 select/input 一并重构",
-    "Phase 2f: Tailwind 主题收敛（text-green-600/text-red-600/text-gray-400 → semantic token，cardsAll.dom.test.ts:188 一并迁）"
+    "Phase 2d: Select 原语 + ReceiptsList 14 处 label 包 select/input 一并重构（data-entry 卡片里还有 6 处 raw <select>：RebarWeldingTensile/Bend、RebarMechNumeric、ConcretePermeability、DataEntryPage 弹窗 ×2）",
+    "Phase 2e: Dialog 原语；Phase 2f: NavigationMenu + Tailwind 主题收敛（text-green-600/text-red-600/text-gray-400 → semantic token；ParticleGradationCard rowspan 跨行视觉按 grid 一并处理）"
   ],
   "open_questions": [],
   "dont": [
@@ -35,11 +36,13 @@
     "regression-anchor 测试 it() 标题禁止嵌入 Mxx.Fxx.Ixx 字面（fnReporter leak）",
     "不要把 Input.vue modelValue 再改回 string-only（会触发 reactive Record TS2322 回归）",
     "不要给 v-model 加 .lazy modifier（搜索框 @keydown.enter / @keyup.enter 仍依赖 input 事件即时同步）",
-    "不要在 <Input>/TableCell/TableHead/TableRow 单值 class prop 上用 :class=\"[]\" 数组（class 是 string 不是 string[]，要拼接；与 Phase 1.4 同源）",
+    "不要在 <Input>/TableCell/TableHead/TableRow 单值 class prop 上用 :class=\"[]\" 数组（class 是 string 不是 string[]，要拼接；Phase 2a-4 SoilCompactionDegreeCard 评定列踩过，已改 verdictCls() 脚本侧拼串）",
+    "不要断言 TableCell 基类被 twMerge 吃掉（inheritAttrs:false + v-bind=\"$attrs\" 让调用方 class 与 cn() 基类**拼接**不是二选一，p-2 仍在串里；要断言就断言 indexOf 顺序）",
     "不要 <Input @change=\"(e) => ...\"> 省略 Event 类型注解（L3 TS7006）",
     "不要在 Phase 2b 之前提前把 find('.text-green-600') 改了（class 字面量 → semantic token 走 Phase 2f 全家族一起收敛）",
-    "不要在 Phase 2a-4 之前提前迁 data-entry 卡片（按 pilot 节奏 5-7 个/批，逐批更新对应 selector，避免 selector 散落同时改）",
-    "不要给 Markdown 加 `+` 列表项（MD004 ul-style 期望 dash，本批 PHASE 2a-3 CHANGELOG 36/39 行踩坑，已统一为 `-` 缩进续行）"
+    "不要指望 div-based Table 支持 rowspan/colspan（ParticleGradationCard 序号 cell 的 rowspan=3 是惰性属性，保留只为与已迁文件 colspan 处理一致）",
+    "不要照抄模板列数写回归锚（SoilCompactionDegreeCard 默认 config 是 9 列不是 10 列，showMaxDensityColumn 未开）",
+    "不要给 Markdown 加 `+` 列表项（MD004 ul-style 期望 dash，Phase 2a-3 与 2a-4 CHANGELOG 各踩一次，已统一为 `-` 缩进续行）"
   ],
   "active_branch": "master"
 }

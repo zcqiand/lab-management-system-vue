@@ -207,6 +207,7 @@
         "docs\\design\\design-function-map.md"
       ],
       "tests": [
+        "2 行 fixture：data-fn=M03.F01.I01 落 rowgroup[1] 内 div[role=row]",
         "[M03.F01.I01] 接样管理：渲染标题 + 列表行（fixture 真数据穿透）"
       ],
       "entry": [
@@ -943,7 +944,8 @@
       ],
       "tests": [
         "[M06.F03.I02] toggle：未关联标准 → POST 后按钮翻「解除关联」",
-        "[M06.F03.I02] 关联弹窗：列出标准 + 已关联态（IP-0001 已关联 GB 175-2023）"
+        "[M06.F03.I02] 关联弹窗：列出标准 + 已关联态（IP-0001 已关联 GB 175-2023）",
+        "行内 button data-fn='M06.F03.I02' 落到真实 button，且嵌套在 cell 内（不被 <TableCell> 吞）"
       ],
       "entry": [
         "src\\features\\inspection-capability\\InspectionCapabilityList.vue",
