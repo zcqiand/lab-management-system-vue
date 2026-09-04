@@ -34,10 +34,15 @@ import {
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
 import BackendBadge from "@/components/app/BackendBadge.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
+import { useRequireAuth } from "@/state/require-auth";
 import { useBackendMenus, type MenuNode } from "@/composables/use-backend-menus";
 
 const auth = useAuthStore();
 const router = useRouter();
+// M01.F04.I03 守卫提升到 AppShell：未登录访问任何业务子路由（receipts/contracts/...）
+// 直接跳 /login，而不是停在 AppShell 渲染「菜单加载失败」错误态。
+// 镜像 react 仓 app-shell.tsx §58 useRequireAuth()。
+const { allowed, checking } = useRequireAuth();
 
 // 图标字符串 → lucide 组件映射。saas 菜单 icon 字段是 PascalCase 字符串名，
 // SidebarNav.vue 接受 iconMap prop 后用 <component :is> 动态渲染。
@@ -116,7 +121,12 @@ function onAction(action: string): void {
 </script>
 
 <template>
-  <div class="flex h-screen">
+  <!-- M01.F04.I03：useRequireAuth 守卫 — idle 挂起 / anonymous → /login。
+       未登录访问 /receipts 等业务页时不让 AppShell 渲染半残 UI，
+       直接由守卫跳 /login（带 from 回跳），与 react 仓 app-shell.tsx 同构。 -->
+  <div v-if="checking" />
+  <div v-else-if="!allowed" />
+  <div v-else class="flex h-screen">
     <aside
       v-if="menuLoadError"
       class="border-r bg-sidebar flex w-60 flex-col"

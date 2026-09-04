@@ -14,7 +14,7 @@ import { fnTest } from "../../fn";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { createPinia, setActivePinia, getActivePinia } from "pinia";
 import AppShell from "@/components/app/AppShell.vue";
-import { __testReset } from "@/state/auth";
+import { __testActions, __testReset } from "@/state/auth";
 
 // -- axios mock：可编程响应队列 ----------------------------------------------------
 
@@ -33,8 +33,15 @@ vi.mock("axios", () => ({
       }
       return { status: r.status, data: r.data };
     },
-    post: async () => {
-      throw new Error("menus 测试不应触达 POST");
+    // POST 必须放行：toAuthenticated() 走 __testActions.login() → axios.post。
+    // 这里记录但不消费队列（login+permissions 在 toAuthenticated 内部 push）。
+    post: async (url: string) => {
+      calls.push({ method: "POST", url });
+      const r = queue.shift();
+      if (!r || r.status >= 400) {
+        throw Object.assign(new Error(`HTTP ${r?.status ?? "no-mock"}`), { response: r });
+      }
+      return { status: r.status, data: r.data };
     },
     create: () => {
       throw new Error("menus 测试不应触达 axios.create");
@@ -46,6 +53,22 @@ vi.mock("axios", () => ({
 import { useBackendMenus, type MenuNode } from "@/composables/use-backend-menus";
 
 // -- fixtures：契约形状（shared tsp MenuNode{id,label,path?,icon?,children?}）---
+
+// auth fixtures — AppShell 自从把 useRequireAuth 提升到这里（M01.F04.I03），
+// 未登录会被守卫拦到 /login，AppShell 不渲染任何 UI。
+// 测试前必须先推 authenticated（axios mock 队列先 push login + permissions），
+// 否则 mountShell 会渲染空。镜像 appShellLogout.dom.test.ts toAuthenticated()。
+const USER = { id: "u1", username: "admin" };
+const TENANT_A = { tenantId: "t-a", code: "ACME", name: "甲公司", roleIds: [] };
+
+async function toAuthenticated(): Promise<void> {
+  queue.push(
+    { status: 200, data: { token: "t1", refreshToken: "r1", user: USER, tenants: [TENANT_A] } },
+    { status: 200, data: { permissions: [] } },
+  );
+  const resp = await __testActions.login({ username: "admin", password: "x" });
+  expect("code" in resp && resp.code ? false : true).toBe(true);
+}
 
 const CONTRACT_MENUS = [
   {
@@ -100,6 +123,7 @@ beforeEach(() => {
 
 describe("M01.F04.I01 useBackendMenus", () => {
   fnTest(["M01.F04.I01"], "成功：/api/auth/menus 契约树 → AppShell 平铺渲染叶子菜单", async () => {
+    await toAuthenticated();
     queue.push({ status: 200, data: CONTRACT_MENUS });
     const wrapper = await mountShell();
 
@@ -112,6 +136,7 @@ describe("M01.F04.I01 useBackendMenus", () => {
   });
 
   fnTest(["M01.F04.I01"], "失败：抛错上抛，AppShell 渲染错误态（demo 兜底删除）", async () => {
+    await toAuthenticated();
     queue.push({ status: 500, data: { message: "boom" } });
     const wrapper = await mountShell();
 
@@ -128,6 +153,7 @@ describe("M01.F04.I01 useBackendMenus", () => {
   // 树 path 带斜杠（"/catalog/models"）。两条数据链都要归一化成 router 真实
   // 路由（"/models"），否则 router-link 相对路径跳转 + 选中态全失效。
   fnTest(["M01.F04.I01"], "saas 快照 path（无斜杠）归一化为绝对路由", async () => {
+    await toAuthenticated();
     queue.push({
       status: 200,
       data: [
@@ -156,6 +182,7 @@ describe("M01.F04.I01 useBackendMenus", () => {
   });
 
   fnTest(["M01.F04.I01"], "demo 兜底旧 path 别名映射到真实路由", async () => {
+    await toAuthenticated();
     queue.push({
       status: 200,
       data: [

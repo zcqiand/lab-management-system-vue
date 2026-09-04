@@ -2,6 +2,23 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.27] — 2026-09-04
+
+- fix(AppShell): M01.F04.I03 守卫从 DashboardPage 提升到 AppShell — 未登录访问
+  任何业务子路由（receipts / contracts / data-entry / ...）直接跳 /login，而不是
+  让 AppShell 渲染「菜单加载失败」半残错误态。镜像 react 仓 app-shell.tsx §58
+  `useRequireAuth()`。
+  - `src/components/app/AppShell.vue` 加 `useRequireAuth()` 调用，template 三段门
+    `v-if="checking"` / `v-else-if="!allowed"` / `v-else`(原内容)
+  - `tests/features/auth/backendMenus.dom.test.ts`：axios mock POST 放行 +
+    `toAuthenticated()` 前置（与 appShellLogout.dom.test.ts 同款），4 个
+    useBackendMenus case 在 mount 前先推 authenticated 态
+- fix(LoginPage): VITE_SAAS_CLIENT_ID 禁 UUID 字面兜底（ADR-0019）。之前
+  `?? "11111111-1111-1111-1111-111111111111"` 是业务身份字段兜底到 demo
+  字面量，L0.no_fallback 红。改为 `(() => { const v = ...; if (v ===
+  undefined) throw new Error(...); return v; })()` — dev 期 .env.local
+  显式声明、prod 由 Dockerfile ENV / deploy 脚本注入。
+
 ## [0.1.1] — 2026-08-27
 
 - M01.F04.I01 前端失败语义改为上抛错误，不再静默回退静态 `FALLBACK_NAV`：
