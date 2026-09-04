@@ -98,7 +98,10 @@ describe("M06.F01 检测专项维护", () => {
     });
     await flushPromises();
     expect(wrapper.text()).toContain("检测专项维护");
-    expect(wrapper.findAll("tbody tr").length).toBeGreaterThan(0);
+    // Phase 2a-2 迁移：<tbody><tr> → <TableBody> 内 <TableRow> 渲染为 div[role=row]
+    // 数据行在第二个 rowgroup（TableBody）
+    const bodyRows = wrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBeGreaterThan(0);
   });
 
   fnTest(["M06.F01.I01"], "F01 新建按钮 + SP01 编码可见", async () => {
@@ -172,7 +175,9 @@ describe("M06.F05 计算方法维护", () => {
     const wrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
     expect(wrapper.text()).toContain("计算方法维护");
-    expect(wrapper.findAll("tbody tr").length).toBeGreaterThan(0);
+    // Phase 2a-2 迁移：<tbody><tr> → <TableBody> 内 <TableRow> 渲染为 div[role=row]
+    const bodyRows = wrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBeGreaterThan(0);
     expect(wrapper.text()).toContain("OBJ-1");
     expect(wrapper.text()).toContain("P-1");
   });
@@ -201,7 +206,9 @@ describe("M06.F06 技术要求维护", () => {
     const wrapper = mountWithProviders(TechnicalRequirementList);
     await flushPromises();
     expect(wrapper.text()).toContain("新建技术要求");
-    expect(wrapper.findAll("tbody tr").length).toBeGreaterThan(0);
+    // Phase 2a-2 迁移：<tbody><tr> → <TableBody> 内 <TableRow> 渲染为 div[role=row]
+    const bodyRows = wrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBeGreaterThan(0);
     const editBtns = wrapper.findAll('button[aria-label^="编辑 "]');
     const delBtns = wrapper.findAll('button[aria-label^="删除 "]');
     expect(editBtns.length).toBeGreaterThan(0);
@@ -560,5 +567,131 @@ describe("Phase 1.4 — CalculationMethodList 表单 <Label> 原语回归", () =
     expect(labels[0].text()).toBe("检测项目");
     expect(labels[0].classes()).toContain("font-medium");
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+});
+
+// Phase 2a-2 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁 3 件事：<Table> 渲染 div[role=table] / <TableHead> 渲染 div[role=columnheader] /
+// <TableRow> 数据行在 rowgroup[1]（TableBody），不带 data-fn。
+describe("Phase 2a-2 — InspectionCapabilityList <Table> 原语回归", () => {
+  it("specialties 视图：<Table> 渲染 div[role=table]；6 <TableHead>（编码/名称/官方序号/官方/状态 + 操作）", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "specialties" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    // columnHeaders() 给 specialties 返回 5 列 + 操作列 = 6
+    expect(heads.length).toBe(6);
+    expect(heads.map((h) => h.text())).toEqual([
+      "编码",
+      "名称",
+      "官方序号",
+      "官方/自定义",
+      "状态",
+      "操作",
+    ]);
+  });
+
+  it("parameters 视图：行内「关联标准」按钮 data-fn 落到真实 <button>，行在 rowgroup[1]", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "parameters" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 1 fixture 行
+    const bodyRows = lastWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(1);
+
+    // 行内关联标准按钮
+    const linkBtn = lastWrapper.find('button[data-fn="M06.F03.I02"]');
+    expect(linkBtn.exists()).toBe(true);
+    expect(linkBtn.attributes("aria-label")).toBe("关联标准 P-1");
+  });
+});
+
+describe("Phase 2a-2 — CalculationMethodList <Table> 原语回归", () => {
+  it("<Table> 渲染 div[role=table]；7 <TableHead>（项目/参数/判定标准/算法类型/试件数量/备注 + 操作）", async () => {
+    lastWrapper = mountWithProviders(CalculationMethodList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(7);
+    expect(heads.map((h) => h.text())).toEqual([
+      "检测项目",
+      "检测参数",
+      "判定标准",
+      "算法类型",
+      "试件数量",
+      "备注",
+      "操作",
+    ]);
+  });
+
+  it("1 fixture 行：判定标准 cell 用 font-mono + text-xs 渲染（调用方 class 经 tailwind-merge 合并）", async () => {
+    lastWrapper = mountWithProviders(CalculationMethodList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 行内第 3 个 cell（0-indexed） 是判定标准 cell（class=\"font-mono text-xs\"）
+    const stdCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+      .findAll('[role="row"]')[0]!
+      .findAll('[role="cell"]')[2];
+    expect(stdCell.exists()).toBe(true);
+    expect(stdCell.classes()).toContain("font-mono");
+    expect(stdCell.classes()).toContain("text-xs");
+  });
+});
+
+describe("Phase 2a-2 — TechnicalRequirementList <Table> 原语回归", () => {
+  it("<Table> 渲染 div[role=table]；11 <TableHead>（10 列 + 操作列）", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(11);
+    expect(heads.map((h) => h.text())).toEqual([
+      "检测项目",
+      "检测参数",
+      "判定标准",
+      "牌号",
+      "型号",
+      "等级",
+      "规格",
+      "判定方式",
+      "上限",
+      "下限",
+      "操作",
+    ]);
+  });
+
+  it("1 fixture 行：判定标准 cell 用 font-mono + text-xs 渲染", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 行内第 3 个 cell（0-indexed） 是判定标准 cell
+    const stdCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+      .findAll('[role="row"]')[0]!
+      .findAll('[role="cell"]')[2];
+    expect(stdCell.exists()).toBe(true);
+    expect(stdCell.classes()).toContain("font-mono");
+    expect(stdCell.classes()).toContain("text-xs");
   });
 });
