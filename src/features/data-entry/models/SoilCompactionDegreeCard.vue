@@ -4,6 +4,7 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import {
   computeCompactionDegree,
   parseDegreeResult,
@@ -96,7 +97,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
   <div class="border rounded p-3 space-y-3" data-fn="M03.F03.I03">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium">{{ param.canonicalName || param.name }}</span>
-      <label class="text-xs text-gray-600">
+      <Label class="text-xs text-gray-600">
         最大干密度（g/cm³）：
         <Input
           type="number"
@@ -107,7 +108,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
           :model-value="state.maxDryDensity || ''"
           @change="(e: Event) => updateMax((e.target as HTMLInputElement).value)"
         />
-      </label>
+      </Label>
     </div>
 
     <table class="text-sm border-collapse">
