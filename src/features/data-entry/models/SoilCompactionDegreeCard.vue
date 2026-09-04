@@ -5,6 +5,12 @@ import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 import {
   computeCompactionDegree,
   parseDegreeResult,
@@ -91,6 +97,19 @@ const cellCls = "border px-1 py-1 text-center";
 const numCls =
   "w-20 border rounded px-1 py-0.5 text-right disabled:bg-gray-100 disabled:text-gray-500";
 const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:text-gray-500";
+
+// Phase 2a-4：TableCell 的 `class` prop 是 string 不是 string[]，
+// 不能沿用 `:class="[cellCls, 条件色]"` 数组绑定（同 Phase 1.4 的 :class 数组陷阱），
+// 必须先在脚本里拼成单个字符串再传。
+function verdictCls(verdict: string): string {
+  const tone =
+    verdict === "不合格"
+      ? "text-red-600"
+      : verdict === "合格"
+        ? "text-green-600"
+        : "text-gray-400";
+  return `${cellCls} ${tone}`;
+}
 </script>
 
 <template>
@@ -111,24 +130,24 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
       </Label>
     </div>
 
-    <table class="text-sm border-collapse">
-      <thead>
-        <tr class="bg-gray-50">
-          <th :class="cellCls">试样编号</th>
-          <th :class="cellCls">取样部位</th>
-          <th :class="cellCls">层次</th>
-          <th :class="cellCls">设计压实度（%）</th>
-          <th :class="cellCls">湿密度（g/cm³）</th>
-          <th :class="cellCls">含水率（%）</th>
-          <th :class="cellCls">干密度（g/cm³）</th>
-          <th v-if="showMaxCol" :class="cellCls">最大干密度（g/cm³）</th>
-          <th :class="cellCls">压实度（%）</th>
-          <th :class="cellCls">单项评定</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(r, i) in computedRows" :key="i">
-          <td :class="cellCls">
+    <Table class="text-sm border-collapse">
+      <TableHeader>
+        <TableRow class="bg-gray-50">
+          <TableHead :class="cellCls">试样编号</TableHead>
+          <TableHead :class="cellCls">取样部位</TableHead>
+          <TableHead :class="cellCls">层次</TableHead>
+          <TableHead :class="cellCls">设计压实度（%）</TableHead>
+          <TableHead :class="cellCls">湿密度（g/cm³）</TableHead>
+          <TableHead :class="cellCls">含水率（%）</TableHead>
+          <TableHead :class="cellCls">干密度（g/cm³）</TableHead>
+          <TableHead v-if="showMaxCol" :class="cellCls">最大干密度（g/cm³）</TableHead>
+          <TableHead :class="cellCls">压实度（%）</TableHead>
+          <TableHead :class="cellCls">单项评定</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(r, i) in computedRows" :key="i">
+          <TableCell :class="cellCls">
             <Input
               :aria-label="`第 ${i + 1} 行试样编号`"
               :class="txtCls"
@@ -136,8 +155,8 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :model-value="r.code"
               @change="(e: Event) => updateRow(i, 'code', (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td :class="cellCls">
+          </TableCell>
+          <TableCell :class="cellCls">
             <Input
               :aria-label="`第 ${i + 1} 行取样部位`"
               :class="txtCls"
@@ -145,8 +164,8 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :model-value="r.part"
               @change="(e: Event) => updateRow(i, 'part', (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td :class="cellCls">
+          </TableCell>
+          <TableCell :class="cellCls">
             <Input
               :aria-label="`第 ${i + 1} 行层次`"
               :class="txtCls"
@@ -154,8 +173,8 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :model-value="r.layer"
               @change="(e: Event) => updateRow(i, 'layer', (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td :class="cellCls">
+          </TableCell>
+          <TableCell :class="cellCls">
             <Input
               type="number"
               step="0.1"
@@ -165,8 +184,8 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :model-value="r.designDegree || ''"
               @change="(e: Event) => updateRow(i, 'designDegree', (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td :class="cellCls">
+          </TableCell>
+          <TableCell :class="cellCls">
             <Input
               type="number"
               step="0.001"
@@ -176,8 +195,8 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :model-value="r.wetDensity || ''"
               @change="(e: Event) => updateRow(i, 'wetDensity', (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td :class="cellCls">
+          </TableCell>
+          <TableCell :class="cellCls">
             <Input
               type="number"
               step="0.1"
@@ -187,29 +206,19 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :model-value="r.moisture || ''"
               @change="(e: Event) => updateRow(i, 'moisture', (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td :class="cellCls" :data-testid="`dry-density-${i}`">
+          </TableCell>
+          <TableCell :class="cellCls" :data-testid="`dry-density-${i}`">
             {{ r.dryDensity || '—' }}
-          </td>
-          <td v-if="showMaxCol" :class="cellCls">{{ r.maxDryDensity || '—' }}</td>
-          <td :class="cellCls" :data-testid="`degree-${i}`">
+          </TableCell>
+          <TableCell v-if="showMaxCol" :class="cellCls">{{ r.maxDryDensity || '—' }}</TableCell>
+          <TableCell :class="cellCls" :data-testid="`degree-${i}`">
             {{ r.degree || '—' }}
-          </td>
-          <td
-            :class="[
-              cellCls,
-              r.verdict === '不合格'
-                ? 'text-red-600'
-                : r.verdict === '合格'
-                  ? 'text-green-600'
-                  : 'text-gray-400',
-            ]"
-            :data-testid="`verdict-${i}`"
-          >
+          </TableCell>
+          <TableCell :class="verdictCls(r.verdict)" :data-testid="`verdict-${i}`">
             {{ r.verdict || '—' }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
   </div>
 </template>
