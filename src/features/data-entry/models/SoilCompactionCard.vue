@@ -4,6 +4,12 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 import {
   computeCompactionPeak,
   parseCompactionResult,
@@ -64,17 +70,17 @@ const inputCls =
       <span class="text-xs text-gray-500">GB/T 50123-2019 击实试验</span>
     </div>
 
-    <table class="text-sm border-collapse">
-      <thead>
-        <tr class="bg-gray-50">
-          <th :class="cellCls">序号</th>
-          <th v-for="(_, i) in points" :key="i" :class="cellCls">{{ i + 1 }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td :class="cellCls">含水率（%）</td>
-          <td v-for="(p, i) in points" :key="i" :class="cellCls">
+    <Table class="text-sm border-collapse">
+      <TableHeader>
+        <TableRow class="bg-gray-50">
+          <TableHead :class="cellCls">序号</TableHead>
+          <TableHead v-for="(_, i) in points" :key="i" :class="cellCls">{{ i + 1 }}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell :class="cellCls">含水率（%）</TableCell>
+          <TableCell v-for="(p, i) in points" :key="i" :class="cellCls">
             <Input
               type="number"
               step="0.1"
@@ -84,11 +90,11 @@ const inputCls =
               :model-value="p.moisture || ''"
               @change="(e: Event) => update(i, 'moisture', (e.target as HTMLInputElement).value)"
             />
-          </td>
-        </tr>
-        <tr>
-          <td :class="cellCls">干密度（g/cm³）</td>
-          <td v-for="(p, i) in points" :key="i" :class="cellCls">
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell :class="cellCls">干密度（g/cm³）</TableCell>
+          <TableCell v-for="(p, i) in points" :key="i" :class="cellCls">
             <Input
               type="number"
               step="0.001"
@@ -98,10 +104,10 @@ const inputCls =
               :model-value="p.dryDensity || ''"
               @change="(e: Event) => update(i, 'dryDensity', (e.target as HTMLInputElement).value)"
             />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
 
     <div class="flex gap-6 text-sm">
       <span>
