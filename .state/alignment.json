@@ -1000,7 +1000,8 @@
       ],
       "tests": [
         "[M06.F05.I01] F05 新建 + 删除按钮",
-        "[M06.F05.I01] F05 渲染标题 + 复合主键列表行"
+        "[M06.F05.I01] F05 渲染标题 + 复合主键列表行",
+        "新建计算方法：<Button variant=default> 渲染 <button>，data-fn M06.F05.I01 落到真实 DOM"
       ],
       "entry": [
         "src\\features\\inspection-capability\\CalculationMethodList.vue"
@@ -1037,7 +1038,8 @@
         "docs\\design\\design-function-map.md"
       ],
       "tests": [
-        "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮"
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I03] F06 列表行 + 新建/编辑/删除按钮",
+        "新建技术要求：<Button variant=default> 渲染 <button>，data-fn M06.F06.I02 落到真实 DOM"
       ],
       "entry": [
         "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
@@ -1094,7 +1096,8 @@
       ],
       "tests": [
         "[M06.F07.I02] toggle 参数：POST 后按钮翻「解除」",
-        "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）"
+        "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）",
+        "行内关联按钮：size=sm variant=outline，CVA h-8 活着，data-fn M06.F07.I02 落到真实 DOM"
       ],
       "entry": [
         "src\\features\\report-names\\ReportNameLinkDialog.vue",
