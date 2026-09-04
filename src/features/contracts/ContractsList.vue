@@ -14,6 +14,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/resources/contract.ts）
@@ -162,13 +163,9 @@ async function submitForm(): Promise<void> {
         </p>
       </div>
       <!-- @entry M02.F01.I02 新建合同按钮 -->
-      <button
-        class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-        data-fn="M02.F01.I02"
-        @click="openCreate"
-      >
+      <Button data-fn="M02.F01.I02" @click="openCreate">
         新建合同
-      </button>
+      </Button>
     </div>
 
     <div class="mb-4 flex gap-2">
@@ -183,12 +180,9 @@ async function submitForm(): Promise<void> {
         placeholder="按合同编号 / 项目名称搜索"
         @keydown.enter="load"
       />
-      <button
-        class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm hover:bg-slate-50"
-        @click="load"
-      >
+      <Button variant="outline" @click="load">
         搜索
-      </button>
+      </Button>
     </div>
 
     <Teleport to="body">
@@ -291,13 +285,9 @@ async function submitForm(): Promise<void> {
           </div>
           <div class="px-6 py-3 flex justify-end border-t">
             <!-- @entry M02.F01.I02 表单内保存 -->
-            <button
-              class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-              data-fn="M02.F01.I02"
-              @click="submitForm"
-            >
+            <Button data-fn="M02.F01.I02" @click="submitForm">
               {{ mode.kind === "create" ? "创建" : "保存" }}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -371,19 +361,18 @@ async function submitForm(): Promise<void> {
               {{ c.entrustedDate ?? "—" }}
             </td>
             <td class="px-4 py-2 text-right">
-              <button
-                class="inline-flex items-center justify-center rounded-md border px-2 py-1 text-xs hover:bg-slate-50"
-                @click="openEdit(c)"
-              >
+              <Button size="sm" variant="outline" @click="openEdit(c)">
                 编辑
-              </button>
-              <button
-                class="ml-2 inline-flex items-center justify-center rounded-md border px-2 py-1 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                class="ml-2 text-red-600 hover:bg-red-50 hover:text-red-700"
                 data-fn="M02.F01.I03"
                 @click="deleteTarget = c"
               >
                 删除
-              </button>
+              </Button>
             </td>
           </tr>
         </tbody>

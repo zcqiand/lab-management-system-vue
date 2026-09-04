@@ -3,8 +3,9 @@
 // 镜像 react 仓 tests/features/contracts/contractsList.dom.test.tsx 3 个 fnTest。
 // vue 仓不挂 msw（deps 未引入），用 vi.mock('axios') 拦截；fixture 数据走
 // 内联字面量（与 react 仓 contracts 同构：id + tenantId）。
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -128,5 +129,50 @@ describe("M02.F01 合同管理", () => {
     const dialog = wrapper.find('[data-testid="confirm-dialog"]');
     expect(dialog.exists()).toBe(true);
     expect(dialog.text()).toContain("删除合同");
+  });
+});
+
+// Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁 3 件事，Phase 后续换原语 / 改 class 时不许回归：
+//   1. <Button> 渲染 <button> 底层 — 原有 findAll("button") / data-fn 仍命中
+//   2. $attrs 转发 — data-fn 落到真实 <button>，不是被吞掉
+//   3. CVA base（inline-flex）活着；调用方 class（如 text-red-600）经 tailwind-merge 合并进来
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2a — ContractsList 列表 <Button> 原语回归", () => {
+  it("新建合同按钮：<Button variant=default> 渲染 <button>，CVA base inline-flex 活着，data-fn 落到真实 DOM", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const create = lastWrapper.find('button[data-fn="M02.F01.I02"]');
+    expect(create.exists()).toBe(true);
+    expect(create.classes()).toContain("inline-flex");
+    // CVA default 变体带 bg-primary
+    expect(create.classes()).toContain("bg-primary");
+  });
+
+  it("行内删除按钮：<Button variant=ghost> 保留调用方 text-red-600 class，点击仍打开 ConfirmDialog", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const delBtn = lastWrapper.findAll("button").find((b) => b.text() === "删除");
+    expect(delBtn).toBeTruthy();
+    // 调用方 class 经 tailwind-merge 合并进 ghost variant
+    expect(delBtn!.classes()).toContain("text-red-600");
+    await delBtn!.trigger("click");
+    await flushPromises();
+    expect(lastWrapper!.find('[data-testid="confirm-dialog"]').exists()).toBe(true);
   });
 });
