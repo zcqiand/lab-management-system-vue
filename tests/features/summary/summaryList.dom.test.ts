@@ -74,7 +74,8 @@ describe("M05.F01 报告汇总", () => {
     const wrapper = mountWithProviders(SummaryList);
     await flushPromises();
     expect(wrapper.text()).toContain("报告汇总");
-    const headers = wrapper.findAll("thead th");
+    // Phase 2a-1 迁移：<th> → <TableHead> 渲染为 div[role=columnheader]
+    const headers = wrapper.findAll('[role="columnheader"]');
     const labels = headers.map((h) => h.text());
     expect(labels).toContain("委托编号");
     expect(labels).toContain("工程名称");
@@ -86,8 +87,12 @@ describe("M05.F01 报告汇总", () => {
   fnTest(["M05.F01.I01"], "F01 列表行渲染（rows 数据穿透）", async () => {
     const wrapper = mountWithProviders(SummaryList);
     await flushPromises();
-    const rows = wrapper.findAll("tbody tr");
-    expect(rows.length).toBeGreaterThan(0);
+    // Phase 2a-1 迁移：<tbody><tr> → <TableBody> 内 <TableRow> 渲染为 div[role=row]
+    // 数据行在第二个 rowgroup（TableBody），不在第一个（TableHeader）
+    const rowgroups = wrapper.findAll('[role="rowgroup"]');
+    expect(rowgroups.length).toBe(2);
+    const bodyRows = rowgroups[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBeGreaterThan(0);
     expect(wrapper.text()).toContain("C-001");
     expect(wrapper.text()).toContain("工程 A");
   });

@@ -11,6 +11,12 @@ import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 
 interface SummaryColumn {
   key: string;
@@ -107,25 +113,25 @@ watch(categoryCode, () => { void load(); });
         暂无报告
       </div>
 
-      <table v-else-if="data && data.rows.length > 0" class="w-full text-sm">
-        <thead class="bg-slate-50 text-slate-600">
-          <tr>
-            <th v-for="c in data.columns" :key="c.key" class="px-4 py-2 text-left">{{ c.label }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, idx) in data.rows" :key="idx" class="border-t hover:bg-slate-50">
-            <td v-for="c in data.columns" :key="c.key" class="px-4 py-2 align-top">
+      <Table v-else-if="data && data.rows.length > 0" class="w-full text-sm">
+        <TableHeader class="bg-slate-50 text-slate-600">
+          <TableRow>
+            <TableHead v-for="c in data.columns" :key="c.key" class="px-4 py-2 text-left">{{ c.label }}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="(row, idx) in data.rows" :key="idx" class="border-t hover:bg-slate-50">
+            <TableCell v-for="c in data.columns" :key="c.key" class="px-4 py-2 align-top">
               <span v-if="c.key === 'flowStatus'" class="inline-flex items-center rounded border px-2 py-0.5 text-xs">
                 {{ (STATUS_LABEL[String(row[c.key] ?? '')] ?? (String(row[c.key] ?? '') || '-')) }}
               </span>
               <span v-else-if="c.key === 'result' && row[c.key] === 'qualified'" class="inline-flex items-center rounded bg-green-100 text-green-700 px-2 py-0.5 text-xs">合格</span>
               <span v-else-if="c.key === 'result' && row[c.key] === 'unqualified'" class="inline-flex items-center rounded bg-red-100 text-red-700 px-2 py-0.5 text-xs">不合格</span>
               <span v-else>{{ String(row[c.key] ?? '-') }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
 
       <div class="mt-2 text-sm text-slate-500">
         <span v-if="data">共 {{ data.rows.length }} 条 — {{ data.summaryName }}</span>

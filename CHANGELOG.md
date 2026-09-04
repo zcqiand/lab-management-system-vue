@@ -2,6 +2,76 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.43] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2a-1**（Table 家族原语引入 + 2 个 pilot 迁移）。
+
+**新增 6 个 Table 原语**（`src/components/ui/Table*.vue`）：
+
+- `Table.vue` — `div[role="table"]` 容器，class prop 走 `cn()` 合并
+- `TableHeader.vue` — `div[role="rowgroup"]`，语义等价 `<thead>`
+- `TableBody.vue` — `div[role="rowgroup"]`，`&:last-child:border-0` 让末行无下边框
+- `TableRow.vue` — `div[role="row"]`，**继承 Phase 0 契约**：`inheritAttrs:false` +
+  `v-bind="$attrs"` 把 `data-fn` 落到真实 DOM
+- `TableHead.vue` — `div[role="columnheader"]`，语义等价 `<th>`
+- `TableCell.vue` — `div[role="cell"]`，语义等价 `<td>`
+
+**与 Button/Input/Label 原语差异**：
+
+- Table 家族是**div-based**（shadcn-vue 约定）：用 `role="table"` /
+  `role="rowgroup"` / `role="row"` / `role="columnheader"` / `role="cell"`
+  维持 ARIA 语义，浏览器无 table-layout 强制，便于 flex/grid 灵活布局 + 滚动条定制
+- 容器原语（Table/Header/Body）**不**挂 `inheritAttrs:false`，因为锚点
+  （`data-fn`）通常挂在行/单元格上；Row/Head/Cell 三个 leaf 挂 `inheritAttrs:false`
+
+**新增 1 个底座冒烟测试**（`tests/foundation/shadcn-table.dom.test.ts`，8 case）：
+
+- 钉 6 个原语的 role 属性 + 基础 class
+- 钉 `$attrs` 转发：`data-fn="M99.F99.I99"` 在 `<TableRow>` 上落到真实 `<div>`
+- 钉 `class` prop 合并：调用方 `bg-amber-100` 走 `cn()` 合并到默认类后
+
+**Pilot 迁移 2 个文件**（表格 raw `<table>`/`<thead>`/`<tbody>`/`<tr>`/`<th>`/`<td>`
+→ `<Table>`/`<TableHeader>`/`<TableBody>`/`<TableRow>`/`<TableHead>`/`<TableCell>`）：
+
+- `src/features/summary/SummaryList.vue` — 1 个汇总表（含 6 列、flowStatus/result 状态徽章）
+- `src/features/data-entry/models/StrengthCardBase.vue` — 1 个强度卡基类的破坏荷载表
+  （3 列 × 3/6 试件行）
+- 视觉零变更：Tailwind class 全保留（`bg-slate-50` / `hover:bg-slate-50` / `border-t`
+  / `px-4 py-2` / `text-left` 等），调用方 class 通过 `cn()` 末段合并
+
+**测试 selector 同步迁移**（Phase 1.5 audit 第 5 类「按 tag 名查」开始破例）：
+
+- `tests/features/summary/summaryList.dom.test.ts:77` `findAll("thead th")` →
+  `findAll('[role="columnheader"]')`
+- `tests/features/summary/summaryList.dom.test.ts:89` `findAll("tbody tr")` →
+  第二个 rowgroup（TableBody）的 `findAll('[role="row"]')`（避开 TableHeader 那行）
+- 其他表测试（`inspectionCapabilityPages.dom.test.ts` 3 处 `findAll("tbody tr")`）
+  **不在本阶段范围**，对应源文件（`InspectionCapabilityList`）留 Phase 2a-2/3 迁
+
+**踩坑 + 修复**：
+
+- `StrengthCardBase.vue:182` 原本 `<td :class="['py-1', conditional]">` 用 array binding，
+  TableCell class prop 是 `string`（与 Input/Button 一致），L3 类型 2345 报
+  `string[] not assignable to string`。**修法**：改模板字符串 ``:class="`py-1 ${cond ? '...' : '...'}`"``，
+  与 Phase 1.4「卡片 Label class 数组→字符串」同源教训——详见 MEMORY「不要在
+  <Input>/TableCell 等单值 class prop 上用 :class="[]" 数组」。
+
+**Phase 2a 计划**：
+
+- 2a-2/2a-3 继续迁剩余 14 个列表页（InspectionCapabilityList / CalculationMethodList /
+  TechnicalRequirementList / ParamInterfaceList / TaskAssignmentList / ContractsList /
+  ReportPhasePage / ReportNameList / ReceiptsList / ReportPreviewModal / ParameterStandardLinkDialog
+  / SoilCompactionDegreeCard / SoilCompactionCard / RebarWeldingTensileCard /
+  RebarWeldingBendCard / RebarMechNumericCard / ParticleGradationCard /
+  ConcretePermeabilityCard / ConcreteCompressCard / DataEntryPage），对应测试
+  selector 同步迁移
+
+**验证**：
+
+- vitest: 223 case / 27 文件全绿（Phase 0/1 基线 215 + 新 Table 底座 8）
+- gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS
+- 100 个功能条目，引用完整；L5 无断裂
+
 ## [0.3.42] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.5**（test selector 审计）。原计划担心 Phase 0 / 1.0–1.4
