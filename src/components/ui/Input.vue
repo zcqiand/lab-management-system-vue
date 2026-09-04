@@ -19,7 +19,11 @@ const props = withDefaults(
     placeholder?: string;
     autofocus?: boolean;
     disabled?: boolean;
-    modelValue?: string;
+    // Phase 1.3a hotfix: 放宽到 string | number | boolean，让 v-model 在
+    // reactive Record<string, string|number|boolean> 上不报 TS2322。
+    // emit 仍写 string —— 调用方拿到 string；表单层 .number modifier 自己负责 number 化。
+    // boolean 仅作契约兜底（<Input> 不应绑 checkbox —— 留给 Phase 2b Checkbox 原语）。
+    modelValue?: string | number | boolean;
     class?: string;
   }>(),
   { type: "text", modelValue: "" },
