@@ -4,6 +4,12 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 import {
   computeConcretePermeability,
   parsePermeationResult,
@@ -65,18 +71,18 @@ function updatePermeated(i: number, v: Permeation) {
       {{ p.canonicalName || p.name
       }}<span v-if="p.unit">（{{ p.unit }}）</span>
     </div>
-    <table class="w-full text-xs">
-      <thead class="text-gray-500">
-        <tr>
-          <th class="text-left py-1">#</th>
-          <th class="text-left py-1">渗水压力 (MPa)</th>
-          <th class="text-left py-1">渗水情况</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(s, i) in specimens" :key="i">
-          <td class="py-1">{{ i + 1 }}</td>
-          <td class="py-1">
+    <Table class="w-full text-xs">
+      <TableHeader class="text-gray-500">
+        <TableRow>
+          <TableHead class="text-left py-1">#</TableHead>
+          <TableHead class="text-left py-1">渗水压力 (MPa)</TableHead>
+          <TableHead class="text-left py-1">渗水情况</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(s, i) in specimens" :key="i">
+          <TableCell class="py-1">{{ i + 1 }}</TableCell>
+          <TableCell class="py-1">
             <Input
               type="number"
               step="0.1"
@@ -87,8 +93,8 @@ function updatePermeated(i: number, v: Permeation) {
               class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e: Event) => updatePressure(i, (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td class="py-1">
+          </TableCell>
+          <TableCell class="py-1">
             <select
               :value="s.permeated"
               :disabled="readOnly"
@@ -99,10 +105,10 @@ function updatePermeated(i: number, v: Permeation) {
               <option value="未渗">未渗</option>
               <option value="已渗">已渗</option>
             </select>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
     <div class="text-xs text-gray-600">
       抗渗等级：<span class="font-medium text-gray-900">{{ gradeLabel }}</span>
       <span v-if="reason" class="ml-2 text-gray-500">（{{ reason }}）</span>
