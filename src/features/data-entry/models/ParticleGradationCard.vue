@@ -5,6 +5,12 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 
 type Props = Pick<
   ParamModelProps,
@@ -188,39 +194,39 @@ const avg = computed(() => averageByCol(rows.value));
       </span>
     </div>
 
-    <table class="w-full text-xs border-collapse border border-gray-300">
-      <thead class="bg-blue-50 text-gray-700">
-        <tr>
-          <th class="border border-gray-300 px-2 py-1 text-left w-6">序号</th>
-          <th class="border border-gray-300 px-2 py-1 text-left w-20">项目</th>
-          <th
+    <Table class="w-full text-xs border-collapse border border-gray-300">
+      <TableHeader class="bg-blue-50 text-gray-700">
+        <TableRow>
+          <TableHead class="border border-gray-300 px-2 py-1 text-left w-6">序号</TableHead>
+          <TableHead class="border border-gray-300 px-2 py-1 text-left w-20">项目</TableHead>
+          <TableHead
             v-for="s in sieveCols"
             :key="s"
             class="border border-gray-300 px-2 py-1 text-center whitespace-nowrap"
           >
             {{ s }}
-          </th>
-          <th class="border border-gray-300 px-2 py-1 text-left w-32">分筛前总量(g):</th>
-        </tr>
-      </thead>
-      <tbody>
+          </TableHead>
+          <TableHead class="border border-gray-300 px-2 py-1 text-left w-32">分筛前总量(g):</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         <template v-for="(row, ri) in rows" :key="ri">
-          <tr>
-            <td
+          <TableRow>
+            <TableCell
               class="border border-gray-300 px-2 py-1 text-center font-medium"
               :rowspan="3"
             >
               {{ ri + 1 }}
-            </td>
-            <td class="border border-gray-300 px-2 py-1">筛余量(g):</td>
-            <td
+            </TableCell>
+            <TableCell class="border border-gray-300 px-2 py-1">筛余量(g):</TableCell>
+            <TableCell
               v-for="(pct, ci) in row.retainedPct"
               :key="ci"
               class="border border-gray-300 px-1 py-1 text-center text-gray-500"
             >
               {{ pct === 0 ? '' : Math.round((pct * (row.totalBefore > 0 ? row.totalBefore : 1)) / 100) }}
-            </td>
-            <td class="border border-gray-300 px-1 py-1 text-center">
+            </TableCell>
+            <TableCell class="border border-gray-300 px-1 py-1 text-center">
               <Input
                 type="number"
                 step="1"
@@ -231,11 +237,11 @@ const avg = computed(() => averageByCol(rows.value));
                 @change="(e: Event) => updateTotal(ri, 'totalBefore', (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
-            </td>
-          </tr>
-          <tr>
-            <td class="border border-gray-300 px-2 py-1">分计筛余量(%):</td>
-            <td
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell class="border border-gray-300 px-2 py-1">分计筛余量(%):</TableCell>
+            <TableCell
               v-for="(pct, ci) in row.retainedPct"
               :key="ci"
               class="border border-gray-300 px-1 py-1 text-center"
@@ -250,8 +256,8 @@ const avg = computed(() => averageByCol(rows.value));
                 @change="(e: Event) => updatePct(ri, ci, (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
-            </td>
-            <td class="border border-gray-300 px-1 py-1 text-center">
+            </TableCell>
+            <TableCell class="border border-gray-300 px-1 py-1 text-center">
               分筛后总量(g):&nbsp;
               <Input
                 type="number"
@@ -266,36 +272,36 @@ const avg = computed(() => averageByCol(rows.value));
               <span v-if="rowComputed[ri]!.delta !== 0" class="ml-1 text-[10px] text-orange-500">
                 Δ{{ rowComputed[ri]!.delta }}
               </span>
-            </td>
-          </tr>
-          <tr>
-            <td class="border border-gray-300 px-2 py-1">累计筛余量(%):</td>
-            <td
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell class="border border-gray-300 px-2 py-1">累计筛余量(%):</TableCell>
+            <TableCell
               v-for="(c, ci) in rowComputed[ri]!.cum"
               :key="ci"
               class="border border-gray-300 px-1 py-1 text-center text-gray-700"
             >
               {{ c === 0 ? '' : c }}
-            </td>
-            <td class="border border-gray-300 px-1 py-1 text-center">
+            </TableCell>
+            <TableCell class="border border-gray-300 px-1 py-1 text-center">
               细&nbsp;度&nbsp;模&nbsp;数:&nbsp;
               <span class="font-mono">{{ rowComputed[ri]!.fm === 0 ? '—' : rowComputed[ri]!.fm }}</span>
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         </template>
-        <tr class="bg-gray-50 font-medium">
-          <td class="border border-gray-300 px-2 py-1"></td>
-          <td class="border border-gray-300 px-2 py-1">平均值(%):</td>
-          <td
+        <TableRow class="bg-gray-50 font-medium">
+          <TableCell class="border border-gray-300 px-2 py-1"></TableCell>
+          <TableCell class="border border-gray-300 px-2 py-1">平均值(%):</TableCell>
+          <TableCell
             v-for="(v, ci) in avg"
             :key="ci"
             class="border border-gray-300 px-2 py-1 text-center"
           >
             {{ v === 0 ? '—' : v }}
-          </td>
-          <td class="border border-gray-300 px-2 py-1"></td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+          <TableCell class="border border-gray-300 px-2 py-1"></TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
   </div>
 </template>
