@@ -208,3 +208,59 @@ describe("Phase 1.4 — TaskAssignmentList 弹窗 <Label> 原语回归", () => {
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
   });
 });
+
+// Phase 2a-2 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁 3 件事：<Table> 渲染 div[role=table] / 6 <TableHead> 文本顺序 /
+// 行内安排按钮 data-fn 落到真实 <button>。
+describe("Phase 2a-2 — TaskAssignmentList 列表 <Table> 原语回归", () => {
+  it("<Table> 渲染 div[role=table]；6 <TableHead> 文本顺序 委托书编号/工程名称/检测人员/计划日期/流程状态/操作", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(6);
+    expect(heads.map((h) => h.text())).toEqual([
+      "委托书编号",
+      "工程名称",
+      "检测人员",
+      "计划日期",
+      "流程状态",
+      "操作",
+    ]);
+  });
+
+  it("1 fixture 行：行内安排按钮 data-fn 落到 div[role=row] 内 <button>，行在 rowgroup[1]", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const bodyRows = lastWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(1);
+    // 安排按钮 data-fn 落到真实 <button>，而非 div
+    const arrangeBtn = lastWrapper.find('button[data-fn="M03.F02.I02"]');
+    expect(arrangeBtn.exists()).toBe(true);
+    expect(arrangeBtn.element.tagName).toBe("BUTTON");
+  });
+
+  it("TableCell 调用方 class 经 tailwind-merge 合并：委托书编号 cell 带 font-mono + text-xs", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const codeCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+      .findAll('[role="row"]')[0]!
+      .findAll('[role="cell"]')[0];
+    expect(codeCell.exists()).toBe(true);
+    expect(codeCell.classes()).toContain("font-mono");
+    expect(codeCell.classes()).toContain("text-xs");
+  });
+});
