@@ -1,6 +1,7 @@
 // M06.F07.I01 — 报告名称维护 smoke
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -108,5 +109,42 @@ describe("M06.F07 报告名称维护", () => {
     const dialog = wrapper.find('[data-testid="confirm-dialog"]');
     expect(dialog.exists()).toBe(true);
     expect(dialog.text()).toContain("删除报告名称");
+  });
+});
+
+// Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2a — ReportNameList 列表 <Button> 原语回归", () => {
+  it("新建报告名称：<Button variant=default> 渲染 <button>，data-fn 落到真实 DOM", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const create = lastWrapper.find('button[data-fn="M06.F07.I01"]');
+    expect(create.exists()).toBe(true);
+    expect(create.classes()).toContain("inline-flex");
+    expect(create.classes()).toContain("bg-primary");
+  });
+
+  it("行内关联按钮：size=sm variant=outline，CVA h-8 活着，data-fn M06.F07.I02 落到真实 DOM", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const linkBtn = lastWrapper.find('button[data-fn="M06.F07.I02"]');
+    expect(linkBtn.exists()).toBe(true);
+    expect(linkBtn.classes()).toContain("h-8");
+    expect(linkBtn.classes()).toContain("border");
   });
 });
