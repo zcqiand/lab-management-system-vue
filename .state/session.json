@@ -1,28 +1,37 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "Phase 1.2c 4 modal/dialog <Button> 迁移 → tag push v0.3.37-20260905",
+  "current_task": "Phase 1.3a 4 form-heavy <Input> 迁移 → tag push v0.3.38-20260905",
   "last_session_at": "2026-09-05",
-  "last_session_summary": "Phase 1.2c 完成：4 modal/dialog 文件 raw <button> → <Button> 原语。共迁移 4 处（SampleExtFieldsModal 取消/确认 + ReportPreviewModal 关闭/打印），保留 6 处 raw（2 个 modal 关闭× icon-glyph + 4 个 toggle 行内双态按钮，均超 >3 override 阈值）。新增 extFieldsPreviewModalsButtons.dom.test.ts 2 case 锁 CVA 合成。全量 167 case 全绿，gate exit 0。",
+  "last_session_summary": "Phase 1.3a 完成：4 form-heavy 文件 raw <input> → <Input> 原语。共迁移 55 处（ContractsList 17 + InspectionCapabilityList 10 + TechnicalRequirementList 12 + ReceiptsList 11），保留所有 <input type=checkbox>（Phase 2b）+ <textarea>（2c）+ <select>（2d）+ <label> 父级（1.4）。Input.vue modelValue 类型放宽 string→string|number|boolean 让 reactive Record<string, string|number|boolean> 不报 TS2322。新增 11 个 Input regression-anchor case 锁 v-model/$attrs/type=number/disabled 落到真实 <input>。全量 178 case 全绿（+11），gate exit 0。",
   "done": [
-    "SampleExtFieldsModal.vue 取消 outline / 确认 default bg-blue-600（关闭× raw）",
-    "ReportPreviewModal.vue 关闭 outline / 打印 default bg-blue-600（关闭× raw）",
-    "ReportNameLinkDialog.vue 2 toggle 按钮 raw（双态视觉需 4 override）",
-    "ParameterStandardLinkDialog.vue 1 toggle 按钮 raw（同 toggle 模式）",
-    "tests/features/data-entry/extFieldsPreviewModalsButtons.dom.test.ts（2 case regression-anchor）",
-    "CHANGELOG 0.3.37 条目（已记录 6 处未迁移 + 阈值依据）",
-    "4 commit（按文件粒度：2 迁移 + 1 test + 1 changelog）",
-    "tag v0.3.37-20260905",
-    "gate -p lab-management-system-vue exit 0（167 case / 26 文件，L0.no_fallback PASS）"
+    "ContractsList.vue 17 处 <input> → <Input>（1 搜索 @keydown.enter + 16 form）",
+    "InspectionCapabilityList.vue 10 处 <input> → <Input>（1 搜索 + 8 form + 1 type=number v-model.number；6 checkbox 保留 raw）",
+    "TechnicalRequirementList.vue 12 处 <input> → <Input>（4 筛选 aria-label + 8 form 含 font-mono + 2 type=number）",
+    "ReceiptsList.vue 11 处 <input> → <Input>（1 搜索 @keyup.enter + 5 form × 2 dialog 含 type=date；<label> 父级保留）",
+    "src/components/ui/Input.vue modelValue 类型放宽 string|number|boolean（fix TS2322）",
+    "tests/features/contracts/contractsList.dom.test.ts +2 Input case",
+    "tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts +7 Input case（4 筛选 + disabled + type=number × 2 + font-mono）",
+    "tests/features/receipts/receiptsList.dom.test.ts +2 Input case（搜索 + 弹窗 5 input + type=date）",
+    "CHANGELOG 0.3.38 条目（Phase 1.3a 记录 + type 放宽说明）",
+    "7 commit（按文件粒度：4 迁移 + 1 test + 1 changelog + 1 type fix）",
+    "tag v0.3.38-20260905",
+    "gate -p lab-management-system-vue exit 0（178 case / 26 文件，L0.no_fallback PASS）"
   ],
   "next": [
-    "deploy: push tag v0.3.37-20260905 → CI docker build + VPS pull + restart"
+    "deploy: push tag v0.3.38-20260905 → CI docker build + VPS pull + restart",
+    "Phase 1.3b: input 迁移扫尾（其他文件的 raw input，scope 1.3a 之外）",
+    "Phase 1.4: <label> 父级 wrapper → Label 原语",
+    "Phase 2b: Checkbox 原语（处理 InspectionCapabilityList 6 个 type=checkbox）",
+    "Phase 2c: Textarea 原语",
+    "Phase 2d: Select 原语 + Label/Input 配对"
   ],
   "open_questions": [],
   "dont": [
-    "不要把 toggle 双态按钮强行塞 <Button variant=outline|default>（4+ override 触发阈值）",
-    "不要给关闭× icon-glyph 按钮加 h-auto w-auto p-0（与 react 仓同 raw）",
-    "regression-anchor 测试 it() 标题禁止嵌入 Mxx.Fxx.Ixx 字面（fnReporter leak）"
+    "不要 <input type=checkbox/radio/textarea/select>（留 Phase 2b/c/d）",
+    "不要 <label> 父级 wrapper（留 Phase 1.4）",
+    "regression-anchor 测试 it() 标题禁止嵌入 Mxx.Fxx.Ixx 字面（fnReporter leak）",
+    "不要把 Input.vue modelValue 再改回 string-only（会触发 reactive Record TS2322 回归）"
   ],
   "active_branch": "master"
 }
