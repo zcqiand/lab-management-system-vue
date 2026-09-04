@@ -2,11 +2,124 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.49] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2d-1**（raw `<select>` → `<Select>` / `<SelectTrigger>`
+/ `<SelectContent>` / `<SelectItem>` / `<SelectValue>` 五原语）。新增 5 个原语
+（基于 reka-ui `SelectRoot` + `SelectPortal` + `SelectItemText`），迁移 5 个文件
+共 7 处 `<select>`。
+
+**新增 5 个原语**（reka-ui Select 复合原语，单 Select 包不下 — trigger / content
+/ item 必须共享 SelectRoot context，所以拆 5 sub-component）：
+
+- `src/components/ui/Select.vue` — reka-ui `SelectRoot` 包裹；`v-bind="$attrs"`
+  `inheritAttrs:false` 让 `class` 走 `cn()` 末尾（调用方胜出，tailwind-merge）；
+  `modelValue` 类型 `string | number`；emit `update:modelValue` + `update:open`
+- `src/components/ui/SelectTrigger.vue` — reka-ui `SelectTrigger` + `SelectIcon`
+  `lucide-vue-next` 的 `<ChevronDown>`（替代 native select 下拉箭头）；
+  shadcn-vue 标准 class 串（`flex h-9 w-full rounded-md border border-input ...`）；
+  默认插槽放 `<SelectValue>`；`aria-label` / `data-fn` 经 `$attrs` 落到真实
+  `<button role="combobox">`；`disabled` 无条件绑定（undefined 时 Vue 移除属性）
+- `src/components/ui/SelectContent.vue` — reka-ui `SelectPortal` + `SelectContent`
+  `SelectViewport` 包裹；shadcn-vue 标准 class 串（`z-50 max-h-96 ... shadow-md`
+  data-state 动画）；`position="popper" | "item-aligned"`（默认 popper）
+- `src/components/ui/SelectItem.vue` — reka-ui `SelectItem` + `SelectItemText`
+  `SelectItemIndicator` + `<Check>` icon 选中指示（`absolute left-2`）；`text`
+  prop 走 SelectItemText（reka-ui 把 SelectItemText 文本配对回写到 SelectValue）；
+  默认插槽也支持
+- `src/components/ui/SelectValue.vue` — reka-ui `SelectValue` 包裹；从 SelectRoot
+  context 读当前值并展示；`placeholder` 在 value 为空时显示 fallback
+
+**5 个文件 7 处 `<select>` 迁移**：
+
+- `src/features/dicts/CategoryDictList.vue` — 1 处（弹窗「检测项目」select，
+  `:disabled="!!editing"` 编辑态锁住，class `w-full rounded border ... disabled:bg-gray-100`）
+- `src/features/summary/SummaryList.vue` — 1 处（顶部「报告类别」filter，6 个
+  option：ALL / RC / ST / MT / AD / ID；`<Label for=categoryCode>` 配对改为
+  SelectTrigger 的 `id="categoryCode"`）
+- `src/features/contracts/ContractsList.vue` — 2 处（顶部 status filter：3 个
+  option 「全部状态 / 在用 / 已归档」；弹窗 form.status：2 个 option 「在用 / 已归档」）。
+  顶部 filter 的 `value=""` 在 reka-ui 是禁用值（保留给 placeholder），所以走
+  `"__all__"` sentinel，在 `load()` 里翻译回空串才不下发给 API
+- `src/features/data-entry/DataEntryPage.vue` — 2 处（录入弹窗样品 + 检测参数
+  select，**保留 Phase 1.4 wrapping 模式**：`<Label class=text-xs block>` 包着
+  `<Select>`，SelectTrigger 渲染的 `<button role="combobox">` 是 `<label>` 的后代，
+  测试断言 selector 从 `find("select")` 改 `find('[role="combobox"]')`）
+- `src/features/data-entry/models/ConcretePermeabilityCard.vue` — 1 处 ×6 行
+  （渗水情况 select ×6：`未渗` / `已渗`；原 `:value` + `@change` 受控写法改
+  `:model-value` + `@update:model-value`；`aria-label` 从 `<Select>` 移到
+  `<SelectTrigger>` 才能落到真实 button — reka-ui SelectRoot 是 Fragment，
+  attrs 不会自动 propagate 到 trigger）
+
+**Phase 2d-1 原语回归锚 8 case**（不挂功能 ID，工程设施测试）：
+`tests/foundation/shadcn-select.dom.test.ts` + `__fixtures__/SelectFixture.vue`
+
+- `<SelectTrigger>` 渲染为 `<button type="button" role="combobox">`；
+  `aria-label` / `data-fn` 走 `$attrs` 落到真实 DOM；class prop 经 `cn()` 合并
+- `<SelectValue>` placeholder 在 modelValue 为空时显示 fallback
+- 点 `<SelectTrigger>` 打开 portal → `<SelectContent>` 渲染为 `div[role="listbox"]`
+- `<SelectItem>` 渲染为 `div[role="option"]`；3 个选项文本正确
+- 点 `<SelectItem>` → v-model 双向写回（trigger 显示新值，state span 同步）
+- 选中态 `<SelectItem>` 挂 `data-state="checked"`
+- `<Select :disabled>` 受控 disabled 落到真实 `<button>` 的 disabled 属性
+- class prop `<SelectTrigger class="extra-class">` 经 `cn()` 合并（基类 + 调用方共存）
+
+**测试 selector 迁移 3 文件**：
+
+- `tests/features/data-entry/cardsAll.dom.test.ts` — Phase 2a-4 ConcretePermeabilityCard 锚：
+  `bodyRows[0]!.find('[role="cell"] select[aria-label="试件 1 渗水情况"]')` →
+  `bodyRows[0]!.find('[role="cell"] [role="combobox"][aria-label="试件 1 渗水情况"]')`
+- `tests/features/data-entry/dataEntryPage.dom.test.ts` — Phase 1.4 wrapping 锚：
+  `labels[0].find("select")` → `labels[0].find('[role="combobox"]')`，注释
+  从「raw <select> 留 Phase 2d」改「<Select> 触发器渲染为 <button role=combobox>」
+- `tests/features/summary/summaryList.dom.test.ts` — F01+F02 下拉存在断言：
+  `#categoryCode` 现在指向 SelectTrigger button，`role="combobox"`；初始显示
+  从「请选择类别」placeholder 改「全部」（categoryCode 默认值 "ALL" 被
+  SelectItemText 配对回写）
+
+**踩坑 / 教训**：
+
+- **reka-ui SelectItem 不允许 `value=""`**：`reka-ui/src/Select/SelectItem.vue:129`
+  显式抛 "A <SelectItem /> must have a value prop that is not an empty string.
+  This is because the Select value can be set to an empty string to clear the
+  selection and show the placeholder." —— 空串是 placeholder 的哨兵值，业务
+  想表达「不限 / 全部」必须换 sentinel。ContractsList 顶部 status filter
+  从 `value=""` 改 `value="__all__"`，`status = ref("__all__")` 初始化同步；
+  `load()` 里 `apiStatus = status.value === "__all__" ? "" : status.value` 翻译
+  回空串才不下发给 API（业务接口约定 `status` 缺省 = 全部）
+- **reka-ui SelectRoot 是 Fragment，`$attrs` 不会自动 propagate 到 SelectTrigger**：
+  `<Select aria-label="...">` 把 `aria-label` 给到 SelectRoot 的 root（一个 Fragment，
+  渲染时直接挂 slot），不会下沉到 SelectTrigger。`aria-label` / `data-fn` /
+  `id` 必须直接挂在 `<SelectTrigger>` 上。ConcretePermeabilityCard 6 行 ×
+  `aria-label="试件 N 渗水情况"` 从 `<Select>` 移到 `<SelectTrigger>` 才生效
+- **reka-ui SelectTrigger 监听 `pointerdown` 开门，不是 `click`**：
+  `onTriggerPointerDown` → `handlePointerOpen` → `rootContext.onOpenChange(true)`；
+  `onTriggerClick` 只做 `event.currentTarget.focus()`。所以 jsdom 测试不能用
+  `trigger.trigger("click")` 触发打开，必须 dispatch native `pointerdown` event。
+  jsdom 25 缺 `PointerEvent` 构造函数 + `HTMLElement.hasPointerCapture`，需
+  fallback 到 `MouseEvent` + 给 element 补 `hasPointerCapture = () => false`
+- **reka-ui SelectItem 用 `pointerup` 选中，不是 `click` 也不是 `pointerdown`**：
+  `onPointerup: handleSelectCustomEvent` 是选中入口；`onPointerdown` 只做
+  `event.currentTarget.focus({ preventScroll: true })`。所以测试触发选中
+  必须 dispatch `pointerup` event（同 fallback 处理）
+- **SelectValue 文本显示靠 SelectItemText 配对**：reka-ui 在 SelectItem mount
+  时把 `SelectItemText` 内的文本 content 配对回写到 SelectValue context，
+  SelectValue 渲染时优先用这个文本而不是 placeholder。所以 `<SelectItem
+  value="ALL">全部</SelectItem>` + 初始 `modelValue = "ALL"` 时，trigger 显示
+  「全部」（不是 placeholder）。这与 raw `<select><option selected>` 行为 1:1
+
+**验证**：
+
+- vitest: 283 case / 29 文件全绿（Phase 2b/c 基线 275 + 新 Select 回归锚 8）
+- vue-tsc --noEmit 零错误
+- gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5
+  全 PASS，100 个功能条目引用完整
+
 ## [0.3.48] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 2b + 2c**（raw `<input type="checkbox">` / `<textarea>` →
 `<Checkbox>` / `<Textarea>` 原语）。新增 2 个原语，迁移 8 处表单控件（5 checkbox
-+ 2 checkbox + 1 textarea），引入 reka-ui 的 `CheckboxRoot` 作为底层（a11y
+和 2 checkbox 和 1 textarea），引入 reka-ui 的 `CheckboxRoot` 作为底层（a11y
 升级：`<button role="checkbox">` 自带键盘处理，aria-checked 三态）。
 
 **新增 2 个原语**：
@@ -448,7 +561,7 @@ shadcn-vue 迁移 **Phase 1.4**（15 个文件 raw `<label>` → `<Label>` 原�
 - dicts：`text-xs` 压过 `text-sm` + `mb-1 block` 保留
 - task-assignment / reports / data-entry：wrapping 断言（`<input>` / `<select>` 是 `<label>` 后代）
 - cardsAll：SoilCompactionDegreeCard wrapping + StrengthCardBase + CementCompressCard 6 试件
-  + DefaultParamCard 4 label 文本序列
+  - DefaultParamCard 4 label 文本序列
 - summary：`label[for=categoryCode]` 与 `#categoryCode` 配对不断
 
 红→绿分界：迁移前 raw `<label class="text-sm font-medium">` 没有 `peer-disabled:` 前缀，
@@ -471,7 +584,7 @@ shadcn-vue 迁移 **Phase 1.3c**（12 个 data-entry card / page 文件 raw `<in
   搜索框（`@keyup.enter="load"`，`max-w-sm` + `bg-white` 保留）
 - **SoilCompactionDegreeCard**（data-entry）：7 处 `<input>`（含 v-for × 6 行）。
   1 处最大干密度（`type=number step=0.001` + `aria-label` + `disabled` 转发）
-  + 6 行 × 6 字段（试样编号 / 取样部位 / 层次 / 设计压实度 `type=number step=0.1` /
+  - 6 行 × 6 字段（试样编号 / 取样部位 / 层次 / 设计压实度 `type=number step=0.1` /
   湿密度 `type=number step=0.001` / 含水率 `type=number step=0.1`），
   `@change` 转发 + `read-only:bg-gray-50 read-only:text-gray-500` 灰化样式保留
 - **ParticleGradationCard**（data-entry）：3 处 `<input>`（v-for × 筛孔）。

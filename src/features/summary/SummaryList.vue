@@ -11,6 +11,11 @@ import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Label from "@/components/ui/Label.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import Table from "@/components/ui/Table.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableBody from "@/components/ui/TableBody.vue";
@@ -96,14 +101,19 @@ watch(categoryCode, () => { void load(); });
       <div class="mb-3 flex items-end gap-3">
         <div>
           <Label for="categoryCode">报告类别</Label>
-          <select id="categoryCode" v-model="categoryCode" class="border rounded h-9 px-2 text-sm bg-white w-48">
-            <option value="ALL">全部</option>
-            <option value="RC">建材检测（RC）</option>
-            <option value="ST">主体结构（ST）</option>
-            <option value="MT">钢结构（MT）</option>
-            <option value="AD">建筑节能（AD）</option>
-            <option value="ID">室内环境（ID）</option>
-          </select>
+          <Select v-model="categoryCode">
+            <SelectTrigger id="categoryCode" class="border rounded h-9 px-2 text-sm bg-white w-48">
+              <SelectValue placeholder="请选择类别" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">全部</SelectItem>
+              <SelectItem value="RC">建材检测（RC）</SelectItem>
+              <SelectItem value="ST">主体结构（ST）</SelectItem>
+              <SelectItem value="MT">钢结构（MT）</SelectItem>
+              <SelectItem value="AD">建筑节能（AD）</SelectItem>
+              <SelectItem value="ID">室内环境（ID）</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

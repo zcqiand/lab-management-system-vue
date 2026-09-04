@@ -17,6 +17,11 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import Table from "@/components/ui/Table.vue";
 import TableBody from "@/components/ui/TableBody.vue";
 import TableCell from "@/components/ui/TableCell.vue";
@@ -66,7 +71,10 @@ const EMPTY_BODY: ContractBody = {
 
 const items = ref<Contract[]>([]);
 const total = ref(0);
-const status = ref("");
+// status "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui
+// SelectItem 不允许 value=""，保留给 placeholder；"__all__" 在 load() 里
+// 翻译回空串才不下发给 API）
+const status = ref("__all__");
 const keyword = ref("");
 const mode = ref<Mode>({ kind: "idle" });
 const loading = ref(false);
@@ -82,11 +90,14 @@ const editing = computed<Contract | null>(() => {
 async function load(): Promise<void> {
   loading.value = true;
   try {
+    // status.value === "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel；
+    // 空字符串 SelectItem 在 reka-ui 是禁用值（保留给 placeholder），所以走 __all__。
+    const apiStatus = status.value === "__all__" ? "" : status.value;
     const res = await axios.get<{ items: Contract[]; total: number }>(
       API_ROUTES["/contracts"],
       {
         params: {
-          ...(status.value ? { status: status.value } : {}),
+          ...(apiStatus ? { status: apiStatus } : {}),
           ...(keyword.value ? { keyword: keyword.value } : {}),
           page: 1,
           pageSize: 50,
@@ -177,11 +188,16 @@ async function submitForm(): Promise<void> {
     </div>
 
     <div class="mb-4 flex gap-2">
-      <select v-model="status" class="border rounded h-9 px-2 text-sm bg-white">
-        <option value="">全部状态</option>
-        <option value="active">在用</option>
-        <option value="archived">已归档</option>
-      </select>
+      <Select v-model="status">
+        <SelectTrigger class="border rounded h-9 px-2 text-sm bg-white">
+          <SelectValue placeholder="全部状态" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">全部状态</SelectItem>
+          <SelectItem value="active">在用</SelectItem>
+          <SelectItem value="archived">已归档</SelectItem>
+        </SelectContent>
+      </Select>
       <Input
         v-model="keyword"
         class="max-w-sm"
@@ -284,10 +300,15 @@ async function submitForm(): Promise<void> {
               </div>
               <div>
                 <Label>状态</Label>
-                <select v-model="form.status" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option value="active">在用</option>
-                  <option value="archived">已归档</option>
-                </select>
+                <Select v-model="form.status">
+                  <SelectTrigger class="border rounded h-9 px-2 text-sm bg-white w-full">
+                    <SelectValue placeholder="请选择状态" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">在用</SelectItem>
+                    <SelectItem value="archived">已归档</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>

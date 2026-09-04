@@ -113,17 +113,20 @@ describe("M05.F01 报告汇总", () => {
   fnTest(["M05.F01.I01", "M05.F01.I02"], "F01+F02 报告类别下拉存在", async () => {
     const wrapper = mountWithProviders(SummaryList);
     await flushPromises();
+    // Phase 2d-1：<Select> 触发器渲染为 <button id="categoryCode" role="combobox">
     const select = wrapper.find("#categoryCode");
     expect(select.exists()).toBe(true);
+    expect(select.attributes("role")).toBe("combobox");
+    // categoryCode 默认值 "ALL" → SelectItemText "全部" 配对回写到 SelectValue
     expect(select.text()).toContain("全部");
   });
 });
 
 // Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
 // 锁：显式 for/id 配对经 Label 的 props.for 转发到真实 <label for>，
-// 与 raw <select id=categoryCode> 的配对不断（select 留 Phase 2d）。
+// 与 <SelectTrigger id=categoryCode> 的配对不断。
 describe("Phase 1.4 — SummaryList 筛选 <Label> 原语回归", () => {
-  it("<Label for=categoryCode>：for 落到真实 <label>，仍指向 raw <select id>", async () => {
+  it("<Label for=categoryCode>：for 落到真实 <label>，仍指向 <SelectTrigger id>", async () => {
     const wrapper = mountWithProviders(SummaryList);
     await flushPromises();
 
@@ -134,7 +137,7 @@ describe("Phase 1.4 — SummaryList 筛选 <Label> 原语回归", () => {
     expect(label.classes()).toContain("text-sm");
     expect(label.classes()).toContain("font-medium");
     expect(label.classes()).toContain("peer-disabled:opacity-70");
-    // for 指向的 id 真实存在
+    // for 指向的 id 真实存在（Phase 2d-1：现在是 SelectTrigger 的 button[id]）
     expect(wrapper.find("#categoryCode").exists()).toBe(true);
     wrapper.unmount();
   });

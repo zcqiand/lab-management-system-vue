@@ -17,6 +17,11 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import Table from "@/components/ui/Table.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableBody from "@/components/ui/TableBody.vue";
@@ -268,26 +273,34 @@ function onParamChange(patch: Partial<TestRecord>): void {
 
           <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
             <Label class="text-xs block">样品
-              <select
+              <Select
                 v-model="selectedSampleId"
-                class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white"
+                class="mt-1"
               >
-                <option v-if="samples.length === 0" value="">（无样品）</option>
-                <option v-for="s in samples" :key="s.id" :value="s.id">
-                  {{ s.sampleCode }}
-                </option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder="（无样品）" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="s in samples" :key="s.id" :value="s.id">
+                    {{ s.sampleCode }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </Label>
             <Label class="text-xs block">检测参数
-              <select
+              <Select
                 v-model="activeParamCode"
-                class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white"
+                class="mt-1"
               >
-                <option v-if="parameters.length === 0" value="">（无参数）</option>
-                <option v-for="p in parameters" :key="p.code" :value="p.code">
-                  {{ p.canonicalName || p.name }}
-                </option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder="（无参数）" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
+                    {{ p.canonicalName || p.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </Label>
           </div>
 

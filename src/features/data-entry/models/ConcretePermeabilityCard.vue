@@ -4,6 +4,11 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import Table from "@/components/ui/Table.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableBody from "@/components/ui/TableBody.vue";
@@ -95,16 +100,23 @@ function updatePermeated(i: number, v: Permeation) {
             />
           </TableCell>
           <TableCell class="py-1">
-            <select
-              :value="s.permeated"
+            <Select
+              :model-value="s.permeated"
               :disabled="readOnly"
-              :aria-label="`试件 ${i + 1} 渗水情况`"
-              class="border rounded px-2 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-500"
-              @change="(e) => updatePermeated(i, (e.target as HTMLSelectElement).value as '已渗' | '未渗')"
+              class="disabled:bg-gray-50 disabled:text-gray-500"
+              @update:model-value="(v) => updatePermeated(i, v as '已渗' | '未渗')"
             >
-              <option value="未渗">未渗</option>
-              <option value="已渗">已渗</option>
-            </select>
+              <SelectTrigger
+                :aria-label="`试件 ${i + 1} 渗水情况`"
+                class="border rounded px-2 py-1 text-sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="未渗">未渗</SelectItem>
+                <SelectItem value="已渗">已渗</SelectItem>
+              </SelectContent>
+            </Select>
           </TableCell>
         </TableRow>
       </TableBody>

@@ -532,15 +532,16 @@ describe("Phase 2a-4 — 数据录入卡 <Table> 原语回归", () => {
     ).toBe(true);
   });
 
-  it("ConcretePermeabilityCard：6 体行，raw <select> 嵌在 cell 内（Phase 2d 才换原语）", () => {
+  it("ConcretePermeabilityCard：6 体行，<Select> 触发器嵌在 cell 内", () => {
     lastCardWrapper = mount(ConcretePermeabilityCard, {
       props: makeProps({ parameter: param("IP-0190", "抗渗性能") }),
     });
     const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
     expect(bodyRows.length).toBe(6);
     expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(3);
+    // Phase 2d-1：<Select> → <button role="combobox"> 嵌在 cell 内，aria-label 经 $attrs 落真实 <button>
     expect(
-      bodyRows[0]!.find('[role="cell"] select[aria-label="试件 1 渗水情况"]').exists(),
+      bodyRows[0]!.find('[role="cell"] [role="combobox"][aria-label="试件 1 渗水情况"]').exists(),
     ).toBe(true);
   });
 

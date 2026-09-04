@@ -30,6 +30,11 @@ import { API_ROUTES, type ApiRouteKey } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
@@ -343,15 +348,16 @@ function dialogTitle(): string {
           <Label class="mb-1 block text-xs text-gray-600">
             检测项目
           </Label>
-          <select
-            v-model="formObject"
-            :disabled="!!editing"
-            class="w-full rounded border px-2 py-1.5 disabled:bg-gray-100"
-          >
-            <option v-for="o in objects" :key="o.code" :value="o.code">
-              {{ o.name }}
-            </option>
-          </select>
+          <Select v-model="formObject" :disabled="!!editing">
+            <SelectTrigger class="w-full rounded border px-2 py-1.5 disabled:bg-gray-100">
+              <SelectValue placeholder="请选择检测项目" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="o in objects" :key="o.code" :value="o.code">
+                {{ o.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label class="mb-1 block text-xs text-gray-600">
