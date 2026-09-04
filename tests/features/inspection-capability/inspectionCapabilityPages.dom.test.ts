@@ -4,8 +4,9 @@
 // vue 仓不挂 msw（deps 未引入），用 vi.mock('axios') 拦截；fixture 数据走
 // 内联字面量（与 react 仓 inspection-specialty / inspection-calculation-method /
 // inspection-technical-requirement 同构）。
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 import InspectionCapabilityList from "@/features/inspection-capability/InspectionCapabilityList.vue";
@@ -205,5 +206,32 @@ describe("M06.F06 技术要求维护", () => {
     const delBtns = wrapper.findAll('button[aria-label^="删除 "]');
     expect(editBtns.length).toBeGreaterThan(0);
     expect(delBtns.length).toBeGreaterThan(0);
+  });
+});
+
+// Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 只覆盖 InspectionCapabilityList；CalculationMethodList / TechnicalRequirementList
+// 各自的迁移回归锚留在它们的 commit 里加。
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2a — InspectionCapabilityList <Button> 原语回归", () => {
+  it("parameters 行内关联标准：<Button variant=ghost class=text-primary> 渲染 <button>，data-fn 落到真实 DOM", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "parameters" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const linkBtn = lastWrapper.find('button[data-fn="M06.F03.I02"]');
+    expect(linkBtn.exists()).toBe(true);
+    expect(linkBtn.classes()).toContain("inline-flex");
+    expect(linkBtn.classes()).toContain("text-primary");
   });
 });

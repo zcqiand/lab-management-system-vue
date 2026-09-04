@@ -7,6 +7,7 @@
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import axios, { type AxiosResponse } from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ParameterStandardLinkDialog from "@/features/inspection-capability/ParameterStandardLinkDialog.vue";
 import { normalizeListResponse, unwrapListResponse } from "@/lib/responses";
@@ -352,13 +353,9 @@ function cellOf(item: ListItem, idx: number): string {
         <h1 class="text-2xl font-semibold">{{ title }}</h1>
         <p class="text-sm text-slate-500">M06 检测能力多资源列表（数据来自 lab-msw fixtures）</p>
       </div>
-      <button
-        class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-        :data-fn="fnCreate"
-        @click="openCreate"
-      >
+      <Button :data-fn="fnCreate" @click="openCreate">
         {{ createLabel }}
-      </button>
+      </Button>
     </div>
 
     <div class="flex flex-wrap gap-2">
@@ -416,32 +413,38 @@ function cellOf(item: ListItem, idx: number): string {
             <span v-else>{{ cellOf(item, i) }}</span>
           </td>
           <td class="px-4 py-2 text-xs whitespace-nowrap">
-            <button
+            <Button
               v-if="resource === 'parameters'"
-              class="text-primary hover:underline disabled:opacity-40 mr-3"
+              size="sm"
+              variant="ghost"
+              class="text-primary hover:underline mr-3"
               data-fn="M06.F03.I02"
               :aria-label="`关联标准 ${item.code}`"
               @click="linkingParam = item"
             >
               关联标准
-            </button>
-            <button
-              class="text-primary hover:underline disabled:opacity-40 mr-3"
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              class="text-primary hover:underline mr-3"
               :data-fn="fnCreate"
               :aria-label="`编辑 ${item.code}`"
               @click="openEdit(item)"
             >
               编辑
-            </button>
-            <button
-              class="text-red-600 hover:underline disabled:opacity-40"
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              class="text-red-600 hover:underline"
               :data-fn="fnDelete"
               :aria-label="`删除 ${item.code}`"
               :disabled="isOfficialRow(item)"
               @click="confirmDeleteStart(item)"
             >
               删除
-            </button>
+            </Button>
           </td>
         </tr>
       </tbody>
@@ -556,19 +559,12 @@ function cellOf(item: ListItem, idx: number): string {
             </div>
           </div>
           <div class="px-6 py-3 flex justify-end gap-2 border-t">
-            <button
-              class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm hover:bg-slate-50"
-              @click="closeDialog"
-            >
+            <Button variant="outline" @click="closeDialog">
               取消
-            </button>
-            <button
-              class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-              :data-fn="fnCreate"
-              @click="submitForm"
-            >
+            </Button>
+            <Button :data-fn="fnCreate" @click="submitForm">
               保存
-            </button>
+            </Button>
           </div>
         </div>
       </div>
