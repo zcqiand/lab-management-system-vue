@@ -261,3 +261,33 @@ describe("Phase 1.2a — TechnicalRequirementList <Button> 原语回归", () => 
     expect(delBtns[0]!.classes()).toContain("h-8");
   });
 });
+
+describe("Phase 1.2a — CalculationMethodList <Button> 原语回归", () => {
+  it("新建计算方法：<Button variant=default> 渲染 <button>，data-fn M06.F05.I01 落到真实 DOM", async () => {
+    lastWrapper = mountWithProviders(CalculationMethodList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const create = lastWrapper.findAll('button[data-fn="M06.F05.I01"]').find(
+      (b) => b.text() === "新建计算方法",
+    );
+    expect(create).toBeTruthy();
+    expect(create!.classes()).toContain("bg-primary");
+  });
+
+  it("行内编辑/删除：size=sm variant=ghost，aria-label 转发 + 调用方 text-primary / text-red-600 保留", async () => {
+    lastWrapper = mountWithProviders(CalculationMethodList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const editBtns = lastWrapper.findAll('button[aria-label^="编辑 "]');
+    const delBtns = lastWrapper.findAll('button[aria-label^="删除 "]');
+    expect(editBtns.length).toBeGreaterThan(0);
+    expect(delBtns.length).toBeGreaterThan(0);
+    expect(editBtns[0]!.classes()).toContain("text-primary");
+    expect(delBtns[0]!.classes()).toContain("text-red-600");
+    expect(editBtns[0]!.classes()).toContain("h-8");
+  });
+});

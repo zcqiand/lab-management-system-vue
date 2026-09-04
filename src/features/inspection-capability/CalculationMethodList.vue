@@ -6,6 +6,7 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // @entry M06.F05.I01
@@ -197,13 +198,9 @@ async function confirmDelete(): Promise<void> {
           M06.F05 计算方法（复合主键：检测项目 + 检测参数）——算法类型 + 试件数量 + 修约规则
         </p>
       </div>
-      <button
-        class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-        data-fn="M06.F05.I01"
-        @click="openCreate"
-      >
+      <Button data-fn="M06.F05.I01" @click="openCreate">
         新建计算方法
-      </button>
+      </Button>
     </div>
 
     <div class="flex gap-2">
@@ -255,22 +252,26 @@ async function confirmDelete(): Promise<void> {
           <td class="px-4 py-2">{{ row.specimenCount }}</td>
           <td class="px-4 py-2 text-xs text-slate-500">{{ row.remark ?? "-" }}</td>
           <td class="px-4 py-2 text-xs whitespace-nowrap">
-            <button
+            <Button
+              size="sm"
+              variant="ghost"
               class="text-primary hover:underline mr-3"
               data-fn="M06.F05.I01"
               :aria-label="`编辑 ${row.id}`"
               @click="openEdit(row)"
             >
               编辑
-            </button>
-            <button
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
               class="text-red-600 hover:underline"
               data-fn="M06.F05.I01"
               :aria-label="`删除 ${row.id}`"
               @click="startDelete(row)"
             >
               删除
-            </button>
+            </Button>
           </td>
         </tr>
       </tbody>
@@ -371,19 +372,12 @@ async function confirmDelete(): Promise<void> {
             </div>
           </div>
           <div class="px-6 py-3 flex justify-end gap-2 border-t">
-            <button
-              class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm hover:bg-slate-50"
-              @click="closeDialog"
-            >
+            <Button variant="outline" @click="closeDialog">
               取消
-            </button>
-            <button
-              class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-              data-fn="M06.F05.I01"
-              @click="submitForm"
-            >
+            </Button>
+            <Button data-fn="M06.F05.I01" @click="submitForm">
               保存
-            </button>
+            </Button>
           </div>
         </div>
       </div>
