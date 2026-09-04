@@ -88,7 +88,7 @@ function updateLoad(i: number, v: string) {
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 破坏荷载`"
               class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
-              @change="(e) => updateLoad(i, (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
           </td>
           <td class="py-1 text-gray-700">{{ lv ? Number((((lv * 1000) / area) * 100) / 100).toFixed(2) : '-' }}</td>

@@ -169,7 +169,7 @@ const verdictClass = computed(() =>
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 破坏荷载`"
               class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
-              @change="(e) => onLoadChange(i, (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => onLoadChange(i, (e.target as HTMLInputElement).value)"
             />
           </td>
           <td

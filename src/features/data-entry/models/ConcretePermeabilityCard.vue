@@ -85,7 +85,7 @@ function updatePermeated(i: number, v: Permeation) {
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 渗水压力`"
               class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
-              @change="(e) => updatePressure(i, (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updatePressure(i, (e.target as HTMLInputElement).value)"
             />
           </td>
           <td class="py-1">

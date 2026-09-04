@@ -189,7 +189,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               :readonly="readOnly"
               :aria-label="`试件 ${t + 1} 最大荷重`"
               class="w-24 read-only:bg-gray-50 read-only:text-gray-500"
-              @change="(e) => updateLoad(t, (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateLoad(t, (e.target as HTMLInputElement).value)"
             />
           </td>
           <td class="py-1 text-gray-700">
@@ -204,7 +204,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               :readonly="readOnly"
               :aria-label="`试件 ${t + 1} 断口距`"
               class="w-20 read-only:bg-gray-50 read-only:text-gray-500"
-              @change="(e) => updateDistance(t, (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateDistance(t, (e.target as HTMLInputElement).value)"
             />
           </td>
           <td class="py-1">

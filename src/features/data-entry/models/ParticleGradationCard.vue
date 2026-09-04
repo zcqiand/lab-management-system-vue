@@ -228,7 +228,7 @@ const avg = computed(() => averageByCol(rows.value));
                 :model-value="row.totalBefore === 0 ? '' : row.totalBefore"
                 :readonly="readOnly"
                 class="w-20 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
-                @change="(e) => updateTotal(ri, 'totalBefore', (e.target as HTMLInputElement).value)"
+                @change="(e: Event) => updateTotal(ri, 'totalBefore', (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
             </td>
@@ -247,7 +247,7 @@ const avg = computed(() => averageByCol(rows.value));
                 :model-value="pct === 0 ? '' : pct"
                 :readonly="readOnly"
                 class="w-16 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
-                @change="(e) => updatePct(ri, ci, (e.target as HTMLInputElement).value)"
+                @change="(e: Event) => updatePct(ri, ci, (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
             </td>
@@ -260,7 +260,7 @@ const avg = computed(() => averageByCol(rows.value));
                 :model-value="row.totalAfter === 0 ? '' : row.totalAfter"
                 :readonly="readOnly"
                 class="w-20 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
-                @change="(e) => updateTotal(ri, 'totalAfter', (e.target as HTMLInputElement).value)"
+                @change="(e: Event) => updateTotal(ri, 'totalAfter', (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
               <span v-if="rowComputed[ri]!.delta !== 0" class="ml-1 text-[10px] text-orange-500">

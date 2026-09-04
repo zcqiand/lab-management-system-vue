@@ -232,7 +232,7 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
           :readonly="readOnly"
           aria-label="公称直径"
           class="ml-1 w-24 read-only:bg-gray-50 read-only:text-gray-500"
-          @change="(e) => updateDiameter((e.target as HTMLInputElement).value)"
+          @change="(e: Event) => updateDiameter((e.target as HTMLInputElement).value)"
         />
       </span>
       <span class="text-gray-500">
@@ -272,7 +272,7 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
               :readonly="readOnly"
               :aria-label="`第 ${i + 1} 组 ${inputLabel}`"
               class="w-28 read-only:bg-gray-50 read-only:text-gray-500"
-              @change="(e) => updateLoad(i, (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
           </td>
           <td v-if="isStrength" class="py-1 text-gray-700">

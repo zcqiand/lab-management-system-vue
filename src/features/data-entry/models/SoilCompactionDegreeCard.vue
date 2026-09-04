@@ -102,10 +102,10 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
           type="number"
           step="0.001"
           aria-label="最大干密度"
-          :class="[numCls, 'ml-1']"
+          :class="`${numCls} ml-1`"
           :disabled="readOnly"
           :model-value="state.maxDryDensity || ''"
-          @change="(e) => updateMax((e.target as HTMLInputElement).value)"
+          @change="(e: Event) => updateMax((e.target as HTMLInputElement).value)"
         />
       </label>
     </div>
@@ -133,7 +133,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :class="txtCls"
               :disabled="readOnly"
               :model-value="r.code"
-              @change="(e) => updateRow(i, 'code', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateRow(i, 'code', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
@@ -142,7 +142,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :class="txtCls"
               :disabled="readOnly"
               :model-value="r.part"
-              @change="(e) => updateRow(i, 'part', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateRow(i, 'part', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
@@ -151,7 +151,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :class="txtCls"
               :disabled="readOnly"
               :model-value="r.layer"
-              @change="(e) => updateRow(i, 'layer', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateRow(i, 'layer', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
@@ -162,7 +162,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :class="numCls"
               :disabled="readOnly"
               :model-value="r.designDegree || ''"
-              @change="(e) => updateRow(i, 'designDegree', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateRow(i, 'designDegree', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
@@ -173,7 +173,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :class="numCls"
               :disabled="readOnly"
               :model-value="r.wetDensity || ''"
-              @change="(e) => updateRow(i, 'wetDensity', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateRow(i, 'wetDensity', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
@@ -184,7 +184,7 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
               :class="numCls"
               :disabled="readOnly"
               :model-value="r.moisture || ''"
-              @change="(e) => updateRow(i, 'moisture', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateRow(i, 'moisture', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls" :data-testid="`dry-density-${i}`">

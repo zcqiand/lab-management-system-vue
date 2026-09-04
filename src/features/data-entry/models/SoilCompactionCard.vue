@@ -82,7 +82,7 @@ const inputCls =
               :class="inputCls"
               :disabled="readOnly"
               :model-value="p.moisture || ''"
-              @change="(e) => update(i, 'moisture', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => update(i, 'moisture', (e.target as HTMLInputElement).value)"
             />
           </td>
         </tr>
@@ -96,7 +96,7 @@ const inputCls =
               :class="inputCls"
               :disabled="readOnly"
               :model-value="p.dryDensity || ''"
-              @change="(e) => update(i, 'dryDensity', (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => update(i, 'dryDensity', (e.target as HTMLInputElement).value)"
             />
           </td>
         </tr>

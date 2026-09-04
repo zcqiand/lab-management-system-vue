@@ -396,7 +396,12 @@ describe("Phase 1.3c — 模型卡 <Input> 原语回归", () => {
 
   it("StrengthCardBase：破坏荷载 <Input> 经 $attrs 落 readonly + read-only 灰化样式", () => {
     const wrapper = mount(StrengthCardBase, {
-      props: { ...makeProps(), specimenCount: 3, compute: (l: number[]) => ({ strengths: l.map(() => 0), mean: 0, kept: [true, true, true] }), strengthLabel: "抗压 (MPa)" },
+      props: {
+        ...makeProps(),
+        specimenCount: 3,
+        compute: (l: number[]) => ({ strengths: l.map(() => 0), mean: 0, kept: [true, true, true], invalid: false }),
+        strengthLabel: "抗压 (MPa)",
+      },
     });
     const input = wrapper.find('input[aria-label="试件 1 破坏荷载"]');
     expect(input.exists()).toBe(true);

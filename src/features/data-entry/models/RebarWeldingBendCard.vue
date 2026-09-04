@@ -122,7 +122,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               :readonly="readOnly"
               :aria-label="`试件 ${t + 1} 弯曲角度`"
               class="w-20 read-only:bg-gray-50 read-only:text-gray-500"
-              @change="(e) => updateAngle(t, (e.target as HTMLInputElement).value)"
+              @change="(e: Event) => updateAngle(t, (e.target as HTMLInputElement).value)"
             />
           </td>
           <td class="py-1">
