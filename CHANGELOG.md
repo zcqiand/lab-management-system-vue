@@ -2,6 +2,49 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.32] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.2a**（7 个 list 页 raw `<button>` → `<Button>` 原语）。
+7 个独立 commit（按文件粒度回滚），共迁移 41 处按钮；全量回归 151 case 全绿、gate exit 0。
+
+- **ContractsList** 5 处：新建合同 / 搜索 / 表单保存 / 行内编辑 / 行内删除
+- **ReceiptsList** 9 处：新建接样 / 搜索 / 行内提交+编辑+删除 / 2× dialog 取消+保存
+  - 注：ReceiptsList 视觉调色 `bg-blue-600`（区别于合同的 primary），用
+    `<Button variant="default" class="bg-blue-600 hover:bg-blue-700">` 覆盖 CVA default 的 bg-primary。
+- **ReportNameList** 6 处：新建 / 搜索 / 表单保存 / 行内关联+编辑+删除
+- **InspectionCapabilityList** 6 处（4 个 resource 视图共用）：新建 / 行内关联标准
+  （parameters 专属）/ 行内编辑+删除 / dialog 取消+保存。`disabled` 落到真实 `<button>`
+  （官方行不可删）；`aria-label` 经 `$attrs` 转发。
+- **ParamInterfaceList** 5 处：新建 / 搜索 / 表单保存 / 行内编辑+删除
+- **TechnicalRequirementList** 5 处：新建 / 行内编辑+删除 / dialog 取消+保存。
+  行内按钮走 `text-primary hover:underline` / `text-red-600 hover:underline` link 风格，
+  用 `<Button size="sm" variant="ghost">` 保留视觉。
+- **CalculationMethodList** 5 处：同上结构。
+
+**class 映射规则**：
+
+- 顶部主操作（新建 / 保存）→ `<Button variant="default">`（CVA base `inline-flex` +
+  `bg-primary` 自带）
+- 取消 / 搜索 → `<Button variant="outline">`
+- 行内 link-style 操作 → `<Button size="sm" variant="ghost" class="text-primary hover:underline">`
+  或 `text-red-600 hover:underline`
+- ReceiptsList 蓝色定制 → `<Button variant="default" class="bg-blue-600 hover:bg-blue-700">`，
+  CVA default 的 `bg-primary` 被调用方 `tailwind-merge` 压掉
+
+**L5 不动**：所有原 `data-fn` 锚点经 `$attrs` 转发到真实 `<button>`，原测试 selector
+（`find('button[data-fn="..."]')` / `findAll("button")` / `findAll('button[aria-label^="..."]')`）
+零回归。`tailwind-merge` 保证调用方 class 压过 CVA 默认值，视觉零差异。
+
+**测试新增 9 条 Phase 1.2a 回归锚**（不挂功能 ID，工程设施测试）：
+
+- ContractsList 2：新建 default + 行内删除 ghost text-red-600
+- ReceiptsList 2：新建 blue 覆盖 + 行内提交 size=sm h-8
+- ReportNameList 2：新建 default + 行内关联 size=sm
+- InspectionCapabilityList 1：parameters 行内关联 ghost text-primary
+- TechnicalRequirementList 2：新建 default + 行内删除 ghost aria-label 转发
+- CalculationMethodList 2：新建 default + 行内 aria-label + text-primary/text-red-600
+- ParamInterfaceList 2：新建 default + 行内删除 ghost text-red-600
+
 ## [0.3.31] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.1**（SidebarNav action 按钮）。TDD：先写失败测试（4 case），
