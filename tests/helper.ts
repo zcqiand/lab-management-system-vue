@@ -38,10 +38,18 @@ export function mountWithProviders(
         ...(options.global?.plugins ?? []),
       ],
       stubs: {
-        // 默认 stub Teleport（no-op，丢弃 children），避免 Teleport 找 body 报错；
-        // 业务组件若需要在测试里验证 Teleport 子内容，per-test 传
-        // `global: { stubs: { teleport: false } }` 覆盖。
-        teleport: true,
+        // 两个 portal stub，都**渲染默认插槽**（不像 `teleport: true` 那样丢 children）：
+        //
+        //  - `teleport`：Vue 内置 <Teleport>。原来是 no-op stub，内容被丢掉，
+        //    业务测试没法断言浮层内容。改成渲染 slot 的 <div data-portal-stub>，
+        //    既避开 Teleport 找不到 body 目标的报错，内容又留在 wrapper 子树里。
+        //  - `DialogPortal`：reka-ui 的 portal 组件。它内部走 Teleport 把内容送进
+        //    document.body，wrapper.find 就扫不到；直接按组件名 stub 掉最稳，
+        //    shadcn-vue Dialog/Sheet/AlertDialog 都靠它。
+        //
+        // per-test 想要真 portal 行为，传 `global: { stubs: { teleport: false } }` 覆盖。
+        teleport: { template: "<div data-portal-stub><slot /></div>" },
+        DialogPortal: { template: "<div data-portal-stub><slot /></div>" },
         ...(options.global?.stubs ?? {}),
       },
     },
