@@ -8,6 +8,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // @entry M06.F05.I01
@@ -297,7 +298,7 @@ async function confirmDelete(): Promise<void> {
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-sm font-medium">检测项目</label>
+                <Label>检测项目</Label>
                 <select
                   v-model="form.inspectionObjectCode"
                   class="border rounded h-9 px-2 text-sm bg-white w-full"
@@ -309,7 +310,7 @@ async function confirmDelete(): Promise<void> {
                 </select>
               </div>
               <div>
-                <label class="text-sm font-medium">检测参数</label>
+                <Label>检测参数</Label>
                 <select
                   v-model="form.inspectionParameterCode"
                   class="border rounded h-9 px-2 text-sm bg-white w-full"
@@ -322,7 +323,7 @@ async function confirmDelete(): Promise<void> {
               </div>
             </div>
             <div>
-              <label class="text-sm font-medium">判定标准（可选）</label>
+              <Label>判定标准（可选）</Label>
               <select
                 v-model="form.testingStandardCode"
                 class="border rounded h-9 px-2 text-sm bg-white w-full"
@@ -335,7 +336,7 @@ async function confirmDelete(): Promise<void> {
             </div>
             <div class="grid grid-cols-3 gap-3">
               <div>
-                <label class="text-sm font-medium">算法类型</label>
+                <Label>算法类型</Label>
                 <select
                   v-model="form.algorithmType"
                   class="border rounded h-9 px-2 text-sm bg-white w-full"
@@ -346,14 +347,14 @@ async function confirmDelete(): Promise<void> {
                 </select>
               </div>
               <div>
-                <label class="text-sm font-medium">试件数量</label>
+                <Label>试件数量</Label>
                 <Input
                   v-model="form.specimenCount"
                   type="number"
                 />
               </div>
               <div>
-                <label class="text-sm font-medium">修约规则</label>
+                <Label>修约规则</Label>
                 <Input
                   v-model="form.roundingRule"
                   placeholder="如 修约到 0.1"
@@ -361,7 +362,7 @@ async function confirmDelete(): Promise<void> {
               </div>
             </div>
             <div>
-              <label class="text-sm font-medium">备注</label>
+              <Label>备注</Label>
               <Input
                 v-model="form.remark"
               />
