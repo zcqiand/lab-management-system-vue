@@ -16,6 +16,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/resources/contract.ts）
@@ -212,71 +213,71 @@ async function submitForm(): Promise<void> {
           <div class="px-6 py-4 max-h-[60vh] overflow-y-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label class="text-sm font-medium">合同编号 *</label>
+                <Label>合同编号 *</Label>
                 <Input v-model="form.contractCode" />
               </div>
               <div>
-                <label class="text-sm font-medium">委托单位 *</label>
+                <Label>委托单位 *</Label>
                 <Input v-model="form.clientUnit" />
               </div>
               <div>
-                <label class="text-sm font-medium">项目名称 *</label>
+                <Label>项目名称 *</Label>
                 <Input v-model="form.projectName" />
               </div>
               <div>
-                <label class="text-sm font-medium">项目地点</label>
+                <Label>项目地点</Label>
                 <Input v-model="form.projectLocation" />
               </div>
               <div>
-                <label class="text-sm font-medium">施工单位 *</label>
+                <Label>施工单位 *</Label>
                 <Input v-model="form.constructionUnit" />
               </div>
               <div>
-                <label class="text-sm font-medium">检测专项</label>
+                <Label>检测专项</Label>
                 <Input v-model="form.inspectionSpecialtyCode" />
               </div>
               <div>
-                <label class="text-sm font-medium">建设单位</label>
+                <Label>建设单位</Label>
                 <Input v-model="form.buildingUnit" />
               </div>
               <div>
-                <label class="text-sm font-medium">监理单位</label>
+                <Label>监理单位</Label>
                 <Input v-model="form.supervisorUnit" />
               </div>
               <div>
-                <label class="text-sm font-medium">检测人</label>
+                <Label>检测人</Label>
                 <Input v-model="form.inspectionPerson" />
               </div>
               <div>
-                <label class="text-sm font-medium">检测人电话</label>
+                <Label>检测人电话</Label>
                 <Input v-model="form.inspectionPhone" />
               </div>
               <div>
-                <label class="text-sm font-medium">见证单位 *</label>
+                <Label>见证单位 *</Label>
                 <Input v-model="form.witnessUnit" />
               </div>
               <div>
-                <label class="text-sm font-medium">见证人 *</label>
+                <Label>见证人 *</Label>
                 <Input v-model="form.witness" />
               </div>
               <div>
-                <label class="text-sm font-medium">见证人电话</label>
+                <Label>见证人电话</Label>
                 <Input v-model="form.witnessPhone" />
               </div>
               <div>
-                <label class="text-sm font-medium">联系人</label>
+                <Label>联系人</Label>
                 <Input v-model="form.contactPerson" />
               </div>
               <div>
-                <label class="text-sm font-medium">联系人电话</label>
+                <Label>联系人电话</Label>
                 <Input v-model="form.contactPhone" />
               </div>
               <div>
-                <label class="text-sm font-medium">委托日期 (YYYY-MM-DD)</label>
+                <Label>委托日期 (YYYY-MM-DD)</Label>
                 <Input v-model="form.entrustedDate" />
               </div>
               <div>
-                <label class="text-sm font-medium">状态</label>
+                <Label>状态</Label>
                 <select v-model="form.status" class="border rounded h-9 px-2 text-sm bg-white w-full">
                   <option value="active">在用</option>
                   <option value="archived">已归档</option>
