@@ -21,6 +21,20 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
+  // 手工分包基线 —— 在 shadcn-vue 原语大批进场**之前**先定死，
+  // 后续每个 phase 都对着同一条基线量 bundle 体积，涨的是自己的账。
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vue: ["vue", "vue-router", "pinia"],
+          query: ["@tanstack/vue-query"],
+          reka: ["reka-ui"],
+          icons: ["lucide-vue-next"],
+        },
+      },
+    },
+  },
   server: {
     port: devPort,
     forwardConsole: false,
