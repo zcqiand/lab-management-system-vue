@@ -3,6 +3,8 @@
 // 镜像 react/src/features/data-entry/SampleExtFieldsModal.tsx。
 // 完整版见 react 仓；vue 仓 stub：渲染标题 + 字段列表 + 确定/取消按钮。
 
+import Button from "@/components/ui/Button.vue";
+
 interface ExtFieldDef {
   key: string
   label: string
@@ -38,7 +40,13 @@ function emitConfirm() {
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] flex flex-col">
       <header class="flex items-center justify-between px-5 py-3 border-b">
         <h2 class="text-base font-semibold">样品扩展字段补录</h2>
-        <button type="button" class="text-gray-400 hover:text-gray-600 text-xl leading-none" @click="emitClose">×</button>
+        <button
+          type="button"
+          class="text-gray-400 hover:text-gray-600 text-xl leading-none"
+          @click="emitClose"
+        >
+          ×
+        </button>
       </header>
       <div class="px-5 py-4 space-y-2">
         <p class="text-sm text-gray-600">报告预览前按当前类别 extFields 补录样品扩展字段（vue 仓 Batch 2B-8 stub）</p>
@@ -47,8 +55,14 @@ function emitConfirm() {
         </ul>
       </div>
       <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-gray-50">
-        <button type="button" class="px-4 py-1.5 text-sm border rounded hover:bg-gray-100" @click="emitClose">取消</button>
-        <button type="button" class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700" @click="emitConfirm">确认</button>
+        <Button variant="outline" class="px-4 py-1.5 text-sm rounded" @click="emitClose">取消</Button>
+        <Button
+          variant="default"
+          class="bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm rounded"
+          @click="emitConfirm"
+        >
+          确认
+        </Button>
       </footer>
     </div>
   </div>
