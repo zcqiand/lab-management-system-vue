@@ -8,6 +8,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // @entry M06.F06.I01
@@ -288,14 +289,14 @@ async function confirmDelete(): Promise<void> {
             <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-sm font-medium">检测项目</label>
+                <Label>检测项目</Label>
                 <select v-model="form.inspectionObjectCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
                   <option value="">未选择</option>
                   <option v-for="o in objects" :key="o.code" :value="o.code">{{ o.code }} {{ o.name }}</option>
                 </select>
               </div>
               <div>
-                <label class="text-sm font-medium">检测参数</label>
+                <Label>检测参数</Label>
                 <select v-model="form.inspectionParameterCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
                   <option value="">未选择</option>
                   <option v-for="p in parameters" :key="p.code" :value="p.code">{{ p.code }} {{ p.name }}</option>
@@ -303,45 +304,45 @@ async function confirmDelete(): Promise<void> {
               </div>
             </div>
             <div>
-              <label class="text-sm font-medium">判定标准</label>
+              <Label>判定标准</Label>
               <Input v-model="form.judgmentStandardCode" class="font-mono" placeholder="如 GB 175-2023" />
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-sm font-medium">牌号</label>
+                <Label>牌号</Label>
                 <Input v-model="form.brand" />
               </div>
               <div>
-                <label class="text-sm font-medium">型号</label>
+                <Label>型号</Label>
                 <Input v-model="form.model" />
               </div>
               <div>
-                <label class="text-sm font-medium">等级</label>
+                <Label>等级</Label>
                 <Input v-model="form.grade" />
               </div>
               <div>
-                <label class="text-sm font-medium">规格</label>
+                <Label>规格</Label>
                 <Input v-model="form.spec" />
               </div>
             </div>
             <div class="grid grid-cols-3 gap-3">
               <div>
-                <label class="text-sm font-medium">判定方式</label>
+                <Label>判定方式</Label>
                 <select v-model="form.comparison" class="border rounded h-9 px-2 text-sm bg-white w-full">
                   <option v-for="c in COMPARISONS" :key="c" :value="c">{{ COMPARISON_LABEL[c] ?? c }}</option>
                 </select>
               </div>
               <div>
-                <label class="text-sm font-medium">下限</label>
+                <Label>下限</Label>
                 <Input v-model="form.minValue" type="number" />
               </div>
               <div>
-                <label class="text-sm font-medium">上限</label>
+                <Label>上限</Label>
                 <Input v-model="form.maxValue" type="number" />
               </div>
             </div>
             <div>
-              <label class="text-sm font-medium">备注</label>
+              <Label>备注</Label>
               <Input v-model="form.remark" />
             </div>
           </div>
