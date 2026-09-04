@@ -15,7 +15,12 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["src/**/*.{ts,vue}", "tests/**/*.ts", "scripts/**/*.ts"],
+    files: [
+      "src/**/*.{ts,vue}",
+      "tests/**/*.ts",
+      "tests/**/*.vue",
+      "scripts/**/*.ts",
+    ],
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
       parser: vueParser,

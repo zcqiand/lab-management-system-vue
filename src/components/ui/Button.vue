@@ -52,7 +52,7 @@ const classes = computed(() =>
     v-bind="$attrs"
     :type="type ?? 'button'"
     :class="classes"
-    :disabled="disabled"
+    :disabled="disabled ?? undefined"
     :title="title"
   >
     <slot />
