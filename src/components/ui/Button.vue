@@ -1,9 +1,15 @@
 <script setup lang="ts">
 // Button 原语 — shadcn/ui 风格（react 仓 button.tsx 的 Vue 版，手写不引 reka-ui，
 // 只覆盖本仓用到的 variant/size）。
+//
+// Phase 0 起对齐 shadcn-vue 契约：
+//   - `class` prop 走 cn() 最后一位 → 调用方 class 经 tailwind-merge 压过 CVA 默认值
+//   - inheritAttrs:false + v-bind="$attrs" → `data-fn` / `aria-label` 落到真实 <button>
 import { computed } from "vue";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+
+defineOptions({ inheritAttrs: false });
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
@@ -11,7 +17,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        outline:
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",
       },
       size: {
@@ -32,15 +39,22 @@ const props = defineProps<{
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   title?: string;
+  class?: string;
 }>();
 
 const classes = computed(() =>
-  cn(buttonVariants({ variant: props.variant, size: props.size })),
+  cn(buttonVariants({ variant: props.variant, size: props.size }), props.class),
 );
 </script>
 
 <template>
-  <button :type="type ?? 'button'" :class="classes" :disabled="disabled" :title="title">
+  <button
+    v-bind="$attrs"
+    :type="type ?? 'button'"
+    :class="classes"
+    :disabled="disabled"
+    :title="title"
+  >
     <slot />
   </button>
 </template>
