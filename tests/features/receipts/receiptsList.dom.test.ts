@@ -256,7 +256,7 @@ describe("Phase 2a-3 — ReceiptsList 列表 <Table> 原语回归", () => {
     ]);
   });
 
-  it("2 行 fixture：data-fn=M03.F01.I01 落 rowgroup[1] 内 div[role=row]", async () => {
+  it("2 行 fixture：列表行 data-fn 落 rowgroup[1] 内 div[role=row]", async () => {
     const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
     lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
     await flushPromises();

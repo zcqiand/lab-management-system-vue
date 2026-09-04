@@ -158,7 +158,7 @@ describe("Phase 2a-3 — ParameterStandardLinkDialog 关联表 <Table> 原语回
     }
   });
 
-  it("行内 button data-fn='M06.F03.I02' 落到真实 button，且嵌套在 cell 内（不被 <TableCell> 吞）", async () => {
+  it("行内 button data-fn 落到真实 button，且嵌套在 cell 内（不被 <TableCell> 吞）", async () => {
     const { default: Dialog } = await import(
       "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
     );
