@@ -2,6 +2,7 @@
 // M03.F03 通用参数卡（白名单之外的兜底）— vue 仓镜像 react 仓 Batch 2B-2。
 import { computed } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 
 const VERDICT_OPTIONS = ["合格", "不合格", "符合", "不符合"] as const;
 
@@ -83,12 +84,12 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
       </div>
       <div>
         <label class="block text-slate-500 mb-0.5">检测结果</label>
-        <input
-          class="w-full border rounded px-2 py-1 text-sm"
-          :value="rec?.result ?? ''"
+        <Input
+          class="w-full"
+          :model-value="rec?.result ?? ''"
           :readonly="readOnly"
           placeholder="录入检测结果"
-          @input="onChange({ result: ($event.target as HTMLInputElement).value })"
+          @update:model-value="onChange({ result: String($event) })"
         />
       </div>
       <div>
