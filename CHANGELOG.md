@@ -2,6 +2,43 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.39] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.3b**（6 个 list-page 文件 raw `<input>` → `<Input>` 原语，
+共迁移 24 处；保留所有 `<input type="checkbox">` / `<textarea>` / `<select>` / `<label>` 父级）。
+
+- **ReportNameList**（report-names）：7 处 `<input>`。
+  1 处搜索框（`@keydown.enter="load"`，`max-w-sm` 保留）+ 6 处表单字段（编码 / 简称 /
+  全称 / 模板路径 / 排序 `type=number v-model.number` / 描述）。`<textarea>` extFields 保留 raw
+- **ReportPhasePage**（reports）：4 处 `<input>`。
+  1 处搜索框（`@keyup.enter`，`max-w-sm` 保留）+ 1 处退回原因表单（`mt-1` 保留）。
+  `<input type="checkbox">` 全选 / 行选保留 raw（Phase 2b 范围）
+- **ParamInterfaceList**（param-interfaces）：4 处 `<input>`。
+  1 处搜索框 + 3 处表单字段（编码 `:disabled` 在 edit 模式保留 / 组件路径 / 排序 `type=number`）
+- **CalculationMethodList**（inspection-capability）：4 处 `<input>`。
+  1 处搜索框 + 3 处表单字段（试件数量 `type=number` / 修约规则 placeholder 转发 / 备注）。
+  `<select>` 4 个保留 raw（Phase 2d 范围）
+- **TaskAssignmentList**（task-assignment）：3 处 `<input>`。
+  1 处搜索框 + 2 处表单字段（检测人员 + 计划检测日期 `type=date`）。
+  `<input type="date">` 经 `$attrs` 转发 type 到 DOM
+- **CategoryDictList**（dicts）：2 处 `<input>`。
+  2 处表单字段（名称 + 备注）。`<select>` 检测项目保留 raw（Phase 2d 范围）
+
+新增 6 段 Input 原语回归锚（不挂功能 ID，regression-anchor 模式）：
+
+- `tests/features/report-names/reportNameList.dom.test.ts`：搜索 v-model + 弹窗 6 个 input + type=number
+- `tests/features/reports/reportPhasePage.dom.test.ts`：搜索 v-model + 退回弹窗 v-model
+- `tests/features/param-interfaces/paramInterfaceList.dom.test.ts`：搜索 v-model + 弹窗 3 个 input + :disabled / type=number
+- `tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts`：搜索 v-model + 弹窗 3 个 input + type=number + placeholder
+- `tests/features/task-assignment/taskAssignmentList.dom.test.ts`：搜索 v-model + 弹窗 2 个 input + type=date
+- `tests/features/dicts/categoryDictPages.dom.test.ts`：弹窗 2 个 input v-model
+
+**不回归**：
+
+- 189 case（26 文件）全绿（v0.3.38 = 178 case，本次 +11）
+- v-model / @keydown.enter / @keyup.enter / type=number / type=date 全经 `$attrs` 落到真实 `<input>`
+- 调用方 class（`max-w-sm` / `mt-1` / `disabled:bg-slate-100`）经 tailwind-merge 与 CVA base 合成
+
 ## [0.3.38] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.3a**（4 个 form-heavy 文件 raw `<input>` → `<Input>` 原语，
