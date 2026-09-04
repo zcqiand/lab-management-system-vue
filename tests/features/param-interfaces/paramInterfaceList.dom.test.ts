@@ -225,3 +225,62 @@ describe("Phase 1.4 — ParamInterfaceList 表单 <Label> 原语回归", () => {
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
   });
 });
+
+// Phase 2a-2 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁 3 件事：<Table> 渲染 div[role=table] / 4 <TableHead> 文本顺序 /
+// 3 fixture 行 data-fn 落到 div[role=row]。
+describe("Phase 2a-2 — ParamInterfaceList 列表 <Table> 原语回归", () => {
+  it("<Table> 渲染 div[role=table]；4 <TableHead> 文本顺序 编码/组件路径/排序/操作", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(4);
+    expect(heads.map((h) => h.text())).toEqual([
+      "编码",
+      "组件路径",
+      "排序",
+      "操作",
+    ]);
+  });
+
+  it("3 fixture 行：行级 data-fn 落到 div[role=row]，且在 rowgroup[1]（TableBody）", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const bodyRows = lastWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(3);
+    for (const row of bodyRows) {
+      expect(row.attributes("data-fn")).toBe("M06.F08.I01");
+    }
+  });
+
+  it("TableCell 调用方 class 经 tailwind-merge 合并：编码 cell 带 font-mono + text-xs", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const codeCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+      .findAll('[role="row"]')[0]!
+      .findAll('[role="cell"]')[0];
+    expect(codeCell.exists()).toBe(true);
+    expect(codeCell.classes()).toContain("font-mono");
+    expect(codeCell.classes()).toContain("text-xs");
+  });
+});
