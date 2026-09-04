@@ -42,11 +42,10 @@ shadcn-vue 迁移 **Phase 1.3a**（4 个 form-heavy 文件 raw `<input>` → `<I
 - 调用方 class（`max-w-sm` / `max-w-32` / `font-mono` / `w-full mt-1`）经
   tailwind-merge 与 CVA base 合成，无 tailwind 类覆盖冲突
 
-**已存在的小告警**（与本次迁移无关）：`<Input modelValue=... Number>` 在
-v-model.number 路径上报「Expected String got Number」。是 Phase 0 设计 —
-Input.vue 显式 `modelValue?: string`；Vue 的 `.number` modifier 把 v-model
-发射的 number 值塞回 prop。属于 Phase 1.3 后续工作（Input.vue type 放宽到
-`string | number`），不在 Phase 1.3a scope。
+**hotfix 摘要**：Input.vue `modelValue` 类型放宽 `string → string | number |
+boolean`（commit c43ce0a），emit 仍写 string；`v-model.number` 路径上的
+number 化由 Vue modifier 负责，TS2322 在 reactive
+`Record<string, string | number | boolean>` form 上不再炸。
 
 ## [0.3.37] — 2026-09-05
 
