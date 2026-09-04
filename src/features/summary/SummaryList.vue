@@ -10,6 +10,7 @@
 import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Label from "@/components/ui/Label.vue";
 
 interface SummaryColumn {
   key: string;
@@ -88,7 +89,7 @@ watch(categoryCode, () => { void load(); });
       </div>
       <div class="mb-3 flex items-end gap-3">
         <div>
-          <label for="categoryCode" class="text-sm font-medium">报告类别</label>
+          <Label for="categoryCode">报告类别</Label>
           <select id="categoryCode" v-model="categoryCode" class="border rounded h-9 px-2 text-sm bg-white w-48">
             <option value="ALL">全部</option>
             <option value="RC">建材检测（RC）</option>
