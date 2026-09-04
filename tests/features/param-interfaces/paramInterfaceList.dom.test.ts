@@ -200,3 +200,28 @@ describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归",
     expect((codeInput.element as HTMLInputElement).disabled).toBe(false);
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：表单 3 个 <Label> 落成真实 <label>，Label 基类活着。
+describe("Phase 1.4 — ParamInterfaceList 表单 <Label> 原语回归", () => {
+  it("新建弹窗 3 个 <Label> 落成真实 <label>，文本 编码/组件路径/排序", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建参数界面");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBe(3);
+    expect(labels.map((l) => l.text())).toEqual(["编码 *", "组件路径 *", "排序"]);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+});

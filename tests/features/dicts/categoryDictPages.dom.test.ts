@@ -430,3 +430,43 @@ describe("Phase 1.3b — CategoryDictList 弹窗 <Input> 原语回归", () => {
     expect((remarkInput.element as HTMLInputElement).value).toBe("抗震钢筋");
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：弹窗 3 个 <Label> 落成真实 <label>，调用方 text-xs 经 tailwind-merge
+// 压过 Label 基类 text-sm（视觉不回归）。
+describe("Phase 1.4 — CategoryDictList 弹窗 <Label> 原语回归", () => {
+  it("弹窗 3 个 <Label class=text-xs>：text-xs 压过基类 text-sm，font-medium 保留", async () => {
+    const { default: CategoryDictList } = await import(
+      "@/features/dicts/CategoryDictList.vue"
+    );
+    lastWrapper = mountWithProviders(CategoryDictList, {
+      props: {
+        endpoint: "/models",
+        title: "型号维护",
+        createDataFn: "M04.F06.I02",
+      },
+      global: MOUNT_GLOBAL,
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll('[data-teleport-stub] label');
+    expect(labels.length).toBe(3);
+    expect(labels.map((l) => l.text())).toEqual(["检测项目", "名称", "备注"]);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    // tailwind-merge：调用方 text-xs 压掉基类 text-sm
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).not.toContain("text-sm");
+    // 基类其余部分活着
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+    // 调用方布局 class 仍在
+    expect(labels[0].classes()).toContain("mb-1");
+    expect(labels[0].classes()).toContain("block");
+  });
+});

@@ -490,3 +490,75 @@ describe("Phase 1.3b — CalculationMethodList 搜索/表单 <Input> 原语回�
     expect((roundInput.element as HTMLInputElement).value).toBe("修约到 0.1");
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：3 个列表页的表单 <Label> 落成真实 <label>，Label 基类活着；
+// checkbox 旁的裸 <label>（迁移前无 class）迁移后拿到 text-sm font-medium。
+describe("Phase 1.4 — InspectionCapabilityList 表单 <Label> 原语回归", () => {
+  it("specialties 新建弹窗：编码/名称 <Label> 落成真实 <label> 且带 Label 基类", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "specialties" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text().startsWith("新建"));
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBeGreaterThan(0);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toBe("编码");
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+
+    // checkbox 旁的裸 <label>（迁移前无 class）现在也走 Label 基类
+    const officialLabel = labels.find((l) => l.text() === "官方");
+    expect(officialLabel).toBeTruthy();
+    expect(officialLabel!.classes()).toContain("text-sm");
+    expect(officialLabel!.classes()).toContain("font-medium");
+    // checkbox 本身仍是 raw <input type=checkbox>（留 Phase 2b）
+    expect(lastWrapper.find('input[type="checkbox"]').exists()).toBe(true);
+  });
+});
+
+describe("Phase 1.4 — TechnicalRequirementList 表单 <Label> 原语回归", () => {
+  it("新建弹窗 11 个 <Label> 落成真实 <label>，首个文本「检测项目」", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建技术要求");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBe(11);
+    expect(labels[0].text()).toBe("检测项目");
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+    expect(labels[10].text()).toBe("备注");
+  });
+});
+
+describe("Phase 1.4 — CalculationMethodList 表单 <Label> 原语回归", () => {
+  it("新建弹窗 7 个 <Label> 落成真实 <label>，首个文本「检测项目」", async () => {
+    lastWrapper = mountWithProviders(CalculationMethodList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建计算方法");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBe(7);
+    expect(labels[0].text()).toBe("检测项目");
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+});

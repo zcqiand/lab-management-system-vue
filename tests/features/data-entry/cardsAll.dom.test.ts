@@ -13,6 +13,8 @@ import ParticleGradationCard from "@/features/data-entry/models/ParticleGradatio
 import SoilCompactionCard from "@/features/data-entry/models/SoilCompactionCard.vue";
 import SoilCompactionDegreeCard from "@/features/data-entry/models/SoilCompactionDegreeCard.vue";
 import StrengthCardBase from "@/features/data-entry/models/StrengthCardBase.vue";
+import CementCompressCard from "@/features/data-entry/models/CementCompressCard.vue";
+import DefaultParamCard from "@/features/data-entry/models/DefaultParamCard.vue";
 import {
   tensileStrength,
   REBAR_DIAMETER_MM,
@@ -423,5 +425,79 @@ describe("Phase 1.3c — 模型卡 <Input> 原语回归", () => {
     input.setValue("90");
     input.trigger("change");
     expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：模型卡 raw <label> → <Label> 后仍是真实 <label>；调用方 text-xs 压过基类
+// text-sm（卡片小字号视觉不回归）；SoilCompactionDegreeCard 的 wrapping 模式保留。
+describe("Phase 1.4 — 模型卡 <Label> 原语回归", () => {
+  it("SoilCompactionDegreeCard：<Label class=text-xs> 包着最大干密度 <input>（wrapping 保留）", () => {
+    lastCardWrapper = mount(SoilCompactionDegreeCard, {
+      props: makeProps({ parameter: param("IP-0200", "压实度") }),
+    });
+    const labels = lastCardWrapper.findAll("label");
+    expect(labels.length).toBe(1);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toContain("最大干密度");
+    // wrapping：<Input> 渲染出的真实 <input> 是 <label> 的后代
+    expect(labels[0].find('input[aria-label="最大干密度"]').exists()).toBe(true);
+    // tailwind-merge：调用方 text-xs 压掉基类 text-sm
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).not.toContain("text-sm");
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+
+  it("StrengthCardBase：技术要求 <Label> 落成真实 <label>，旁边 <select> 仍是 raw", () => {
+    lastCardWrapper = mount(StrengthCardBase, {
+      props: {
+        ...makeProps(),
+        specimenCount: 3,
+        compute: (l: number[]) => ({ strengths: l.map(() => 0), mean: 0, kept: [true, true, true], invalid: false }),
+        strengthLabel: "抗压 (MPa)",
+      },
+    });
+    const labels = lastCardWrapper.findAll("label");
+    expect(labels.length).toBe(1);
+    // techReqs 为空 → 渲染「单项评定」分支
+    expect(labels[0].text()).toBe("单项评定");
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+    // <select> 留 Phase 2d，仍是 raw
+    expect(lastCardWrapper.find("select").exists()).toBe(true);
+  });
+
+  it("CementCompressCard：6 个试件 <Label> 落成真实 <label>，文本「试件 N」", () => {
+    lastCardWrapper = mount(CementCompressCard, {
+      props: makeProps({ parameter: param("IP-0001", "抗压强度", "MPa") }),
+    });
+    const labels = lastCardWrapper.findAll("label");
+    expect(labels.length).toBe(6);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toBe("试件 1");
+    expect(labels[5].text()).toBe("试件 6");
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).not.toContain("text-sm");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+
+  it("DefaultParamCard：4 个 <Label> 落成真实 <label>，text-xs 补回卡片小字号", () => {
+    lastCardWrapper = mount(DefaultParamCard, {
+      props: makeProps({ parameter: param("IP-9999", "兜底参数") }),
+    });
+    const labels = lastCardWrapper.findAll("label");
+    expect(labels.length).toBe(4);
+    expect(labels.map((l) => l.text())).toEqual([
+      "检测依据",
+      "技术要求",
+      "检测结果",
+      "单项评定",
+    ]);
+    // 迁移时补 text-xs：基类 text-sm 会放大卡片字号，这条锁住视觉不回归
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).not.toContain("text-sm");
+    expect(labels[0].classes()).toContain("block");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
   });
 });

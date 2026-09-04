@@ -281,3 +281,32 @@ describe("Phase 1.3b — ReportPhasePage 搜索/退回弹窗 <Input> 原语回�
     expect((reasonInput.element as HTMLInputElement).value).toBe("数据待补正");
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：退回弹窗的 <Label> 包 <Input> wrapping 模式保留。
+describe("Phase 1.4 — ReportPhasePage 退回弹窗 <Label> 原语回归", () => {
+  beforeEach(() => installAdapters("review"));
+
+  it("<Label class=text-xs block mb-2> 包着退回原因 <input>（wrapping 模式保留）", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const back = lastWrapper.findAll("button").find((b) => b.text() === "退回");
+    await back!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBe(1);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toContain("退回原因（可选）");
+    // wrapping：<input> 是 <label> 的后代
+    expect(labels[0].find('input[placeholder="如：数据待补正"]').exists()).toBe(true);
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).not.toContain("text-sm");
+    expect(labels[0].classes()).toContain("mb-2");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+});

@@ -179,3 +179,32 @@ describe("Phase 1.3b — TaskAssignmentList 搜索/弹窗 <Input> 原语回归",
     expect(dateInput.attributes("type")).toBe("date");
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：wrapping 模式（<Label> 包 <Input>）不变 —— 隐式 label/input 关联仍靠
+// 父子结构成立，点击 label 聚焦子 input 的 HTML 语义不丢。
+describe("Phase 1.4 — TaskAssignmentList 弹窗 <Label> 原语回归", () => {
+  it("2 个 <Label class=text-xs block> 各自包着一个真实 <input>（wrapping 模式保留）", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll('[data-teleport-stub] label');
+    expect(labels.length).toBe(2);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toContain("检测人员 *");
+    // wrapping：<input> 是 <label> 的后代
+    expect(labels[0].find("input").exists()).toBe(true);
+    expect(labels[1].find('input[type="date"]').exists()).toBe(true);
+    // tailwind-merge：调用方 text-xs 压掉基类 text-sm
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).not.toContain("text-sm");
+    expect(labels[0].classes()).toContain("block");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+});

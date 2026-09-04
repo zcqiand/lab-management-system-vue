@@ -196,3 +196,28 @@ describe("Phase 1.3b — ReportNameList 列表/表单 <Input> 原语回归", () 
     expect((numInput.element as HTMLInputElement).value).toBe("42");
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：表单 7 个 <Label> 落成真实 <label>，Label 基类活着。
+describe("Phase 1.4 — ReportNameList 表单 <Label> 原语回归", () => {
+  it("新建弹窗 7 个 <Label> 落成真实 <label>，首个文本「编码 *」带 Label 基类", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建报告名称");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBe(7);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toBe("编码 *");
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+    // extFields 的 <textarea> 仍是 raw（留 Phase 2c），它的 label 已是原语
+    expect(labels[6].text()).toContain("扩展属性");
+  });
+});

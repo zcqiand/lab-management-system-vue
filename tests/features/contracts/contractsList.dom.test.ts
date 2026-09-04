@@ -216,3 +216,33 @@ describe("Phase 1.3a — ContractsList 搜索/表单 <Input> 原语回归", () =
     expect((codeInput.element as HTMLInputElement).value).toBe("HT-NEW");
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：表单 17 个 <Label> 落成真实 <label>；Label 基类（text-sm font-medium
+// leading-none peer-disabled:*）活着 —— 迁移前 raw <label class="text-sm font-medium">
+// 没有 peer-disabled: 前缀，这条断言就是红→绿的分界。
+describe("Phase 1.4 — ContractsList 表单 <Label> 原语回归", () => {
+  it("新建弹窗 17 个 <Label> 渲染成真实 <label>，首个文本「合同编号 *」带 Label 基类", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建合同");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBe(17);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toBe("合同编号 *");
+    // Label 基类经 cn() 落到真实 <label>
+    expect(labels[0].classes()).toContain("text-sm");
+    expect(labels[0].classes()).toContain("font-medium");
+    expect(labels[0].classes()).toContain("leading-none");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+    // 末尾「状态」label 仍与 raw <select> 同级（select 留 Phase 2d）
+    expect(labels[16].text()).toBe("状态");
+  });
+});

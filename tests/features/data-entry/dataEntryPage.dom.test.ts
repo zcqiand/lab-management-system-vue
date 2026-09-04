@@ -186,3 +186,35 @@ describe("Phase 1.3c — DataEntryPage 搜索 <Input> 原语回归", () => {
     expect((search.element as HTMLInputElement).value).toBe("WT-2026");
   });
 });
+
+// Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：录入弹窗 2 个 <Label> 包着 raw <select>（select 留 Phase 2d），
+// wrapping 模式与 text-xs 字号都不回归。
+describe("Phase 1.4 — DataEntryPage 录入弹窗 <Label> 原语回归", () => {
+  it("2 个 <Label class=text-xs block> 各自包着一个 raw <select>（wrapping 模式保留）", async () => {
+    const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
+    lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    await lastWrapper.find('button[data-fn="M03.F03.I03"]').trigger("click");
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const labels = lastWrapper.findAll("label");
+    expect(labels.length).toBe(2);
+    expect(labels[0].element.tagName).toBe("LABEL");
+    expect(labels[0].text()).toContain("样品");
+    expect(labels[1].text()).toContain("检测参数");
+    // wrapping：<select> 仍是 <label> 的后代，且仍是 raw（Phase 2d 才换原语）
+    expect(labels[0].find("select").exists()).toBe(true);
+    expect(labels[1].find("select").exists()).toBe(true);
+    // tailwind-merge：调用方 text-xs 压掉基类 text-sm
+    expect(labels[0].classes()).toContain("text-xs");
+    expect(labels[0].classes()).not.toContain("text-sm");
+    expect(labels[0].classes()).toContain("block");
+    expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
+  });
+});
