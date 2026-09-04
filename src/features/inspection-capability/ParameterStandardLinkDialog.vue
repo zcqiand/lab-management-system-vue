@@ -8,6 +8,12 @@ import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import { unwrapListResponse } from "@/lib/responses";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 
 // 内联类型（vue 仓类型内联惯例）
 interface StdRow {
@@ -125,30 +131,30 @@ function close(): void {
         </div>
         <div class="px-6 py-4">
           <p v-if="loading" class="text-sm text-slate-500 py-4">加载中…</p>
-          <table v-else class="w-full text-sm">
-            <thead class="bg-slate-50 text-slate-600">
-              <tr>
-                <th class="px-3 py-2 text-left">标准编码</th>
-                <th class="px-3 py-2 text-left">名称</th>
-                <th class="px-3 py-2 text-left">版本</th>
-                <th class="px-3 py-2 text-left">状态</th>
-                <th class="px-3 py-2 text-left w-24">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="s in standards" :key="s.code" class="border-t hover:bg-slate-50">
-                <td class="px-3 py-2 font-mono text-xs">{{ s.code }}</td>
-                <td class="px-3 py-2">{{ s.name ?? "-" }}</td>
-                <td class="px-3 py-2 text-xs">{{ s.version ?? "-" }}</td>
-                <td class="px-3 py-2">
+          <Table v-else class="w-full text-sm">
+            <TableHeader class="bg-slate-50 text-slate-600">
+              <TableRow>
+                <TableHead class="px-3 py-2 text-left">标准编码</TableHead>
+                <TableHead class="px-3 py-2 text-left">名称</TableHead>
+                <TableHead class="px-3 py-2 text-left">版本</TableHead>
+                <TableHead class="px-3 py-2 text-left">状态</TableHead>
+                <TableHead class="px-3 py-2 text-left w-24">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="s in standards" :key="s.code" class="border-t hover:bg-slate-50">
+                <TableCell class="px-3 py-2 font-mono text-xs">{{ s.code }}</TableCell>
+                <TableCell class="px-3 py-2">{{ s.name ?? "-" }}</TableCell>
+                <TableCell class="px-3 py-2 text-xs">{{ s.version ?? "-" }}</TableCell>
+                <TableCell class="px-3 py-2">
                   <span
                     class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
                     :class="s.status === 'active' ? 'bg-slate-900 text-white' : 'border text-slate-600'"
                   >
                     {{ statusCn(s.status) }}
                   </span>
-                </td>
-                <td class="px-3 py-2">
+                </TableCell>
+                <TableCell class="px-3 py-2">
                   <button
                     :data-fn="'M06.F03.I02'"
                     :aria-label="`${linked.has(s.code) ? '解除关联' : '关联'} ${s.code}`"
@@ -159,10 +165,10 @@ function close(): void {
                   >
                     {{ linked.has(s.code) ? "解除关联" : "关联" }}
                   </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>
