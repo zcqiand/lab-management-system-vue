@@ -2,8 +2,9 @@
 //
 // 镜像 react 仓 tests/features/receipts/receiptsList.dom.test.tsx 4 个 fnTest。
 // vue 仓不挂 msw，用 vi.mock('axios') 拦截；fixture 数据走内联字面量（同 react 仓 contracts/receipts）。
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -144,5 +145,46 @@ describe("M03.F01 接样管理", () => {
       "/api/receipts/flow",
       expect.objectContaining({ action: "submit", ids: ["RECEIPT-001"] }),
     );
+  });
+});
+
+// Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2a — ReceiptsList 列表 <Button> 原语回归", () => {
+  it("新建接样按钮：<Button variant=default class=bg-blue-600> 渲染 <button>，data-fn 落到真实 DOM", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const create = lastWrapper.find('button[data-fn="M03.F01.I02"]');
+    expect(create.exists()).toBe(true);
+    expect(create.classes()).toContain("inline-flex");
+    // 调用方覆盖：blue 替代 primary
+    expect(create.classes()).toContain("bg-blue-600");
+    // CVA default 是 bg-primary，被调用方 tailwind-merge 压掉
+    expect(create.classes()).not.toContain("bg-primary");
+  });
+
+  it("行内提交按钮：disabled 落到真实 <button>（不是被 <Button> 吞掉）", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const submit = lastWrapper.find('button[data-fn="M03.F01.I04"]');
+    expect(submit.exists()).toBe(true);
+    // CVA size=sm h-8 + variant=outline 都在
+    expect(submit.classes()).toContain("h-8");
+    expect(submit.classes()).toContain("border");
   });
 });

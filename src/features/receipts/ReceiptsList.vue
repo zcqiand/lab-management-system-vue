@@ -15,6 +15,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/process/{sample-receipt,flow}.ts）
@@ -231,13 +232,14 @@ function alertError(msg: string): void {
         <p class="text-sm text-slate-500">M03.F01 接样单 CRUD 与提交</p>
       </div>
       <!-- @entry M03.F01.I02 新建接样按钮 -->
-      <button
-        @click="openCreate"
+      <Button
+        variant="default"
+        class="bg-blue-600 hover:bg-blue-700"
         data-fn="M03.F01.I02"
-        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+        @click="openCreate"
       >
         新建接样
-      </button>
+      </Button>
     </div>
 
     <div class="mb-4 flex gap-2">
@@ -255,7 +257,7 @@ function alertError(msg: string): void {
         class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
         @keyup.enter="load()"
       />
-      <button class="border rounded h-9 px-3 text-sm" @click="load()">搜索</button>
+      <Button variant="outline" size="sm" @click="load()">搜索</Button>
     </div>
 
     <div class="bg-white rounded shadow">
@@ -310,29 +312,33 @@ function alertError(msg: string): void {
               {{ (r.createdAt ?? "").slice(0, 10) }}
             </td>
             <td class="px-4 py-2 text-right space-x-1">
-              <button
+              <Button
                 v-if="r.flowStatus === 'receiving'"
-                class="border rounded px-2 py-0.5 text-xs"
+                size="sm"
+                variant="outline"
                 :disabled="submitting === r.id"
                 data-fn="M03.F01.I04"
                 @click="handleSubmitReceipt(r.id)"
               >
                 提交
-              </button>
-              <button
-                class="border rounded px-2 py-0.5 text-xs"
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
                 @click="openEdit(r)"
               >
                 编辑
-              </button>
-              <button
+              </Button>
+              <Button
                 v-if="r.flowStatus === 'receiving'"
-                class="border rounded px-2 py-0.5 text-xs text-red-600 hover:text-red-700"
+                size="sm"
+                variant="ghost"
+                class="text-red-600 hover:text-red-700"
                 data-fn="M03.F01.I03"
                 @click="deleteTarget = r"
               >
                 删除
-              </button>
+              </Button>
             </td>
           </tr>
         </tbody>
@@ -371,8 +377,14 @@ function alertError(msg: string): void {
             <label class="text-xs">报告类别编码 *<input v-model="form.categoryCode" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
           </div>
           <div class="mt-4 flex justify-end gap-2">
-            <button class="px-4 py-2 text-sm" @click="mode = { kind: 'idle' }">取消</button>
-            <button class="px-4 py-2 bg-blue-600 text-white rounded text-sm" @click="handleCreate()">保存</button>
+            <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
+            <Button
+              variant="default"
+              class="bg-blue-600 hover:bg-blue-700"
+              @click="handleCreate()"
+            >
+              保存
+            </Button>
           </div>
         </div>
       </div>
@@ -407,8 +419,14 @@ function alertError(msg: string): void {
             <label class="text-xs">报告类别编码 *<input v-model="form.categoryCode" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
           </div>
           <div class="mt-4 flex justify-end gap-2">
-            <button class="px-4 py-2 text-sm" @click="mode = { kind: 'idle' }">取消</button>
-            <button class="px-4 py-2 bg-blue-600 text-white rounded text-sm" @click="handleSubmit()">保存</button>
+            <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
+            <Button
+              variant="default"
+              class="bg-blue-600 hover:bg-blue-700"
+              @click="handleSubmit()"
+            >
+              保存
+            </Button>
           </div>
         </div>
       </div>
