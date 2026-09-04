@@ -20,7 +20,7 @@ const buttonVariants = cva(
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        // link: 纯文本样式 — 无 height/padding/border-radius；size 不生效。
+        // link: 纯文本样式 — 配合 compoundVariants 取消 size 注入，无 height/padding。
         // 用法：<Button variant="link" class="text-destructive hover:underline">删除</Button>
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -30,6 +30,15 @@ const buttonVariants = cva(
         icon: "h-9 w-9",
       },
     },
+    compoundVariants: [
+      // link variant 不受 size 控制 — 纯文本链接，无 height/padding。
+      // CVA defaultVariants.size="default" 仍会注入 h-9 px-4 py-2，但
+      // tailwind-merge 在 cn() 末段把 compoundVariants 推入的 h-auto px-0 py-0
+      // 排在前面并压过之。
+      { variant: "link", size: "default", class: "h-auto px-0 py-0" },
+      { variant: "link", size: "sm", class: "h-auto px-0 py-0" },
+      { variant: "link", size: "icon", class: "h-auto w-auto p-0" },
+    ],
     defaultVariants: { variant: "default", size: "default" },
   },
 );

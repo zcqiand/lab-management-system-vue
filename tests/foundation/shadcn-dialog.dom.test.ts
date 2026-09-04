@@ -48,6 +48,22 @@ describe("Phase 0 foundation — shadcn-vue dialog 底座", () => {
     expect(cancel.classes()).not.toContain("h-9");
   });
 
+  it("link variant 不注入 size 默认 h-9 px-4 py-2，保持纯文本链接", () => {
+    lastWrapper = mountWithProviders(DialogFixture, { attachTo: document.body });
+
+    const linkBtn = lastWrapper.find('button[data-fn="dialog-link"]');
+    expect(linkBtn.exists()).toBe(true);
+    // compoundVariants 应当压过 size=default 的 h-9 / px-4 / py-2
+    expect(linkBtn.classes()).not.toContain("h-9");
+    expect(linkBtn.classes()).not.toContain("px-4");
+    expect(linkBtn.classes()).not.toContain("py-2");
+    // CVA base inline-flex 仍在（icon+label 布局）
+    expect(linkBtn.classes()).toContain("inline-flex");
+    // link variant 自身
+    expect(linkBtn.classes()).toContain("text-primary");
+    expect(linkBtn.classes()).toContain("underline-offset-4");
+  });
+
   it("点 cancel 关掉 dialog", async () => {
     lastWrapper = mountWithProviders(DialogFixture, { attachTo: document.body });
 
