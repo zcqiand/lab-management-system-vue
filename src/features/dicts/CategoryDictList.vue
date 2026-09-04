@@ -27,6 +27,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES, type ApiRouteKey } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
@@ -201,15 +202,14 @@ function dialogTitle(): string {
         <h2 class="text-2xl font-bold">{{ title }}</h2>
         <p v-if="hint" class="mt-1 text-xs text-gray-500">{{ hint }}</p>
       </div>
-      <button
-        type="button"
+      <Button
         :data-fn="createDataFn"
         :disabled="!selectedCode && objects.length === 0"
-        class="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        class="bg-blue-600 hover:bg-blue-700 disabled:cursor-not-allowed"
         @click="openCreate"
       >
         新建
-      </button>
+      </Button>
     </div>
 
     <div
@@ -305,22 +305,22 @@ function dialogTitle(): string {
               {{ item.remark ?? "" }}
             </span>
             <div class="space-x-2">
-              <button
-                type="button"
+              <Button
+                variant="link"
                 :data-fn="editDataFn"
-                class="px-2 py-1 text-blue-600 hover:underline"
+                class="text-primary hover:underline"
                 @click="openEdit(item)"
               >
                 编辑
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="link"
                 :data-fn="deleteDataFn"
-                class="px-2 py-1 text-red-600 hover:underline"
+                class="text-destructive hover:underline"
                 @click="deleteTarget = item"
               >
                 删除
-              </button>
+              </Button>
             </div>
           </li>
         </ul>

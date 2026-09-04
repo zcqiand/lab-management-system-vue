@@ -7,8 +7,9 @@
 // helper.ts 把 <Teleport> 默认 stub 成 no-op；本文件 per-test 传
 // `global: { stubs: { teleport: false } }` 覆盖，让 ConfirmDialog 内容渲染到
 // wrapper，然后 wrapper.find('[data-testid=confirm-dialog]') 直接定位。
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -315,5 +316,75 @@ describe("M04.F06-F09 码表维护 4 页", () => {
     const dialog = wrapper.find('[data-testid="confirm-dialog"]');
     expect(dialog.exists()).toBe(true);
     expect(dialog.text()).toContain("删除确认");
+  });
+});
+// Phase 1.2b Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁 3 件事：
+//   1. <Button> 渲染 <button> 底层 —— 原有 findAll("button") / data-fn selector 零回归
+//   2. $attrs 转发 —— data-fn 落到真实 <button>
+//   3. link variant 不注入 size（无 h-8 / px-3），delete 用 text-destructive 设计 token
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
+  it("新建按钮：<Button variant=default> 渲染 <button>，CVA base inline-flex 活着，data-fn 落到真实 DOM", async () => {
+    const { default: CategoryDictList } = await import(
+      "@/features/dicts/CategoryDictList.vue"
+    );
+    lastWrapper = mountWithProviders(CategoryDictList, {
+      props: { endpoint: "/models", title: "型号维护", createDataFn: "M04.F06.I02" },
+      global: MOUNT_GLOBAL,
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const create = lastWrapper.find('button[data-fn="M04.F06.I02"]');
+    expect(create.exists()).toBe(true);
+    expect(create.classes()).toContain("inline-flex");
+    // 调用方蓝色定制压过 CVA default 的 bg-primary（tailwind-merge）
+    expect(create.classes()).toContain("bg-blue-600");
+    expect(create.classes()).not.toContain("bg-primary");
+  });
+
+  it("行内编辑/删除：<Button variant=link> 无 h-8/px-3，删除用 text-destructive token", async () => {
+    const { default: CategoryDictList } = await import(
+      "@/features/dicts/CategoryDictList.vue"
+    );
+    lastWrapper = mountWithProviders(CategoryDictList, {
+      props: {
+        endpoint: "/models",
+        title: "型号维护",
+        editDataFn: "M04.F06.I02",
+        deleteDataFn: "M04.F06.I03",
+      },
+      global: MOUNT_GLOBAL,
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const rebarBtn = lastWrapper.findAll("aside button").find((b) => b.text().includes("钢筋"));
+    expect(rebarBtn).toBeTruthy();
+    await rebarBtn!.trigger("click");
+    await flushPromises();
+
+    const edit = lastWrapper.find('button[data-fn="M04.F06.I02"]');
+    expect(edit.exists()).toBe(true);
+    expect(edit.classes()).toContain("inline-flex");
+    expect(edit.classes()).toContain("text-primary");
+    expect(edit.classes()).not.toContain("h-8");
+    expect(edit.classes()).not.toContain("px-3");
+
+    const del = lastWrapper.find('button[data-fn="M04.F06.I03"]');
+    expect(del.exists()).toBe(true);
+    expect(del.classes()).toContain("text-destructive");
+    expect(del.classes()).not.toContain("text-red-600");
+    expect(del.classes()).not.toContain("h-8");
   });
 });
