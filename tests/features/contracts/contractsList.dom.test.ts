@@ -221,6 +221,74 @@ describe("Phase 1.3a — ContractsList 搜索/表单 <Input> 原语回归", () =
 // 锁：表单 17 个 <Label> 落成真实 <label>；Label 基类（text-sm font-medium
 // leading-none peer-disabled:*）活着 —— 迁移前 raw <label class="text-sm font-medium">
 // 没有 peer-disabled: 前缀，这条断言就是红→绿的分界。
+// Phase 2a-2 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁 3 件事：<Table> 渲染为 div[role=table] / 行 data-fn 落到真实 <div> /
+// TableCell class 经 tailwind-merge 合并（font-mono + text-xs 保留）。
+describe("Phase 2a-2 — ContractsList 列表 <Table> 原语回归", () => {
+  it("<Table> 渲染为 div[role=table]；7 个 <TableHead> 渲染为 div[role=columnheader]，文本顺序 合同编号/项目名称/委托单位/见证人/状态/委托日期/操作", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // Table 容器 div[role=table]
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+
+    // 7 个 columnheader，文本顺序对得上 raw <th>
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(7);
+    expect(heads.map((h) => h.text())).toEqual([
+      "合同编号",
+      "项目名称",
+      "委托单位",
+      "见证人",
+      "状态",
+      "委托日期",
+      "操作",
+    ]);
+  });
+
+  it("3 个 fixture 行：data-fn 落到 div[role=row]，且不在 [role=rowgroup] 内首组（避开 TableHeader 行）", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 2 个 rowgroup（TableHeader + TableBody）
+    const rowgroups = lastWrapper.findAll('[role="rowgroup"]');
+    expect(rowgroups.length).toBe(2);
+
+    // 数据行在第二个 rowgroup（TableBody），3 行
+    const bodyRows = rowgroups[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(3);
+
+    // 行级 data-fn 落到真实 div[role=row]
+    for (const row of bodyRows) {
+      expect(row.attributes("data-fn")).toBe("M02.F01.I01");
+    }
+  });
+
+  it("TableCell 调用方 class 经 tailwind-merge 合并（font-mono + text-xs 落到合同编号 cell）", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 第一个 cell 是合同编号 cell，应带 font-mono + text-xs
+    const cells = lastWrapper.findAll('[role="cell"]');
+    expect(cells.length).toBeGreaterThan(0);
+    // 找到文本为 HT-2026-001 的 cell（3 行都有合同编码，但 table 现在是 div[role=cell]）
+    const codeCell = cells.find((c) => c.text().includes("HT-2026-001"));
+    expect(codeCell).toBeTruthy();
+    expect(codeCell!.classes()).toContain("font-mono");
+    expect(codeCell!.classes()).toContain("text-xs");
+  });
+});
+
 describe("Phase 1.4 — ContractsList 表单 <Label> 原语回归", () => {
   it("新建弹窗 17 个 <Label> 渲染成真实 <label>，首个文本「合同编号 *」带 Label 基类", async () => {
     const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
