@@ -12,6 +12,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ReportNameLinkDialog from "@/features/report-names/ReportNameLinkDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
@@ -206,31 +207,31 @@ async function submitForm(): Promise<void> {
           <div class="px-6 py-4 max-h-[60vh] overflow-y-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label class="text-sm font-medium">编码 *</label>
+                <Label>编码 *</Label>
                 <Input v-model="form.code" />
               </div>
               <div>
-                <label class="text-sm font-medium">简称 *</label>
+                <Label>简称 *</Label>
                 <Input v-model="form.name" />
               </div>
               <div>
-                <label class="text-sm font-medium">全称</label>
+                <Label>全称</Label>
                 <Input v-model="form.fullName" />
               </div>
               <div>
-                <label class="text-sm font-medium">模板路径</label>
+                <Label>模板路径</Label>
                 <Input v-model="form.templatePath" />
               </div>
               <div>
-                <label class="text-sm font-medium">排序</label>
+                <Label>排序</Label>
                 <Input v-model.number="form.sortOrder" type="number" />
               </div>
               <div class="md:col-span-2">
-                <label class="text-sm font-medium">描述</label>
+                <Label>描述</Label>
                 <Input v-model="form.description" />
               </div>
               <div class="md:col-span-2">
-                <label class="text-sm font-medium">扩展属性 extFields（JSON 数组）</label>
+                <Label>扩展属性 extFields（JSON 数组）</Label>
                 <textarea
                   v-model="form.extFieldsText"
                   class="border rounded w-full h-32 px-2 py-1 text-sm font-mono bg-white"
