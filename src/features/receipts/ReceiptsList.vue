@@ -16,6 +16,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/process/{sample-receipt,flow}.ts）
@@ -251,10 +252,10 @@ function alertError(msg: string): void {
         <option value="receiving">接样中</option>
         <option value="submitted">已提交</option>
       </select>
-      <input
+      <Input
         v-model="keyword"
         placeholder="按委托书编号搜索"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         @keyup.enter="load()"
       />
       <Button variant="outline" size="sm" @click="load()">搜索</Button>
@@ -355,10 +356,10 @@ function alertError(msg: string): void {
           <h2 class="text-lg font-semibold">新建接样</h2>
           <p class="text-sm text-slate-500 mb-3">录入委托书基础信息（带 * 字段必填）。</p>
           <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-            <label class="text-xs">委托书编号 *<input v-model="form.commissionCode" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
-            <label class="text-xs">委托日期 *<input v-model="form.commissionDate" type="date" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
-            <label class="text-xs">工程名称 *<input v-model="form.projectName" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
-            <label class="text-xs">委托单位 *<input v-model="form.clientUnit" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
+            <label class="text-xs">委托书编号 *<Input v-model="form.commissionCode" class="w-full mt-1" /></label>
+            <label class="text-xs">委托日期 *<Input v-model="form.commissionDate" type="date" class="w-full mt-1" /></label>
+            <label class="text-xs">工程名称 *<Input v-model="form.projectName" class="w-full mt-1" /></label>
+            <label class="text-xs">委托单位 *<Input v-model="form.clientUnit" class="w-full mt-1" /></label>
             <label class="text-xs">检测类别 *
               <select v-model="form.testCategory" class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white">
                 <option value="委托检验">委托检验</option>
@@ -373,7 +374,7 @@ function alertError(msg: string): void {
                 <option value="委托送样">委托送样</option>
               </select>
             </label>
-            <label class="text-xs">报告类别编码 *<input v-model="form.categoryCode" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
+            <label class="text-xs">报告类别编码 *<Input v-model="form.categoryCode" class="w-full mt-1" /></label>
           </div>
           <div class="mt-4 flex justify-end gap-2">
             <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
@@ -397,10 +398,10 @@ function alertError(msg: string): void {
           <h2 class="text-lg font-semibold">编辑接样 — {{ editing?.commissionCode }}</h2>
           <p class="text-sm text-slate-500 mb-3">修改接样字段后保存。</p>
           <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-            <label class="text-xs">委托书编号 *<input v-model="form.commissionCode" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
-            <label class="text-xs">委托日期 *<input v-model="form.commissionDate" type="date" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
-            <label class="text-xs">工程名称 *<input v-model="form.projectName" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
-            <label class="text-xs">委托单位 *<input v-model="form.clientUnit" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
+            <label class="text-xs">委托书编号 *<Input v-model="form.commissionCode" class="w-full mt-1" /></label>
+            <label class="text-xs">委托日期 *<Input v-model="form.commissionDate" type="date" class="w-full mt-1" /></label>
+            <label class="text-xs">工程名称 *<Input v-model="form.projectName" class="w-full mt-1" /></label>
+            <label class="text-xs">委托单位 *<Input v-model="form.clientUnit" class="w-full mt-1" /></label>
             <label class="text-xs">检测类别 *
               <select v-model="form.testCategory" class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white">
                 <option value="委托检验">委托检验</option>
@@ -415,7 +416,7 @@ function alertError(msg: string): void {
                 <option value="委托送样">委托送样</option>
               </select>
             </label>
-            <label class="text-xs">报告类别编码 *<input v-model="form.categoryCode" class="border rounded h-9 px-2 text-sm w-full mt-1" /></label>
+            <label class="text-xs">报告类别编码 *<Input v-model="form.categoryCode" class="w-full mt-1" /></label>
           </div>
           <div class="mt-4 flex justify-end gap-2">
             <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
