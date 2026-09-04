@@ -8,6 +8,7 @@
 import { useRoute, useRouter } from "vue-router";
 import type { Component } from "vue";
 import { cn } from "@/lib/utils";
+import Button from "@/components/ui/Button.vue";
 
 export interface NavItem {
   label: string;
@@ -70,12 +71,13 @@ function navigate(item: NavItem): void {
         </slot>
         {{ item.label }}
       </component>
-      <button
+      <Button
         v-else
         type="button"
+        variant="ghost"
         :data-fn="item.dataFn"
         :aria-label="item.label"
-        class="text-muted-foreground hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 text-sm"
+        class="text-muted-foreground hover:bg-accent w-full justify-start gap-2 rounded-md px-3 py-2 text-sm"
         @click="item.action && emit('action', item.action)"
       >
         <slot :name="item.icon ?? 'none'">
@@ -86,7 +88,7 @@ function navigate(item: NavItem): void {
           />
         </slot>
         {{ item.label }}
-      </button>
+      </Button>
     </template>
   </nav>
 </template>

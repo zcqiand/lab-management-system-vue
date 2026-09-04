@@ -2,6 +2,23 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.31] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.1**（SidebarNav action 按钮）。TDD：先写失败测试（4 case），
+见红 → 替换 → 见绿 → 全量回归 138 case 全绿、gate exit 0。
+
+- `src/components/app/SidebarNav.vue` action 分支 raw `<button>` → `<Button variant="ghost">`。
+  router-link 分支（`<component :is="'router-link'">`）**不动** —— 它不是 `<button>`，
+  Phase 1.1 范围只覆盖 raw button。
+- caller class 走 `w-full justify-start gap-2 rounded-md px-3 py-2 text-sm`：
+  - 删 `flex` —— Button CVA 基类已是 `inline-flex`，避免 tailwind-merge 把
+    `inline-flex` 当 flex 冲突吞掉。
+  - 加 `justify-start` —— CVA 默认 `justify-center`，侧栏 nav 布局要左对齐（icon 在 label 左）。
+  - CVA `ghost` variant 自带 `hover:bg-accent hover:text-accent-foreground`，与原 raw
+    button 的 `hover:bg-slate-100` 视觉相近（侧栏背景色统一后无差别）。
+- add `tests/app/sidebarNav.dom.test.ts` 4 case：router-link 渲染为 `<a>` / action 渲染为
+  `<button>` + inline-flex / `aria-label` 转发 / 点击 emit action。
+
 ## [0.3.28] — 2026-09-04
 
 shadcn-vue 迁移 **Phase 0（底座）**。纯工程设施，无业务行为改动 —— 目的是让后续
