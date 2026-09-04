@@ -3,6 +3,7 @@
 // GB/T 50123-2019 击实试验：N 组（含水率, 干密度）→ 二次拟合峰值 → 最大干密度 / 最优含水率。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 import {
   computeCompactionPeak,
   parseCompactionResult,
@@ -74,13 +75,13 @@ const inputCls =
         <tr>
           <td :class="cellCls">含水率（%）</td>
           <td v-for="(p, i) in points" :key="i" :class="cellCls">
-            <input
+            <Input
               type="number"
               step="0.1"
               :aria-label="`第 ${i + 1} 组含水率`"
               :class="inputCls"
               :disabled="readOnly"
-              :value="p.moisture || ''"
+              :model-value="p.moisture || ''"
               @change="(e) => update(i, 'moisture', (e.target as HTMLInputElement).value)"
             />
           </td>
@@ -88,13 +89,13 @@ const inputCls =
         <tr>
           <td :class="cellCls">干密度（g/cm³）</td>
           <td v-for="(p, i) in points" :key="i" :class="cellCls">
-            <input
+            <Input
               type="number"
               step="0.001"
               :aria-label="`第 ${i + 1} 组干密度`"
               :class="inputCls"
               :disabled="readOnly"
-              :value="p.dryDensity || ''"
+              :model-value="p.dryDensity || ''"
               @change="(e) => update(i, 'dryDensity', (e.target as HTMLInputElement).value)"
             />
           </td>
