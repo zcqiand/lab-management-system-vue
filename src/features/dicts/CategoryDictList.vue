@@ -29,6 +29,7 @@ import axios from "axios";
 import { API_ROUTES, type ApiRouteKey } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
@@ -339,9 +340,9 @@ function dialogTitle(): string {
     >
       <div class="space-y-3 text-left text-sm">
         <div>
-          <label class="mb-1 block text-xs font-medium text-gray-600">
+          <Label class="mb-1 block text-xs text-gray-600">
             检测项目
-          </label>
+          </Label>
           <select
             v-model="formObject"
             :disabled="!!editing"
@@ -353,17 +354,17 @@ function dialogTitle(): string {
           </select>
         </div>
         <div>
-          <label class="mb-1 block text-xs font-medium text-gray-600">
+          <Label class="mb-1 block text-xs text-gray-600">
             名称
-          </label>
+          </Label>
           <Input
             v-model="formName"
           />
         </div>
         <div>
-          <label class="mb-1 block text-xs font-medium text-gray-600">
+          <Label class="mb-1 block text-xs text-gray-600">
             备注
-          </label>
+          </Label>
           <Input
             v-model="formRemark"
           />
