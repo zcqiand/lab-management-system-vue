@@ -8,6 +8,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import axios, { type AxiosResponse } from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ParameterStandardLinkDialog from "@/features/inspection-capability/ParameterStandardLinkDialog.vue";
 import { normalizeListResponse, unwrapListResponse } from "@/lib/responses";
@@ -359,9 +360,9 @@ function cellOf(item: ListItem, idx: number): string {
     </div>
 
     <div class="flex flex-wrap gap-2">
-      <input
+      <Input
         v-model="keyword"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         placeholder="搜索编码/名称"
       />
       <select
@@ -473,17 +474,17 @@ function cellOf(item: ListItem, idx: number): string {
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="text-sm font-medium">编码</label>
-                <input v-model="form.code" :disabled="mode.kind === 'edit'" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.code" :disabled="mode.kind === 'edit'" />
               </div>
               <div>
                 <label class="text-sm font-medium">名称</label>
-                <input v-model="form.name" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.name" />
               </div>
             </div>
             <div v-if="props.resource === 'specialties'" class="grid grid-cols-3 gap-3">
               <div>
                 <label class="text-sm font-medium">官方序号</label>
-                <input v-model="form.officialNo" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.officialNo" />
               </div>
               <div class="pt-6 flex items-center gap-2">
                 <input v-model="form.isOfficial" type="checkbox" /> <label>官方</label>
@@ -503,11 +504,11 @@ function cellOf(item: ListItem, idx: number): string {
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="text-sm font-medium">来源行号</label>
-                  <input v-model="form.sourceProjectNo" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                  <Input v-model="form.sourceProjectNo" />
                 </div>
                 <div>
                   <label class="text-sm font-medium">来源行名称</label>
-                  <input v-model="form.sourceProjectName" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                  <Input v-model="form.sourceProjectName" />
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-3">
@@ -522,7 +523,7 @@ function cellOf(item: ListItem, idx: number): string {
             <div v-else-if="props.resource === 'parameters'" class="grid grid-cols-3 gap-3">
               <div>
                 <label class="text-sm font-medium">单位</label>
-                <input v-model="form.unit" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.unit" />
               </div>
               <div>
                 <label class="text-sm font-medium">来源类型</label>
@@ -535,7 +536,7 @@ function cellOf(item: ListItem, idx: number): string {
             <div v-else class="grid grid-cols-3 gap-3">
               <div>
                 <label class="text-sm font-medium">版本</label>
-                <input v-model="form.version" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.version" />
               </div>
               <div>
                 <label class="text-sm font-medium">状态</label>
@@ -547,12 +548,12 @@ function cellOf(item: ListItem, idx: number): string {
               </div>
               <div>
                 <label class="text-sm font-medium">来源文件</label>
-                <input v-model="form.sourceDocumentId" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.sourceDocumentId" />
               </div>
             </div>
             <div>
               <label class="text-sm font-medium">排序</label>
-              <input v-model.number="form.sortOrder" type="number" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+              <Input v-model.number="form.sortOrder" type="number" />
             </div>
           </div>
           <div class="px-6 py-3 flex justify-end gap-2 border-t">
