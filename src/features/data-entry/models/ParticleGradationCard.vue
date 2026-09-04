@@ -4,6 +4,7 @@
 // 末行平均；右侧分筛前/后总量 + 细度模数。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 
 type Props = Pick<
   ParamModelProps,
@@ -220,13 +221,13 @@ const avg = computed(() => averageByCol(rows.value));
               {{ pct === 0 ? '' : Math.round((pct * (row.totalBefore > 0 ? row.totalBefore : 1)) / 100) }}
             </td>
             <td class="border border-gray-300 px-1 py-1 text-center">
-              <input
+              <Input
                 type="number"
                 step="1"
                 :aria-label="`第 ${ri + 1} 行 分筛前总量`"
-                :value="row.totalBefore === 0 ? '' : row.totalBefore"
+                :model-value="row.totalBefore === 0 ? '' : row.totalBefore"
                 :readonly="readOnly"
-                class="w-20 border rounded px-1 py-0.5 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
+                class="w-20 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
                 @change="(e) => updateTotal(ri, 'totalBefore', (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
@@ -239,26 +240,26 @@ const avg = computed(() => averageByCol(rows.value));
               :key="ci"
               class="border border-gray-300 px-1 py-1 text-center"
             >
-              <input
+              <Input
                 type="number"
                 step="0.1"
                 :aria-label="`第 ${ri + 1} 行 ${sieveCols[ci]} 分计筛余`"
-                :value="pct === 0 ? '' : pct"
+                :model-value="pct === 0 ? '' : pct"
                 :readonly="readOnly"
-                class="w-16 border rounded px-1 py-0.5 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
+                class="w-16 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
                 @change="(e) => updatePct(ri, ci, (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
             </td>
             <td class="border border-gray-300 px-1 py-1 text-center">
               分筛后总量(g):&nbsp;
-              <input
+              <Input
                 type="number"
                 step="1"
                 :aria-label="`第 ${ri + 1} 行 分筛后总量`"
-                :value="row.totalAfter === 0 ? '' : row.totalAfter"
+                :model-value="row.totalAfter === 0 ? '' : row.totalAfter"
                 :readonly="readOnly"
-                class="w-20 border rounded px-1 py-0.5 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
+                class="w-20 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
                 @change="(e) => updateTotal(ri, 'totalAfter', (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
