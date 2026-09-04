@@ -388,3 +388,45 @@ describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
     expect(del.classes()).not.toContain("h-8");
   });
 });
+
+// Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：弹窗内 2 个 form <Input> 名称 + 备注 v-model 双向写回。
+describe("Phase 1.3b — CategoryDictList 弹窗 <Input> 原语回归", () => {
+  it("弹窗 2 个 form <Input>：名称 + 备注 v-model 双向写回", async () => {
+    const { default: CategoryDictList } = await import(
+      "@/features/dicts/CategoryDictList.vue"
+    );
+    lastWrapper = mountWithProviders(CategoryDictList, {
+      props: {
+        endpoint: "/models",
+        title: "型号维护",
+        createDataFn: "M04.F06.I02",
+      },
+      global: MOUNT_GLOBAL,
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 开新建弹窗
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建");
+    expect(createBtn).toBeTruthy();
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    // 弹窗内的 2 个 <Input>：名称 + 备注（不含 select 检测项目）
+    const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
+    expect(dialogInputs.length).toBe(2);
+
+    // 第一个：名称（input[required] 由 formName 控制必填）
+    const nameInput = dialogInputs[0];
+    expect(nameInput.classes()).toContain("h-9");
+    await nameInput.setValue("HRB400E");
+    expect((nameInput.element as HTMLInputElement).value).toBe("HRB400E");
+
+    // 第二个：备注
+    const remarkInput = dialogInputs[1];
+    await remarkInput.setValue("抗震钢筋");
+    expect((remarkInput.element as HTMLInputElement).value).toBe("抗震钢筋");
+  });
+});

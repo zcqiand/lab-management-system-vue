@@ -28,6 +28,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES, type ApiRouteKey } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
@@ -355,18 +356,16 @@ function dialogTitle(): string {
           <label class="mb-1 block text-xs font-medium text-gray-600">
             名称
           </label>
-          <input
+          <Input
             v-model="formName"
-            class="w-full rounded border px-2 py-1.5"
           />
         </div>
         <div>
           <label class="mb-1 block text-xs font-medium text-gray-600">
             备注
           </label>
-          <input
+          <Input
             v-model="formRemark"
-            class="w-full rounded border px-2 py-1.5"
           />
         </div>
       </div>
