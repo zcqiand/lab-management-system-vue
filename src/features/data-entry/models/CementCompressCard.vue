@@ -5,6 +5,7 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import {
   computeCementCompress,
   parseStrengthRecord,
@@ -73,7 +74,7 @@ function updateLoad(i: number, v: string) {
     </div>
     <div class="grid grid-cols-6 gap-1">
       <div v-for="(_, i) in loads" :key="i">
-        <label class="block text-xs text-slate-500 mb-0.5">试件 {{ i + 1 }}</label>
+        <Label class="block text-xs text-slate-500 mb-0.5">试件 {{ i + 1 }}</Label>
         <Input
           type="number"
           step="0.01"
