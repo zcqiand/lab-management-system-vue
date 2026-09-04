@@ -442,3 +442,51 @@ describe("Phase 1.3a — TechnicalRequirementList 4 维筛选 <Input> 原语回�
     expect(stdInput.classes()).toContain("font-mono");
   });
 });
+
+// Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：搜索 <Input> 渲染真实 <input> + placeholder 落到 DOM；
+// 弹窗 3 个 form <Input>：specimenCount type=number / roundingRule 字符串 / remark 字符串。
+describe("Phase 1.3b — CalculationMethodList 搜索/表单 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：渲染 <input>，placeholder 落到真实 DOM", async () => {
+    lastWrapper = mountWithProviders(CalculationMethodList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="搜索项目/参数"]');
+    expect(search.exists()).toBe(true);
+    expect(search.classes()).toContain("max-w-sm");
+    expect(search.classes()).toContain("h-9");
+    await search.setValue("OBJ-1");
+    expect((search.element as HTMLInputElement).value).toBe("OBJ-1");
+  });
+
+  it("弹窗 3 个 form <Input>：type=number 落 DOM + placeholder 转发 + v-model 写回", async () => {
+    lastWrapper = mountWithProviders(CalculationMethodList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 开新建弹窗
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建计算方法");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    // 弹窗内的 3 个 <Input>：试件数量(type=number) + 修约规则 + 备注
+    const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
+    expect(dialogInputs.length).toBe(3);
+
+    // type=number 仅试件数量 1 个
+    const numInput = lastWrapper.find('[data-teleport-stub] input[type="number"]');
+    expect(numInput.exists()).toBe(true);
+    expect(numInput.attributes("type")).toBe("number");
+    await numInput.setValue("3");
+    expect((numInput.element as HTMLInputElement).value).toBe("3");
+
+    // roundingRule placeholder 落到真实 DOM
+    const roundInput = lastWrapper.find('input[placeholder="如 修约到 0.1"]');
+    expect(roundInput.exists()).toBe(true);
+    await roundInput.setValue("修约到 0.1");
+    expect((roundInput.element as HTMLInputElement).value).toBe("修约到 0.1");
+  });
+});

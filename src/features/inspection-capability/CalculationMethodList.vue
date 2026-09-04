@@ -7,6 +7,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // @entry M06.F05.I01
@@ -204,9 +205,9 @@ async function confirmDelete(): Promise<void> {
     </div>
 
     <div class="flex gap-2">
-      <input
+      <Input
         v-model="keyword"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         placeholder="搜索项目/参数"
       />
     </div>
@@ -346,26 +347,23 @@ async function confirmDelete(): Promise<void> {
               </div>
               <div>
                 <label class="text-sm font-medium">试件数量</label>
-                <input
+                <Input
                   v-model="form.specimenCount"
                   type="number"
-                  class="border rounded h-9 px-2 text-sm bg-white w-full"
                 />
               </div>
               <div>
                 <label class="text-sm font-medium">修约规则</label>
-                <input
+                <Input
                   v-model="form.roundingRule"
-                  class="border rounded h-9 px-2 text-sm bg-white w-full"
                   placeholder="如 修约到 0.1"
                 />
               </div>
             </div>
             <div>
               <label class="text-sm font-medium">备注</label>
-              <input
+              <Input
                 v-model="form.remark"
-                class="border rounded h-9 px-2 text-sm bg-white w-full"
               />
             </div>
           </div>
