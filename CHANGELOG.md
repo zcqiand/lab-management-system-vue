@@ -2,6 +2,52 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.38] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.3a**（4 个 form-heavy 文件 raw `<input>` → `<Input>` 原语，
+共迁移 55 处；保留所有 `<input type="checkbox">` / `<textarea>` / `<select>`）。
+
+- **ContractsList**（contracts）：17 处 `<input>`。
+  1 处搜索框（`@keydown.enter="load"` 转发）+ 16 处表单字段（合同编号 / 委托单位 /
+  项目名称 / 项目地点 / 施工单位 / 检测专项 / 建设单位 / 监理单位 / 检测人 /
+  检测人电话 / 见证单位 / 见证人 / 见证人电话 / 联系人 / 联系人电话 / 委托日期）。
+  调用方 class 全部移除（CVA base 已含 `border bg-background h-9 rounded px-3`）
+- **InspectionCapabilityList**（inspection-capability）：10 处 `<input>`。
+  1 处搜索框（`max-w-sm` 保留）+ 8 处表单字段（编码 / 名称 / 官方序号 / 来源行号 /
+  来源行名称 / 单位 / 版本 / 来源文件）+ 1 处排序（`type=number v-model.number`）。
+  **保留 6 处 `<input type="checkbox">`**（官方/启用/资质可选 — Phase 2b Checkbox 原语范围）
+- **TechnicalRequirementList**（inspection-capability）：12 处 `<input>`。
+  4 个筛选框（牌号/型号/等级/规格，`aria-label` + `max-w-32` 保留）+ 8 处表单字段
+  （判定标准 `font-mono` 保留 / 牌号 / 型号 / 等级 / 规格 / 下限 `type=number` /
+  上限 `type=number` / 备注）
+- **ReceiptsList**（receipts）：11 处 `<input>`。
+  1 处搜索框（`@keyup.enter="load"` 转发，`max-w-sm` 保留）+ 10 处表单字段
+  （委托书编号 / 委托日期 `type=date` / 工程名称 / 委托单位 / 报告类别编码，
+  各 1 份 × 新建 + 编辑两个 dialog）。`<label>` 父级保留 raw（Phase 1.4 单独处理）
+
+新增 4 段 Input 原语回归锚（不挂功能 ID，regression-anchor 模式）：
+
+- `tests/features/contracts/contractsList.dom.test.ts`：搜索框 v-model + 弹窗内合同编号 v-model
+- `tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts`：
+  搜索框 / 编辑模式 disabled 落到真实 input / type=number 转发 / 4 维筛选
+  aria-label 保留 / 下限上限 type=number / 判定标准 font-mono 合并
+- `tests/features/receipts/receiptsList.dom.test.ts`：搜索框 v-model + 弹窗内 5 个 input + type=date 转发
+
+**不回归**：
+
+- 47 case（5 文件）全绿；Phase 0 hotfix `:disabled ?? undefined` 让 Label 的
+  `peer-disabled:` 选择器在 edit 模式仍激活（specialties 编码测试锁）
+- v-model / @keydown.enter / @keyup.enter / type=number / type=date / id / data-fn
+  / aria-label 全经 `$attrs` 落到真实 `<input>`
+- 调用方 class（`max-w-sm` / `max-w-32` / `font-mono` / `w-full mt-1`）经
+  tailwind-merge 与 CVA base 合成，无 tailwind 类覆盖冲突
+
+**已存在的小告警**（与本次迁移无关）：`<Input modelValue=... Number>` 在
+v-model.number 路径上报「Expected String got Number」。是 Phase 0 设计 —
+Input.vue 显式 `modelValue?: string`；Vue 的 `.number` modifier 把 v-model
+发射的 number 值塞回 prop。属于 Phase 1.3 后续工作（Input.vue type 放宽到
+`string | number`），不在 Phase 1.3a scope。
+
 ## [0.3.37] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.2c**（4 个 modal/dialog raw `<button>` → `<Button>` 原语，
