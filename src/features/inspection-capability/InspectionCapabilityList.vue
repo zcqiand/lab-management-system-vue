@@ -9,6 +9,7 @@ import axios, { type AxiosResponse } from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ParameterStandardLinkDialog from "@/features/inspection-capability/ParameterStandardLinkDialog.vue";
 import { normalizeListResponse, unwrapListResponse } from "@/lib/responses";
@@ -473,29 +474,29 @@ function cellOf(item: ListItem, idx: number): string {
             <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-sm font-medium">编码</label>
+                <Label>编码</Label>
                 <Input v-model="form.code" :disabled="mode.kind === 'edit'" />
               </div>
               <div>
-                <label class="text-sm font-medium">名称</label>
+                <Label>名称</Label>
                 <Input v-model="form.name" />
               </div>
             </div>
             <div v-if="props.resource === 'specialties'" class="grid grid-cols-3 gap-3">
               <div>
-                <label class="text-sm font-medium">官方序号</label>
+                <Label>官方序号</Label>
                 <Input v-model="form.officialNo" />
               </div>
               <div class="pt-6 flex items-center gap-2">
-                <input v-model="form.isOfficial" type="checkbox" /> <label>官方</label>
+                <input v-model="form.isOfficial" type="checkbox" /> <Label>官方</Label>
               </div>
               <div class="pt-6 flex items-center gap-2">
-                <input v-model="form.enabled" type="checkbox" /> <label>启用</label>
+                <input v-model="form.enabled" type="checkbox" /> <Label>启用</Label>
               </div>
             </div>
             <div v-else-if="props.resource === 'objects'" class="space-y-3">
               <div>
-                <label class="text-sm font-medium">检测专项编码</label>
+                <Label>检测专项编码</Label>
                 <select v-model="form.inspectionSpecialtyCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
                   <option value="">未选择</option>
                   <option v-for="s in specialtyOptions" :key="s.code" :value="s.code">{{ s.code }} {{ s.name }}</option>
@@ -503,18 +504,18 @@ function cellOf(item: ListItem, idx: number): string {
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="text-sm font-medium">来源行号</label>
+                  <Label>来源行号</Label>
                   <Input v-model="form.sourceProjectNo" />
                 </div>
                 <div>
-                  <label class="text-sm font-medium">来源行名称</label>
+                  <Label>来源行名称</Label>
                   <Input v-model="form.sourceProjectName" />
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-3">
-                <div class="pt-6 flex items-center gap-2"><input v-model="form.isOfficial" type="checkbox" /><label>官方</label></div>
-                <div class="pt-6 flex items-center gap-2"><input v-model="form.enabled" type="checkbox" /><label>启用</label></div>
-                <div class="pt-6 flex items-center gap-2"><input v-model="form.isOptionalForQualification" type="checkbox" /><label>资质可选</label></div>
+                <div class="pt-6 flex items-center gap-2"><input v-model="form.isOfficial" type="checkbox" /><Label>官方</Label></div>
+                <div class="pt-6 flex items-center gap-2"><input v-model="form.enabled" type="checkbox" /><Label>启用</Label></div>
+                <div class="pt-6 flex items-center gap-2"><input v-model="form.isOptionalForQualification" type="checkbox" /><Label>资质可选</Label></div>
               </div>
               <div class="text-xs text-slate-500">
                 已选检测参数候选：{{ parameterOptions.length }} 个（M06.F02.I02 关联）
@@ -522,11 +523,11 @@ function cellOf(item: ListItem, idx: number): string {
             </div>
             <div v-else-if="props.resource === 'parameters'" class="grid grid-cols-3 gap-3">
               <div>
-                <label class="text-sm font-medium">单位</label>
+                <Label>单位</Label>
                 <Input v-model="form.unit" />
               </div>
               <div>
-                <label class="text-sm font-medium">来源类型</label>
+                <Label>来源类型</Label>
                 <select v-model="form.sourceType" class="border rounded h-9 px-2 text-sm bg-white w-full">
                   <option value="official">官方</option>
                   <option value="custom">自定义</option>
@@ -535,11 +536,11 @@ function cellOf(item: ListItem, idx: number): string {
             </div>
             <div v-else class="grid grid-cols-3 gap-3">
               <div>
-                <label class="text-sm font-medium">版本</label>
+                <Label>版本</Label>
                 <Input v-model="form.version" />
               </div>
               <div>
-                <label class="text-sm font-medium">状态</label>
+                <Label>状态</Label>
                 <select v-model="form.status" class="border rounded h-9 px-2 text-sm bg-white w-full">
                   <option value="active">现行</option>
                   <option value="superseded">被替代</option>
@@ -547,12 +548,12 @@ function cellOf(item: ListItem, idx: number): string {
                 </select>
               </div>
               <div>
-                <label class="text-sm font-medium">来源文件</label>
+                <Label>来源文件</Label>
                 <Input v-model="form.sourceDocumentId" />
               </div>
             </div>
             <div>
-              <label class="text-sm font-medium">排序</label>
+              <Label>排序</Label>
               <Input v-model.number="form.sortOrder" type="number" />
             </div>
           </div>
