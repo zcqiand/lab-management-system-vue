@@ -221,3 +221,79 @@ describe("Phase 1.4 — ReportNameList 表单 <Label> 原语回归", () => {
     expect(labels[6].text()).toContain("扩展属性");
   });
 });
+
+// Phase 2a-3 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁 3 件事：<Table> 渲染为 div[role=table] / 6 个 columnheader 文本顺序对得上 /
+// 行 data-fn 落到 div[role=row]（rowgroup[1] 是 TableBody）。
+describe("Phase 2a-3 — ReportNameList 列表 <Table> 原语回归", () => {
+  it("<Table> 渲染为 div[role=table]；6 个 <TableHead> 文本顺序 编码/简称/全称/模板/排序/操作", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(6);
+    expect(heads.map((h) => h.text())).toEqual([
+      "编码",
+      "简称",
+      "全称",
+      "模板",
+      "排序",
+      "操作",
+    ]);
+  });
+
+  it("2 个 fixture 行：data-fn 落到 rowgroup[1] 内 div[role=row]", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const rowgroups = lastWrapper.findAll('[role="rowgroup"]');
+    expect(rowgroups.length).toBe(2);
+
+    const bodyRows = rowgroups[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(2);
+
+    for (const row of bodyRows) {
+      expect(row.attributes("data-fn")).toBe("M06.F07.I01");
+    }
+  });
+
+  it("TableCell 调用方 class 经 tailwind-merge 合并（font-mono + text-xs 落到编码 cell）", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const cells = lastWrapper.findAll('[role="cell"]');
+    expect(cells.length).toBeGreaterThan(0);
+    const codeCell = cells.find((c) => c.text().includes("RN-001"));
+    expect(codeCell).toBeTruthy();
+    expect(codeCell!.classes()).toContain("font-mono");
+    expect(codeCell!.classes()).toContain("text-xs");
+  });
+
+  it("行内「关联」按钮：data-fn 落到真实 button，不被 <TableCell> 吞掉", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const linkBtn = lastWrapper.find('button[data-fn="M06.F07.I02"]');
+    expect(linkBtn.exists()).toBe(true);
+    expect(linkBtn.element.tagName).toBe("BUTTON");
+    // Button 在 <TableCell>（div[role=cell]）内 — 验证嵌套而非被吞
+    const cell = linkBtn.element.parentElement;
+    expect(cell).not.toBeNull();
+    expect(cell!.getAttribute("role")).toBe("cell");
+  });
+});
