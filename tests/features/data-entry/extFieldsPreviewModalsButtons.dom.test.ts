@@ -101,3 +101,131 @@ describe("Phase 1.2c — ReportPreviewModal <Button> 原语回归", () => {
     expect(printBtn!.classes()).not.toContain("bg-primary");
   });
 });
+
+// Phase 2a-3 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// ReportPreviewModal 2 张只读表（基础信息 4 列 + 检测参数结果 4 列）。
+// 锁：2 张表都渲染为 div[role=table] / 第 2 张表 columnheader 文本顺序 /
+// TableCell class 经 tailwind-merge 合并 border + px-2 py-1 保留。
+describe("Phase 2a-3 — ReportPreviewModal 内嵌 2 张 <Table> 原语回归", () => {
+  it("2 张表都渲染为 div[role=table]（基础信息表 + 检测参数结果表）", async () => {
+    const { default: Modal } = await import(
+      "@/features/data-entry/ReportPreviewModal.vue"
+    );
+    lastWrapper = mountWithProviders(Modal, {
+      props: {
+        open: true,
+        receipt: {
+          id: "R-1",
+          commissionCode: "WT-001",
+          categoryCode: "CAT-1",
+          projectName: "工程A",
+          clientUnit: "委托单位X",
+          testCategory: "CAT-1",
+        },
+        onClose: () => {},
+      },
+      global: MOUNT_GLOBAL,
+    });
+
+    const tables = lastWrapper.findAll('[role="table"]');
+    expect(tables.length).toBe(2);
+  });
+
+  it("第 2 张表（检测参数结果）：4 个 <TableHead> 文本顺序 项目/技术要求/检测结果/单项评定", async () => {
+    const { default: Modal } = await import(
+      "@/features/data-entry/ReportPreviewModal.vue"
+    );
+    lastWrapper = mountWithProviders(Modal, {
+      props: {
+        open: true,
+        receipt: {
+          id: "R-1",
+          commissionCode: "WT-001",
+          categoryCode: "CAT-1",
+          projectName: "工程A",
+          clientUnit: "委托单位X",
+          testCategory: "CAT-1",
+        },
+        onClose: () => {},
+      },
+      global: MOUNT_GLOBAL,
+    });
+
+    const tables = lastWrapper.findAll('[role="table"]');
+    expect(tables.length).toBe(2);
+    // 第 2 张表有 columnheader（基础信息表只 2 行 × 4 cell 无 header）
+    const heads = tables[1]!.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(4);
+    expect(heads.map((h) => h.text())).toEqual([
+      "项目",
+      "技术要求",
+      "检测结果",
+      "单项评定",
+    ]);
+  });
+
+  it("第 1 张表（基础信息）：rowgroup 内 2 行 div[role=row]，每行 4 cell", async () => {
+    const { default: Modal } = await import(
+      "@/features/data-entry/ReportPreviewModal.vue"
+    );
+    lastWrapper = mountWithProviders(Modal, {
+      props: {
+        open: true,
+        receipt: {
+          id: "R-1",
+          commissionCode: "WT-001",
+          categoryCode: "CAT-1",
+          projectName: "工程A",
+          clientUnit: "委托单位X",
+          testCategory: "CAT-1",
+        },
+        onClose: () => {},
+      },
+      global: MOUNT_GLOBAL,
+    });
+
+    const tables = lastWrapper.findAll('[role="table"]');
+    const rowgroups = tables[0]!.findAll('[role="rowgroup"]');
+    // 第 1 张表只有 TableBody，1 个 rowgroup
+    expect(rowgroups.length).toBe(1);
+    const rows = rowgroups[0]!.findAll('[role="row"]');
+    expect(rows.length).toBe(2);
+    // 每行 4 cell（标签 + 值 + 标签 + 值）
+    expect(rows[0]!.findAll('[role="cell"]').length).toBe(4);
+    expect(rows[1]!.findAll('[role="cell"]').length).toBe(4);
+  });
+
+  it("TableCell 调用方 class 经 tailwind-merge 合并（border + px-2 py-1 落第 2 张表 cell）", async () => {
+    const { default: Modal } = await import(
+      "@/features/data-entry/ReportPreviewModal.vue"
+    );
+    lastWrapper = mountWithProviders(Modal, {
+      props: {
+        open: true,
+        receipt: {
+          id: "R-1",
+          commissionCode: "WT-001",
+          categoryCode: "CAT-1",
+          projectName: "工程A",
+          clientUnit: "委托单位X",
+          testCategory: "CAT-1",
+        },
+        onClose: () => {},
+      },
+      global: MOUNT_GLOBAL,
+    });
+
+    const tables = lastWrapper.findAll('[role="table"]');
+    // 第 2 张表是带 header 的；cell 应带 border + px-2 + py-1
+    const cells = tables[1]!.findAll('[role="cell"]');
+    expect(cells.length).toBe(0); // 无 records fixture
+    // 但 4 个 TableHead 应带 border
+    const heads = tables[1]!.findAll('[role="columnheader"]');
+    for (const head of heads) {
+      expect(head.classes()).toContain("border");
+      expect(head.classes()).toContain("px-2");
+      expect(head.classes()).toContain("py-1");
+      expect(head.classes()).toContain("text-left");
+    }
+  });
+});

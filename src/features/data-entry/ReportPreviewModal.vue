@@ -9,6 +9,12 @@
 import { computed, ref, watch } from "vue";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 
 interface SampleReceiptLike {
   id: string;
@@ -94,45 +100,45 @@ const categoryName = computed(() => {
           </button>
         </header>
         <div class="px-5 py-4 overflow-auto">
-          <table class="w-full text-xs">
-            <tbody>
-              <tr>
-                <td class="py-1 text-slate-500 w-24">委托单位</td>
-                <td class="py-1">{{ receipt.clientUnit ?? "—" }}</td>
-                <td class="py-1 text-slate-500 w-24">报告类别</td>
-                <td class="py-1">{{ categoryName }}</td>
-              </tr>
-              <tr>
-                <td class="py-1 text-slate-500">工程名称</td>
-                <td class="py-1">{{ receipt.projectName ?? "—" }}</td>
-                <td class="py-1 text-slate-500">检测类别</td>
-                <td class="py-1">{{ receipt.testCategory ?? "—" }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <Table class="w-full text-xs">
+            <TableBody>
+              <TableRow>
+                <TableCell class="py-1 text-slate-500 w-24">委托单位</TableCell>
+                <TableCell class="py-1">{{ receipt.clientUnit ?? "—" }}</TableCell>
+                <TableCell class="py-1 text-slate-500 w-24">报告类别</TableCell>
+                <TableCell class="py-1">{{ categoryName }}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell class="py-1 text-slate-500">工程名称</TableCell>
+                <TableCell class="py-1">{{ receipt.projectName ?? "—" }}</TableCell>
+                <TableCell class="py-1 text-slate-500">检测类别</TableCell>
+                <TableCell class="py-1">{{ receipt.testCategory ?? "—" }}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
 
           <h3 class="mt-4 mb-2 font-medium">检测参数结果</h3>
-          <table class="w-full text-xs border-collapse border">
-            <thead>
-              <tr class="bg-gray-50">
-                <th class="border px-2 py-1 text-left">项目</th>
-                <th class="border px-2 py-1 text-left">技术要求</th>
-                <th class="border px-2 py-1 text-left">检测结果</th>
-                <th class="border px-2 py-1 text-left">单项评定</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="rec in records" :key="rec.parameterCode">
-                <td class="border px-2 py-1">{{
+          <Table class="w-full text-xs border-collapse border">
+            <TableHeader>
+              <TableRow class="bg-gray-50">
+                <TableHead class="border px-2 py-1 text-left">项目</TableHead>
+                <TableHead class="border px-2 py-1 text-left">技术要求</TableHead>
+                <TableHead class="border px-2 py-1 text-left">检测结果</TableHead>
+                <TableHead class="border px-2 py-1 text-left">单项评定</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="rec in records" :key="rec.parameterCode">
+                <TableCell class="border px-2 py-1">{{
                   parameters.find((p) => p.code === rec.parameterCode)?.name ??
                   rec.parameterCode
-                }}</td>
-                <td class="border px-2 py-1">{{ rec.requirement ?? "—" }}</td>
-                <td class="border px-2 py-1">{{ rec.result ?? "—" }}</td>
-                <td class="border px-2 py-1">{{ rec.verdict ?? "—" }}</td>
-              </tr>
-            </tbody>
-          </table>
+                }}</TableCell>
+                <TableCell class="border px-2 py-1">{{ rec.requirement ?? "—" }}</TableCell>
+                <TableCell class="border px-2 py-1">{{ rec.result ?? "—" }}</TableCell>
+                <TableCell class="border px-2 py-1">{{ rec.verdict ?? "—" }}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
         <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-gray-50">
           <Button
