@@ -2,6 +2,40 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.37] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.2c**（4 个 modal/dialog raw `<button>` → `<Button>` 原语，
+共迁移 4 处；未迁移 6 处保留 raw）。
+
+- **SampleExtFieldsModal**（data-entry）：取消 `outline` / 确认 `default bg-blue-600`。
+  关闭 × icon-style raw（>3 override 阈值，与 react 仓同型）
+- **ReportPreviewModal**（data-entry）：关闭 `outline` / 打印 `default bg-blue-600`。
+  关闭 × icon-style raw（同上）
+- **ReportNameLinkDialog**（report-names）：2 处 toggle 行内按钮 raw。
+  `px-2 py-1 rounded text-xs` + 双态动态 class（`border text-slate-700` /
+  `bg-slate-900 text-white`），迁移需 4-5 override，超阈值
+- **ParameterStandardLinkDialog**（inspection-capability）：1 处 toggle 行内按钮 raw，
+  同上双态模式
+
+新增 `tests/features/data-entry/extFieldsPreviewModalsButtons.dom.test.ts`（2 case）
+覆盖 2 个迁移文件的 CVA base / outline border / default bg-blue-600 覆盖
+bg-primary。不挂功能 ID（regression-anchor 模式）。
+
+**未迁移（有意保留 raw `<button>`，6 处）**：
+
+- 2 个 modal 的关闭 × 按钮（icon-glyph，`text-gray-400 hover:text-gray-600 text-xl
+  leading-none`，迁移需 `h-auto w-auto p-0` 三件套 + 视觉保留，触发 >3 阈值）
+- 4 个 toggle 行内按钮（标准/参数 关联|解除 / 参数↔标准 关联|解除关联）。
+  是双态视觉按钮（一态 outline 风、一态 filled dark），强行用 `<Button variant=outline|default>`
+  配合 `:class` 叠加态会同时与 CVA 的 `border` / `bg-primary` / `hover:bg-accent` 打架，
+  至少需 4 个 override 平衡，留给后续 Toggle 原语专项（与 SidebarNav 同型）
+
+**L5 不动**：4 处 toggle 按钮的 `data-fn="M06.F07.I02"` / `data-fn="M06.F03.I02"`
+原 selector 仍走 `find('button[data-fn=…]')`，`reportNameLink.dom.test.ts` +
+`parameterStandardLink.dom.test.ts` 全绿。
+
+全量回归 167 case（26 文件）全绿；gate -p lab-management-system-vue exit 0。
+
 ## [0.3.36] — 2026-09-05
 
 Phase 1.2b hotfix — regression-anchor `it()` 标题去 fn ID 字面。
