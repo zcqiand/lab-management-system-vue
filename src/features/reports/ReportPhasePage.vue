@@ -12,6 +12,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 
 type FlowStage =
   | "receiving"
@@ -266,13 +267,13 @@ function alertError(msg: string): void {
           <p class="text-sm text-slate-500 mb-3">
             退回后该接样单回到上一环节（{{ FLOW_STAGE_LABELS[PREV_STAGE[stage]] }}）。
           </p>
-          <label class="text-xs block mb-2">退回原因（可选）
+          <Label class="text-xs block mb-2">退回原因（可选）
             <Input
               v-model="returnReason"
               placeholder="如：数据待补正"
               class="mt-1"
             />
-          </label>
+          </Label>
           <div class="mt-4 flex justify-end gap-2">
             <Button variant="outline" @click="returnTarget = null">取消</Button>
             <Button
