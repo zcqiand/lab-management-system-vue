@@ -6,6 +6,7 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps, ParamTechReq } from "./types";
 import type { TestRecord } from "@/api/endpoints/endpoints.schemas";
+import Input from "@/components/ui/Input.vue";
 import { autoVerdict, parseStrengthRecord, type StrengthResult } from "./cement-strength";
 
 const MANUAL_VERDICTS = ["合格", "不合格"] as const;
@@ -161,13 +162,13 @@ const verdictClass = computed(() =>
         <tr v-for="(lv, i) in loads" :key="i">
           <td class="py-1">{{ i + 1 }}</td>
           <td class="py-1">
-            <input
+            <Input
               type="number"
               step="0.01"
-              :value="lv === 0 ? '' : lv"
+              :model-value="lv === 0 ? '' : lv"
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 破坏荷载`"
-              class="w-32 border rounded px-2 py-1 text-sm read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e) => onLoadChange(i, (e.target as HTMLInputElement).value)"
             />
           </td>
