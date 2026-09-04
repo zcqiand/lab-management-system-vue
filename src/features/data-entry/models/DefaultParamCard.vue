@@ -4,6 +4,11 @@ import { computed } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 
 const VERDICT_OPTIONS = ["合格", "不合格", "符合", "不符合"] as const;
 
@@ -50,38 +55,44 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
     </div>
     <div class="grid grid-cols-4 gap-x-3 gap-y-1 text-xs">
       <div>
-        <Label class="block text-xs text-slate-500 mb-0.5">检测依据</Label>
-        <select
-          class="w-full border rounded px-1 py-1 text-sm bg-white"
-          :value="rec?.standardCode ?? ''"
+        <Label for="standardCode" class="block text-xs text-slate-500 mb-0.5">检测依据</Label>
+        <Select
+          :model-value="rec?.standardCode ?? ''"
           :disabled="readOnly"
-          @change="onChange({ standardCode: ($event.target as HTMLSelectElement).value })"
+          @update:model-value="(v: string | number) => onChange({ standardCode: v === '__none__' ? '' : String(v) })"
         >
-          <option value="">—</option>
-          <option v-for="s in basisOptions" :key="s.code" :value="s.code">
-            {{ s.code }} {{ s.name }}
-          </option>
-        </select>
+          <SelectTrigger class="w-full h-8 px-2 text-sm">
+            <SelectValue placeholder="—" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__none__">—</SelectItem>
+            <SelectItem v-for="s in basisOptions" :key="s.code" :value="s.code">
+              {{ s.code }} {{ s.name }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div>
-        <Label class="block text-xs text-slate-500 mb-0.5">技术要求</Label>
-        <select
-          class="w-full border rounded px-1 py-1 text-sm bg-white"
-          :value="rec?.requirementCode ?? ''"
+        <Label for="requirementCode" class="block text-xs text-slate-500 mb-0.5">技术要求</Label>
+        <Select
+          :model-value="rec?.requirementCode ?? ''"
           :disabled="readOnly"
-          @change="
-            (e) => {
-              const v = (e.target as HTMLSelectElement).value;
-              const found = reqOptions.find((r) => r.id === v);
-              onChange({ requirementCode: v, requirement: found ? requirementLabel(found) : '' });
-            }
-          "
+          @update:model-value="(v: string | number) => {
+            const sv = v === '__none__' ? '' : String(v);
+            const found = reqOptions.find((r) => r.id === sv);
+            onChange({ requirementCode: sv, requirement: found ? requirementLabel(found) : '' });
+          }"
         >
-          <option value="">—</option>
-          <option v-for="r in reqOptions" :key="r.id" :value="r.id">
-            {{ requirementLabel(r) }}
-          </option>
-        </select>
+          <SelectTrigger class="w-full h-8 px-2 text-sm">
+            <SelectValue placeholder="—" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__none__">—</SelectItem>
+            <SelectItem v-for="r in reqOptions" :key="r.id" :value="r.id ?? ''">
+              {{ requirementLabel(r) }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div>
         <Label class="block text-xs text-slate-500 mb-0.5">检测结果</Label>
@@ -94,20 +105,20 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         />
       </div>
       <div>
-        <Label class="block text-xs text-slate-500 mb-0.5">单项评定</Label>
-        <select
-          class="w-full border rounded px-1 py-1 text-sm bg-white"
-          :value="rec?.verdict ?? ''"
+        <Label for="verdict" class="block text-xs text-slate-500 mb-0.5">单项评定</Label>
+        <Select
+          :model-value="rec?.verdict ?? ''"
           :disabled="readOnly"
-          @change="
-            onChange({
-              verdict: ($event.target as HTMLSelectElement).value as string,
-            })
-          "
+          @update:model-value="(v: string | number) => onChange({ verdict: v === '__none__' ? '' : String(v) })"
         >
-          <option value="">未评定</option>
-          <option v-for="v in VERDICT_OPTIONS" :key="v" :value="v">{{ v }}</option>
-        </select>
+          <SelectTrigger class="w-full h-8 px-2 text-sm">
+            <SelectValue placeholder="未评定" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__none__">未评定</SelectItem>
+            <SelectItem v-for="v in VERDICT_OPTIONS" :key="v" :value="v">{{ v }}</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   </div>
