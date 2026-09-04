@@ -3,6 +3,7 @@
 // 覆盖 RN-109-2 灌砂法 + RN-109-3 环刀法两份报告（环刀法逐行显示「最大干密度」列）。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 import {
   computeCompactionDegree,
   parseDegreeResult,
@@ -97,13 +98,13 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
       <span class="text-sm font-medium">{{ param.canonicalName || param.name }}</span>
       <label class="text-xs text-gray-600">
         最大干密度（g/cm³）：
-        <input
+        <Input
           type="number"
           step="0.001"
           aria-label="最大干密度"
           :class="[numCls, 'ml-1']"
           :disabled="readOnly"
-          :value="state.maxDryDensity || ''"
+          :model-value="state.maxDryDensity || ''"
           @change="(e) => updateMax((e.target as HTMLInputElement).value)"
         />
       </label>
@@ -127,62 +128,62 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
       <tbody>
         <tr v-for="(r, i) in computedRows" :key="i">
           <td :class="cellCls">
-            <input
+            <Input
               :aria-label="`第 ${i + 1} 行试样编号`"
               :class="txtCls"
               :disabled="readOnly"
-              :value="r.code"
+              :model-value="r.code"
               @change="(e) => updateRow(i, 'code', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
-            <input
+            <Input
               :aria-label="`第 ${i + 1} 行取样部位`"
               :class="txtCls"
               :disabled="readOnly"
-              :value="r.part"
+              :model-value="r.part"
               @change="(e) => updateRow(i, 'part', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
-            <input
+            <Input
               :aria-label="`第 ${i + 1} 行层次`"
               :class="txtCls"
               :disabled="readOnly"
-              :value="r.layer"
+              :model-value="r.layer"
               @change="(e) => updateRow(i, 'layer', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
-            <input
+            <Input
               type="number"
               step="0.1"
               :aria-label="`第 ${i + 1} 行设计压实度`"
               :class="numCls"
               :disabled="readOnly"
-              :value="r.designDegree || ''"
+              :model-value="r.designDegree || ''"
               @change="(e) => updateRow(i, 'designDegree', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
-            <input
+            <Input
               type="number"
               step="0.001"
               :aria-label="`第 ${i + 1} 行湿密度`"
               :class="numCls"
               :disabled="readOnly"
-              :value="r.wetDensity || ''"
+              :model-value="r.wetDensity || ''"
               @change="(e) => updateRow(i, 'wetDensity', (e.target as HTMLInputElement).value)"
             />
           </td>
           <td :class="cellCls">
-            <input
+            <Input
               type="number"
               step="0.1"
               :aria-label="`第 ${i + 1} 行含水率`"
               :class="numCls"
               :disabled="readOnly"
-              :value="r.moisture || ''"
+              :model-value="r.moisture || ''"
               @change="(e) => updateRow(i, 'moisture', (e.target as HTMLInputElement).value)"
             />
           </td>
