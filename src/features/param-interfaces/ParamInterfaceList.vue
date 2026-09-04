@@ -11,6 +11,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
@@ -160,7 +161,7 @@ async function submitForm(): Promise<void> {
           <div class="px-6 py-4">
             <div class="grid grid-cols-1 gap-3">
               <div>
-                <label class="text-sm font-medium">编码 *</label>
+                <Label>编码 *</Label>
                 <Input
                   v-model="form.code"
                   :disabled="mode.kind === 'edit'"
@@ -168,11 +169,11 @@ async function submitForm(): Promise<void> {
                 />
               </div>
               <div>
-                <label class="text-sm font-medium">组件路径 *</label>
+                <Label>组件路径 *</Label>
                 <Input v-model="form.componentPath" />
               </div>
               <div>
-                <label class="text-sm font-medium">排序</label>
+                <Label>排序</Label>
                 <Input
                   v-model.number="form.sortOrder"
                   type="number"
