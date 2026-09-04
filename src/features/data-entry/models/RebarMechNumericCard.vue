@@ -4,6 +4,7 @@
 // passthrough（断后伸长率/最大力总伸长率）、ratio_tensile_over_yield / ratio_measured_over_spec_yield（比值卡）。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps, ParamTechReq } from "./types";
+import Input from "@/components/ui/Input.vue";
 import { autoVerdict } from "./cement-strength";
 import {
   parseRebarMechResult,
@@ -223,14 +224,14 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
     <div class="flex items-center gap-3 text-xs bg-gray-50 rounded p-2">
       <span v-if="needsDiameter" class="text-gray-500">
         直径 d (mm)
-        <input
+        <Input
           type="number"
           step="0.1"
           placeholder="直径"
-          :value="(state.diameter ?? 0) === 0 ? '' : state.diameter"
+          :model-value="(state.diameter ?? 0) === 0 ? '' : state.diameter"
           :readonly="readOnly"
           aria-label="公称直径"
-          class="ml-1 w-24 border rounded px-2 py-1 text-sm read-only:bg-gray-50 read-only:text-gray-500"
+          class="ml-1 w-24 read-only:bg-gray-50 read-only:text-gray-500"
           @change="(e) => updateDiameter((e.target as HTMLInputElement).value)"
         />
       </span>
@@ -263,14 +264,14 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
         <tr v-for="i in indices" :key="i">
           <td class="py-1">{{ i + 1 }}</td>
           <td class="py-1">
-            <input
+            <Input
               type="number"
               step="0.01"
               :placeholder="inputLabel"
-              :value="(state.loads[i] ?? 0) === 0 ? '' : state.loads[i]"
+              :model-value="(state.loads[i] ?? 0) === 0 ? '' : state.loads[i]"
               :readonly="readOnly"
               :aria-label="`第 ${i + 1} 组 ${inputLabel}`"
-              class="w-28 border rounded px-2 py-1 text-sm read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-28 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
           </td>
