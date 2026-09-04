@@ -7,6 +7,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // @entry M06.F06.I01
@@ -204,10 +205,10 @@ async function confirmDelete(): Promise<void> {
     </div>
 
     <div class="flex flex-wrap gap-2">
-      <input v-model="brandFilter" aria-label="牌号筛选" class="border rounded h-9 px-2 text-sm bg-white max-w-32" placeholder="牌号" />
-      <input v-model="modelFilter" aria-label="型号筛选" class="border rounded h-9 px-2 text-sm bg-white max-w-32" placeholder="型号" />
-      <input v-model="gradeFilter" aria-label="等级筛选" class="border rounded h-9 px-2 text-sm bg-white max-w-32" placeholder="等级" />
-      <input v-model="specFilter" aria-label="规格筛选" class="border rounded h-9 px-2 text-sm bg-white max-w-32" placeholder="规格" />
+      <Input v-model="brandFilter" aria-label="牌号筛选" class="max-w-32" placeholder="牌号" />
+      <Input v-model="modelFilter" aria-label="型号筛选" class="max-w-32" placeholder="型号" />
+      <Input v-model="gradeFilter" aria-label="等级筛选" class="max-w-32" placeholder="等级" />
+      <Input v-model="specFilter" aria-label="规格筛选" class="max-w-32" placeholder="规格" />
     </div>
 
     <div v-if="error" role="alert" class="text-sm text-red-600 bg-red-50 p-2 rounded">{{ error }}</div>
@@ -303,24 +304,24 @@ async function confirmDelete(): Promise<void> {
             </div>
             <div>
               <label class="text-sm font-medium">判定标准</label>
-              <input v-model="form.judgmentStandardCode" class="border rounded h-9 px-2 text-sm bg-white w-full font-mono" placeholder="如 GB 175-2023" />
+              <Input v-model="form.judgmentStandardCode" class="font-mono" placeholder="如 GB 175-2023" />
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="text-sm font-medium">牌号</label>
-                <input v-model="form.brand" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.brand" />
               </div>
               <div>
                 <label class="text-sm font-medium">型号</label>
-                <input v-model="form.model" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.model" />
               </div>
               <div>
                 <label class="text-sm font-medium">等级</label>
-                <input v-model="form.grade" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.grade" />
               </div>
               <div>
                 <label class="text-sm font-medium">规格</label>
-                <input v-model="form.spec" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.spec" />
               </div>
             </div>
             <div class="grid grid-cols-3 gap-3">
@@ -332,16 +333,16 @@ async function confirmDelete(): Promise<void> {
               </div>
               <div>
                 <label class="text-sm font-medium">下限</label>
-                <input v-model="form.minValue" type="number" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.minValue" type="number" />
               </div>
               <div>
                 <label class="text-sm font-medium">上限</label>
-                <input v-model="form.maxValue" type="number" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.maxValue" type="number" />
               </div>
             </div>
             <div>
               <label class="text-sm font-medium">备注</label>
-              <input v-model="form.remark" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+              <Input v-model="form.remark" />
             </div>
           </div>
           <div class="px-6 py-3 flex justify-end gap-2 border-t">
