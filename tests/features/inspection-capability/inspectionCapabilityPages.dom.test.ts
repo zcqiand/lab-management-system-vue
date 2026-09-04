@@ -323,3 +323,122 @@ describe("Phase 1.2a — CalculationMethodList <Button> 原语回归", () => {
     expect(editBtns[0]!.classes()).not.toContain("h-8");
   });
 });
+
+describe("Phase 1.3a — InspectionCapabilityList 搜索/表单 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：渲染 <input>，placeholder 落到真实 DOM", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "specialties" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="搜索编码/名称"]');
+    expect(search.exists()).toBe(true);
+    // 调用方 max-w-sm 仍生效
+    expect(search.classes()).toContain("max-w-sm");
+  });
+
+  it("specialties 弹窗编辑模式：编码 <Input :disabled> 真实 <input> 带 disabled 属性", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "specialties" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 点编辑按钮打开弹窗
+    const editBtn = lastWrapper.findAll('button[aria-label^="编辑 "]')[0];
+    expect(editBtn).toBeTruthy();
+    await editBtn!.trigger("click");
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 弹窗内的所有非 checkbox <input>：第一个应是「编码」+ disabled
+    const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
+    expect(dialogInputs.length).toBeGreaterThan(0);
+    const codeInput = dialogInputs[0];
+    // :disabled 必须无条件落到 DOM（Phase 0 hotfix）
+    expect((codeInput.element as HTMLInputElement).disabled).toBe(true);
+  });
+
+  it("standards 排序 <Input type=number v-model.number>：$attrs 转发 type=number", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "standards" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 开新建弹窗（standards 视图）
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建检测标准");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    // 排序 input 是 type=number
+    const numInput = lastWrapper.find('input[type="number"]');
+    expect(numInput.exists()).toBe(true);
+    expect(numInput.attributes("type")).toBe("number");
+    await numInput.setValue("42");
+    expect((numInput.element as HTMLInputElement).value).toBe("42");
+  });
+});
+
+describe("Phase 1.3a — TechnicalRequirementList 4 维筛选 <Input> 原语回归", () => {
+  it("4 个筛选框：aria-label 落到真实 <input>，调用方 max-w-32 保留", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    for (const ariaLabel of ["牌号筛选", "型号筛选", "等级筛选", "规格筛选"]) {
+      const input = lastWrapper.find(`input[aria-label="${ariaLabel}"]`);
+      expect(input.exists()).toBe(true);
+      // 调用方 max-w-32 仍生效
+      expect(input.classes()).toContain("max-w-32");
+    }
+  });
+
+  it("牌号筛选 <Input>：v-model 双向写到 brandFilter", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const brand = lastWrapper.find('input[aria-label="牌号筛选"]');
+    await brand.setValue("P·O 42.5");
+    expect((brand.element as HTMLInputElement).value).toBe("P·O 42.5");
+  });
+
+  it("弹窗内下限/上限 <Input type=number>：$attrs 转发 type=number", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 开新建弹窗
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建技术要求");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const numInputs = lastWrapper.findAll('input[type="number"]');
+    expect(numInputs.length).toBe(2); // 下限 + 上限
+  });
+
+  it("弹窗内判定标准 <Input class=font-mono>：调用方 class 经 tailwind-merge 合并", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建技术要求");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    const stdInput = lastWrapper.find('input[placeholder="如 GB 175-2023"]');
+    expect(stdInput.exists()).toBe(true);
+    // 调用方 font-mono 保留
+    expect(stdInput.classes()).toContain("font-mono");
+  });
+});

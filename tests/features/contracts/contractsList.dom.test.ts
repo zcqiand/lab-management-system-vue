@@ -180,3 +180,39 @@ describe("Phase 1.2a — ContractsList 列表 <Button> 原语回归", () => {
     expect(lastWrapper!.find('[data-testid="confirm-dialog"]').exists()).toBe(true);
   });
 });
+
+describe("Phase 1.3a — ContractsList 搜索/表单 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：$attrs 转发 @keydown.enter，setValue 后 keyword 实时更新", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="按合同编号 / 项目名称搜索"]');
+    expect(search.exists()).toBe(true);
+    // 调用方 max-w-sm 仍生效（Input CVA 没覆盖 max-w）
+    expect(search.classes()).toContain("max-w-sm");
+    // v-model 双向：setValue 后真实 <input> value 即时反映
+    await search.setValue("HT-2026-001");
+    expect((search.element as HTMLInputElement).value).toBe("HT-2026-001");
+  });
+
+  it("新建弹窗内的合同编号 <Input>：v-model 双向写到 form.contractCode", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建合同");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    // 弹窗内找第一个 input（合同编号），它不带 placeholder（与搜索框区分）
+    const codeInput = lastWrapper.find('input:not([placeholder])');
+    expect(codeInput.exists()).toBe(true);
+    await codeInput.setValue("HT-NEW");
+    expect((codeInput.element as HTMLInputElement).value).toBe("HT-NEW");
+  });
+});

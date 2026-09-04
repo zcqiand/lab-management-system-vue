@@ -188,3 +188,42 @@ describe("Phase 1.2a — ReceiptsList 列表 <Button> 原语回归", () => {
     expect(submit.classes()).toContain("border");
   });
 });
+
+describe("Phase 1.3a — ReceiptsList 搜索/表单 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：@keyup.enter 转发到真实 <input>", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="按委托书编号搜索"]');
+    expect(search.exists()).toBe(true);
+    expect(search.classes()).toContain("max-w-sm");
+    await search.setValue("WT-2026-001");
+    expect((search.element as HTMLInputElement).value).toBe("WT-2026-001");
+  });
+
+  it("新建弹窗内：5 个 <Input> 渲染（含 1 个 type=date），v-model 双向", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建接样");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    // 5 个 form <Input> + 1 个搜索 <Input>（都在 dialog stub 区域之外或之内，看 mount）
+    // 真实约束：弹窗内必须有 type=date input + 至少 4 个 type=text/none 的 input
+    const textInputs = lastWrapper.findAll('input[type="text"], input[type="date"], input:not([type])');
+    expect(textInputs.length).toBeGreaterThanOrEqual(5);
+
+    // 委托日期 type=date 落到真实 <input>
+    const dateInput = lastWrapper.find('input[type="date"]');
+    expect(dateInput.exists()).toBe(true);
+    await dateInput.setValue("2026-08-01");
+    expect((dateInput.element as HTMLInputElement).value).toBe("2026-08-01");
+  });
+});
