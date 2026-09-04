@@ -10,6 +10,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 
 type FlowStage =
   | "receiving"
@@ -113,10 +114,10 @@ async function handleSave(): Promise<void> {
     </div>
 
     <div class="mb-4 flex gap-2">
-      <input
+      <Input
         v-model="keyword"
         placeholder="按委托书编号搜索"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         @keyup.enter="load()"
       />
       <Button variant="outline" @click="load()">搜索</Button>
@@ -185,17 +186,17 @@ async function handleSave(): Promise<void> {
           <p class="text-sm text-slate-500 mb-3">指定检测人员与计划检测日期。</p>
           <div class="space-y-3">
             <label class="text-xs block">检测人员 *
-              <input
+              <Input
                 v-model="assigneeName"
                 placeholder="如：张三"
-                class="border rounded h-9 px-2 text-sm w-full mt-1"
+                class="mt-1"
               />
             </label>
             <label class="text-xs block">计划检测日期 *
-              <input
+              <Input
                 v-model="plannedTestDate"
                 type="date"
-                class="border rounded h-9 px-2 text-sm w-full mt-1"
+                class="mt-1"
               />
             </label>
           </div>

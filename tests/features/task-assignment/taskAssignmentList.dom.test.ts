@@ -134,3 +134,48 @@ describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
     expect(cancel!.classes()).toContain("border");
   });
 });
+
+// Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：搜索 <Input> @keyup.enter 落到真实 DOM；
+// 弹窗 2 个 form <Input>：检测人员 字符串 + 计划日期 type=date。
+describe("Phase 1.3b — TaskAssignmentList 搜索/弹窗 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：渲染 <input>，v-model 双向写回", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="按委托书编号搜索"]');
+    expect(search.exists()).toBe(true);
+    expect(search.classes()).toContain("max-w-sm");
+    expect(search.classes()).toContain("h-9");
+    await search.setValue("WT-2026-002");
+    expect((search.element as HTMLInputElement).value).toBe("WT-2026-002");
+  });
+
+  it("弹窗 2 个 form <Input>：检测人员 字符串 + 计划日期 type=date 落 DOM", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await flushPromises();
+
+    const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
+    expect(dialogInputs.length).toBe(2);
+
+    // 检测人员 placeholder 落到真实 DOM
+    const nameInput = lastWrapper.find('input[placeholder="如：张三"]');
+    expect(nameInput.exists()).toBe(true);
+    await nameInput.setValue("张三");
+    expect((nameInput.element as HTMLInputElement).value).toBe("张三");
+
+    // 计划日期 type=date
+    const dateInput = lastWrapper.find('[data-teleport-stub] input[type="date"]');
+    expect(dateInput.exists()).toBe(true);
+    expect(dateInput.attributes("type")).toBe("date");
+  });
+});
