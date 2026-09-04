@@ -20,6 +20,11 @@ import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ParameterStandardLinkDialog from "@/features/inspection-capability/ParameterStandardLinkDialog.vue";
 import { normalizeListResponse, unwrapListResponse } from "@/lib/responses";
+import Select from "@/components/ui/Select.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 
 // 失败兜底：axios catch 需要一个 AxiosResponse 形态的对象占位；
 // unwrapListResponse 只读 .data，所以这个 stub 仅 .data 字段被消费。
@@ -180,17 +185,22 @@ async function load(): Promise<void> {
   try {
     const params: Record<string, string | number> = { page: 1, pageSize: 50 };
     if (keyword.value.trim()) params.keyword = keyword.value.trim();
-    if (props.resource === "objects" && specialtyFilter.value) {
-      params.inspectionSpecialtyCode = specialtyFilter.value;
+    // filter "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui SelectItem
+    // 显式禁止空字符串 value；空串是 placeholder 保留值），load() 里翻译回空串跳过条件过滤
+    const specialtyVal = specialtyFilter.value === "__all__" ? "" : specialtyFilter.value;
+    const objectVal = objectFilter.value === "__all__" ? "" : objectFilter.value;
+    const standardVal = standardFilter.value === "__all__" ? "" : standardFilter.value;
+    if (props.resource === "objects" && specialtyVal) {
+      params.inspectionSpecialtyCode = specialtyVal;
     }
     if (props.resource === "standards") {
-      if (specialtyFilter.value) params.inspectionSpecialtyCode = specialtyFilter.value;
-      if (objectFilter.value) params.inspectionObjectCode = objectFilter.value;
+      if (specialtyVal) params.inspectionSpecialtyCode = specialtyVal;
+      if (objectVal) params.inspectionObjectCode = objectVal;
     }
     if (props.resource === "parameters") {
-      if (specialtyFilter.value) params.inspectionSpecialtyCode = specialtyFilter.value;
-      if (objectFilter.value) params.inspectionObjectCode = objectFilter.value;
-      if (standardFilter.value) params.inspectionStandardCode = standardFilter.value;
+      if (specialtyVal) params.inspectionSpecialtyCode = specialtyVal;
+      if (objectVal) params.inspectionObjectCode = objectVal;
+      if (standardVal) params.inspectionStandardCode = standardVal;
     }
     const res = await axios.get<unknown>(route.value, { params });
     const { items: listItems, total: listTotal } = unwrapListResponse<ListItem>(res);
@@ -280,7 +290,9 @@ async function submitForm(): Promise<void> {
     payload.isOfficial = form.isOfficial === true;
     payload.enabled = form.enabled === true;
   } else if (props.resource === "objects") {
-    payload.inspectionSpecialtyCode = form.inspectionSpecialtyCode || undefined;
+    // __none__ 是 reka-ui SelectItem 替代 raw <option value=""> 的 sentinel
+    const specVal = form.inspectionSpecialtyCode;
+    payload.inspectionSpecialtyCode = specVal && specVal !== "__none__" ? specVal : undefined;
     payload.sourceProjectNo = form.sourceProjectNo || undefined;
     payload.sourceProjectName = form.sourceProjectName || undefined;
     payload.isOfficial = form.isOfficial === true;
@@ -382,33 +394,57 @@ function cellOf(item: ListItem, idx: number): string {
         class="max-w-sm"
         placeholder="搜索编码/名称"
       />
-      <select
+      <Select
         v-if="props.resource !== 'specialties'"
         v-model="specialtyFilter"
-        class="border rounded h-9 px-2 text-sm bg-white"
-        aria-label="检测专项筛选"
       >
-        <option value="">全部专项</option>
-        <option v-for="s in specialtyOptions" :key="s.code" :value="s.code">{{ s.name }}</option>
-      </select>
-      <select
+        <SelectTrigger
+          class="w-48"
+          aria-label="检测专项筛选"
+        >
+          <SelectValue placeholder="全部专项" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">全部专项</SelectItem>
+          <SelectItem v-for="s in specialtyOptions" :key="s.code" :value="s.code">
+            {{ s.name }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+      <Select
         v-if="props.resource === 'standards' || props.resource === 'parameters'"
         v-model="objectFilter"
-        class="border rounded h-9 px-2 text-sm bg-white"
-        aria-label="检测项目筛选"
       >
-        <option value="">全部项目</option>
-        <option v-for="o in objectOptions" :key="o.code" :value="o.code">{{ o.name }}</option>
-      </select>
-      <select
+        <SelectTrigger
+          class="w-48"
+          aria-label="检测项目筛选"
+        >
+          <SelectValue placeholder="全部项目" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">全部项目</SelectItem>
+          <SelectItem v-for="o in objectOptions" :key="o.code" :value="o.code">
+            {{ o.name }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+      <Select
         v-if="props.resource === 'parameters'"
         v-model="standardFilter"
-        class="border rounded h-9 px-2 text-sm bg-white"
-        aria-label="检测标准筛选"
       >
-        <option value="">全部标准</option>
-        <option v-for="s in standardOptions" :key="s.code" :value="s.code">{{ s.code }}</option>
-      </select>
+        <SelectTrigger
+          class="w-48"
+          aria-label="检测标准筛选"
+        >
+          <SelectValue placeholder="全部标准" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">全部标准</SelectItem>
+          <SelectItem v-for="s in standardOptions" :key="s.code" :value="s.code">
+            {{ s.code }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
     </div>
 
     <div v-if="error" role="alert" class="text-sm text-red-600 bg-red-50 p-2 rounded">{{ error }}</div>
@@ -512,11 +548,18 @@ function cellOf(item: ListItem, idx: number): string {
             </div>
             <div v-else-if="props.resource === 'objects'" class="space-y-3">
               <div>
-                <Label>检测专项编码</Label>
-                <select v-model="form.inspectionSpecialtyCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option value="">未选择</option>
-                  <option v-for="s in specialtyOptions" :key="s.code" :value="s.code">{{ s.code }} {{ s.name }}</option>
-                </select>
+                <Label for="inspectionSpecialtyCode">检测专项编码</Label>
+                <Select v-model="form.inspectionSpecialtyCode">
+                  <SelectTrigger id="inspectionSpecialtyCode" class="w-full">
+                    <SelectValue placeholder="未选择" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">未选择</SelectItem>
+                    <SelectItem v-for="s in specialtyOptions" :key="s.code" :value="s.code">
+                      {{ s.code }} {{ s.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>
@@ -543,11 +586,16 @@ function cellOf(item: ListItem, idx: number): string {
                 <Input v-model="form.unit" />
               </div>
               <div>
-                <Label>来源类型</Label>
-                <select v-model="form.sourceType" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option value="official">官方</option>
-                  <option value="custom">自定义</option>
-                </select>
+                <Label for="sourceType">来源类型</Label>
+                <Select v-model="form.sourceType">
+                  <SelectTrigger id="sourceType" class="w-full">
+                    <SelectValue placeholder="选择来源类型" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="official">官方</SelectItem>
+                    <SelectItem value="custom">自定义</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div v-else class="grid grid-cols-3 gap-3">
@@ -556,12 +604,17 @@ function cellOf(item: ListItem, idx: number): string {
                 <Input v-model="form.version" />
               </div>
               <div>
-                <Label>状态</Label>
-                <select v-model="form.status" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option value="active">现行</option>
-                  <option value="superseded">被替代</option>
-                  <option value="draft">草案</option>
-                </select>
+                <Label for="status">状态</Label>
+                <Select v-model="form.status">
+                  <SelectTrigger id="status" class="w-full">
+                    <SelectValue placeholder="选择状态" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">现行</SelectItem>
+                    <SelectItem value="superseded">被替代</SelectItem>
+                    <SelectItem value="draft">草案</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>来源文件</Label>

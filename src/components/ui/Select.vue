@@ -19,7 +19,11 @@ import { SelectRoot } from "reka-ui";
 defineOptions({ inheritAttrs: false });
 
 const props = defineProps<{
-  modelValue?: string | number;
+  // Phase 2d-2 hotfix: 放宽到 string | number | boolean，让 v-model 在
+  // reactive Record<string, string|number|boolean> 上不报 TS2322（与 Input.vue 一致）。
+  // emit 仍写 string | number —— reka-ui SelectItem 端是 string|number；
+  // boolean 仅作契约兜底（<Select> 不应绑 boolean —— 留给 Checkbox 原语）。
+  modelValue?: string | number | boolean;
   defaultValue?: string | number;
   disabled?: boolean;
   name?: string;
@@ -35,12 +39,12 @@ defineEmits<{
 <template>
   <SelectRoot
     v-bind="$attrs"
-    :model-value="props.modelValue"
+    :model-value="(props.modelValue as string | number | undefined)"
     :default-value="props.defaultValue"
     :disabled="props.disabled ?? undefined"
     :name="props.name"
     :required="props.required ?? undefined"
-    @update:model-value="$emit('update:modelValue', $event)"
+    @update:model-value="(v: string | number) => $emit('update:modelValue', v)"
     @update:open="$emit('update:open', $event)"
   >
     <slot />
