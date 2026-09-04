@@ -11,6 +11,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 
 type FlowStage =
   | "receiving"
@@ -185,20 +186,20 @@ async function handleSave(): Promise<void> {
           <h2 class="text-lg font-semibold">任务安排 — {{ assignTarget.commissionCode }}</h2>
           <p class="text-sm text-slate-500 mb-3">指定检测人员与计划检测日期。</p>
           <div class="space-y-3">
-            <label class="text-xs block">检测人员 *
+            <Label class="text-xs block">检测人员 *
               <Input
                 v-model="assigneeName"
                 placeholder="如：张三"
                 class="mt-1"
               />
-            </label>
-            <label class="text-xs block">计划检测日期 *
+            </Label>
+            <Label class="text-xs block">计划检测日期 *
               <Input
                 v-model="plannedTestDate"
                 type="date"
                 class="mt-1"
               />
-            </label>
+            </Label>
           </div>
           <div class="mt-4 flex justify-end gap-2">
             <Button variant="outline" @click="assignTarget = null">取消</Button>
