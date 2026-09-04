@@ -5,6 +5,12 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps, ParamTechReq } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 import { autoVerdict } from "./cement-strength";
 import {
   parseTensileRecord,
@@ -167,20 +173,20 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
       </span>
     </div>
 
-    <table class="w-full text-xs">
-      <thead class="text-gray-500">
-        <tr>
-          <th class="text-left py-1 w-6">#</th>
-          <th class="text-left py-1">最大荷重 (kN)</th>
-          <th class="text-left py-1">抗拉强度 (MPa)</th>
-          <th class="text-left py-1">断口距 (mm)</th>
-          <th class="text-left py-1">断裂特征</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="t in trialIndices" :key="t">
-          <td class="py-1">{{ t + 1 }}</td>
-          <td class="py-1">
+    <Table class="w-full text-xs">
+      <TableHeader class="text-gray-500">
+        <TableRow>
+          <TableHead class="text-left py-1 w-6">#</TableHead>
+          <TableHead class="text-left py-1">最大荷重 (kN)</TableHead>
+          <TableHead class="text-left py-1">抗拉强度 (MPa)</TableHead>
+          <TableHead class="text-left py-1">断口距 (mm)</TableHead>
+          <TableHead class="text-left py-1">断裂特征</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="t in trialIndices" :key="t">
+          <TableCell class="py-1">{{ t + 1 }}</TableCell>
+          <TableCell class="py-1">
             <Input
               type="number"
               step="0.01"
@@ -191,11 +197,11 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               class="w-24 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e: Event) => updateLoad(t, (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td class="py-1 text-gray-700">
+          </TableCell>
+          <TableCell class="py-1 text-gray-700">
             {{ spec.strengths[t] > 0 ? Number(spec.strengths[t]).toFixed(1) : '-' }}
-          </td>
-          <td class="py-1">
+          </TableCell>
+          <TableCell class="py-1">
             <Input
               type="number"
               step="0.1"
@@ -206,8 +212,8 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               class="w-20 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e: Event) => updateDistance(t, (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td class="py-1">
+          </TableCell>
+          <TableCell class="py-1">
             <select
               :value="spec.fractureCharacteristics[t]"
               :disabled="readOnly"
@@ -218,10 +224,10 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               <option value="">未选</option>
               <option v-for="opt in FRACTURE_OPTIONS" :key="opt" :value="opt">{{ opt }}</option>
             </select>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
 
     <div class="text-xs text-gray-600">
       均值：<span class="font-medium text-gray-900">{{ mean ?? '—' }}</span>
