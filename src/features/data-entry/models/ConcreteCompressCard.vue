@@ -3,6 +3,7 @@
 // N 试件 × 破坏荷载 → 只读抗压强度 → 代表值=均值。无 ±10% 剔除（混凝土按代表值评定）。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 
 const props = defineProps<ParamModelProps>();
 const { parameter: p, record, sampleId, config, onChange, readOnly = false } = props;
@@ -80,13 +81,13 @@ function updateLoad(i: number, v: string) {
         <tr v-for="(lv, i) in loads" :key="i">
           <td class="py-1">{{ i + 1 }}</td>
           <td class="py-1">
-            <input
+            <Input
               type="number"
               placeholder="破坏荷载 (kN)"
-              :value="lv === 0 ? '' : lv"
+              :model-value="lv === 0 ? '' : lv"
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 破坏荷载`"
-              class="w-32 border rounded px-2 py-1 text-sm read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
           </td>
