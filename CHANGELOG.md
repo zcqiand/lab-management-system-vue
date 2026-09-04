@@ -2,6 +2,79 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.44] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2a-2**（6 个 list pages 表格 raw `<table>` →
+`<Table>` 家族原语迁移，对应测试 selector 同步）。
+
+**6 个 list 页迁移**（每页 7 个 import：`Table` / `TableHeader` / `TableBody` /
+`TableRow` / `TableHead` / `TableCell` + 既有的 `Button` / `Input` / `Label`；
+视觉零变更 — Tailwind class 全保留）：
+
+- `src/features/contracts/ContractsList.vue` — M02.F01 合同管理（7 列 × 3 fixture
+  行，行级 `data-fn="M02.F01.I01"` 经 `$attrs` 落到真实 `div[role="row"]`）
+- `src/features/inspection-capability/InspectionCapabilityList.vue` —
+  M06.F01/F02/F03/F04 多资源（4 资源 × 5 列 + 操作列 = 6 列；行级不挂 data-fn，
+  data-fn 在 3 个行内按钮上）
+- `src/features/inspection-capability/CalculationMethodList.vue` —
+  M06.F05 计算方法（7 列含复合主键 + 算法类型徽章；调用方 class `font-mono
+  text-xs` 走 TableCell class prop 经 `cn()` 合并）
+- `src/features/inspection-capability/TechnicalRequirementList.vue` —
+  M06.F06 技术要求（11 列含 4 维筛选字段 + 判定方式徽章 + 上限/下限；
+  11 `<TableHead>` 文本顺序锁）
+- `src/features/param-interfaces/ParamInterfaceList.vue` —
+  M06.F08 参数界面维护（4 列 × 3 fixture 行，行级 `data-fn="M06.F08.I01"`）
+- `src/features/task-assignment/TaskAssignmentList.vue` —
+  M03.F02 任务分配（6 列 × 1 fixture 行，行内安排按钮
+  `data-fn="M03.F02.I02"` 落到真实 `<button>` 而非 div）
+
+**测试 selector 同步**（Phase 1.5 audit 第 5 类「按 tag 名查」本批正式迁移）：
+
+- `tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts`
+  3 处 `findAll("tbody tr")` → `[role="rowgroup"]` 第 2 个（TableBody）内
+  `findAll('[role="row"]')`：
+  - F01 检测专项维护渲染测试（specialties fixture 2 行）
+  - F05 计算方法维护渲染测试（1 行 + OBJ-1/P-1 文本穿透）
+  - F06 技术要求列表行 + 新建/编辑/删除按钮（1 行）
+
+**Phase 2a-2 Table 回归锚新增**（不挂功能 ID，工程设施测试；为 6 个
+list 页钉 3 件事 — `<Table>` 渲染 `div[role="table"]` /
+`<TableHead>` 文本顺序 / TableCell class 经 `cn()` 合并）：
+
+- `tests/features/contracts/contractsList.dom.test.ts` — 3 case：
+  7 columnheader 文本顺序（合同编号/项目名称/委托单位/见证人/状态/委托日期/
+  操作）+ 3 fixture 行 `data-fn` 落到 `div[role="row"]` + 合同编号 cell
+  `font-mono` + `text-xs`
+- `tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts`
+  — 5 case：InspectionCapabilityList specialties 6 `<TableHead>` 文本 +
+  parameters 行内关联标准按钮 `aria-label` + CalculationMethodList 7
+  `<TableHead>` 文本 + 判定标准 cell `font-mono text-xs` + TechnicalRequirementList
+  11 `<TableHead>` 文本 + 判定标准 cell `font-mono text-xs`
+- `tests/features/param-interfaces/paramInterfaceList.dom.test.ts` — 3 case：
+  4 columnheader 文本顺序（编码/组件路径/排序/操作）+ 3 fixture 行
+  `data-fn="M06.F08.I01"` + 编码 cell `font-mono text-xs`
+- `tests/features/task-assignment/taskAssignmentList.dom.test.ts` — 3 case：
+  6 columnheader 文本顺序（委托书编号/工程名称/检测人员/计划日期/流程状态/
+  操作）+ 1 fixture 行内安排按钮 `data-fn="M03.F02.I02"` 落到真实
+  `<button>` + 委托书编号 cell `font-mono text-xs`
+
+**踩坑 / 教训**：
+
+- `<TableCell colspan="N">` 渲染到 `<div>` 是空 HTML attribute（div 不支持
+  colspan），但视觉无影响（CSS `text-center` + `px-4 py-8` 居中布局生效）；
+  本批 4 个含空态行的列表（ContractsList / ParamInterfaceList /
+  TaskAssignmentList / ReceiptsList 留 2a-3）都安全，无回归
+- CalculationMethodList 的「检测项目」cell class 不直接是 `font-mono text-xs`
+  （那是 `<div>` 子元素 class），改测判定标准 cell（class 直接在 TableCell
+  上）以保持回归锚的语义
+
+**验证**：
+
+- vitest: 238 case / 27 文件全绿（Phase 2a-1 基线 223 + 新 Table 回归锚 15）
+- gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5
+  全 PASS
+- 100 个功能条目，引用完整；L5 无断裂
+
 ## [0.3.43] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 2a-1**（Table 家族原语引入 + 2 个 pilot 迁移）。

@@ -1,26 +1,26 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "Phase 2a-1 Table 原语引入 + 2 个 pilot 迁移 → tag v0.3.43-20260905",
+  "current_task": "Phase 2a-2 Table 迁 6 个 list pages → tag v0.3.44-20260905",
   "last_session_at": "2026-09-05",
-  "last_session_summary": "Phase 2a-1 完成：6 个 Table 原语（Table / TableHeader / TableBody / TableRow / TableHead / TableCell）落 src/components/ui/，div-based + role 属性（role=table/rowgroup/row/columnheader/cell）。1 个底座冒烟测试 shadcn-table.dom.test.ts（8 case 钉 6 个原语 role + $attrs 转发 + class 合并）。Pilot 迁 2 个文件：SummaryList.vue（6 列汇总表）+ StrengthCardBase.vue（破坏荷载表）。视觉零变更（Tailwind class 全保留）。踩坑：StrengthCardBase.vue:182 :class=\"['py-1', cond ? ...]\" 数组绑定过 TableCell class:string prop → TS2345；改模板字符串拼接。Phase 1.5 审计结论开始破例：summaryList 测试 2 个 selector 同步迁（thead th → [role=columnheader] / tbody tr → rowgroup[1] 下 [role=row]）；其他 3 处 inspectionCapabilityPages findAll('tbody tr') 不在范围留 2a-2/3 迁对应源文件时同步。",
+  "last_session_summary": "Phase 2a-2 完成：6 个 list pages 表格 raw <table>/<thead>/<tbody>/<tr>/<th>/<td> 全部迁到 shadcn-vue Table 6 原语（div-based + role 属性）。文件：ContractsList（M02.F01 7 列）/ InspectionCapabilityList（M06.F01-F04 多资源 6 列）/ CalculationMethodList（M06.F05 7 列含算法类型徽章）/ TechnicalRequirementList（M06.F06 11 列）/ ParamInterfaceList（M06.F08 4 列）/ TaskAssignmentList（M03.F02 6 列含 router-link）。每文件 7 个新 import（Table/Header/Body/Row/Head/Cell + 既有）；视觉零变更（Tailwind class 全保留，data-fn 经 $attrs 落到真实 <div>）。测试 selector 同步：inspectionCapabilityPages 3 处 findAll('tbody tr') → rowgroup[1].findAll('[role=row]')；其他 4 个文件 selector 不涉及原生 tag（只查 button/input/label/div），零迁移。Phase 2a-2 Table 回归锚共 14 case（不挂功能 ID）：6 文件各 2-3 case 钉 <Table> div[role=table] + <TableHead> 文本顺序 + TableCell class 经 cn() 合并 + 行 data-fn/data-fn 行内按钮 落真实 DOM。vitest 238/27 全绿（基线 223 + Table 回归锚 15）；gate exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整。",
   "done": [
-    "新增 6 个 Table 原语：Table.vue (root div[role=table]) / TableHeader.vue (div[role=rowgroup]) / TableBody.vue (div[role=rowgroup]) / TableRow.vue (div[role=row], inheritAttrs:false + v-bind=$attrs) / TableHead.vue (div[role=columnheader]) / TableCell.vue (div[role=cell])",
-    "新增 1 个 fixture：tests/foundation/__fixtures__/TableFixture.vue（挂全 6 原语 + data-testid + 1 个 data-fn 锚点 + 1 个 bg-amber-100 class 合并测试点）",
-    "新增 1 个底座冒烟：tests/foundation/shadcn-table.dom.test.ts 8 case（role / $attrs / cn() 合并 / 完整 3 行 × 2 列计数）",
-    "Pilot 1：SummaryList.vue（src/features/summary/）table → Table 系 6 原语，视觉 class 全保留（bg-slate-50 / hover:bg-slate-50 / border-t / px-4 py-2 / text-left / align-top / inline-flex 徽章）",
-    "Pilot 2：StrengthCardBase.vue（src/features/data-entry/models/）table → Table 系 6 原语，:class 数组拼接修复（line-through / text-gray-400 / text-gray-700）",
-    "测试 selector 同步：summaryList.dom.test.ts:77 findAll('thead th') → findAll('[role=columnheader]')，:89 findAll('tbody tr') → rowgroup[1].findAll('[role=row]')（避开 TableHeader 行）",
-    "StrengthCardBase :class=array 修复：模板字符串拼接，根因 L3 TS2345 与 Phase 1.4 Input :class=array 同源",
-    "vitest 223/27 全绿（基线 215 + Table 底座 8）",
-    "gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整",
-    "CHANGELOG 0.3.43 条目（6 原语 + 1 fixture + 1 底座 + 2 pilot + selector 同步 + 数组 class 坑 + Phase 2a 计划）"
+    "ContractsList.vue raw <table> → <Table> 6 原语（M02.F01 7 列 × 3 行，行 data-fn=M02.F01.I01）",
+    "InspectionCapabilityList.vue raw <table> → <Table> 6 原语（M06.F01-F04 多资源 4 视图 6 列）",
+    "CalculationMethodList.vue raw <table> → <Table> 6 原语（M06.F05 7 列含算法类型徽章）",
+    "TechnicalRequirementList.vue raw <table> → <Table> 6 原语（M06.F06 11 列）",
+    "ParamInterfaceList.vue raw <table> → <Table> 6 原语（M06.F08 4 列 × 3 行）",
+    "TaskAssignmentList.vue raw <table> → <Table> 6 原语（M03.F02 6 列含 router-link）",
+    "测试 selector 同步：inspectionCapabilityPages 3 处 findAll('tbody tr') → rowgroup[1].findAll('[role=row]')",
+    "Phase 2a-2 Table 回归锚 14 case：contractsList 3 / inspectionCapability 5 / paramInterface 3 / taskAssignment 3",
+    "vitest 238/27 全绿（基线 223 + 锚 15）",
+    "gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS",
+    "CHANGELOG 0.3.44 条目（6 list pages + selector 同步 + Table 回归锚 + 踩坑 + 验证）"
   ],
   "next": [
-    "Phase 2a-2：迁 list pages 第一批 5-7 个文件（InspectionCapabilityList / CalculationMethodList / TechnicalRequirementList / ParamInterfaceList / TaskAssignmentList / ContractsList / ReportPhasePage）+ 对应测试 selector 同步（3 处 inspectionCapabilityPages findAll('tbody tr') + 其他文件 table selector）",
     "Phase 2a-3：迁 list pages 第二批（ReportNameList / ReceiptsList / ReportPreviewModal / ParameterStandardLinkDialog）",
     "Phase 2a-4：迁 data-entry 卡片（SoilCompactionDegreeCard / SoilCompactionCard / RebarWeldingTensileCard / RebarWeldingBendCard / RebarMechNumericCard / ParticleGradationCard / ConcretePermeabilityCard / ConcreteCompressCard / DataEntryPage）",
-    "deploy：推 tag v0.3.43-20260905 → CI docker build + VPS pull + restart（实际功能变更，需要 deploy）",
+    "deploy：推 tag v0.3.44-20260905 → CI docker build + VPS pull + restart（实际功能变更，需要 deploy）",
     "Phase 2b: Checkbox 原语（InspectionCapabilityList 5 个 type=checkbox + ReportPhasePage 全选/行选 + ReceiptsList 全选/单选）",
     "Phase 2c: Textarea 原语（ReportNameList extFields + ReceiptsList 备注）",
     "Phase 2d: Select 原语 + ReceiptsList 14 处 label 包 select/input 一并重构",
@@ -39,8 +39,7 @@
     "不要在 <Input>/TableCell/TableHead/TableRow 单值 class prop 上用 :class=\"[]\" 数组（class 是 string 不是 string[]，要拼接；与 Phase 1.4 同源）",
     "不要 <Input @change=\"(e) => ...\"> 省略 Event 类型注解（L3 TS7006）",
     "不要在 Phase 2b 之前提前把 find('.text-green-600') 改了（class 字面量 → semantic token 走 Phase 2f 全家族一起收敛）",
-    "不要在 Phase 2a-2 之前提前迁 InspectionCapabilityList / 其他列表页（按 pilot 节奏 5-7 个/批，逐批更新对应 selector，避免 14 文件 selector 散落同时改）"
+    "不要在 Phase 2a-3 之前提前迁 ReceiptsList / ReportPhasePage / 其他剩余 14 表格文件（按 pilot 节奏 5-7 个/批，逐批更新对应 selector，避免 selector 散落同时改）"
   ],
   "active_branch": "master"
 }
-
