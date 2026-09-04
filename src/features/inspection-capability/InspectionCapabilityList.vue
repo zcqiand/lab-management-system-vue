@@ -8,6 +8,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import axios, { type AxiosResponse } from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Checkbox from "@/components/ui/Checkbox.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -141,6 +142,15 @@ const linkingParam = ref<ListItem | null>(null);
 
 // form 通用字段（多资源用 reactive 一次性管理）
 const form = reactive<Record<string, string | boolean | number>>({});
+
+// Phase 2b：form 是宽类型 Record（与 Input.vue 共享），但 <Checkbox> 期望严格 boolean。
+// 提供读写器：读 = `=== true` 收敛；写 = `=== true` 收敛（与 submitForm 业务侧一致）。
+function readBool(key: string): boolean {
+  return form[key] === true;
+}
+function writeBool(key: string, value: boolean | "indeterminate"): void {
+  form[key] = value === true;
+}
 
 function resetForm(): void {
   if (props.resource === "specialties") {
@@ -494,10 +504,10 @@ function cellOf(item: ListItem, idx: number): string {
                 <Input v-model="form.officialNo" />
               </div>
               <div class="pt-6 flex items-center gap-2">
-                <input v-model="form.isOfficial" type="checkbox" /> <Label>官方</Label>
+                <Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /> <Label>官方</Label>
               </div>
               <div class="pt-6 flex items-center gap-2">
-                <input v-model="form.enabled" type="checkbox" /> <Label>启用</Label>
+                <Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /> <Label>启用</Label>
               </div>
             </div>
             <div v-else-if="props.resource === 'objects'" class="space-y-3">
@@ -519,9 +529,9 @@ function cellOf(item: ListItem, idx: number): string {
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-3">
-                <div class="pt-6 flex items-center gap-2"><input v-model="form.isOfficial" type="checkbox" /><Label>官方</Label></div>
-                <div class="pt-6 flex items-center gap-2"><input v-model="form.enabled" type="checkbox" /><Label>启用</Label></div>
-                <div class="pt-6 flex items-center gap-2"><input v-model="form.isOptionalForQualification" type="checkbox" /><Label>资质可选</Label></div>
+                <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /><Label>官方</Label></div>
+                <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /><Label>启用</Label></div>
+                <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOptionalForQualification')" @update:model-value="(v) => writeBool('isOptionalForQualification', v)" /><Label>资质可选</Label></div>
               </div>
               <div class="text-xs text-slate-500">
                 已选检测参数候选：{{ parameterOptions.length }} 个（M06.F02.I02 关联）

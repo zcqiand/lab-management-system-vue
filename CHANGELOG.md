@@ -2,6 +2,87 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.48] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2b + 2c**（raw `<input type="checkbox">` / `<textarea>` →
+`<Checkbox>` / `<Textarea>` 原语）。新增 2 个原语，迁移 8 处表单控件（5 checkbox
++ 2 checkbox + 1 textarea），引入 reka-ui 的 `CheckboxRoot` 作为底层（a11y
+升级：`<button role="checkbox">` 自带键盘处理，aria-checked 三态）。
+
+**新增 2 个原语**：
+
+- `src/components/ui/Checkbox.vue` — reka-ui `CheckboxRoot` + `CheckboxIndicator`
+  包裹；shadcn-vue 标准 class 串（`h-4 w-4 rounded-sm border-primary ...`，
+  `data-[state=checked]:bg-primary`，`data-[state=indeterminate]:bg-primary`）；
+  `lucide-vue-next` 的 `<Check>` 当 checked 视觉；`inheritAttrs:false` +
+  `v-bind="$attrs"` 让 `aria-label` / `data-fn` 落到真实 `<button>`
+- `src/components/ui/Textarea.vue` — 手写原生 `<textarea>`（Phase 1.5 审计原则：
+  原生 tag 够用不引 reka-ui），shadcn-vue 标准 class 串
+  （`min-h-[60px] rounded-md border border-input bg-background ...`）；
+  `inheritAttrs:false` + `v-bind="$attrs"` 让 `data-fn` / `aria-*` 落到真实
+  `<textarea>`；modelValue 类型严格 `string`（与 `<Input>` 的 `string|number|boolean`
+  不同 — Textarea 语义上没有数字/布尔场景）
+
+**3 个文件迁移**：
+
+- `src/features/inspection-capability/InspectionCapabilityList.vue` — 5 处
+  `<input type="checkbox" v-model="form.isOfficial|enabled|isOptionalForQualification" />`
+  迁 `<Checkbox>`（specialties 资源：官方 / 启用；objects 资源：官方 / 启用 / 资质可选）
+- `src/features/reports/ReportPhasePage.vue` — 2 处 `<input type="checkbox" :checked ... @change ...>`
+  迁 `<Checkbox :model-value @update:model-value>`（全选 columnheader + 行选 cell）
+- `src/features/report-names/ReportNameList.vue` — 1 处 `<textarea v-model="form.extFieldsText" class="border rounded ... font-mono" />`
+  迁 `<Textarea v-model="form.extFieldsText" class="h-32 font-mono" />`
+  （`h-32` / `font-mono` 是业务定制保留；其他 class 由原语基类接管）
+
+**Phase 2b/c 原语回归锚 8 case**（不挂功能 ID，工程设施测试）：
+`tests/foundation/shadcn-checkbox-textarea.dom.test.ts`
+
+- `<Checkbox>` 渲染为 `<button type="button" role="checkbox">`，`aria-label` /
+  `data-fn` 走 `$attrs` 落到真实 DOM；class prop 经 `cn()` 合并调用方胜出
+- `<Checkbox>` `aria-checked` 反映初始 `modelValue`（false），点击切换为
+  true，再点击回到 false
+- `<Textarea>` 渲染为真实 `<textarea>`，`rows` / `placeholder` / `data-fn` 落到
+  真实 DOM；class prop 经 `cn()` 合并
+- `<Textarea>` setValue 双向写回（DOM value 与 v-model span 同步）
+- `<Textarea :model-value :disabled>` `disabled` 落到真实 DOM
+
+**踩坑 / 教训**：
+
+- **`form` 是宽类型 Record 时 `<Checkbox>` 的 `v-model` 直接 TS2322**：
+  `<Checkbox>` modelValue 严格 `boolean | "indeterminate"`，但
+  `form: Record<string, string|number|boolean>` 宽类型在 v-model 推导时
+  不能窄化为 boolean。试过把 Checkbox 也放宽到 `string|number|boolean|"indeterminate"`
+  —— **不行**：reka-ui 的 `update:modelValue` 回调类型从泛型 T 默认 boolean
+  走到模板里 `$event` 是 `string|number|boolean`（泛型被 v-bind 推导抹平），
+  再 emit 给外层 `boolean | "indeterminate"` 报 TS2345。最后落到 **`readBool(key)`
+  / `writeBool(key, v)` helper**：读侧 `=== true` 收敛，写侧 `=== true` 收敛，
+  业务侧 `submitForm` 也是 `=== true` 收敛，三处口径一致。`<Checkbox>` 自身
+  保持严格 boolean 类型（语义清晰）
+- **`<Checkbox>` 在原生 `<input type=checkbox>` 之上的 a11y 升级**：
+  reka-ui CheckboxRoot 默认 `as="button"` 渲染 `<button type="button" role="checkbox" aria-checked>`，
+  比 raw `<input>` 多出键盘 handling（WAI ARIA checkbox 模式：Space 切换，
+  Enter 不触发），所以测试 selector 必须从 `input[type=checkbox][aria-label=...]`
+  改 `[role=checkbox][aria-label=...]`。这是 Phase 1.5 审计原则的合理例外：
+  原生 HTML 不能给 button 一样的 checkbox 键盘语义，迁移即升级
+- **`<Textarea>` fixture 用 `:rows="4"` 而不是 `rows="4"`**：HTML 属性
+  template 编译时 `rows="4"` 给字符串 `"4"`，而 prop 类型是 number，触发
+  Vue dev warn。`vue-tsc` 不报但 VTU 跑出来会有 8 条 stderr warning
+  （grep "Invalid prop: type check failed for prop rows"）。`:rows="4"` 是
+  JS 表达式，类型对得上
+
+**验证**：
+
+- vitest: 275 case / 28 文件全绿（Phase 2a-4 基线 267 + 新 Checkbox/Textarea
+  回归锚 8）
+- vue-tsc --noEmit 零错误
+- gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5
+  全 PASS
+- 100 个功能条目，引用完整；L5 无断裂
+- `grep -rn 'type="checkbox"' src/features/` 命中 0 处（5 原 checkbox 迁完 +
+  ReportPhasePage 2 处经 form 走 Checkbox）
+- `grep -rn '<textarea' src/features/` 命中 1 处 —— 仍是 ReportNameLinkDialog
+  内的纯字符串展示模板（不是表单控件，**不在本 Phase 范围**）
+
 ## [0.3.46] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 2a-4**（数据录入页 + 8 张检测模型卡的 raw `<table>` →

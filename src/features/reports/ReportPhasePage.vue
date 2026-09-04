@@ -11,6 +11,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Checkbox from "@/components/ui/Checkbox.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -214,7 +215,11 @@ function alertError(msg: string): void {
         <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">
-              <input type="checkbox" :checked="allSelected()" @change="toggleAll()" aria-label="全选" />
+              <Checkbox
+                :model-value="allSelected()"
+                aria-label="全选"
+                @update:model-value="toggleAll()"
+              />
             </TableHead>
             <TableHead class="px-4 py-2 text-left">委托书编号</TableHead>
             <TableHead class="px-4 py-2 text-left">工程名称</TableHead>
@@ -229,11 +234,10 @@ function alertError(msg: string): void {
           </TableRow>
           <TableRow v-for="r in rows" :key="r.id" :data-fn="i01DataFn" class="border-t hover:bg-slate-50">
             <TableCell class="px-4 py-2">
-              <input
-                type="checkbox"
-                :checked="selected.has(r.id)"
+              <Checkbox
+                :model-value="selected.has(r.id)"
                 :aria-label="`选择 ${r.commissionCode}`"
-                @change="toggleOne(r.id)"
+                @update:model-value="toggleOne(r.id)"
               />
             </TableCell>
             <TableCell class="px-4 py-2 font-mono text-xs">

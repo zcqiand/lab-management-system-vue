@@ -176,8 +176,8 @@ describe("M03.F08 报告归档", () => {
 });
 // Phase 1.2b Button 迁移回归锚（不挂功能 ID，工程设施测试）。
 // 锁：<Button> 底层仍是 <button>、data-fn 经 $attrs 落到真实 DOM、
-// 行内退回走 link variant（无 h-8/px-3）+ text-destructive token、
-// 「全选」仍是 raw <input type=checkbox>（Phase 1.3 才动，本 Phase 不许顺手迁）。
+// 行内退回走 link variant（无 h-8/px-3）+ text-destructive token。
+// Phase 2b 后「全选」checkbox 已迁 <Checkbox> 原语（reka-ui CheckboxRoot = <button role=checkbox>）。
 let lastWrapper: VueWrapper | null = null;
 afterEach(() => {
   if (lastWrapper) {
@@ -228,16 +228,17 @@ describe("Phase 1.2b — ReportPhasePage <Button> 原语回归", () => {
     expect(confirm!.classes()).toContain("bg-red-600");
   });
 
-  it("「全选」仍是 raw <input type=checkbox>（Phase 1.3 才迁，Button 迁移不许顺手动它）", async () => {
+  it("「全选」checkbox 已迁 <Checkbox> 原语（<button role=checkbox> + aria-label=全选）", async () => {
     const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
     lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    const selectAll = lastWrapper.find('input[type="checkbox"][aria-label="全选"]');
+    const selectAll = lastWrapper.find('[role="checkbox"][aria-label="全选"]');
     expect(selectAll.exists()).toBe(true);
-    expect(selectAll.element.tagName).toBe("INPUT");
+    expect(selectAll.element.tagName).toBe("BUTTON");
+    expect(selectAll.attributes("type")).toBe("button");
   });
 });
 
@@ -336,7 +337,7 @@ describe("Phase 2a-3 — ReportPhasePage 列表 <Table> 原语回归", () => {
     expect(heads[4].text()).toBe("流程状态");
     expect(heads[5].text()).toBe("操作");
     // 全选 checkbox 仍在 columnheader 内（不被 <TableHead> 吞）
-    expect(heads[0].find('input[type="checkbox"][aria-label="全选"]').exists()).toBe(true);
+    expect(heads[0].find('[role="checkbox"][aria-label="全选"]').exists()).toBe(true);
   });
 
   it("1 行 fixture：data-fn=i01DataFn 落 rowgroup[1] 内 div[role=row]", async () => {
@@ -384,7 +385,7 @@ describe("Phase 2a-3 — ReportPhasePage 列表 <Table> 原语回归", () => {
     expect(cell!.getAttribute("role")).toBe("cell");
 
     // 行 checkbox 也在 cell 内
-    const rowCheckbox = lastWrapper.find('input[type="checkbox"][aria-label*="选择"]');
+    const rowCheckbox = lastWrapper.find('[role="checkbox"][aria-label*="选择"]');
     expect(rowCheckbox.exists()).toBe(true);
     const rowCell = rowCheckbox.element.parentElement;
     expect(rowCell).not.toBeNull();

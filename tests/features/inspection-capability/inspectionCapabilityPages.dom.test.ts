@@ -526,8 +526,8 @@ describe("Phase 1.4 — InspectionCapabilityList 表单 <Label> 原语回归", (
     expect(officialLabel).toBeTruthy();
     expect(officialLabel!.classes()).toContain("text-sm");
     expect(officialLabel!.classes()).toContain("font-medium");
-    // checkbox 本身仍是 raw <input type=checkbox>（留 Phase 2b）
-    expect(lastWrapper.find('input[type="checkbox"]').exists()).toBe(true);
+    // Phase 2b 后 checkbox 已迁 <Checkbox> 原语（reka-ui CheckboxRoot = <button role=checkbox>）
+    expect(lastWrapper.find('[role="checkbox"]').exists()).toBe(true);
   });
 });
 

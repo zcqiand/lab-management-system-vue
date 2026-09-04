@@ -217,8 +217,14 @@ describe("Phase 1.4 — ReportNameList 表单 <Label> 原语回归", () => {
     expect(labels[0].text()).toBe("编码 *");
     expect(labels[0].classes()).toContain("font-medium");
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
-    // extFields 的 <textarea> 仍是 raw（留 Phase 2c），它的 label 已是原语
+    // extFields 的 <textarea> 已迁 <Textarea> 原语（Phase 2c），它的 label 仍是原语
     expect(labels[6].text()).toContain("扩展属性");
+    // Textarea 原语渲染为真实 <textarea>，且基类在
+    const textarea = lastWrapper.find("textarea");
+    expect(textarea.exists()).toBe(true);
+    expect(textarea.element.tagName).toBe("TEXTAREA");
+    expect(textarea.classes()).toContain("min-h-[60px]");
+    expect(textarea.classes()).toContain("rounded-md");
   });
 });
 

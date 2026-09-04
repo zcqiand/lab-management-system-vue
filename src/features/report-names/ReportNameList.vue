@@ -14,6 +14,7 @@ import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
+import Textarea from "@/components/ui/Textarea.vue";
 import TableBody from "@/components/ui/TableBody.vue";
 import TableCell from "@/components/ui/TableCell.vue";
 import TableHead from "@/components/ui/TableHead.vue";
@@ -238,9 +239,9 @@ async function submitForm(): Promise<void> {
               </div>
               <div class="md:col-span-2">
                 <Label>扩展属性 extFields（JSON 数组）</Label>
-                <textarea
+                <Textarea
                   v-model="form.extFieldsText"
-                  class="border rounded w-full h-32 px-2 py-1 text-sm font-mono bg-white"
+                  class="h-32 font-mono"
                 />
               </div>
             </div>
