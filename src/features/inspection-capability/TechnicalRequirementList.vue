@@ -9,6 +9,12 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // @entry M06.F06.I01
@@ -218,37 +224,37 @@ async function confirmDelete(): Promise<void> {
       暂无技术要求
     </div>
 
-    <table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
-      <thead class="bg-slate-50 text-slate-600">
-        <tr>
-          <th class="px-4 py-2 text-left">检测项目</th>
-          <th class="px-4 py-2 text-left">检测参数</th>
-          <th class="px-4 py-2 text-left">判定标准</th>
-          <th class="px-4 py-2 text-left">牌号</th>
-          <th class="px-4 py-2 text-left">型号</th>
-          <th class="px-4 py-2 text-left">等级</th>
-          <th class="px-4 py-2 text-left">规格</th>
-          <th class="px-4 py-2 text-left">判定方式</th>
-          <th class="px-4 py-2 text-left">上限</th>
-          <th class="px-4 py-2 text-left">下限</th>
-          <th class="px-4 py-2 text-left w-32">操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in items" :key="row.id" class="border-t hover:bg-slate-50">
-          <td class="px-4 py-2 font-mono text-xs">{{ row.inspectionObjectCode }}</td>
-          <td class="px-4 py-2 font-mono text-xs">{{ row.inspectionParameterCode }}</td>
-          <td class="px-4 py-2 font-mono text-xs">{{ row.judgmentStandardCode }}</td>
-          <td class="px-4 py-2">{{ row.brand ?? "-" }}</td>
-          <td class="px-4 py-2">{{ row.model ?? "-" }}</td>
-          <td class="px-4 py-2">{{ row.grade ?? "-" }}</td>
-          <td class="px-4 py-2">{{ row.spec ?? "-" }}</td>
-          <td class="px-4 py-2">
+    <Table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
+      <TableHeader class="bg-slate-50 text-slate-600">
+        <TableRow>
+          <TableHead class="px-4 py-2 text-left">检测项目</TableHead>
+          <TableHead class="px-4 py-2 text-left">检测参数</TableHead>
+          <TableHead class="px-4 py-2 text-left">判定标准</TableHead>
+          <TableHead class="px-4 py-2 text-left">牌号</TableHead>
+          <TableHead class="px-4 py-2 text-left">型号</TableHead>
+          <TableHead class="px-4 py-2 text-left">等级</TableHead>
+          <TableHead class="px-4 py-2 text-left">规格</TableHead>
+          <TableHead class="px-4 py-2 text-left">判定方式</TableHead>
+          <TableHead class="px-4 py-2 text-left">上限</TableHead>
+          <TableHead class="px-4 py-2 text-left">下限</TableHead>
+          <TableHead class="px-4 py-2 text-left w-32">操作</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="row in items" :key="row.id" class="border-t hover:bg-slate-50">
+          <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionObjectCode }}</TableCell>
+          <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionParameterCode }}</TableCell>
+          <TableCell class="px-4 py-2 font-mono text-xs">{{ row.judgmentStandardCode }}</TableCell>
+          <TableCell class="px-4 py-2">{{ row.brand ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2">{{ row.model ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2">{{ row.grade ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2">{{ row.spec ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2">
             <span class="inline-flex items-center rounded border px-2 py-0.5 text-xs">{{ COMPARISON_LABEL[row.comparison] ?? row.comparison }}</span>
-          </td>
-          <td class="px-4 py-2">{{ row.maxValue ?? "-" }}</td>
-          <td class="px-4 py-2">{{ row.minValue ?? "-" }}</td>
-          <td class="px-4 py-2 text-xs whitespace-nowrap">
+          </TableCell>
+          <TableCell class="px-4 py-2">{{ row.maxValue ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2">{{ row.minValue ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2 text-xs whitespace-nowrap">
             <Button
               variant="link"
               class="text-primary hover:underline mr-3"
@@ -267,10 +273,10 @@ async function confirmDelete(): Promise<void> {
             >
               删除
             </Button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
 
     <div class="text-sm text-slate-500">共 {{ items.length }} 条</div>
 

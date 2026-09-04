@@ -9,6 +9,12 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // @entry M06.F05.I01
@@ -221,39 +227,39 @@ async function confirmDelete(): Promise<void> {
       暂无计算方法
     </div>
 
-    <table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
-      <thead class="bg-slate-50 text-slate-600">
-        <tr>
-          <th class="px-4 py-2 text-left">检测项目</th>
-          <th class="px-4 py-2 text-left">检测参数</th>
-          <th class="px-4 py-2 text-left">判定标准</th>
-          <th class="px-4 py-2 text-left">算法类型</th>
-          <th class="px-4 py-2 text-left">试件数量</th>
-          <th class="px-4 py-2 text-left">备注</th>
-          <th class="px-4 py-2 text-left w-32">操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in items" :key="row.id" class="border-t hover:bg-slate-50">
-          <td class="px-4 py-2 align-top">
+    <Table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
+      <TableHeader class="bg-slate-50 text-slate-600">
+        <TableRow>
+          <TableHead class="px-4 py-2 text-left">检测项目</TableHead>
+          <TableHead class="px-4 py-2 text-left">检测参数</TableHead>
+          <TableHead class="px-4 py-2 text-left">判定标准</TableHead>
+          <TableHead class="px-4 py-2 text-left">算法类型</TableHead>
+          <TableHead class="px-4 py-2 text-left">试件数量</TableHead>
+          <TableHead class="px-4 py-2 text-left">备注</TableHead>
+          <TableHead class="px-4 py-2 text-left w-32">操作</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="row in items" :key="row.id" class="border-t hover:bg-slate-50">
+          <TableCell class="px-4 py-2 align-top">
             <div class="font-mono text-xs">{{ row.inspectionObjectCode }}</div>
             <div v-if="row.objectName" class="text-xs text-slate-500">{{ row.objectName }}</div>
-          </td>
-          <td class="px-4 py-2 align-top">
+          </TableCell>
+          <TableCell class="px-4 py-2 align-top">
             <div class="font-mono text-xs">{{ row.inspectionParameterCode }}</div>
             <div v-if="row.parameterName" class="text-xs text-slate-500">
               {{ row.parameterName }}
             </div>
-          </td>
-          <td class="px-4 py-2 font-mono text-xs">{{ row.testingStandardCode ?? "-" }}</td>
-          <td class="px-4 py-2">
+          </TableCell>
+          <TableCell class="px-4 py-2 font-mono text-xs">{{ row.testingStandardCode ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2">
             <span class="inline-flex items-center rounded border px-2 py-0.5 text-xs">{{
               ALGO_LABEL[row.algorithmType] ?? row.algorithmType
             }}</span>
-          </td>
-          <td class="px-4 py-2">{{ row.specimenCount }}</td>
-          <td class="px-4 py-2 text-xs text-slate-500">{{ row.remark ?? "-" }}</td>
-          <td class="px-4 py-2 text-xs whitespace-nowrap">
+          </TableCell>
+          <TableCell class="px-4 py-2">{{ row.specimenCount }}</TableCell>
+          <TableCell class="px-4 py-2 text-xs text-slate-500">{{ row.remark ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2 text-xs whitespace-nowrap">
             <Button
               variant="link"
               class="text-primary hover:underline mr-3"
@@ -272,10 +278,10 @@ async function confirmDelete(): Promise<void> {
             >
               删除
             </Button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
 
     <div class="text-sm text-slate-500">共 {{ items.length }} 条</div>
 

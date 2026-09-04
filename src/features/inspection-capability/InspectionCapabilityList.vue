@@ -10,6 +10,12 @@ import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ParameterStandardLinkDialog from "@/features/inspection-capability/ParameterStandardLinkDialog.vue";
 import { normalizeListResponse, unwrapListResponse } from "@/lib/responses";
@@ -401,20 +407,20 @@ function cellOf(item: ListItem, idx: number): string {
       暂无{{ title }}，点击右上角新建一行
     </div>
 
-    <table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
-      <thead class="bg-slate-50 text-slate-600">
-        <tr>
-          <th v-for="(h, i) in columnHeaders()" :key="i" class="px-4 py-2 text-left">{{ h }}</th>
-          <th class="px-4 py-2 text-left w-32">操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in items" :key="item.id" class="border-t hover:bg-slate-50">
-          <td v-for="(_, i) in columnHeaders()" :key="i" class="px-4 py-2 align-top">
+    <Table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
+      <TableHeader class="bg-slate-50 text-slate-600">
+        <TableRow>
+          <TableHead v-for="(h, i) in columnHeaders()" :key="i" class="px-4 py-2 text-left">{{ h }}</TableHead>
+          <TableHead class="px-4 py-2 text-left w-32">操作</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="item in items" :key="item.id" class="border-t hover:bg-slate-50">
+          <TableCell v-for="(_, i) in columnHeaders()" :key="i" class="px-4 py-2 align-top">
             <span v-if="i === 0" class="font-mono text-xs">{{ cellOf(item, i) }}</span>
             <span v-else>{{ cellOf(item, i) }}</span>
-          </td>
-          <td class="px-4 py-2 text-xs whitespace-nowrap">
+          </TableCell>
+          <TableCell class="px-4 py-2 text-xs whitespace-nowrap">
             <Button
               v-if="resource === 'parameters'"
               variant="link"
@@ -444,10 +450,10 @@ function cellOf(item: ListItem, idx: number): string {
             >
               删除
             </Button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
 
     <div class="text-sm text-slate-500">共 {{ total }} 条</div>
 
