@@ -4,6 +4,12 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Table from "@/components/ui/Table.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableRow from "@/components/ui/TableRow.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableCell from "@/components/ui/TableCell.vue";
 
 const props = defineProps<ParamModelProps>();
 const { parameter: p, record, sampleId, config, onChange, readOnly = false } = props;
@@ -69,18 +75,18 @@ function updateLoad(i: number, v: string) {
       {{ p.canonicalName || p.name
       }}<span v-if="p.unit">（{{ p.unit }}）</span>
     </div>
-    <table class="w-full text-xs">
-      <thead class="text-gray-500">
-        <tr>
-          <th class="text-left py-1">#</th>
-          <th class="text-left py-1">破坏荷载 (kN)</th>
-          <th class="text-left py-1">抗压强度 (MPa)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(lv, i) in loads" :key="i">
-          <td class="py-1">{{ i + 1 }}</td>
-          <td class="py-1">
+    <Table class="w-full text-xs">
+      <TableHeader class="text-gray-500">
+        <TableRow>
+          <TableHead class="text-left py-1">#</TableHead>
+          <TableHead class="text-left py-1">破坏荷载 (kN)</TableHead>
+          <TableHead class="text-left py-1">抗压强度 (MPa)</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(lv, i) in loads" :key="i">
+          <TableCell class="py-1">{{ i + 1 }}</TableCell>
+          <TableCell class="py-1">
             <Input
               type="number"
               placeholder="破坏荷载 (kN)"
@@ -90,11 +96,11 @@ function updateLoad(i: number, v: string) {
               class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e: Event) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
-          </td>
-          <td class="py-1 text-gray-700">{{ lv ? Number((((lv * 1000) / area) * 100) / 100).toFixed(2) : '-' }}</td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+          <TableCell class="py-1 text-gray-700">{{ lv ? Number((((lv * 1000) / area) * 100) / 100).toFixed(2) : '-' }}</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
     <div class="text-xs text-gray-600">抗压强度代表值：{{ result.representative ?? '—' }}</div>
   </div>
 </template>
