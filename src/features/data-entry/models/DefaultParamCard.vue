@@ -3,6 +3,7 @@
 import { computed } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 
 const VERDICT_OPTIONS = ["合格", "不合格", "符合", "不符合"] as const;
 
@@ -49,7 +50,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
     </div>
     <div class="grid grid-cols-4 gap-x-3 gap-y-1 text-xs">
       <div>
-        <label class="block text-slate-500 mb-0.5">检测依据</label>
+        <Label class="block text-xs text-slate-500 mb-0.5">检测依据</Label>
         <select
           class="w-full border rounded px-1 py-1 text-sm bg-white"
           :value="rec?.standardCode ?? ''"
@@ -63,7 +64,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         </select>
       </div>
       <div>
-        <label class="block text-slate-500 mb-0.5">技术要求</label>
+        <Label class="block text-xs text-slate-500 mb-0.5">技术要求</Label>
         <select
           class="w-full border rounded px-1 py-1 text-sm bg-white"
           :value="rec?.requirementCode ?? ''"
@@ -83,7 +84,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         </select>
       </div>
       <div>
-        <label class="block text-slate-500 mb-0.5">检测结果</label>
+        <Label class="block text-xs text-slate-500 mb-0.5">检测结果</Label>
         <Input
           class="w-full"
           :model-value="rec?.result ?? ''"
@@ -93,7 +94,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         />
       </div>
       <div>
-        <label class="block text-slate-500 mb-0.5">单项评定</label>
+        <Label class="block text-xs text-slate-500 mb-0.5">单项评定</Label>
         <select
           class="w-full border rounded px-1 py-1 text-sm bg-white"
           :value="rec?.verdict ?? ''"
