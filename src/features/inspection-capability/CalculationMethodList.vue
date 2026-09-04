@@ -16,6 +16,11 @@ import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 
 // @entry M06.F05.I01
 interface CalcRule {
@@ -149,10 +154,15 @@ function alertError(msg: string): void {
 
 async function submitForm(): Promise<void> {
   saveError.value = null;
+  // __none__ 是 reka-ui SelectItem 替代 raw <option value=""> 的 sentinel（reka-ui
+  // SelectItem 显式禁止空字符串 value），翻译回空串让后端字段缺失
+  const objVal = form.inspectionObjectCode;
+  const paramVal = form.inspectionParameterCode;
+  const stdVal = form.testingStandardCode;
   const payload = {
-    inspectionObjectCode: form.inspectionObjectCode,
-    inspectionParameterCode: form.inspectionParameterCode,
-    testingStandardCode: form.testingStandardCode || undefined,
+    inspectionObjectCode: objVal && objVal !== "__none__" ? objVal : "",
+    inspectionParameterCode: paramVal && paramVal !== "__none__" ? paramVal : "",
+    testingStandardCode: stdVal && stdVal !== "__none__" ? stdVal : undefined,
     algorithmType: form.algorithmType,
     specimenCount: Number(form.specimenCount) || 1,
     roundingRule: form.roundingRule || undefined,
@@ -304,53 +314,61 @@ async function confirmDelete(): Promise<void> {
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <Label>检测项目</Label>
-                <select
-                  v-model="form.inspectionObjectCode"
-                  class="border rounded h-9 px-2 text-sm bg-white w-full"
-                >
-                  <option value="">未选择</option>
-                  <option v-for="o in objects" :key="o.code" :value="o.code">
-                    {{ o.code }} {{ o.name }}
-                  </option>
-                </select>
+                <Label for="inspectionObjectCode">检测项目</Label>
+                <Select v-model="form.inspectionObjectCode">
+                  <SelectTrigger id="inspectionObjectCode" class="w-full">
+                    <SelectValue placeholder="未选择" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">未选择</SelectItem>
+                    <SelectItem v-for="o in objects" :key="o.code" :value="o.code">
+                      {{ o.code }} {{ o.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <Label>检测参数</Label>
-                <select
-                  v-model="form.inspectionParameterCode"
-                  class="border rounded h-9 px-2 text-sm bg-white w-full"
-                >
-                  <option value="">未选择</option>
-                  <option v-for="p in parameters" :key="p.code" :value="p.code">
-                    {{ p.code }} {{ p.name }}
-                  </option>
-                </select>
+                <Label for="inspectionParameterCode">检测参数</Label>
+                <Select v-model="form.inspectionParameterCode">
+                  <SelectTrigger id="inspectionParameterCode" class="w-full">
+                    <SelectValue placeholder="未选择" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">未选择</SelectItem>
+                    <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
+                      {{ p.code }} {{ p.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div>
-              <Label>判定标准（可选）</Label>
-              <select
-                v-model="form.testingStandardCode"
-                class="border rounded h-9 px-2 text-sm bg-white w-full"
-              >
-                <option value="">不指定</option>
-                <option v-for="s in standards" :key="s.code" :value="s.code">
-                  {{ s.code }} {{ s.name }}
-                </option>
-              </select>
+              <Label for="testingStandardCode">判定标准（可选）</Label>
+              <Select v-model="form.testingStandardCode">
+                <SelectTrigger id="testingStandardCode" class="w-full">
+                  <SelectValue placeholder="不指定" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">不指定</SelectItem>
+                  <SelectItem v-for="s in standards" :key="s.code" :value="s.code">
+                    {{ s.code }} {{ s.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div class="grid grid-cols-3 gap-3">
               <div>
-                <Label>算法类型</Label>
-                <select
-                  v-model="form.algorithmType"
-                  class="border rounded h-9 px-2 text-sm bg-white w-full"
-                >
-                  <option v-for="a in ALGORITHMS" :key="a.value" :value="a.value">
-                    {{ a.label }}
-                  </option>
-                </select>
+                <Label for="algorithmType">算法类型</Label>
+                <Select v-model="form.algorithmType">
+                  <SelectTrigger id="algorithmType" class="w-full">
+                    <SelectValue placeholder="选择算法类型" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem v-for="a in ALGORITHMS" :key="a.value" :value="a.value">
+                      {{ a.label }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>试件数量</Label>
