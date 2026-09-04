@@ -16,6 +16,11 @@ import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 
 // @entry M06.F06.I01
 // @entry M06.F06.I02
@@ -147,9 +152,13 @@ function closeDialog(): void {
 
 async function submitForm(): Promise<void> {
   saveError.value = null;
+  // __none__ 是 reka-ui SelectItem 替代 raw <option value=""> 的 sentinel，
+  // 翻译回空串让后端按缺失处理
+  const objVal = form.inspectionObjectCode;
+  const paramVal = form.inspectionParameterCode;
   const payload = {
-    inspectionObjectCode: form.inspectionObjectCode,
-    inspectionParameterCode: form.inspectionParameterCode,
+    inspectionObjectCode: objVal && objVal !== "__none__" ? objVal : "",
+    inspectionParameterCode: paramVal && paramVal !== "__none__" ? paramVal : "",
     judgmentStandardCode: form.judgmentStandardCode,
     brand: form.brand || undefined,
     model: form.model || undefined,
@@ -295,18 +304,32 @@ async function confirmDelete(): Promise<void> {
             <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <Label>检测项目</Label>
-                <select v-model="form.inspectionObjectCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option value="">未选择</option>
-                  <option v-for="o in objects" :key="o.code" :value="o.code">{{ o.code }} {{ o.name }}</option>
-                </select>
+                <Label for="inspectionObjectCode">检测项目</Label>
+                <Select v-model="form.inspectionObjectCode">
+                  <SelectTrigger id="inspectionObjectCode" class="w-full">
+                    <SelectValue placeholder="未选择" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">未选择</SelectItem>
+                    <SelectItem v-for="o in objects" :key="o.code" :value="o.code">
+                      {{ o.code }} {{ o.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <Label>检测参数</Label>
-                <select v-model="form.inspectionParameterCode" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option value="">未选择</option>
-                  <option v-for="p in parameters" :key="p.code" :value="p.code">{{ p.code }} {{ p.name }}</option>
-                </select>
+                <Label for="inspectionParameterCode">检测参数</Label>
+                <Select v-model="form.inspectionParameterCode">
+                  <SelectTrigger id="inspectionParameterCode" class="w-full">
+                    <SelectValue placeholder="未选择" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">未选择</SelectItem>
+                    <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
+                      {{ p.code }} {{ p.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div>
@@ -333,10 +356,17 @@ async function confirmDelete(): Promise<void> {
             </div>
             <div class="grid grid-cols-3 gap-3">
               <div>
-                <Label>判定方式</Label>
-                <select v-model="form.comparison" class="border rounded h-9 px-2 text-sm bg-white w-full">
-                  <option v-for="c in COMPARISONS" :key="c" :value="c">{{ COMPARISON_LABEL[c] ?? c }}</option>
-                </select>
+                <Label for="comparison">判定方式</Label>
+                <Select v-model="form.comparison">
+                  <SelectTrigger id="comparison" class="w-full">
+                    <SelectValue placeholder="选择判定方式" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem v-for="c in COMPARISONS" :key="c" :value="c">
+                      {{ COMPARISON_LABEL[c] ?? c }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>下限</Label>
