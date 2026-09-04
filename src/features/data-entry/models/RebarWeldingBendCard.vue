@@ -3,6 +3,7 @@
 // 1 样品 = 3 试件（JGJ/T 27-2014 §6.2）；3 行 = 弯曲角度(deg) + 合格/不合格。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 import { parseBendRecord, type BendSpecimen } from "./rebar-welding";
 
 const BEND_RESULTS = ["合格", "不合格"] as const;
@@ -113,14 +114,14 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
         <tr v-for="t in trialIndices" :key="t">
           <td class="py-1">{{ t + 1 }}</td>
           <td class="py-1">
-            <input
+            <Input
               type="number"
               step="1"
               placeholder="90"
-              :value="spec.angles[t] === 0 ? '' : spec.angles[t]"
+              :model-value="spec.angles[t] === 0 ? '' : spec.angles[t]"
               :readonly="readOnly"
               :aria-label="`试件 ${t + 1} 弯曲角度`"
-              class="w-20 border rounded px-2 py-1 text-sm read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-20 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e) => updateAngle(t, (e.target as HTMLInputElement).value)"
             />
           </td>
