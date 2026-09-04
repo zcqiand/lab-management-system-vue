@@ -2,6 +2,42 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.28] — 2026-09-04
+
+shadcn-vue 迁移 **Phase 0（底座）**。纯工程设施，无业务行为改动 —— 目的是让后续
+phase 换原语时不必各自重踩同一批设置问题。
+
+- add `components.json`：静态落盘（CI 无网络跑不了 shadcn-vue CLI）。
+  style=new-york / baseColor=slate / cssVariables=true，alias 对齐本仓 `@` 路径。
+- `src/index.css` design token 扩到 19 项：
+  - **格式变更**：token 值从 `hsl(0 0% 100%)` 改为裸 HSL 分量 `0 0% 100%`
+    —— shadcn-vue 的 CVA 类名与 `bg-primary/90` 这类透明度变体依赖裸值。
+  - 新增 primary / primary-foreground / secondary / secondary-foreground /
+    accent / accent-foreground / destructive / destructive-foreground /
+    card / card-foreground / popover / popover-foreground / input / ring
+    共 14 个 token。
+  - `@theme inline` 镜像全部 19 项，写法是 `--color-x: hsl(var(--x))`。**不是**
+    `var(--x)` —— 裸分量直接塞进 color 属性是非法声明会被丢弃，
+    `bg-background` / `border-input` 会静默全部失效（CSS 没有类型检查兜底）。
+- ui 原语 `Button` / `Input` / `Label` 对齐 shadcn-vue 契约：
+  - 加 `class?: string` prop，放在 `cn()` 最后一位 → 调用方 class 经
+    tailwind-merge 压过 CVA 默认值（如 `h-10` 压掉 size=default 的 `h-9`）。
+  - `inheritAttrs: false` + `v-bind="$attrs"` → `data-fn` / `aria-label`
+    这类测试与埋点锚点落到真实 DOM 元素上，不再被 Vue 的 fallthrough 规则吞掉。
+  - `Input` 的 `:disabled="disabled ?? undefined"` **无条件绑定**：disabled 为真时
+    属性必须落 DOM，同级 `Label` 的 `peer-disabled:` 选择器才会命中。
+  - `Label` 刻意不加「默认插槽包住 Input」的组合模式（Label/Input 配对留 Phase 2d）。
+- add `src/components/ui/Card.vue` 最小外壳（card / card-foreground token 的消费方）。
+- `vite.config.ts` 加 `build.rollupOptions.output.manualChunks`：
+  vue / query / reka / icons 四个 vendor chunk。在原语大批进场**之前**定死基线，
+  后续每个 phase 对着同一条线量体积。`index-*.js` 237 KB → 94.8 KB。
+- `tests/helper.ts` portal stub：`teleport: true` 是 no-op（children 被丢掉，
+  浮层内容断言不到），改为渲染默认插槽的 `<div data-portal-stub>`；
+  同时按名 stub reka-ui 的 `DialogPortal`（Dialog / Sheet / AlertDialog 都靠它）。
+- add `tests/foundation/shadcn-dialog.dom.test.ts` + `__test_helper__/DialogFixture.vue`：
+  底座冒烟，钉住 portal stub / `$attrs` 转发 / class 合并三条契约。不挂功能 ID
+  （工程设施测试）。
+
 ## [0.3.27] — 2026-09-04
 
 - fix(AppShell): M01.F04.I03 守卫从 DashboardPage 提升到 AppShell — 未登录访问
