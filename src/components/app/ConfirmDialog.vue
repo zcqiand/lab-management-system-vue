@@ -6,7 +6,17 @@
 //
 // 用途：CRUD 删除/保存等需要二次确认的危险操作（CLAUDE.md vue 仓明文禁止
 // window.confirm / window.alert，删除/编辑/发布类必须走此原语）。
+//
+// Phase 1.0：内部两 raw <button> 切到 <Button> primitive（shadcn-vue 风格）。
+//   - cancel: variant="outline"（border + bg-background + hover:bg-accent）
+//   - confirm: variant="default"（bg-primary text-primary-foreground）
+//     · danger=true 时 caller class 覆盖成 bg-destructive（tailwind-merge 胜出）
+//   - data-fn / aria-label / @click / :disabled 全部由 Phase 0 的 inheritAttrs:false
+//     + v-bind="$attrs" 转发到真实 <button>，无需手动接管
+//
+// 后续 Phase 2e 会用 reka-ui DialogPrimitive 替换外层 <Teleport> 与遮罩逻辑。
 import { onUnmounted, watch } from "vue";
+import Button from "@/components/ui/Button.vue";
 
 interface Props {
   /** 是否打开 */
@@ -87,25 +97,23 @@ onUnmounted(() => {
           <slot />
         </div>
         <div class="flex justify-end gap-2 border-t border-gray-200 px-6 py-3">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             :disabled="loading"
-            class="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             data-fn="confirm-dialog-cancel"
             @click="onCancel"
           >
             {{ cancelText }}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="default"
             :disabled="loading"
-            class="rounded px-4 py-2 text-sm text-white disabled:opacity-50"
-            :class="danger ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'"
             data-fn="confirm-dialog-confirm"
+            :class="danger ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''"
             @click="onConfirm"
           >
             {{ loading ? loadingText : confirmText }}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
