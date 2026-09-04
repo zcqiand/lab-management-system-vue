@@ -17,6 +17,12 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Table from "@/components/ui/Table.vue";
+import TableBody from "@/components/ui/TableBody.vue";
+import TableCell from "@/components/ui/TableCell.vue";
+import TableHead from "@/components/ui/TableHead.vue";
+import TableHeader from "@/components/ui/TableHeader.vue";
+import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/process/{sample-receipt,flow}.ts）
@@ -266,37 +272,37 @@ function alertError(msg: string): void {
         <h3 class="text-base font-semibold">接样列表（{{ total || "…" }}）</h3>
         <span v-if="loading" class="text-xs text-slate-400">加载中…</span>
       </div>
-      <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
-          <tr>
-            <th class="px-4 py-2 text-left">委托书编号</th>
-            <th class="px-4 py-2 text-left">工程名称</th>
-            <th class="px-4 py-2 text-left">委托单位</th>
-            <th class="px-4 py-2 text-left">检测类别</th>
-            <th class="px-4 py-2 text-left">流程状态</th>
-            <th class="px-4 py-2 text-left">创建时间</th>
-            <th class="px-4 py-2 text-right">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="items.length === 0 && !loading">
-            <td colspan="7" class="px-4 py-8 text-center text-slate-400">（无数据）</td>
-          </tr>
-          <tr
+      <Table class="w-full text-sm">
+        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+          <TableRow>
+            <TableHead class="px-4 py-2 text-left">委托书编号</TableHead>
+            <TableHead class="px-4 py-2 text-left">工程名称</TableHead>
+            <TableHead class="px-4 py-2 text-left">委托单位</TableHead>
+            <TableHead class="px-4 py-2 text-left">检测类别</TableHead>
+            <TableHead class="px-4 py-2 text-left">流程状态</TableHead>
+            <TableHead class="px-4 py-2 text-left">创建时间</TableHead>
+            <TableHead class="px-4 py-2 text-right">操作</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-if="items.length === 0 && !loading">
+            <TableCell colspan="7" class="px-4 py-8 text-center text-slate-400">（无数据）</TableCell>
+          </TableRow>
+          <TableRow
             v-for="r in items"
             :key="r.id"
             data-fn="M03.F01.I01"
             class="border-t hover:bg-slate-50"
           >
-            <td class="px-4 py-2 font-mono text-xs">
+            <TableCell class="px-4 py-2 font-mono text-xs">
               <router-link :to="`/receipts/${r.id}`" class="text-blue-600 hover:underline">
                 {{ r.commissionCode }}
               </router-link>
-            </td>
-            <td class="px-4 py-2">{{ r.projectName ?? "—" }}</td>
-            <td class="px-4 py-2">{{ r.clientUnit ?? "—" }}</td>
-            <td class="px-4 py-2">{{ r.testCategory }}</td>
-            <td class="px-4 py-2">
+            </TableCell>
+            <TableCell class="px-4 py-2">{{ r.projectName ?? "—" }}</TableCell>
+            <TableCell class="px-4 py-2">{{ r.clientUnit ?? "—" }}</TableCell>
+            <TableCell class="px-4 py-2">{{ r.testCategory }}</TableCell>
+            <TableCell class="px-4 py-2">
               <span
                 class="inline-block rounded px-2 py-0.5 text-xs"
                 :class="{
@@ -308,11 +314,11 @@ function alertError(msg: string): void {
               >
                 {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
               </span>
-            </td>
-            <td class="px-4 py-2 text-xs text-slate-500">
+            </TableCell>
+            <TableCell class="px-4 py-2 text-xs text-slate-500">
               {{ (r.createdAt ?? "").slice(0, 10) }}
-            </td>
-            <td class="px-4 py-2 text-right space-x-1">
+            </TableCell>
+            <TableCell class="px-4 py-2 text-right space-x-1">
               <Button
                 v-if="r.flowStatus === 'receiving'"
                 size="sm"
@@ -339,10 +345,10 @@ function alertError(msg: string): void {
               >
                 删除
               </Button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
 
     <!-- 新建 Dialog -->

@@ -227,3 +227,93 @@ describe("Phase 1.3a — ReceiptsList 搜索/表单 <Input> 原语回归", () =>
     expect((dateInput.element as HTMLInputElement).value).toBe("2026-08-01");
   });
 });
+
+// Phase 2a-3 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：<Table> 渲染为 div[role=table] / 7 个 columnheader 文本顺序 /
+// 2 行 fixture data-fn=M03.F01.I01 落 rowgroup[1] 内 div[role=row] /
+// TableCell class 经 tailwind-merge 合并 / 流程状态徽章 span 仍在 cell 内。
+describe("Phase 2a-3 — ReceiptsList 列表 <Table> 原语回归", () => {
+  it("<Table> 渲染为 div[role=table]；7 个 <TableHead> 文本顺序 委托书编号/工程名称/委托单位/检测类别/流程状态/创建时间/操作", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const table = lastWrapper.find('[role="table"]');
+    expect(table.exists()).toBe(true);
+
+    const heads = lastWrapper.findAll('[role="columnheader"]');
+    expect(heads.length).toBe(7);
+    expect(heads.map((h) => h.text())).toEqual([
+      "委托书编号",
+      "工程名称",
+      "委托单位",
+      "检测类别",
+      "流程状态",
+      "创建时间",
+      "操作",
+    ]);
+  });
+
+  it("2 行 fixture：data-fn=M03.F01.I01 落 rowgroup[1] 内 div[role=row]", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const rowgroups = lastWrapper.findAll('[role="rowgroup"]');
+    expect(rowgroups.length).toBe(2);
+
+    const bodyRows = rowgroups[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(2);
+
+    for (const row of bodyRows) {
+      expect(row.attributes("data-fn")).toBe("M03.F01.I01");
+    }
+  });
+
+  it("TableCell 调用方 class 经 tailwind-merge 合并（font-mono + text-xs 落委托书编号 cell）", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const cells = lastWrapper.findAll('[role="cell"]');
+    expect(cells.length).toBeGreaterThan(0);
+    // 第一个 fixture 的委托书编号 cell
+    const codeCell = cells.find((c) => c.text().includes("WT-2026-001"));
+    expect(codeCell).toBeTruthy();
+    expect(codeCell!.classes()).toContain("font-mono");
+    expect(codeCell!.classes()).toContain("text-xs");
+  });
+
+  it("行内操作按钮：「提交」「编辑」「删除」data-fn 落到真实 button 且嵌套在 cell 内（不被 <TableCell> 吞）", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 提交按钮（receiving 行才有；fixture RECEIPT-001 是 receiving）
+    const submit = lastWrapper.find('button[data-fn="M03.F01.I04"]');
+    expect(submit.exists()).toBe(true);
+    const submitCell = submit.element.parentElement;
+    expect(submitCell).not.toBeNull();
+    expect(submitCell!.getAttribute("role")).toBe("cell");
+
+    // 删除按钮（同样仅 receiving 行）
+    const del = lastWrapper.find('button[data-fn="M03.F01.I03"]');
+    expect(del.exists()).toBe(true);
+    const delCell = del.element.parentElement;
+    expect(delCell).not.toBeNull();
+    expect(delCell!.getAttribute("role")).toBe("cell");
+
+    // 流程状态徽章 span 仍在 cell 内（不破结构）
+    const badgeCell = lastWrapper.findAll('[role="cell"]').find((c) => c.text().includes("接样中"));
+    expect(badgeCell).toBeTruthy();
+    expect(badgeCell!.find("span.bg-blue-100").exists()).toBe(true);
+  });
+});
