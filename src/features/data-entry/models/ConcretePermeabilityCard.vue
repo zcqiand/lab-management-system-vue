@@ -3,6 +3,7 @@
 // 6 试件 ×（渗水压力 MPa + 渗水情况）→ 抗渗等级（按 GB/T 50082-2009）。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 import {
   computeConcretePermeability,
   parsePermeationResult,
@@ -76,14 +77,14 @@ function updatePermeated(i: number, v: Permeation) {
         <tr v-for="(s, i) in specimens" :key="i">
           <td class="py-1">{{ i + 1 }}</td>
           <td class="py-1">
-            <input
+            <Input
               type="number"
               step="0.1"
               placeholder="渗水压力 (MPa)"
-              :value="s.pressure === 0 ? '' : s.pressure"
+              :model-value="s.pressure === 0 ? '' : s.pressure"
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 渗水压力`"
-              class="w-32 border rounded px-2 py-1 text-sm read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
               @change="(e) => updatePressure(i, (e.target as HTMLInputElement).value)"
             />
           </td>
