@@ -4,6 +4,7 @@
 // 镜像 react/src/features/data-entry/models/CementCompressCard.tsx（72 行）。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
+import Input from "@/components/ui/Input.vue";
 import {
   computeCementCompress,
   parseStrengthRecord,
@@ -73,14 +74,14 @@ function updateLoad(i: number, v: string) {
     <div class="grid grid-cols-6 gap-1">
       <div v-for="(_, i) in loads" :key="i">
         <label class="block text-xs text-slate-500 mb-0.5">试件 {{ i + 1 }}</label>
-        <input
+        <Input
           type="number"
           step="0.01"
-          class="w-full border rounded px-1 py-1 text-sm"
-          :value="loads[i] || ''"
+          class="w-full"
+          :model-value="loads[i] || ''"
           :readonly="readOnly"
           placeholder="kN"
-          @input="updateLoad(i, ($event.target as HTMLInputElement).value)"
+          @update:model-value="updateLoad(i, String($event))"
         />
         <div class="text-xs text-slate-400 text-center mt-0.5">
           {{ result.strengths[i] ? Number(result.strengths[i]).toFixed(2) : "—" }}
