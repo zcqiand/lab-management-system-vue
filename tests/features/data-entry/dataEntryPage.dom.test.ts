@@ -2,8 +2,9 @@
 //
 // 镜像 react 仓 tests/features/data-entry/dataEntryPage.dom.test.tsx 3 个 fnTest。
 // vue 仓走 vi.mock('axios') + 内联 fixtures（与 Batch 2A/2B-1 同型）。
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -110,5 +111,54 @@ describe("M03.F03 数据录入", () => {
     await flushPromises();
     const saveBtn = wrapper.findAll("button").find((b) => b.text() === "保存");
     expect(saveBtn).toBeTruthy();
+  });
+});
+// Phase 1.2b Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：<Button> 底层仍是 <button>、data-fn 经 $attrs 落到真实 DOM、
+// CVA base inline-flex 活着、调用方蓝色定制经 tailwind-merge 压过 bg-primary。
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2b — DataEntryPage <Button> 原语回归", () => {
+  it("行内录入结果按钮：<Button variant=outline size=sm> 渲染 <button>，data-fn 落到真实 DOM", async () => {
+    const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
+    lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const entry = lastWrapper.find('button[data-fn="M03.F03.I03"]');
+    expect(entry.exists()).toBe(true);
+    expect(entry.element.tagName).toBe("BUTTON");
+    expect(entry.classes()).toContain("inline-flex");
+    expect(entry.classes()).toContain("border");
+  });
+
+  it("弹窗保存按钮：data-fn=M03.F03.I02 落到真实 <button>，bg-blue-600 压过 CVA bg-primary", async () => {
+    const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
+    lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    await lastWrapper.find('button[data-fn="M03.F03.I03"]').trigger("click");
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const save = lastWrapper.find('button[data-fn="M03.F03.I02"]');
+    expect(save.exists()).toBe(true);
+    expect(save.classes()).toContain("inline-flex");
+    expect(save.classes()).toContain("bg-blue-600");
+    expect(save.classes()).not.toContain("bg-primary");
+
+    const cancel = lastWrapper.findAll("button").find((b) => b.text() === "取消");
+    expect(cancel).toBeTruthy();
+    expect(cancel!.classes()).toContain("border");
   });
 });
