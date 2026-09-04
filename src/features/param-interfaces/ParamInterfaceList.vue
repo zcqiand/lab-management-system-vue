@@ -9,6 +9,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
@@ -121,13 +122,9 @@ async function submitForm(): Promise<void> {
         </p>
       </div>
       <!-- @entry M06.F08.I01 新建参数界面按钮 -->
-      <button
-        class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-        data-fn="M06.F08.I01"
-        @click="openCreate"
-      >
+      <Button data-fn="M06.F08.I01" @click="openCreate">
         新建参数界面
-      </button>
+      </Button>
     </div>
 
     <div class="mb-4 flex gap-2">
@@ -137,12 +134,9 @@ async function submitForm(): Promise<void> {
         placeholder="按编码 / 组件路径搜索"
         @keydown.enter="load"
       />
-      <button
-        class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm hover:bg-slate-50"
-        @click="load"
-      >
+      <Button variant="outline" @click="load">
         搜索
-      </button>
+      </Button>
     </div>
 
     <Teleport to="body">
@@ -188,13 +182,9 @@ async function submitForm(): Promise<void> {
           </div>
           <div class="px-6 py-3 flex justify-end border-t">
             <!-- @entry M06.F08.I01 表单内保存 -->
-            <button
-              class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm shadow hover:bg-primary/90"
-              data-fn="M06.F08.I01"
-              @click="submitForm"
-            >
+            <Button data-fn="M06.F08.I01" @click="submitForm">
               {{ mode.kind === "create" ? "创建" : "保存" }}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -256,18 +246,17 @@ async function submitForm(): Promise<void> {
             <td class="px-4 py-2 font-mono text-xs">{{ r.componentPath }}</td>
             <td class="px-4 py-2 text-xs text-slate-500">{{ r.sortOrder }}</td>
             <td class="px-4 py-2 text-right">
-              <button
-                class="inline-flex items-center justify-center rounded-md border px-2 py-1 text-xs hover:bg-slate-50"
-                @click="openEdit(r)"
-              >
+              <Button size="sm" variant="outline" @click="openEdit(r)">
                 编辑
-              </button>
-              <button
-                class="ml-2 inline-flex items-center justify-center rounded-md border px-2 py-1 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                class="ml-2 text-red-600 hover:bg-red-50 hover:text-red-700"
                 @click="deleteTarget = r"
               >
                 删除
-              </button>
+              </Button>
             </td>
           </tr>
         </tbody>
