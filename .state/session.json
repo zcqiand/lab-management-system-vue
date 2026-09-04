@@ -1,25 +1,28 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "修复 /receipts 无应用 UI + LoginPage ADR-0019 收口 → v0.3.27-20260904 tag push",
-  "last_session_at": "2026-09-04",
-  "last_session_summary": "prod /receipts 无 UI 根因：AppShell 未挂 auth 守卫，未登录用户访问业务页触发 /api/auth/menus 401 → AppShell 渲染「菜单加载失败」错误态 + ReceiptsList 列表 401 空表，视觉上 = 没应用 UI。镜像 react 仓 app-shell.tsx 把 useRequireAuth 提升到 AppShell 顶层（template 三段门 v-if checking / v-else-if !allowed / v-else）。测试 backendMenus.dom.test.ts 加 toAuthenticated 前置（与 appShellLogout.dom.test.ts 同款）。同时消化 LoginPage VITE_SAAS_CLIENT_ID ADR-0019 收口（删 UUID 字面兜底 → throw-if-undefined）。",
+  "current_task": "Phase 1.2c 4 modal/dialog <Button> 迁移 → tag push v0.3.37-20260905",
+  "last_session_at": "2026-09-05",
+  "last_session_summary": "Phase 1.2c 完成：4 modal/dialog 文件 raw <button> → <Button> 原语。共迁移 4 处（SampleExtFieldsModal 取消/确认 + ReportPreviewModal 关闭/打印），保留 6 处 raw（2 个 modal 关闭× icon-glyph + 4 个 toggle 行内双态按钮，均超 >3 override 阈值）。新增 extFieldsPreviewModalsButtons.dom.test.ts 2 case 锁 CVA 合成。全量 167 case 全绿，gate exit 0。",
   "done": [
-    "AppShell.vue 加 useRequireAuth() + template 三段门",
-    "backendMenus.dom.test.ts axios mock POST 放行 + toAuthenticated() 前置，4 case 全绿",
-    "LoginPage.vue VITE_SAAS_CLIENT_ID 改为 throw-if-undefined",
-    "CHANGELOG 0.3.27 条目",
-    "npm run build → dist/assets/index-kmPuH3o8.js (237 KB)",
-    "gate -p lab-management-system-vue exit 0（100 功能条目，L0.no_fallback PASS）"
+    "SampleExtFieldsModal.vue 取消 outline / 确认 default bg-blue-600（关闭× raw）",
+    "ReportPreviewModal.vue 关闭 outline / 打印 default bg-blue-600（关闭× raw）",
+    "ReportNameLinkDialog.vue 2 toggle 按钮 raw（双态视觉需 4 override）",
+    "ParameterStandardLinkDialog.vue 1 toggle 按钮 raw（同 toggle 模式）",
+    "tests/features/data-entry/extFieldsPreviewModalsButtons.dom.test.ts（2 case regression-anchor）",
+    "CHANGELOG 0.3.37 条目（已记录 6 处未迁移 + 阈值依据）",
+    "4 commit（按文件粒度：2 迁移 + 1 test + 1 changelog）",
+    "tag v0.3.37-20260905",
+    "gate -p lab-management-system-vue exit 0（167 case / 26 文件，L0.no_fallback PASS）"
   ],
   "next": [
-    "deploy: push tag v0.3.27-20260904 → CI docker build + VPS pull + restart"
+    "deploy: push tag v0.3.37-20260905 → CI docker build + VPS pull + restart"
   ],
   "open_questions": [],
   "dont": [
-    "AppShell useRequireAuth 不要返回 null 直接 break（react 仓 if checking return null 是 break 早返回，vue 仓用 v-if/v-else 模板等价）",
-    "backendMenus 测试改 mock 时不要破坏 calls 队列（toAuthenticated 的 login+permissions 也要按顺序 push）",
-    "LoginPage throw 必须留 undefined-throw 语义（v === '' 是合法值，测试同源相对 URL 模式会显式设空串）"
+    "不要把 toggle 双态按钮强行塞 <Button variant=outline|default>（4+ override 触发阈值）",
+    "不要给关闭× icon-glyph 按钮加 h-auto w-auto p-0（与 react 仓同 raw）",
+    "regression-anchor 测试 it() 标题禁止嵌入 Mxx.Fxx.Ixx 字面（fnReporter leak）"
   ],
   "active_branch": "master"
 }
