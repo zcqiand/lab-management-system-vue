@@ -15,6 +15,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
 // 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/resources/contract.ts）
@@ -174,9 +175,9 @@ async function submitForm(): Promise<void> {
         <option value="active">在用</option>
         <option value="archived">已归档</option>
       </select>
-      <input
+      <Input
         v-model="keyword"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         placeholder="按合同编号 / 项目名称搜索"
         @keydown.enter="load"
       />
@@ -212,67 +213,67 @@ async function submitForm(): Promise<void> {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label class="text-sm font-medium">合同编号 *</label>
-                <input v-model="form.contractCode" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.contractCode" />
               </div>
               <div>
                 <label class="text-sm font-medium">委托单位 *</label>
-                <input v-model="form.clientUnit" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.clientUnit" />
               </div>
               <div>
                 <label class="text-sm font-medium">项目名称 *</label>
-                <input v-model="form.projectName" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.projectName" />
               </div>
               <div>
                 <label class="text-sm font-medium">项目地点</label>
-                <input v-model="form.projectLocation" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.projectLocation" />
               </div>
               <div>
                 <label class="text-sm font-medium">施工单位 *</label>
-                <input v-model="form.constructionUnit" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.constructionUnit" />
               </div>
               <div>
                 <label class="text-sm font-medium">检测专项</label>
-                <input v-model="form.inspectionSpecialtyCode" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.inspectionSpecialtyCode" />
               </div>
               <div>
                 <label class="text-sm font-medium">建设单位</label>
-                <input v-model="form.buildingUnit" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.buildingUnit" />
               </div>
               <div>
                 <label class="text-sm font-medium">监理单位</label>
-                <input v-model="form.supervisorUnit" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.supervisorUnit" />
               </div>
               <div>
                 <label class="text-sm font-medium">检测人</label>
-                <input v-model="form.inspectionPerson" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.inspectionPerson" />
               </div>
               <div>
                 <label class="text-sm font-medium">检测人电话</label>
-                <input v-model="form.inspectionPhone" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.inspectionPhone" />
               </div>
               <div>
                 <label class="text-sm font-medium">见证单位 *</label>
-                <input v-model="form.witnessUnit" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.witnessUnit" />
               </div>
               <div>
                 <label class="text-sm font-medium">见证人 *</label>
-                <input v-model="form.witness" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.witness" />
               </div>
               <div>
                 <label class="text-sm font-medium">见证人电话</label>
-                <input v-model="form.witnessPhone" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.witnessPhone" />
               </div>
               <div>
                 <label class="text-sm font-medium">联系人</label>
-                <input v-model="form.contactPerson" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.contactPerson" />
               </div>
               <div>
                 <label class="text-sm font-medium">联系人电话</label>
-                <input v-model="form.contactPhone" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.contactPhone" />
               </div>
               <div>
                 <label class="text-sm font-medium">委托日期 (YYYY-MM-DD)</label>
-                <input v-model="form.entrustedDate" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.entrustedDate" />
               </div>
               <div>
                 <label class="text-sm font-medium">状态</label>
