@@ -2,6 +2,68 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.40] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 1.3c**（12 个 data-entry card / page 文件 raw `<input>` → `<Input>`
+原语，共迁移 23 处；保留所有 `<input type=checkbox>` / `<textarea>` / `<select>` / `<label>`
+父级）。
+
+- **DataEntryPage**（data-entry）：1 处 `<input>`。
+  搜索框（`@keyup.enter="load"`，`max-w-sm` + `bg-white` 保留）
+- **SoilCompactionDegreeCard**（data-entry）：7 处 `<input>`（含 v-for × 6 行）。
+  1 处最大干密度（`type=number step=0.001` + `aria-label` + `disabled` 转发）
+  + 6 行 × 6 字段（试样编号 / 取样部位 / 层次 / 设计压实度 `type=number step=0.1` /
+  湿密度 `type=number step=0.001` / 含水率 `type=number step=0.1`），
+  `@change` 转发 + `read-only:bg-gray-50 read-only:text-gray-500` 灰化样式保留
+- **ParticleGradationCard**（data-entry）：3 处 `<input>`（v-for × 筛孔）。
+  分筛前总量 `type=number step=1` + 分计筛余 `type=number step=0.1` +
+  分筛后总量 `type=number step=1`，`@change` + `@blur` 双事件转发
+- **SoilCompactionCard**（data-entry）：2 处 `<input>`（v-for × 5 组）。
+  含水率 `type=number step=0.1` + 干密度 `type=number step=0.001`
+- **RebarWeldingTensileCard**（data-entry）：2 处 `<input>`（v-for × 3 试件）。
+  最大荷重 `type=number step=0.01 placeholder=kN` + 断口距 `type=number step=0.1 placeholder=mm`
+- **RebarMechNumericCard**（data-entry）：2 处 `<input>`。
+  公称直径 `type=number step=0.1 placeholder=直径 aria-label=公称直径` +
+  v-for 数值 `type=number step=0.01 placeholder=数值`
+- **StrengthCardBase**（data-entry）：1 处 `<input>`（v-for × 试件）。
+  破坏荷载 `type=number step=0.01 aria-label=试件 N 破坏荷载`，
+  `:readonly` + `read-only:bg-gray-50 read-only:text-gray-500` 灰化样式保留
+- **RebarWeldingBendCard**（data-entry）：1 处 `<input>`（v-for × 3 试件）。
+  弯曲角度 `type=number step=1 placeholder=90`
+- **DefaultParamCard**（data-entry）：1 处 `<input>`。
+  检测结果（`placeholder=录入检测结果`，`@update:model-value` 改判）
+- **ConcretePermeabilityCard**（data-entry）：1 处 `<input>`（v-for × 6 试件）。
+  渗水压力 `type=number step=0.1 placeholder=渗水压力 (MPa)`
+- **ConcreteCompressCard**（data-entry）：1 处 `<input>`（v-for × 3 试件）。
+  破坏荷载 `type=number placeholder=破坏荷载 (kN)`
+- **CementCompressCard**（data-entry）：1 处 `<input>`（v-for × 6 试件）。
+  破坏荷载 `type=number step=0.01 placeholder=kN`，
+  `@update:model-value` 模式（同步 input 事件即时改判，非 change-on-blur）
+
+新增 11 个 Input 原语回归锚（不挂功能 ID，regression-anchor 模式）：
+
+- `tests/features/data-entry/dataEntryPage.dom.test.ts`：搜索 v-model + max-w-sm + bg-white 保留
+- `tests/features/data-entry/cardsAll.dom.test.ts`：10 个 card 覆盖
+  - ConcreteCompressCard：type=number + placeholder + @change 触发 updateLoad
+  - ConcretePermeabilityCard：step + aria-label 落 DOM
+  - RebarWeldingTensileCard：双 type=number + 双 step 落 DOM
+  - RebarWeldingBendCard：@change 触发 updateAngle
+  - RebarMechNumericCard：tensile_strength 直径 + 2 组共 3 个 type=number
+  - ParticleGradationCard：分筛前 / 分计 / 分筛后 3 类 type=number
+  - SoilCompactionCard：含水率 + 干密度 step 0.1 / 0.001 落 DOM
+  - SoilCompactionDegreeCard：最大干密度 step=0.001 + 6 行试样编号 + 含水率 step=0.1 + 湿密度 step=0.001
+  - StrengthCardBase：readonly + read-only 灰化样式经 tailwind-merge 合成
+  - RebarWeldingBendCard readOnly：readonly 落 DOM，@change 不触发 onChange
+
+**不回归**：
+
+- 全量 51 case（4 文件）data-entry 全绿（v0.3.39 = 40 case，本次 +11）
+- v-model / `:model-value` + `@change` / `@update:model-value` / `@blur` / `@keyup.enter` /
+  `type=number` / `step` / `placeholder` / `aria-label` / `:disabled` / `:readonly` /
+  `read-only:bg-gray-50` 全经 `$attrs` 落到真实 `<input>`
+- 调用方 class（`max-w-sm` / `bg-white` / `w-32` / `w-24` / `w-20` / `w-16` /
+  `read-only:bg-gray-50 read-only:text-gray-500`）经 tailwind-merge 与 CVA base 合成
+
 ## [0.3.39] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 1.3b**（6 个 list-page 文件 raw `<input>` → `<Input>` 原语，
