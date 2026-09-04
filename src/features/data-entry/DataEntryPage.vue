@@ -15,6 +15,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import DefaultParamCard from "@/features/data-entry/models/DefaultParamCard.vue";
 import CementCompressCard from "@/features/data-entry/models/CementCompressCard.vue";
 
@@ -190,10 +191,10 @@ function onParamChange(patch: Partial<TestRecord>): void {
     </div>
 
     <div class="mb-4 flex gap-2">
-      <input
+      <Input
         v-model="keyword"
+        class="max-w-sm bg-white"
         placeholder="按委托书编号搜索"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
         @keyup.enter="load()"
       />
       <Button variant="outline" @click="load()">搜索</Button>
