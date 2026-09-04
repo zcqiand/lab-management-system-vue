@@ -9,6 +9,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 
 type FlowStage =
   | "receiving"
@@ -118,7 +119,7 @@ async function handleSave(): Promise<void> {
         class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
         @keyup.enter="load()"
       />
-      <button class="border rounded h-9 px-3 text-sm" @click="load()">搜索</button>
+      <Button variant="outline" @click="load()">搜索</Button>
     </div>
 
     <div class="bg-white rounded shadow">
@@ -159,13 +160,14 @@ async function handleSave(): Promise<void> {
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
             </td>
             <td class="px-4 py-2 text-right">
-              <button
-                class="border rounded px-2 py-0.5 text-xs"
+              <Button
+                variant="outline"
+                size="sm"
                 data-fn="M03.F02.I02"
                 @click="openAssign(r)"
               >
                 安排
-              </button>
+              </Button>
             </td>
           </tr>
         </tbody>
@@ -198,14 +200,15 @@ async function handleSave(): Promise<void> {
             </label>
           </div>
           <div class="mt-4 flex justify-end gap-2">
-            <button class="px-4 py-2 text-sm" @click="assignTarget = null">取消</button>
-            <button
-              class="px-4 py-2 bg-blue-600 text-white rounded text-sm disabled:opacity-50"
+            <Button variant="outline" @click="assignTarget = null">取消</Button>
+            <Button
+              variant="default"
+              class="bg-blue-600 hover:bg-blue-700"
               :disabled="saving || !assigneeName.trim() || !plannedTestDate"
               @click="handleSave()"
             >
               保存
-            </button>
+            </Button>
           </div>
         </div>
       </div>

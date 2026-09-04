@@ -1,8 +1,9 @@
 // M03.F02.I01 / I02 — 任务分配 smoke
 //
 // 镜像 react 仓 tests/features/task-assignment/taskAssignmentList.dom.test.tsx 2 个 fnTest。
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -81,5 +82,55 @@ describe("M03.F02 任务分配", () => {
     await flushPromises();
     const h2 = wrapper.findAll("h2").find((h) => h.text().includes("任务安排 —"));
     expect(h2).toBeTruthy();
+  });
+});
+// Phase 1.2b Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：<Button> 底层仍是 <button>（原 findAll("button") selector 零回归）、
+// data-fn 经 $attrs 落到真实 DOM、CVA base inline-flex 活着、调用方 class 经
+// tailwind-merge 压过 CVA 默认值。
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
+  it("行内安排按钮：<Button variant=outline size=sm> 渲染 <button>，data-fn 落到真实 DOM", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const arrange = lastWrapper.find('button[data-fn="M03.F02.I02"]');
+    expect(arrange.exists()).toBe(true);
+    expect(arrange.element.tagName).toBe("BUTTON");
+    expect(arrange.classes()).toContain("inline-flex");
+    expect(arrange.classes()).toContain("border");
+  });
+
+  it("弹窗保存按钮：<Button variant=default class=bg-blue-600> 压过 CVA bg-primary，disabled 落到真实 DOM", async () => {
+    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await flushPromises();
+
+    const save = lastWrapper.findAll("button").find((b) => b.text() === "保存");
+    expect(save).toBeTruthy();
+    expect(save!.classes()).toContain("inline-flex");
+    expect(save!.classes()).toContain("bg-blue-600");
+    expect(save!.classes()).not.toContain("bg-primary");
+    // assigneeName 为空 → disabled 必须落到真实 <button>
+    expect((save!.element as HTMLButtonElement).disabled).toBe(true);
+
+    const cancel = lastWrapper.findAll("button").find((b) => b.text() === "取消");
+    expect(cancel).toBeTruthy();
+    expect(cancel!.classes()).toContain("border");
   });
 });
