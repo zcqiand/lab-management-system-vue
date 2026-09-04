@@ -134,7 +134,7 @@ describe("Phase 1.2a — ParamInterfaceList <Button> 原语回归", () => {
     expect(create.classes()).toContain("bg-primary");
   });
 
-  it("行内删除按钮：size=sm variant=ghost，text-red-600 调用方 class 经 tailwind-merge 合并进来", async () => {
+  it("行内删除按钮：<Button variant=link>，text-destructive 调用方 class 经 tailwind-merge 合并进来", async () => {
     const { default: ParamInterfaceList } = await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -143,7 +143,8 @@ describe("Phase 1.2a — ParamInterfaceList <Button> 原语回归", () => {
 
     const delBtn = lastWrapper.findAll("button").find((b) => b.text() === "删除");
     expect(delBtn).toBeTruthy();
-    expect(delBtn!.classes()).toContain("h-8");
-    expect(delBtn!.classes()).toContain("text-red-600");
+    // link variant 不带 h-8（CVA sm size 已移除）
+    expect(delBtn!.classes()).not.toContain("h-8");
+    expect(delBtn!.classes()).toContain("text-destructive");
   });
 });

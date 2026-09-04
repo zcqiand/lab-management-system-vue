@@ -136,7 +136,7 @@ describe("M02.F01 合同管理", () => {
 // 锁 3 件事，Phase 后续换原语 / 改 class 时不许回归：
 //   1. <Button> 渲染 <button> 底层 — 原有 findAll("button") / data-fn 仍命中
 //   2. $attrs 转发 — data-fn 落到真实 <button>，不是被吞掉
-//   3. CVA base（inline-flex）活着；调用方 class（如 text-red-600）经 tailwind-merge 合并进来
+//   3. CVA base（inline-flex）活着；调用方 class（如 text-destructive）经 tailwind-merge 合并进来
 let lastWrapper: VueWrapper | null = null;
 afterEach(() => {
   if (lastWrapper) {
@@ -160,7 +160,7 @@ describe("Phase 1.2a — ContractsList 列表 <Button> 原语回归", () => {
     expect(create.classes()).toContain("bg-primary");
   });
 
-  it("行内删除按钮：<Button variant=ghost> 保留调用方 text-red-600 class，点击仍打开 ConfirmDialog", async () => {
+  it("行内删除按钮：<Button variant=link> 保留调用方 text-destructive class，点击仍打开 ConfirmDialog", async () => {
     const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
     lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -169,8 +169,12 @@ describe("Phase 1.2a — ContractsList 列表 <Button> 原语回归", () => {
 
     const delBtn = lastWrapper.findAll("button").find((b) => b.text() === "删除");
     expect(delBtn).toBeTruthy();
-    // 调用方 class 经 tailwind-merge 合并进 ghost variant
-    expect(delBtn!.classes()).toContain("text-red-600");
+    // 调用方 class 经 tailwind-merge 合并进 link variant
+    expect(delBtn!.classes()).toContain("text-destructive");
+    // link variant 不带 CVA sm size (h-8) — 高度回归目标（B1 BLOCKER）
+    expect(delBtn!.classes()).not.toContain("h-8");
+    // link variant 不带 CVA sm padding (px-3)
+    expect(delBtn!.classes()).not.toContain("px-3");
     await delBtn!.trigger("click");
     await flushPromises();
     expect(lastWrapper!.find('[data-testid="confirm-dialog"]').exists()).toBe(true);

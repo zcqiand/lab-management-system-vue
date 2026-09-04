@@ -221,7 +221,7 @@ afterEach(() => {
 });
 
 describe("Phase 1.2a — InspectionCapabilityList <Button> 原语回归", () => {
-  it("parameters 行内关联标准：<Button variant=ghost class=text-primary> 渲染 <button>，data-fn 落到真实 DOM", async () => {
+  it("parameters 行内关联标准：<Button variant=link class=text-primary> 渲染 <button>，data-fn 落到真实 DOM", async () => {
     lastWrapper = mountWithProviders(InspectionCapabilityList, {
       props: { resource: "parameters" },
     });
@@ -233,6 +233,36 @@ describe("Phase 1.2a — InspectionCapabilityList <Button> 原语回归", () => 
     expect(linkBtn.exists()).toBe(true);
     expect(linkBtn.classes()).toContain("inline-flex");
     expect(linkBtn.classes()).toContain("text-primary");
+  });
+
+  // Phase 1.2a hotfix B3：官方行删除按钮 disabled 且带 disabled:opacity-40
+  it("specialties 官方行删除按钮：disabled 落到真实 <button>，class 包含 disabled:opacity-40", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "specialties" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // SPECIALTIES fixture 两条都是 isOfficial=true，删除按钮应 :disabled
+    const officialDelete = lastWrapper.find('button[data-fn="M06.F01.I01"][aria-label^="删除 "]:disabled');
+    expect(officialDelete.exists()).toBe(true);
+    expect(officialDelete.classes()).toContain("disabled:opacity-40");
+  });
+
+  // Phase 1.2a hotfix B1：行内 link-style 按钮用 variant=link（无 h-8 / px-3）
+  it("objects 行内编辑：<Button variant=link> 不带 CVA sm size (h-8) 也不带 sm padding (px-3)", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "objects" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const editBtn = lastWrapper.find('button[aria-label^="编辑 OBJ-1"]');
+    expect(editBtn.exists()).toBe(true);
+    expect(editBtn.classes()).not.toContain("h-8");  // CVA sm size removed
+    expect(editBtn.classes()).not.toContain("px-3"); // CVA sm padding removed
   });
 });
 
@@ -249,7 +279,7 @@ describe("Phase 1.2a — TechnicalRequirementList <Button> 原语回归", () => 
     expect(create.classes()).toContain("bg-primary");
   });
 
-  it("行内删除：<Button size=sm variant=ghost class=text-red-600 hover:underline>，aria-label 转发", async () => {
+  it("行内删除：<Button variant=link class=text-destructive hover:underline>，aria-label 转发", async () => {
     lastWrapper = mountWithProviders(TechnicalRequirementList);
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -257,8 +287,9 @@ describe("Phase 1.2a — TechnicalRequirementList <Button> 原语回归", () => 
 
     const delBtns = lastWrapper.findAll('button[aria-label^="删除 "]');
     expect(delBtns.length).toBeGreaterThan(0);
-    expect(delBtns[0]!.classes()).toContain("text-red-600");
-    expect(delBtns[0]!.classes()).toContain("h-8");
+    expect(delBtns[0]!.classes()).toContain("text-destructive");
+    // link variant 不带 h-8（CVA sm size 已移除）
+    expect(delBtns[0]!.classes()).not.toContain("h-8");
   });
 });
 
@@ -276,7 +307,7 @@ describe("Phase 1.2a — CalculationMethodList <Button> 原语回归", () => {
     expect(create!.classes()).toContain("bg-primary");
   });
 
-  it("行内编辑/删除：size=sm variant=ghost，aria-label 转发 + 调用方 text-primary / text-red-600 保留", async () => {
+  it("行内编辑/删除：<Button variant=link>，aria-label 转发 + 调用方 text-primary / text-destructive 保留", async () => {
     lastWrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -287,7 +318,8 @@ describe("Phase 1.2a — CalculationMethodList <Button> 原语回归", () => {
     expect(editBtns.length).toBeGreaterThan(0);
     expect(delBtns.length).toBeGreaterThan(0);
     expect(editBtns[0]!.classes()).toContain("text-primary");
-    expect(delBtns[0]!.classes()).toContain("text-red-600");
-    expect(editBtns[0]!.classes()).toContain("h-8");
+    expect(delBtns[0]!.classes()).toContain("text-destructive");
+    // link variant 不带 h-8（CVA sm size 已移除）
+    expect(editBtns[0]!.classes()).not.toContain("h-8");
   });
 });

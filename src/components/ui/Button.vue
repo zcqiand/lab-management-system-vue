@@ -20,6 +20,9 @@ const buttonVariants = cva(
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",
+        // link: 纯文本样式 — 无 height/padding/border-radius；size 不生效。
+        // 用法：<Button variant="link" class="text-destructive hover:underline">删除</Button>
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-9 px-4 py-2",

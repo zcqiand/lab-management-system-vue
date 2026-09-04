@@ -324,9 +324,8 @@ async function submitForm(): Promise<void> {
                 编辑
               </Button>
               <Button
-                size="sm"
-                variant="ghost"
-                class="ml-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+                variant="link"
+                class="ml-2 text-destructive hover:underline"
                 @click="deleteTarget = r"
               >
                 删除

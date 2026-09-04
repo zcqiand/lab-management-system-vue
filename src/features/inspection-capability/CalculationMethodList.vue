@@ -253,8 +253,7 @@ async function confirmDelete(): Promise<void> {
           <td class="px-4 py-2 text-xs text-slate-500">{{ row.remark ?? "-" }}</td>
           <td class="px-4 py-2 text-xs whitespace-nowrap">
             <Button
-              size="sm"
-              variant="ghost"
+              variant="link"
               class="text-primary hover:underline mr-3"
               data-fn="M06.F05.I01"
               :aria-label="`编辑 ${row.id}`"
@@ -263,9 +262,8 @@ async function confirmDelete(): Promise<void> {
               编辑
             </Button>
             <Button
-              size="sm"
-              variant="ghost"
-              class="text-red-600 hover:underline"
+              variant="link"
+              class="text-destructive hover:underline"
               data-fn="M06.F05.I01"
               :aria-label="`删除 ${row.id}`"
               @click="startDelete(row)"

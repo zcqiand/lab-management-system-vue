@@ -415,8 +415,7 @@ function cellOf(item: ListItem, idx: number): string {
           <td class="px-4 py-2 text-xs whitespace-nowrap">
             <Button
               v-if="resource === 'parameters'"
-              size="sm"
-              variant="ghost"
+              variant="link"
               class="text-primary hover:underline mr-3"
               data-fn="M06.F03.I02"
               :aria-label="`关联标准 ${item.code}`"
@@ -425,8 +424,7 @@ function cellOf(item: ListItem, idx: number): string {
               关联标准
             </Button>
             <Button
-              size="sm"
-              variant="ghost"
+              variant="link"
               class="text-primary hover:underline mr-3"
               :data-fn="fnCreate"
               :aria-label="`编辑 ${item.code}`"
@@ -435,9 +433,8 @@ function cellOf(item: ListItem, idx: number): string {
               编辑
             </Button>
             <Button
-              size="sm"
-              variant="ghost"
-              class="text-red-600 hover:underline"
+              variant="link"
+              class="text-destructive hover:underline disabled:opacity-40"
               :data-fn="fnDelete"
               :aria-label="`删除 ${item.code}`"
               :disabled="isOfficialRow(item)"

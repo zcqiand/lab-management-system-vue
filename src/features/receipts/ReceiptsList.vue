@@ -331,9 +331,8 @@ function alertError(msg: string): void {
               </Button>
               <Button
                 v-if="r.flowStatus === 'receiving'"
-                size="sm"
-                variant="ghost"
-                class="text-red-600 hover:text-red-700"
+                variant="link"
+                class="text-destructive hover:underline"
                 data-fn="M03.F01.I03"
                 @click="deleteTarget = r"
               >
