@@ -11,6 +11,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 import ReportPreviewModal from "@/features/data-entry/ReportPreviewModal.vue";
 
 type FlowStage =
@@ -121,19 +122,23 @@ function alertError(msg: string): void {
             接样单详情 — {{ receipt.commissionCode }}
           </h3>
           <div class="flex items-center gap-2">
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               data-fn="M03.F09.I03"
-              class="border border-blue-300 text-blue-600 rounded px-3 py-1 text-sm hover:text-blue-700"
+              class="text-primary"
               @click="previewOpen = true"
             >
               报告预览
-            </button>
-            <button
-              class="border rounded px-3 py-1 text-sm text-slate-500 hover:text-slate-700"
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              class="text-muted-foreground"
               @click="router.back()"
             >
               返回
-            </button>
+            </Button>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">

@@ -1,8 +1,9 @@
 // M03.F09.I01 / I02 / I03 — 接样单详情 smoke
 //
 // 镜像 react 仓 tests/features/receipts/receiptDetail.dom.test.tsx 3 个 fnTest。
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -131,5 +132,49 @@ describe("M03.F09 接样单详情", () => {
     await flushPromises();
     const h2 = wrapper.findAll("h2").find((h) => h.text().includes("报告预览 —"));
     expect(h2).toBeTruthy();
+  });
+});
+// Phase 1.2b Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：<Button> 底层仍是 <button>、data-fn=M03.F09.I03 经 $attrs 落到真实 DOM、
+// CVA base inline-flex 活着、调用方 token class 经 tailwind-merge 合并进来。
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2b — ReceiptDetail <Button> 原语回归", () => {
+  it("报告预览按钮：<Button variant=outline size=sm> 渲染 <button>，data-fn 落到真实 DOM，点击开弹窗", async () => {
+    lastWrapper = (await mountDetail()) as unknown as VueWrapper;
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const preview = lastWrapper.find('button[data-fn="M03.F09.I03"]');
+    expect(preview.exists()).toBe(true);
+    expect(preview.element.tagName).toBe("BUTTON");
+    expect(preview.classes()).toContain("inline-flex");
+    expect(preview.classes()).toContain("border");
+    expect(preview.classes()).toContain("text-primary");
+
+    await preview.trigger("click");
+    await flushPromises();
+    const h2 = lastWrapper.findAll("h2").find((h) => h.text().includes("报告预览 —"));
+    expect(h2).toBeTruthy();
+  });
+
+  it("返回按钮：<Button variant=outline size=sm class=text-muted-foreground>", async () => {
+    lastWrapper = (await mountDetail()) as unknown as VueWrapper;
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const back = lastWrapper.findAll("button").find((b) => b.text() === "返回");
+    expect(back).toBeTruthy();
+    expect(back!.classes()).toContain("inline-flex");
+    expect(back!.classes()).toContain("border");
+    expect(back!.classes()).toContain("text-muted-foreground");
   });
 });
