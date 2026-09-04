@@ -1,37 +1,42 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "Phase 1.3a 4 form-heavy <Input> 迁移 → tag push v0.3.38-20260905",
+  "current_task": "Phase 1.3b 6 list pages <Input> 迁移 → tag push v0.3.39-20260905",
   "last_session_at": "2026-09-05",
-  "last_session_summary": "Phase 1.3a 完成：4 form-heavy 文件 raw <input> → <Input> 原语。共迁移 55 处（ContractsList 17 + InspectionCapabilityList 10 + TechnicalRequirementList 12 + ReceiptsList 11），保留所有 <input type=checkbox>（Phase 2b）+ <textarea>（2c）+ <select>（2d）+ <label> 父级（1.4）。Input.vue modelValue 类型放宽 string→string|number|boolean 让 reactive Record<string, string|number|boolean> 不报 TS2322。新增 11 个 Input regression-anchor case 锁 v-model/$attrs/type=number/disabled 落到真实 <input>。全量 178 case 全绿（+11），gate exit 0。",
+  "last_session_summary": "Phase 1.3b 完成：6 个 list-page 文件 raw <input> → <Input> 原语。共迁移 24 处（ReportNameList 7 + ReportPhasePage 4 + ParamInterfaceList 4 + CalculationMethodList 4 + TaskAssignmentList 3 + CategoryDictList 2），保留所有 <input type=checkbox>（Phase 2b）+ <textarea>（2c）+ <select>（2d）+ <label> 父级（1.4）。涉及 type=number v-model.number（sortOrder × 4 处）、:disabled（ParamInterfaceList 编码 edit 模式）、@keydown.enter / @keyup.enter、type=date（TaskAssignmentList 计划日期）、placeholder 转发（CalculationMethodList 修约规则）。调用方 class 仅在非常规样式（max-w-sm / mt-1 / disabled:bg-slate-100）保留，CVA base 接管 border/h-9/px-3/bg-background 等常规样式。新增 11 个 Input regression-anchor case 锁 v-model/type=number/disabled/type=date/placeholder/$attrs 落到真实 <input>。全量 189 case 全绿（+11 vs v0.3.38 178），gate exit 0（L0.no_fallback PASS）。",
   "done": [
-    "ContractsList.vue 17 处 <input> → <Input>（1 搜索 @keydown.enter + 16 form）",
-    "InspectionCapabilityList.vue 10 处 <input> → <Input>（1 搜索 + 8 form + 1 type=number v-model.number；6 checkbox 保留 raw）",
-    "TechnicalRequirementList.vue 12 处 <input> → <Input>（4 筛选 aria-label + 8 form 含 font-mono + 2 type=number）",
-    "ReceiptsList.vue 11 处 <input> → <Input>（1 搜索 @keyup.enter + 5 form × 2 dialog 含 type=date；<label> 父级保留）",
-    "src/components/ui/Input.vue modelValue 类型放宽 string|number|boolean（fix TS2322）",
-    "tests/features/contracts/contractsList.dom.test.ts +2 Input case",
-    "tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts +7 Input case（4 筛选 + disabled + type=number × 2 + font-mono）",
-    "tests/features/receipts/receiptsList.dom.test.ts +2 Input case（搜索 + 弹窗 5 input + type=date）",
-    "CHANGELOG 0.3.38 条目（Phase 1.3a 记录 + type 放宽说明）",
-    "7 commit（按文件粒度：4 迁移 + 1 test + 1 changelog + 1 type fix）",
-    "tag v0.3.38-20260905",
-    "gate -p lab-management-system-vue exit 0（178 case / 26 文件，L0.no_fallback PASS）"
+    "ReportNameList.vue 7 处 <input> → <Input>（1 搜索 @keydown.enter + 6 form 含 type=number v-model.number）",
+    "ReportPhasePage.vue 4 处 <input> → <Input>（1 搜索 @keyup.enter + 1 退回原因 form；<input type=checkbox> 全选/行选保留 raw）",
+    "ParamInterfaceList.vue 4 处 <input> → <Input>（1 搜索 + 3 form：编码 :disabled edit 模式 / 组件路径 / 排序 type=number）",
+    "CalculationMethodList.vue 4 处 <input> → <Input>（1 搜索 + 3 form：试件数量 type=number / 修约规则 placeholder 转发 / 备注；<select> 4 个保留 raw）",
+    "TaskAssignmentList.vue 3 处 <input> → <Input>（1 搜索 + 2 form：检测人员 + 计划日期 type=date）",
+    "CategoryDictList.vue 2 处 <input> → <Input>（名称 + 备注；<select> 检测项目保留 raw）",
+    "tests/features/report-names/reportNameList.dom.test.ts +2 Input case（搜索 + 弹窗 6 input + type=number）",
+    "tests/features/reports/reportPhasePage.dom.test.ts +2 Input case（搜索 + 退回弹窗 v-model）",
+    "tests/features/param-interfaces/paramInterfaceList.dom.test.ts +2 Input case（搜索 + 弹窗 3 input + :disabled / type=number）",
+    "tests/features/inspection-capability/inspectionCapabilityPages.dom.test.ts +2 Input case（搜索 + 弹窗 3 input + type=number + placeholder）",
+    "tests/features/task-assignment/taskAssignmentList.dom.test.ts +2 Input case（搜索 + 弹窗 2 input + type=date）",
+    "tests/features/dicts/categoryDictPages.dom.test.ts +1 Input case（弹窗 2 input v-model）",
+    "CHANGELOG 0.3.39 条目（Phase 1.3b 6 文件 24 处迁移记录）",
+    "7 commit（按文件粒度：6 迁移 + 1 changelog）",
+    "tag v0.3.39-20260905",
+    "gate -p lab-management-system-vue exit 0（189 case / 26 文件，L0.no_fallback PASS）"
   ],
   "next": [
-    "deploy: push tag v0.3.38-20260905 → CI docker build + VPS pull + restart",
-    "Phase 1.3b: input 迁移扫尾（其他文件的 raw input，scope 1.3a 之外）",
+    "deploy: push tag v0.3.39-20260905 → CI docker build + VPS pull + restart",
+    "Phase 1.3c: 全仓扫尾（扫描其他 list/page 是否还有遗漏 raw <input type=text|number|email|password|search>，仅上述 6 文件 + Phase 1.3a 4 文件 + Phase 1.2b 8 文件已迁）",
     "Phase 1.4: <label> 父级 wrapper → Label 原语",
-    "Phase 2b: Checkbox 原语（处理 InspectionCapabilityList 6 个 type=checkbox）",
-    "Phase 2c: Textarea 原语",
-    "Phase 2d: Select 原语 + Label/Input 配对"
+    "Phase 2b: Checkbox 原语（处理 InspectionCapabilityList 6 个 type=checkbox + ReportPhasePage 2 个 + ReceiptsList 全选/单选）",
+    "Phase 2c: Textarea 原语（ReportNameList extFields + ReceiptsList 备注）",
+    "Phase 2d: Select 原语 + Label/Input 配对（CalculationMethodList 4 个 + CategoryDictList 检测项目 + 其他 select）"
   ],
   "open_questions": [],
   "dont": [
     "不要 <input type=checkbox/radio/textarea/select>（留 Phase 2b/c/d）",
     "不要 <label> 父级 wrapper（留 Phase 1.4）",
     "regression-anchor 测试 it() 标题禁止嵌入 Mxx.Fxx.Ixx 字面（fnReporter leak）",
-    "不要把 Input.vue modelValue 再改回 string-only（会触发 reactive Record TS2322 回归）"
+    "不要把 Input.vue modelValue 再改回 string-only（会触发 reactive Record TS2322 回归）",
+    "不要给 v-model 加 .lazy modifier（搜索框 @keydown.enter / @keyup.enter 仍依赖 input 事件即时同步）"
   ],
   "active_branch": "master"
 }
