@@ -16,6 +16,7 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
 import DefaultParamCard from "@/features/data-entry/models/DefaultParamCard.vue";
 import CementCompressCard from "@/features/data-entry/models/CementCompressCard.vue";
 
@@ -260,7 +261,7 @@ function onParamChange(patch: Partial<TestRecord>): void {
           </p>
 
           <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-            <label class="text-xs block">样品
+            <Label class="text-xs block">样品
               <select
                 v-model="selectedSampleId"
                 class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white"
@@ -270,8 +271,8 @@ function onParamChange(patch: Partial<TestRecord>): void {
                   {{ s.sampleCode }}
                 </option>
               </select>
-            </label>
-            <label class="text-xs block">检测参数
+            </Label>
+            <Label class="text-xs block">检测参数
               <select
                 v-model="activeParamCode"
                 class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white"
@@ -281,7 +282,7 @@ function onParamChange(patch: Partial<TestRecord>): void {
                   {{ p.canonicalName || p.name }}
                 </option>
               </select>
-            </label>
+            </Label>
           </div>
 
           <div class="mt-3">
