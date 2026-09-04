@@ -1,6 +1,7 @@
 // M03.F05/F06/F07/F08 — 报告 4 阶段 smoke（镜像 react 仓 tests/features/reports/reportPhasePage.dom.test.tsx 8 个 fnTest）
-import { describe, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -171,5 +172,71 @@ describe("M03.F08 报告归档", () => {
     await flushPromises();
     const submitBtn = wrapper.findAll("button").find((b) => /归档完成/.test(b.text()));
     expect(submitBtn).toBeTruthy();
+  });
+});
+// Phase 1.2b Button 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：<Button> 底层仍是 <button>、data-fn 经 $attrs 落到真实 DOM、
+// 行内退回走 link variant（无 h-8/px-3）+ text-destructive token、
+// 「全选」仍是 raw <input type=checkbox>（Phase 1.3 才动，本 Phase 不许顺手迁）。
+let lastWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastWrapper) {
+    lastWrapper.unmount();
+    lastWrapper = null;
+  }
+});
+
+describe("Phase 1.2b — ReportPhasePage <Button> 原语回归", () => {
+  beforeEach(() => installAdapters("review"));
+
+  it("批量提交按钮：<Button variant=outline> 渲染 <button>，data-fn 落到真实 DOM，空选中时 disabled", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const submit = lastWrapper.find('button[data-fn="M03.F05.I02"]');
+    expect(submit.exists()).toBe(true);
+    expect(submit.element.tagName).toBe("BUTTON");
+    expect(submit.classes()).toContain("inline-flex");
+    expect(submit.classes()).toContain("border");
+    expect((submit.element as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("行内退回按钮：<Button variant=link class=text-destructive> 无 h-8/px-3，点击开退回弹窗", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const back = lastWrapper.findAll("button").find((b) => b.text() === "退回");
+    expect(back).toBeTruthy();
+    expect(back!.classes()).toContain("text-destructive");
+    expect(back!.classes()).not.toContain("text-red-600");
+    expect(back!.classes()).not.toContain("h-8");
+    expect(back!.classes()).not.toContain("px-3");
+
+    await back!.trigger("click");
+    await flushPromises();
+    const h2 = lastWrapper.findAll("h2").find((h) => h.text().includes("退回 —"));
+    expect(h2).toBeTruthy();
+    const confirm = lastWrapper.findAll("button").find((b) => b.text() === "确认退回");
+    expect(confirm).toBeTruthy();
+    expect(confirm!.classes()).toContain("inline-flex");
+    expect(confirm!.classes()).toContain("bg-red-600");
+  });
+
+  it("「全选」仍是 raw <input type=checkbox>（Phase 1.3 才迁，Button 迁移不许顺手动它）", async () => {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const selectAll = lastWrapper.find('input[type="checkbox"][aria-label="全选"]');
+    expect(selectAll.exists()).toBe(true);
+    expect(selectAll.element.tagName).toBe("INPUT");
   });
 });

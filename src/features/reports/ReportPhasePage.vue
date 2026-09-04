@@ -10,6 +10,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Button from "@/components/ui/Button.vue";
 
 type FlowStage =
   | "receiving"
@@ -183,16 +184,16 @@ function alertError(msg: string): void {
         class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
         @keyup.enter="load()"
       />
-      <button class="border rounded h-9 px-3 text-sm" @click="load()">搜索</button>
+      <Button variant="outline" @click="load()">搜索</Button>
       <div class="ml-auto flex gap-2">
-        <button
-          class="border rounded h-9 px-3 text-sm bg-white disabled:opacity-50"
+        <Button
+          variant="outline"
           :disabled="submitting || selected.size === 0"
           :data-fn="i02DataFn"
           @click="batchSubmit()"
         >
           {{ submitLabel }}（{{ selected.size }}）
-        </button>
+        </Button>
       </div>
     </div>
 
@@ -240,12 +241,13 @@ function alertError(msg: string): void {
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
             </td>
             <td class="px-4 py-2 text-right">
-              <button
-                class="text-red-600 hover:text-red-700 text-xs px-2 py-0.5"
+              <Button
+                variant="link"
+                class="text-destructive hover:underline text-xs"
                 @click="openReturn(r)"
               >
                 退回
-              </button>
+              </Button>
             </td>
           </tr>
         </tbody>
@@ -271,14 +273,15 @@ function alertError(msg: string): void {
             />
           </label>
           <div class="mt-4 flex justify-end gap-2">
-            <button class="px-4 py-2 text-sm" @click="returnTarget = null">取消</button>
-            <button
-              class="px-4 py-2 bg-red-600 text-white rounded text-sm disabled:opacity-50"
+            <Button variant="outline" @click="returnTarget = null">取消</Button>
+            <Button
+              variant="default"
+              class="bg-red-600 hover:bg-red-700"
               :disabled="submitting"
               @click="handleReturn()"
             >
               确认退回
-            </button>
+            </Button>
           </div>
         </div>
       </div>
