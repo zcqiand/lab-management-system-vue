@@ -235,3 +235,29 @@ describe("Phase 1.2a — InspectionCapabilityList <Button> 原语回归", () => 
     expect(linkBtn.classes()).toContain("text-primary");
   });
 });
+
+describe("Phase 1.2a — TechnicalRequirementList <Button> 原语回归", () => {
+  it("新建技术要求：<Button variant=default> 渲染 <button>，data-fn M06.F06.I02 落到真实 DOM", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const create = lastWrapper.find('button[data-fn="M06.F06.I02"]');
+    expect(create.exists()).toBe(true);
+    expect(create.classes()).toContain("inline-flex");
+    expect(create.classes()).toContain("bg-primary");
+  });
+
+  it("行内删除：<Button size=sm variant=ghost class=text-red-600 hover:underline>，aria-label 转发", async () => {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const delBtns = lastWrapper.findAll('button[aria-label^="删除 "]');
+    expect(delBtns.length).toBeGreaterThan(0);
+    expect(delBtns[0]!.classes()).toContain("text-red-600");
+    expect(delBtns[0]!.classes()).toContain("h-8");
+  });
+});
