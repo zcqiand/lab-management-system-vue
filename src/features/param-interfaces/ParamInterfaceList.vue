@@ -10,6 +10,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
@@ -128,9 +129,9 @@ async function submitForm(): Promise<void> {
     </div>
 
     <div class="mb-4 flex gap-2">
-      <input
+      <Input
         v-model="keyword"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         placeholder="按编码 / 组件路径搜索"
         @keydown.enter="load"
       />
@@ -160,22 +161,21 @@ async function submitForm(): Promise<void> {
             <div class="grid grid-cols-1 gap-3">
               <div>
                 <label class="text-sm font-medium">编码 *</label>
-                <input
+                <Input
                   v-model="form.code"
                   :disabled="mode.kind === 'edit'"
-                  class="border rounded h-9 px-2 text-sm bg-white w-full disabled:bg-slate-100"
+                  class="disabled:bg-slate-100"
                 />
               </div>
               <div>
                 <label class="text-sm font-medium">组件路径 *</label>
-                <input v-model="form.componentPath" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.componentPath" />
               </div>
               <div>
                 <label class="text-sm font-medium">排序</label>
-                <input
+                <Input
                   v-model.number="form.sortOrder"
                   type="number"
-                  class="border rounded h-9 px-2 text-sm bg-white w-full"
                 />
               </div>
             </div>

@@ -148,3 +148,55 @@ describe("Phase 1.2a — ParamInterfaceList <Button> 原语回归", () => {
     expect(delBtn!.classes()).toContain("text-destructive");
   });
 });
+
+// Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：搜索 <Input> 渲染真实 <input> + @keydown.enter 落到 DOM；
+// 弹窗 3 个 form <Input>：编辑模式 :disabled 落到真实 <input>，type=number 落到 DOM。
+describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：渲染 <input>，v-model 双向写回", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="按编码 / 组件路径搜索"]');
+    expect(search.exists()).toBe(true);
+    expect(search.classes()).toContain("max-w-sm");
+    expect(search.classes()).toContain("h-9");
+    await search.setValue("default");
+    expect((search.element as HTMLInputElement).value).toBe("default");
+  });
+
+  it("弹窗 3 个 form <Input>：编辑模式 :disabled 落到真实 <input>，type=number 落 DOM", async () => {
+    const { default: ParamInterfaceList } = await import(
+      "@/features/param-interfaces/ParamInterfaceList.vue"
+    );
+    lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 开新建弹窗
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建参数界面");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    // 弹窗内的 3 个 <Input>：编码 + 组件路径 + 排序
+    const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
+    expect(dialogInputs.length).toBe(3);
+
+    // type=number 仅排序 1 个
+    const numInput = lastWrapper.find('[data-teleport-stub] input[type="number"]');
+    expect(numInput.exists()).toBe(true);
+    expect(numInput.attributes("type")).toBe("number");
+    await numInput.setValue("42");
+    expect((numInput.element as HTMLInputElement).value).toBe("42");
+
+    // 新建模式下，编码不应 disabled
+    const codeInput = dialogInputs[0];
+    expect((codeInput.element as HTMLInputElement).disabled).toBe(false);
+  });
+});
