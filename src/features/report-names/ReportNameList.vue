@@ -11,6 +11,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Input from "@/components/ui/Input.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ReportNameLinkDialog from "@/features/report-names/ReportNameLinkDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
@@ -171,9 +172,9 @@ async function submitForm(): Promise<void> {
     </div>
 
     <div class="mb-4 flex gap-2">
-      <input
+      <Input
         v-model="keyword"
-        class="border rounded h-9 px-2 text-sm bg-white max-w-sm"
+        class="max-w-sm"
         placeholder="按编码 / 名称搜索"
         @keydown.enter="load"
       />
@@ -206,27 +207,27 @@ async function submitForm(): Promise<void> {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label class="text-sm font-medium">编码 *</label>
-                <input v-model="form.code" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.code" />
               </div>
               <div>
                 <label class="text-sm font-medium">简称 *</label>
-                <input v-model="form.name" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.name" />
               </div>
               <div>
                 <label class="text-sm font-medium">全称</label>
-                <input v-model="form.fullName" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.fullName" />
               </div>
               <div>
                 <label class="text-sm font-medium">模板路径</label>
-                <input v-model="form.templatePath" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.templatePath" />
               </div>
               <div>
                 <label class="text-sm font-medium">排序</label>
-                <input v-model.number="form.sortOrder" type="number" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model.number="form.sortOrder" type="number" />
               </div>
               <div class="md:col-span-2">
                 <label class="text-sm font-medium">描述</label>
-                <input v-model="form.description" class="border rounded h-9 px-2 text-sm bg-white w-full" />
+                <Input v-model="form.description" />
               </div>
               <div class="md:col-span-2">
                 <label class="text-sm font-medium">扩展属性 extFields（JSON 数组）</label>

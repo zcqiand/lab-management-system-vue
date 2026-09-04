@@ -148,3 +148,51 @@ describe("Phase 1.2a — ReportNameList 列表 <Button> 原语回归", () => {
     expect(linkBtn.classes()).toContain("border");
   });
 });
+
+// Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：搜索 <Input class=max-w-sm> 渲染真实 <input> 且 @keydown.enter 落到 DOM；
+// 弹窗 6 个 form <Input>（含 type=number v-model.number）v-model 双向写回。
+describe("Phase 1.3b — ReportNameList 列表/表单 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：渲染 <input>，placeholder/@keydown.enter 落到真实 DOM", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="按编码 / 名称搜索"]');
+    expect(search.exists()).toBe(true);
+    // 调用方 max-w-sm 仍生效
+    expect(search.classes()).toContain("max-w-sm");
+    // CVA base h-9 活着
+    expect(search.classes()).toContain("h-9");
+    // v-model 双向写回
+    await search.setValue("RN-001");
+    expect((search.element as HTMLInputElement).value).toBe("RN-001");
+  });
+
+  it("弹窗 6 个 form <Input>：v-model 双向写回，type=number 落 DOM", async () => {
+    const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
+    lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 开新建弹窗
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建报告名称");
+    await createBtn!.trigger("click");
+    await flushPromises();
+
+    // 弹窗内的 6 个 <Input>（不含 textarea 扩展属性）
+    const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
+    // 编码/简称/全称/模板路径/排序/描述 = 6
+    expect(dialogInputs.length).toBe(6);
+    // type=number 仅排序 1 个
+    const numInput = lastWrapper.find('[data-teleport-stub] input[type="number"]');
+    expect(numInput.exists()).toBe(true);
+    expect(numInput.attributes("type")).toBe("number");
+    await numInput.setValue("42");
+    // v-model.number → form.sortOrder 写 number
+    expect((numInput.element as HTMLInputElement).value).toBe("42");
+  });
+});
