@@ -1,7 +1,7 @@
 // vue 仓 6 张模型卡 + 算法 dom 测试（concrete / rebar-welding / rebar-mech / particle / soil）。
 // 镜像 react 仓同名测试文件，针对 vue 仓 <script setup lang="ts"> 的 selectors 做了调整。
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import ConcreteCompressCard from "@/features/data-entry/models/ConcreteCompressCard.vue";
@@ -12,6 +12,7 @@ import RebarMechNumericCard from "@/features/data-entry/models/RebarMechNumericC
 import ParticleGradationCard from "@/features/data-entry/models/ParticleGradationCard.vue";
 import SoilCompactionCard from "@/features/data-entry/models/SoilCompactionCard.vue";
 import SoilCompactionDegreeCard from "@/features/data-entry/models/SoilCompactionDegreeCard.vue";
+import StrengthCardBase from "@/features/data-entry/models/StrengthCardBase.vue";
 import {
   tensileStrength,
   REBAR_DIAMETER_MM,
@@ -249,5 +250,173 @@ describe("SoilCompactionDegreeCard", () => {
       wrapper.findAll('input[aria-label^="第"][aria-label$="行试样编号"]').length,
     ).toBe(6);
     expect(wrapper.find('input[aria-label="最大干密度"]').exists()).toBe(true);
+  });
+});
+
+// Phase 1.3c Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：raw <input type=text|number> → <Input> 原语后，aria-label / step / placeholder /
+// readonly 经 $attrs 落到真实 <input>；CVA base h-9 + border-input 活着；调用方 class
+// (w-32 / w-20 / read-only:bg-gray-50) 经 tailwind-merge 与 CVA base 合成；
+// @change 在 blur 时仍触发 cards 的 updateFn，且 onChange 被调用。
+let lastCardWrapper: VueWrapper | null = null;
+afterEach(() => {
+  if (lastCardWrapper) {
+    lastCardWrapper.unmount();
+    lastCardWrapper = null;
+  }
+});
+
+describe("Phase 1.3c — 模型卡 <Input> 原语回归", () => {
+  it("ConcreteCompressCard：破坏荷载 <Input> 渲染 type=number + aria-label + @change 触发 updateLoad", () => {
+    const onChange = vi.fn();
+    lastCardWrapper = mount(ConcreteCompressCard, { props: makeProps({ onChange }) });
+    const input = lastCardWrapper.find('input[placeholder="破坏荷载 (kN)"]');
+    expect(input.exists()).toBe(true);
+    expect(input.element.tagName).toBe("INPUT");
+    // CVA base h-9 活着
+    expect(input.classes()).toContain("h-9");
+    // 调用方 w-32 仍生效
+    expect(input.classes()).toContain("w-32");
+    // type=number 经 $attrs 落 DOM
+    expect(input.attributes("type")).toBe("number");
+    // @change 触发 updateLoad → onChange 上报代表值
+    input.setValue("450");
+    input.trigger("change");
+    expect(onChange).toHaveBeenCalled();
+    const last = onChange.mock.calls.at(-1)![0];
+    const parsed = JSON.parse(last.result);
+    expect(parsed.loads[0]).toBe(450);
+  });
+
+  it("ConcretePermeabilityCard：渗水压力 <Input> aria-label + step 经 $attrs 落到真实 <input>", () => {
+    const wrapper = mount(ConcretePermeabilityCard, {
+      props: makeProps({ parameter: param("IP-0190", "抗渗性能") }),
+    });
+    const input = wrapper.find('input[aria-label="试件 1 渗水压力"]');
+    expect(input.exists()).toBe(true);
+    expect(input.element.tagName).toBe("INPUT");
+    expect(input.attributes("type")).toBe("number");
+    expect(input.attributes("step")).toBe("0.1");
+    expect(input.classes()).toContain("w-32");
+  });
+
+  it("RebarWeldingTensileCard：最大荷重 + 断口距 <Input> 双 type=number + aria-label 双落到 DOM", () => {
+    const wrapper = mount(RebarWeldingTensileCard, { props: makeProps() });
+    const loadInput = wrapper.find('input[aria-label="试件 1 最大荷重"]');
+    const distInput = wrapper.find('input[aria-label="试件 1 断口距"]');
+    expect(loadInput.exists()).toBe(true);
+    expect(distInput.exists()).toBe(true);
+    expect(loadInput.attributes("type")).toBe("number");
+    expect(distInput.attributes("type")).toBe("number");
+    expect(loadInput.attributes("step")).toBe("0.01");
+    expect(distInput.attributes("step")).toBe("0.1");
+    expect(loadInput.classes()).toContain("w-24");
+    expect(distInput.classes()).toContain("w-20");
+  });
+
+  it("RebarWeldingBendCard：弯曲角度 <Input> + @change 触发 updateAngle → onChange", () => {
+    const onChange = vi.fn();
+    const wrapper = mount(RebarWeldingBendCard, { props: makeProps({ onChange }) });
+    const input = wrapper.find('input[aria-label="试件 1 弯曲角度"]');
+    expect(input.exists()).toBe(true);
+    expect(input.attributes("type")).toBe("number");
+    input.setValue("90");
+    input.trigger("change");
+    expect(onChange).toHaveBeenCalled();
+    const last = onChange.mock.calls.at(-1)![0];
+    const parsed = JSON.parse(last.result);
+    expect(parsed.angles[0]).toBe(90);
+  });
+
+  it("RebarMechNumericCard tensile_strength：直径 + 2 组荷载 <Input> 共 3 个全数 type=number", () => {
+    const wrapper = mount(RebarMechNumericCard, {
+      props: makeProps({
+        parameter: param("IP-0087", "抗拉强度"),
+        config: { formulaKey: "tensile_strength", specimenCount: 2, needsDiameter: true },
+      }),
+    });
+    const dia = wrapper.find('input[aria-label="公称直径"]');
+    const l1 = wrapper.find('input[aria-label="第 1 组 数值"]');
+    const l2 = wrapper.find('input[aria-label="第 2 组 数值"]');
+    expect(dia.exists()).toBe(true);
+    expect(l1.exists()).toBe(true);
+    expect(l2.exists()).toBe(true);
+    expect(dia.attributes("type")).toBe("number");
+    expect(l1.attributes("type")).toBe("number");
+  });
+
+  it("ParticleGradationCard：分筛前/分计/分筛后 3 类 <Input> 均 type=number + aria-label 落到 DOM", () => {
+    const wrapper = mount(ParticleGradationCard, {
+      props: makeProps({ parameter: param("IP-0577", "颗粒级配") }),
+    });
+    const before = wrapper.find('input[aria-label="第 1 行 分筛前总量"]');
+    const pct = wrapper.find('input[aria-label="第 1 行 4.75mm 分计筛余"]');
+    const after = wrapper.find('input[aria-label="第 1 行 分筛后总量"]');
+    expect(before.exists()).toBe(true);
+    expect(pct.exists()).toBe(true);
+    expect(after.exists()).toBe(true);
+    expect(before.attributes("type")).toBe("number");
+    expect(pct.attributes("type")).toBe("number");
+    expect(after.attributes("type")).toBe("number");
+  });
+
+  it("SoilCompactionCard：5 组含水率 + 干密度 <Input> 经 $attrs 全部落 DOM", () => {
+    const wrapper = mount(SoilCompactionCard, { props: makeProps() });
+    const m1 = wrapper.find('input[aria-label="第 1 组含水率"]');
+    const d1 = wrapper.find('input[aria-label="第 1 组干密度"]');
+    expect(m1.exists()).toBe(true);
+    expect(d1.exists()).toBe(true);
+    expect(m1.attributes("type")).toBe("number");
+    expect(d1.attributes("type")).toBe("number");
+    expect(m1.attributes("step")).toBe("0.1");
+    expect(d1.attributes("step")).toBe("0.001");
+  });
+
+  it("SoilCompactionDegreeCard：最大干密度 + 6 行 × 6 字段 <Input> aria-label 全部落到 DOM", () => {
+    const wrapper = mount(SoilCompactionDegreeCard, {
+      props: makeProps({ parameter: param("IP-0456", "压实度") }),
+    });
+    const max = wrapper.find('input[aria-label="最大干密度"]');
+    expect(max.exists()).toBe(true);
+    expect(max.attributes("type")).toBe("number");
+    expect(max.attributes("step")).toBe("0.001");
+    // 6 行试样编号
+    expect(
+      wrapper.findAll('input[aria-label^="第"][aria-label$="行试样编号"]').length,
+    ).toBe(6);
+    // 含水率 step=0.1
+    expect(
+      wrapper.find('input[aria-label="第 1 行含水率"]')?.attributes("step"),
+    ).toBe("0.1");
+    // 湿密度 step=0.001
+    expect(
+      wrapper.find('input[aria-label="第 1 行湿密度"]')?.attributes("step"),
+    ).toBe("0.001");
+  });
+
+  it("StrengthCardBase：破坏荷载 <Input> 经 $attrs 落 readonly + read-only 灰化样式", () => {
+    const wrapper = mount(StrengthCardBase, {
+      props: { ...makeProps(), specimenCount: 3, compute: (l: number[]) => ({ strengths: l.map(() => 0), mean: 0, kept: [true, true, true] }), strengthLabel: "抗压 (MPa)" },
+    });
+    const input = wrapper.find('input[aria-label="试件 1 破坏荷载"]');
+    expect(input.exists()).toBe(true);
+    expect(input.attributes("type")).toBe("number");
+    // 调用方 w-32 仍生效
+    expect(input.classes()).toContain("w-32");
+    // read-only: 灰化样式经 tailwind-merge 合成
+    expect(input.classes().some((c) => c.includes("read-only:"))).toBe(true);
+  });
+
+  it("RebarWeldingBendCard readOnly：<Input> readonly 落到 DOM，@change 仍不触发 onChange", () => {
+    const onChange = vi.fn();
+    const wrapper = mount(RebarWeldingBendCard, {
+      props: makeProps({ onChange, readOnly: true }),
+    });
+    const input = wrapper.find('input[aria-label="试件 1 弯曲角度"]');
+    // readOnly 经 $attrs 转发为 readonly 属性落到真实 DOM input
+    expect((input.element as HTMLInputElement).readOnly).toBe(true);
+    input.setValue("90");
+    input.trigger("change");
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

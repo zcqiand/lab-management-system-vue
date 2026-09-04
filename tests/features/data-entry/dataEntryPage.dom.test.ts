@@ -162,3 +162,27 @@ describe("Phase 1.2b — DataEntryPage <Button> 原语回归", () => {
     expect(cancel!.classes()).toContain("border");
   });
 });
+
+// Phase 1.3c Input 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：搜索 <Input class=max-w-sm> 渲染真实 <input> + v-model 双向写回 +
+// placeholder/@keyup.enter 经 $attrs 落到真实 DOM。
+describe("Phase 1.3c — DataEntryPage 搜索 <Input> 原语回归", () => {
+  it("搜索框 <Input class=max-w-sm>：渲染 <input>，placeholder/@keyup.enter 落 DOM", async () => {
+    const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
+    lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    const search = lastWrapper.find('input[placeholder="按委托书编号搜索"]');
+    expect(search.exists()).toBe(true);
+    // 调用方 max-w-sm + bg-white 仍生效
+    expect(search.classes()).toContain("max-w-sm");
+    expect(search.classes()).toContain("bg-white");
+    // CVA base h-9 活着
+    expect(search.classes()).toContain("h-9");
+    // v-model 双向写回
+    await search.setValue("WT-2026");
+    expect((search.element as HTMLInputElement).value).toBe("WT-2026");
+  });
+});
