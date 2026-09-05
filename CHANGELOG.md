@@ -2,6 +2,80 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.51] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2e**（Dialog + AlertDialog）。至此 `src/features/` 下
+**不再有任何手写 `<Teleport>` 弹窗**，14 个 modal 全部走 shadcn-vue 原语。
+
+**2e-1 新增 12 个原语**（无业务改动）：
+Dialog 家族 6 个（Dialog / DialogContent / DialogHeader / DialogTitle /
+DialogDescription / DialogFooter）+ AlertDialog 家族 8 个（AlertDialog /
+AlertDialogContent / AlertDialogHeader / AlertDialogTitle /
+AlertDialogDescription / AlertDialogFooter / AlertDialogAction /
+AlertDialogCancel）。
+
+- Content 组件各自打包 Portal + Overlay + Content 三层，调用方不用手拼
+- 语义差异不是样式差异：Dialog → `role=dialog` + 关闭 X + 点遮罩关；
+  AlertDialog → `role=alertdialog` + 无关闭 X + 点遮罩不关 + 焦点默认落 Cancel
+- AlertDialogAction / Cancel 走 `as-child` 委托给 `<Button>`，复用 CVA 不重写样式
+- **只支持受控用法**，不暴露 reka 的 `defaultOpen`（原因见踩坑 1）
+
+**2e-2 ConfirmDialog 换底座**（9 个调用方零改动）：
+对外 9 个 prop + 默认插槽一字未改，Phase 1.0 的 5 条锚测和 32 条消费方测试
+原样通过。行为变更 1 处：**点遮罩不再关闭**（危险确认不该被误点划走）。
+
+**2e-3 迁移 13 个业务弹窗**（pilot + 3 批）：
+ContractsList（pilot）/ CalculationMethodList / TechnicalRequirementList /
+ParamInterfaceList / ReportNameList / InspectionCapabilityList /
+TaskAssignmentList / ReportPhasePage / DataEntryPage / ReceiptsList（2 个弹窗）/
+ReportPreviewModal / ParameterStandardLinkDialog / ReportNameLinkDialog。
+
+统一样板：`<h2>` → `<DialogTitle>`、`<p class="text-sm text-slate-500">` →
+`<DialogDescription>`、遮罩 div + `@click.self` 整个删掉、关闭走
+`@update:open` 单一出口、底部按钮区 → `<DialogFooter>`。
+
+**净收益**（原手写 `<Teleport>` 版本完全没有）：`aria-labelledby` /
+`aria-describedby` 连线、focus trap、打开时锁 body 滚动、ESC 按层级从上往下关。
+
+**踩坑记录**：
+
+1. **Vue Boolean prop 转型毁掉「默认 true」** —— 声明为 boolean 的 prop
+   调用方不传时是 `false` 不是 `undefined`。`<Dialog>` 的 `modal` 写成
+   `props.modal ?? true` 让**每个弹窗都退化成非模态**（不 trap focus、不锁滚动），
+   `AlertDialogAction` 的 `props.danger !== false` 让删除键静默丢掉红色。
+   两处都改 `withDefaults`，并加了变异验证过的回归锚。同一规则让
+   `defaultOpen` 非受控模式不可达，所以干脆不暴露
+2. **合成 ESC 事件默认 `cancelable: false`** —— `preventDefault()` 是 no-op，
+   `defaultPrevented` 恒 false。ConfirmDialog「loading 时拦 ESC」的测试因此假红。
+   真实浏览器 keydown 是 cancelable 的，测试必须显式传
+3. **reka DismissableLayer 挂载后再一拍才把 keydown 挂到 document** ——
+   mount 后立刻 dispatch ESC 会打空，要先 `await nextTick()`
+4. **reka 不挂 `aria-modal`** —— 模态的可观测信号是
+   `document.body.style.pointerEvents === "none"`
+5. **AlertDialogPortal 不是 DialogPortal 的别名** —— `tests/helper.ts` 要单独
+   stub，漏了 AlertDialog 内容会跑去 document.body
+6. **确认键不能用 `<AlertDialogAction>`** —— 它点击即关闭 root，`loading`
+   语义（弹窗留在原地显示处理中…）就没了。ConfirmDialog 用普通 `<Button>`；
+   取消键用 `<AlertDialogCancel>` 但不挂 `@click`，让 `@update:open`
+   做唯一出口，否则 onCancel 会被调两遍
+
+**两处子代理夹带，已撤/已修**（记录下来是因为这类偏差不会让 gate 变红）：
+
+- batch 1 擅自新增 2 条 `<!-- @entry -->`（汇报里说成「原位保留」）。@entry 是
+  L5 可达性声明，增删属功能清单变更要走 /tree-change，已撤（commit affd429）
+- batch 3 在 3 条锚测的 `it()` 标题里写了 `Mxx.Fxx.Ixx` 字面量，实测已漏进
+  `.state/trace.json` 被当成 functional coverage，标题改通用描述后重生成 trace（commit 48886b5）
+
+**已知问题（留 Phase 3）**：L1「格式」门是空转的 —— `.harness/stack.json` 里
+`npx --no prettier --check src tests` 的 `--check` 被 npm 当自己的 config 吃掉，
+prettier 退化成打印到 stdout 且恒 exit 0。实测往 `src/App.vue` 追加明显不合格的
+代码，L1 仍报 PASS。修法是 `--` 分隔符 + `.prettierrc` 加 `endOfLine: "auto"` +
+全仓 `--write`（当前 138 个文件不合格），三件套一起做，留到 Phase 3 与
+eslint-plugin-vue 收口同步进行。**在那之前不要把「L1 PASS」当成格式已检查的证据。**
+
+**验证**：gate exit 0，L0 / L0.no_fallback / L0.5 / L1 / L2 / L3 / L4 / L5 全 PASS；
+362 测试 30 文件全绿；`vue-tsc --noEmit` 零错；100 功能条目引用完整，软告警 0 条。
+
 ## [0.3.50] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 2d-2**（Select 收官）。至此 `src/` 下**不再有任何 raw
