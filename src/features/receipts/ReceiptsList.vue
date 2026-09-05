@@ -17,6 +17,12 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
+import Label from "@/components/ui/Label.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import Table from "@/components/ui/Table.vue";
 import TableBody from "@/components/ui/TableBody.vue";
 import TableCell from "@/components/ui/TableCell.vue";
@@ -89,7 +95,7 @@ const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
 };
 
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; id: string };
-type FlowFilter = "" | "receiving" | "submitted";
+type FlowFilter = "__all__" | "receiving" | "submitted";
 
 type ReceiptBody = {
   commissionCode: string;
@@ -100,6 +106,10 @@ type ReceiptBody = {
   sampleSource: string;
   categoryCode: string;
 };
+
+// 两个弹窗（新建 / 编辑）共用的下拉选项，避免 6 处字面量各自漂移。
+const TEST_CATEGORIES = ["委托检验", "监督检验", "仲裁检验"] as const;
+const SAMPLE_SOURCES = ["施工送检", "监督抽检", "委托送样"] as const;
 
 const EMPTY_BODY: ReceiptBody = {
   commissionCode: "",
@@ -113,7 +123,10 @@ const EMPTY_BODY: ReceiptBody = {
 
 const items = ref<SampleReceipt[]>([]);
 const total = ref(0);
-const flowFilter = ref<FlowFilter>("");
+// flowFilter "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui
+// SelectItem 不允许 value=""，保留给 placeholder）；load() 只认 receiving /
+// submitted，所以 "__all__" 天然翻译成「不下发 flowStatus」。
+const flowFilter = ref<FlowFilter>("__all__");
 const keyword = ref("");
 const mode = ref<Mode>({ kind: "idle" });
 const loading = ref(false);
@@ -250,14 +263,16 @@ function alertError(msg: string): void {
     </div>
 
     <div class="mb-4 flex gap-2">
-      <select
-        v-model="flowFilter"
-        class="border rounded h-9 px-2 text-sm bg-white"
-      >
-        <option value="">全部状态</option>
-        <option value="receiving">接样中</option>
-        <option value="submitted">已提交</option>
-      </select>
+      <Select v-model="flowFilter">
+        <SelectTrigger aria-label="流程状态筛选" class="w-40">
+          <SelectValue placeholder="全部状态" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">全部状态</SelectItem>
+          <SelectItem value="receiving">接样中</SelectItem>
+          <SelectItem value="submitted">已提交</SelectItem>
+        </SelectContent>
+      </Select>
       <Input
         v-model="keyword"
         placeholder="按委托书编号搜索"
@@ -362,33 +377,65 @@ function alertError(msg: string): void {
           <h2 class="text-lg font-semibold">新建接样</h2>
           <p class="text-sm text-slate-500 mb-3">录入委托书基础信息（带 * 字段必填）。</p>
           <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-            <label class="text-xs">委托书编号 *<Input v-model="form.commissionCode" class="w-full mt-1" /></label>
-            <label class="text-xs">委托日期 *<Input v-model="form.commissionDate" type="date" class="w-full mt-1" /></label>
-            <label class="text-xs">工程名称 *<Input v-model="form.projectName" class="w-full mt-1" /></label>
-            <label class="text-xs">委托单位 *<Input v-model="form.clientUnit" class="w-full mt-1" /></label>
-            <label class="text-xs">检测类别 *
-              <select v-model="form.testCategory" class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white">
-                <option value="委托检验">委托检验</option>
-                <option value="监督检验">监督检验</option>
-                <option value="仲裁检验">仲裁检验</option>
-              </select>
-            </label>
-            <label class="text-xs">样品来源 *
-              <select v-model="form.sampleSource" class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white">
-                <option value="施工送检">施工送检</option>
-                <option value="监督抽检">监督抽检</option>
-                <option value="委托送样">委托送样</option>
-              </select>
-            </label>
-            <label class="text-xs">报告类别编码 *<Input v-model="form.categoryCode" class="w-full mt-1" /></label>
+            <div>
+              <Label for="receipt-create-code" class="text-xs">委托书编号 *</Label>
+              <Input id="receipt-create-code" v-model="form.commissionCode" class="w-full mt-1" />
+            </div>
+            <div>
+              <Label for="receipt-create-date" class="text-xs">委托日期 *</Label>
+              <Input
+                id="receipt-create-date"
+                v-model="form.commissionDate"
+                type="date"
+                class="w-full mt-1"
+              />
+            </div>
+            <div>
+              <Label for="receipt-create-project" class="text-xs">工程名称 *</Label>
+              <Input id="receipt-create-project" v-model="form.projectName" class="w-full mt-1" />
+            </div>
+            <div>
+              <Label for="receipt-create-client" class="text-xs">委托单位 *</Label>
+              <Input id="receipt-create-client" v-model="form.clientUnit" class="w-full mt-1" />
+            </div>
+            <div>
+              <Label for="receipt-create-category" class="text-xs">检测类别 *</Label>
+              <Select v-model="form.testCategory">
+                <SelectTrigger
+                  id="receipt-create-category"
+                  aria-label="检测类别"
+                  class="w-full mt-1"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="c in TEST_CATEGORIES" :key="c" :value="c">{{ c }}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label for="receipt-create-source" class="text-xs">样品来源 *</Label>
+              <Select v-model="form.sampleSource">
+                <SelectTrigger id="receipt-create-source" aria-label="样品来源" class="w-full mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="s in SAMPLE_SOURCES" :key="s" :value="s">{{ s }}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label for="receipt-create-report-code" class="text-xs">报告类别编码 *</Label>
+              <Input
+                id="receipt-create-report-code"
+                v-model="form.categoryCode"
+                class="w-full mt-1"
+              />
+            </div>
           </div>
           <div class="mt-4 flex justify-end gap-2">
             <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
-            <Button
-              variant="default"
-              class="bg-blue-600 hover:bg-blue-700"
-              @click="handleCreate()"
-            >
+            <Button variant="default" class="bg-blue-600 hover:bg-blue-700" @click="handleCreate()">
               保存
             </Button>
           </div>
@@ -404,33 +451,57 @@ function alertError(msg: string): void {
           <h2 class="text-lg font-semibold">编辑接样 — {{ editing?.commissionCode }}</h2>
           <p class="text-sm text-slate-500 mb-3">修改接样字段后保存。</p>
           <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-            <label class="text-xs">委托书编号 *<Input v-model="form.commissionCode" class="w-full mt-1" /></label>
-            <label class="text-xs">委托日期 *<Input v-model="form.commissionDate" type="date" class="w-full mt-1" /></label>
-            <label class="text-xs">工程名称 *<Input v-model="form.projectName" class="w-full mt-1" /></label>
-            <label class="text-xs">委托单位 *<Input v-model="form.clientUnit" class="w-full mt-1" /></label>
-            <label class="text-xs">检测类别 *
-              <select v-model="form.testCategory" class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white">
-                <option value="委托检验">委托检验</option>
-                <option value="监督检验">监督检验</option>
-                <option value="仲裁检验">仲裁检验</option>
-              </select>
-            </label>
-            <label class="text-xs">样品来源 *
-              <select v-model="form.sampleSource" class="border rounded h-9 px-2 text-sm w-full mt-1 bg-white">
-                <option value="施工送检">施工送检</option>
-                <option value="监督抽检">监督抽检</option>
-                <option value="委托送样">委托送样</option>
-              </select>
-            </label>
-            <label class="text-xs">报告类别编码 *<Input v-model="form.categoryCode" class="w-full mt-1" /></label>
+            <div>
+              <Label for="receipt-edit-code" class="text-xs">委托书编号 *</Label>
+              <Input id="receipt-edit-code" v-model="form.commissionCode" class="w-full mt-1" />
+            </div>
+            <div>
+              <Label for="receipt-edit-date" class="text-xs">委托日期 *</Label>
+              <Input
+                id="receipt-edit-date"
+                v-model="form.commissionDate"
+                type="date"
+                class="w-full mt-1"
+              />
+            </div>
+            <div>
+              <Label for="receipt-edit-project" class="text-xs">工程名称 *</Label>
+              <Input id="receipt-edit-project" v-model="form.projectName" class="w-full mt-1" />
+            </div>
+            <div>
+              <Label for="receipt-edit-client" class="text-xs">委托单位 *</Label>
+              <Input id="receipt-edit-client" v-model="form.clientUnit" class="w-full mt-1" />
+            </div>
+            <div>
+              <Label for="receipt-edit-category" class="text-xs">检测类别 *</Label>
+              <Select v-model="form.testCategory">
+                <SelectTrigger id="receipt-edit-category" aria-label="检测类别" class="w-full mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="c in TEST_CATEGORIES" :key="c" :value="c">{{ c }}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label for="receipt-edit-source" class="text-xs">样品来源 *</Label>
+              <Select v-model="form.sampleSource">
+                <SelectTrigger id="receipt-edit-source" aria-label="样品来源" class="w-full mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="s in SAMPLE_SOURCES" :key="s" :value="s">{{ s }}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label for="receipt-edit-report-code" class="text-xs">报告类别编码 *</Label>
+              <Input id="receipt-edit-report-code" v-model="form.categoryCode" class="w-full mt-1" />
+            </div>
           </div>
           <div class="mt-4 flex justify-end gap-2">
             <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
-            <Button
-              variant="default"
-              class="bg-blue-600 hover:bg-blue-700"
-              @click="handleSubmit()"
-            >
+            <Button variant="default" class="bg-blue-600 hover:bg-blue-700" @click="handleSubmit()">
               保存
             </Button>
           </div>

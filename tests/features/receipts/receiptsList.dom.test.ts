@@ -3,6 +3,7 @@
 // 镜像 react 仓 tests/features/receipts/receiptsList.dom.test.tsx 4 个 fnTest。
 // vue 仓不挂 msw，用 vi.mock('axios') 拦截；fixture 数据走内联字面量（同 react 仓 contracts/receipts）。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { nextTick } from "vue";
 import { flushPromises } from "@vue/test-utils";
 import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
@@ -315,5 +316,77 @@ describe("Phase 2a-3 — ReceiptsList 列表 <Table> 原语回归", () => {
     const badgeCell = lastWrapper.findAll('[role="cell"]').find((c) => c.text().includes("接样中"));
     expect(badgeCell).toBeTruthy();
     expect(badgeCell!.find("span.bg-blue-100").exists()).toBe(true);
+  });
+});
+
+// Phase 2d-2 Select + Label 配对回归锚（不挂功能 ID，工程设施测试）。
+// 锁三件事：
+//   1. 列表页流程状态筛选 raw <select> → <Select>，"" 走 __all__ sentinel
+//      （与 ContractsList / InspectionCapabilityList 同约定），load() 翻译回不下发
+//   2. 新建/编辑弹窗的 14 个 raw <label> → <Label for>，配对目标 id 必须真实存在。
+//      Phase 1.4 特意跳过这批「label 包 select」，等 Select 原语到位一起改：
+//      reka-ui 的触发器是 <button role="combobox">，包在 <label> 里点击语义会打架，
+//      所以统一改 for/id 显式配对。两个弹窗 v-if 互斥，id 不会撞。
+//   3. 弹窗内检测类别 / 样品来源 → combobox，v-model 仍写回 form
+describe("Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归", () => {
+  // 返回 wrapper 而不是只写 lastWrapper：赋值发生在别的函数作用域里，
+  // TS 在调用点不会把 lastWrapper 收窄成非 null。
+  async function mountAndOpenCreate() {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    const wrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    lastWrapper = wrapper;
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    const createBtn = wrapper.findAll("button").find((b) => b.text() === "新建接样");
+    await createBtn!.trigger("click");
+    await flushPromises();
+    return wrapper;
+  }
+
+  it("全文件不留 raw <select>；列表页筛选是带 aria-label 的 combobox", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    expect(lastWrapper.findAll("select").length).toBe(0);
+    expect(
+      lastWrapper.find('button[role="combobox"][aria-label="流程状态筛选"]').exists(),
+    ).toBe(true);
+  });
+
+  it("新建弹窗：检测类别 / 样品来源 → combobox，且回显 EMPTY_BODY 默认值", async () => {
+    const wrapper = await mountAndOpenCreate();
+
+    expect(wrapper.findAll("select").length).toBe(0);
+    const category = wrapper.find('button[role="combobox"][aria-label="检测类别"]');
+    const source = wrapper.find('button[role="combobox"][aria-label="样品来源"]');
+    expect(category.exists()).toBe(true);
+    expect(source.exists()).toBe(true);
+
+    // reka-ui 关闭态把 items teleport 进 DocumentFragment 才注册 value→text，
+    // fragment 在 SelectContent onMounted 才建 → 回显要等一次 flush。
+    await nextTick();
+    await nextTick();
+    expect(category.text()).toContain("委托检验");
+    expect(source.text()).toContain("施工送检");
+  });
+
+  it("新建弹窗：14 个 raw <label> 已换 <Label for>，每个 for 都指到真实存在的 id", async () => {
+    const wrapper = await mountAndOpenCreate();
+
+    const labels = wrapper.findAll("label");
+    // 弹窗 7 个字段，每个一个 <Label>
+    expect(labels.length).toBe(7);
+    for (const label of labels) {
+      const target = label.attributes("for");
+      // 悬空 for（指向不存在的 id）比没有更糟 —— 必须真实配对
+      expect(target).toBeTruthy();
+      expect(wrapper.find(`#${target}`).exists()).toBe(true);
+    }
+    // <Label> 原语基类落到真实 <label>（不是裸 raw label）
+    expect(labels[0]!.classes()).toContain("peer-disabled:opacity-70");
   });
 });
