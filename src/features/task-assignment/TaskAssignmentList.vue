@@ -10,6 +10,12 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -182,44 +188,47 @@ async function handleSave(): Promise<void> {
       </Table>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="assignTarget"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="assignTarget = null"
-      >
-        <div class="bg-white rounded shadow-xl sm:max-w-md w-full p-6">
-          <h2 class="text-lg font-semibold">任务安排 — {{ assignTarget.commissionCode }}</h2>
-          <p class="text-sm text-slate-500 mb-3">指定检测人员与计划检测日期。</p>
-          <div class="space-y-3">
-            <Label class="text-xs block">检测人员 *
-              <Input
-                v-model="assigneeName"
-                placeholder="如：张三"
-                class="mt-1"
-              />
-            </Label>
-            <Label class="text-xs block">计划检测日期 *
-              <Input
-                v-model="plannedTestDate"
-                type="date"
-                class="mt-1"
-              />
-            </Label>
-          </div>
-          <div class="mt-4 flex justify-end gap-2">
-            <Button variant="outline" @click="assignTarget = null">取消</Button>
-            <Button
-              variant="default"
-              class="bg-blue-600 hover:bg-blue-700"
-              :disabled="saving || !assigneeName.trim() || !plannedTestDate"
-              @click="handleSave()"
-            >
-              保存
-            </Button>
-          </div>
+    <Dialog
+      :open="assignTarget !== null"
+      @update:open="
+        (v: boolean) => {
+          if (!v) assignTarget = null;
+        }
+      "
+    >
+      <DialogContent class="sm:max-w-md gap-0">
+        <DialogHeader class="mb-3">
+          <DialogTitle>任务安排 — {{ assignTarget?.commissionCode ?? "" }}</DialogTitle>
+          <DialogDescription>指定检测人员与计划检测日期。</DialogDescription>
+        </DialogHeader>
+        <div class="space-y-3">
+          <Label class="text-xs block">检测人员 *
+            <Input
+              v-model="assigneeName"
+              placeholder="如：张三"
+              class="mt-1"
+            />
+          </Label>
+          <Label class="text-xs block">计划检测日期 *
+            <Input
+              v-model="plannedTestDate"
+              type="date"
+              class="mt-1"
+            />
+          </Label>
         </div>
-      </div>
-    </Teleport>
+        <DialogFooter class="mt-4 justify-end gap-2">
+          <Button variant="outline" @click="assignTarget = null">取消</Button>
+          <Button
+            variant="default"
+            class="bg-blue-600 hover:bg-blue-700"
+            :disabled="saving || !assigneeName.trim() || !plannedTestDate"
+            @click="handleSave()"
+          >
+            保存
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>

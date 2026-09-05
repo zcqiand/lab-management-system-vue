@@ -3,6 +3,7 @@
 // 镜像 react 仓 tests/features/task-assignment/taskAssignmentList.dom.test.tsx 2 个 fnTest。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import { nextTick } from "vue";
 import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
@@ -262,5 +263,62 @@ describe("Phase 2a-2 — TaskAssignmentList 列表 <Table> 原语回归", () => 
     expect(codeCell.exists()).toBe(true);
     expect(codeCell.classes()).toContain("font-mono");
     expect(codeCell.classes()).toContain("text-xs");
+  });
+});
+
+// Phase 2e-3 batch 2 —— 任务安排弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
+describe("Phase 2e-3 — TaskAssignmentList 安排弹窗走 Dialog 底座", () => {
+  async function openAssign(): Promise<VueWrapper> {
+    const { default: TaskAssignmentList } = await import(
+      "@/features/task-assignment/TaskAssignmentList.vue"
+    );
+    lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await flushPromises();
+    return lastWrapper;
+  }
+
+  it("弹窗渲染 div[role=dialog]，标题/描述经 reka context 连上 aria", async () => {
+    const w = await openAssign();
+
+    const content = w.find('[role="dialog"]');
+    expect(content.exists()).toBe(true);
+
+    const titleId = content.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toBe("任务安排 — WT-2026-002");
+
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("指定检测人员与计划检测日期");
+  });
+
+  it("行内安排键的 data-fn 没被结构改动吞掉，仍落在真实 <button> 上且弹窗外只有一个", async () => {
+    const w = await openAssign();
+
+    const anchors = w.findAll('button[data-fn="M03.F02.I02"]');
+    expect(anchors.length).toBe(1);
+    expect(anchors[0]!.element.tagName).toBe("BUTTON");
+    expect(anchors[0]!.text()).toBe("安排");
+    // 弹窗内没有多出同 data-fn 的按钮（保存键本来就不带锚点）
+    expect(w.find('[role="dialog"]').findAll('button[data-fn="M03.F02.I02"]').length).toBe(0);
+  });
+
+  it("ESC 关闭弹窗（走 @update:open → assignTarget = null）", async () => {
+    const w = await openAssign();
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });
