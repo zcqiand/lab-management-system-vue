@@ -7,6 +7,11 @@
 import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 
 interface StdRow {
   code: string;
@@ -160,72 +165,73 @@ function close(): void {
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      v-if="open"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      @click.self="close"
-    >
-      <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
-        <div class="px-6 py-4 border-b">
-          <h2 class="text-lg font-semibold">关联维护 — {{ reportNameLabel }}</h2>
-          <p class="text-sm text-slate-500">
-            报告名称 {{ reportNameCode }}；标准 {{ stdCount }} 项 / 参数 {{ paramCount }} 项（toggle 即时保存）
-          </p>
-        </div>
-        <div class="px-6 py-4 space-y-4">
-          <p v-if="loading" class="text-sm text-slate-500 py-4">加载中…</p>
-          <template v-else>
-            <section>
-              <h4 class="text-sm font-semibold mb-2">检测标准（role=检测）</h4>
-              <div
-                v-for="s in standards"
-                :key="s.code"
-                class="flex items-center justify-between px-2 py-1 rounded hover:bg-slate-50"
+  <Dialog
+    :open="open"
+    @update:open="
+      (v: boolean) => {
+        if (!v) close();
+      }
+    "
+  >
+    <DialogContent class="max-w-2xl gap-0 p-0 max-h-[80vh] overflow-y-auto">
+      <DialogHeader class="px-6 py-4 border-b gap-1.5">
+        <DialogTitle>关联维护 — {{ reportNameLabel }}</DialogTitle>
+        <DialogDescription>
+          报告名称 {{ reportNameCode }}；标准 {{ stdCount }} 项 / 参数 {{ paramCount }} 项（toggle 即时保存）
+        </DialogDescription>
+      </DialogHeader>
+      <div class="px-6 py-4 space-y-4">
+        <p v-if="loading" class="text-sm text-slate-500 py-4">加载中…</p>
+        <template v-else>
+          <section>
+            <h4 class="text-sm font-semibold mb-2">检测标准（role=检测）</h4>
+            <div
+              v-for="s in standards"
+              :key="s.code"
+              class="flex items-center justify-between px-2 py-1 rounded hover:bg-slate-50"
+            >
+              <span class="text-sm">
+                <span class="font-mono text-xs">{{ s.code }}</span>
+                {{ s.name }}
+              </span>
+              <button
+                data-fn="M06.F07.I02"
+                :aria-label="`${isStdOn(s.code) ? '解除标准' : '关联标准'} ${s.code}`"
+                :disabled="busy === s.code"
+                class="px-2 py-1 rounded text-xs"
+                :class="isStdOn(s.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
+                @click="toggleStd(s.code)"
               >
-                <span class="text-sm">
-                  <span class="font-mono text-xs">{{ s.code }}</span>
-                  {{ s.name }}
-                </span>
-                <button
-                  data-fn="M06.F07.I02"
-                  :aria-label="`${isStdOn(s.code) ? '解除标准' : '关联标准'} ${s.code}`"
-                  :disabled="busy === s.code"
-                  class="px-2 py-1 rounded text-xs"
-                  :class="isStdOn(s.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
-                  @click="toggleStd(s.code)"
-                >
-                  {{ isStdOn(s.code) ? "解除" : "关联" }}
-                </button>
-              </div>
-            </section>
-            <section>
-              <h4 class="text-sm font-semibold mb-2">检测参数</h4>
-              <div
-                v-for="p in parameters"
-                :key="p.code"
-                class="flex items-center justify-between px-2 py-1 rounded hover:bg-slate-50"
+                {{ isStdOn(s.code) ? "解除" : "关联" }}
+              </button>
+            </div>
+          </section>
+          <section>
+            <h4 class="text-sm font-semibold mb-2">检测参数</h4>
+            <div
+              v-for="p in parameters"
+              :key="p.code"
+              class="flex items-center justify-between px-2 py-1 rounded hover:bg-slate-50"
+            >
+              <span class="text-sm">
+                <span class="font-mono text-xs">{{ p.code }}</span>
+                {{ p.name }}
+                <span v-if="p.unit" class="text-xs text-slate-500">({{ p.unit }})</span>
+              </span>
+              <button
+                data-fn="M06.F07.I02"
+                :aria-label="`${paramLinks.has(p.code) ? '解除参数' : '关联参数'} ${p.code}`"
+                :disabled="busy === p.code"
+                class="px-2 py-1 rounded text-xs"
+                :class="paramLinks.has(p.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
+                @click="toggleParam(p.code)"
               >
-                <span class="text-sm">
-                  <span class="font-mono text-xs">{{ p.code }}</span>
-                  {{ p.name }}
-                  <span v-if="p.unit" class="text-xs text-slate-500">({{ p.unit }})</span>
-                </span>
-                <button
-                  data-fn="M06.F07.I02"
-                  :aria-label="`${paramLinks.has(p.code) ? '解除参数' : '关联参数'} ${p.code}`"
-                  :disabled="busy === p.code"
-                  class="px-2 py-1 rounded text-xs"
-                  :class="paramLinks.has(p.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
-                  @click="toggleParam(p.code)"
-                >
-                  {{ paramLinks.has(p.code) ? "解除" : "关联" }}
-                </button>
-              </div>
-            </section>
-          </template>
-        </div>
+                {{ paramLinks.has(p.code) ? "解除" : "关联" }}
+              </button>
+            </div>
+          </section>
+        </template>
       </div>
-    </div>
-  </Teleport>
+    </DialogContent>
+  </Dialog>
 </template>
