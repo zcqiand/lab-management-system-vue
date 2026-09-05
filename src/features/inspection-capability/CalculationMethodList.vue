@@ -404,7 +404,6 @@ async function confirmDelete(): Promise<void> {
           <Button variant="outline" @click="closeDialog">
             取消
           </Button>
-          <!-- @entry M06.F05.I01 弹窗内保存 -->
           <Button data-fn="M06.F05.I01" @click="submitForm">
             保存
           </Button>
