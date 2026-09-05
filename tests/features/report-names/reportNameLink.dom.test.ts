@@ -150,7 +150,7 @@ describe("Phase 2e-3 — ReportNameLinkDialog 关联弹窗走 Dialog 底座", ()
     expect(w.find(`#${descId}`).text()).toContain("报告名称 RN-001");
   });
 
-  it("行内 button data-fn='M06.F07.I02' 仍落真实 <button>，标准段 + 参数段各 1 个", async () => {
+  it("行内关联键的 data-fn 仍落真实 <button>，标准段 + 参数段各 1 个", async () => {
     const w = await mountDialog();
     const dialog = w.find('[role="dialog"]');
     expect(dialog.exists()).toBe(true);

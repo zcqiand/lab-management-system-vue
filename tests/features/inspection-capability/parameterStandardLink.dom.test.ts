@@ -238,7 +238,7 @@ describe("Phase 2e-3 — ParameterStandardLinkDialog 关联弹窗走 Dialog 底�
     expect(w.find(`#${descId}`).text()).toContain("参数编码 IP-0001");
   });
 
-  it("行内 button data-fn='M06.F03.I02' 仍落真实 <button> 且嵌套在 [role=cell] 内", async () => {
+  it("行内关联键的 data-fn 仍落真实 <button> 且嵌套在 [role=cell] 内", async () => {
     const w = await mountDialog();
     const dialog = w.find('[role="dialog"]');
     expect(dialog.exists()).toBe(true);

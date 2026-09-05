@@ -264,7 +264,7 @@ describe("Phase 2e-3 — ReportPreviewModal 预览弹窗走 Dialog 底座", () =
     return wrapper;
   }
 
-  it("弹窗渲染 div[role=dialog]，data-fn='M03.F01.I07' 经 inheritAttrs 落到真实 content 上", async () => {
+  it("弹窗渲染 div[role=dialog]，预览 data-fn 经 inheritAttrs 落到真实 content 上", async () => {
     const w = await mountModal();
 
     const dialog = w.find('[role="dialog"]');
