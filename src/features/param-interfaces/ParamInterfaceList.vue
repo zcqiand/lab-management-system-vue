@@ -10,6 +10,12 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -147,55 +153,56 @@ async function submitForm(): Promise<void> {
       </Button>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="mode.kind === 'create' || mode.kind === 'edit'"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="closeDialog"
-      >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
-          <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold">
-              {{
-                mode.kind === "create"
-                  ? "新建参数界面"
-                  : `编辑参数界面 ${editing?.code ?? ""}`
-              }}
-            </h2>
-            <p class="text-sm text-slate-500">创建一条参数界面记录（录入卡片模型）。</p>
-          </div>
-          <div class="px-6 py-4">
-            <div class="grid grid-cols-1 gap-3">
-              <div>
-                <Label>编码 *</Label>
-                <Input
-                  v-model="form.code"
-                  :disabled="mode.kind === 'edit'"
-                  class="disabled:bg-slate-100"
-                />
-              </div>
-              <div>
-                <Label>组件路径 *</Label>
-                <Input v-model="form.componentPath" />
-              </div>
-              <div>
-                <Label>排序</Label>
-                <Input
-                  v-model.number="form.sortOrder"
-                  type="number"
-                />
-              </div>
+    <Dialog
+      :open="mode.kind === 'create' || mode.kind === 'edit'"
+      @update:open="
+        (v: boolean) => {
+          if (!v) closeDialog();
+        }
+      "
+    >
+      <DialogContent class="max-w-md gap-0 p-0">
+        <DialogHeader class="px-6 py-4 border-b">
+          <DialogTitle>
+            {{
+              mode.kind === "create"
+                ? "新建参数界面"
+                : `编辑参数界面 ${editing?.code ?? ""}`
+            }}
+          </DialogTitle>
+          <DialogDescription>创建一条参数界面记录（录入卡片模型）。</DialogDescription>
+        </DialogHeader>
+        <div class="px-6 py-4">
+          <div class="grid grid-cols-1 gap-3">
+            <div>
+              <Label>编码 *</Label>
+              <Input
+                v-model="form.code"
+                :disabled="mode.kind === 'edit'"
+                class="disabled:bg-slate-100"
+              />
+            </div>
+            <div>
+              <Label>组件路径 *</Label>
+              <Input v-model="form.componentPath" />
+            </div>
+            <div>
+              <Label>排序</Label>
+              <Input
+                v-model.number="form.sortOrder"
+                type="number"
+              />
             </div>
           </div>
-          <div class="px-6 py-3 flex justify-end border-t">
-            <!-- @entry M06.F08.I01 表单内保存 -->
-            <Button data-fn="M06.F08.I01" @click="submitForm">
-              {{ mode.kind === "create" ? "创建" : "保存" }}
-            </Button>
-          </div>
         </div>
-      </div>
-    </Teleport>
+        <DialogFooter class="px-6 py-3 border-t">
+          <!-- @entry M06.F08.I01 表单内保存 -->
+          <Button data-fn="M06.F08.I01" @click="submitForm">
+            {{ mode.kind === "create" ? "创建" : "保存" }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <ConfirmDialog
       :open="deleteTarget !== null"
