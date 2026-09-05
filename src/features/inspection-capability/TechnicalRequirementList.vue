@@ -7,6 +7,12 @@ import { onMounted, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -289,110 +295,114 @@ async function confirmDelete(): Promise<void> {
 
     <div class="text-sm text-slate-500">共 {{ items.length }} 条</div>
 
-    <Teleport to="body">
-      <div
-        v-if="mode.kind === 'create' || mode.kind === 'edit'"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="closeDialog"
-      >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-          <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold">{{ mode.kind === "create" ? "新建技术要求" : "编辑技术要求" }}</h2>
-            <p class="text-sm text-slate-500">复合主键：检测项目 + 检测参数 + 判定标准</p>
-          </div>
-          <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-            <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <Label for="inspectionObjectCode">检测项目</Label>
-                <Select v-model="form.inspectionObjectCode">
-                  <SelectTrigger id="inspectionObjectCode" class="w-full">
-                    <SelectValue placeholder="未选择" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">未选择</SelectItem>
-                    <SelectItem v-for="o in objects" :key="o.code" :value="o.code">
-                      {{ o.code }} {{ o.name }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label for="inspectionParameterCode">检测参数</Label>
-                <Select v-model="form.inspectionParameterCode">
-                  <SelectTrigger id="inspectionParameterCode" class="w-full">
-                    <SelectValue placeholder="未选择" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">未选择</SelectItem>
-                    <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
-                      {{ p.code }} {{ p.name }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+    <Dialog
+      :open="mode.kind === 'create' || mode.kind === 'edit'"
+      @update:open="
+        (v: boolean) => {
+          if (!v) closeDialog();
+        }
+      "
+    >
+      <DialogContent class="max-w-2xl gap-0 p-0">
+        <DialogHeader class="px-6 py-4 border-b">
+          <DialogTitle>
+            {{ mode.kind === "create" ? "新建技术要求" : "编辑技术要求" }}
+          </DialogTitle>
+          <DialogDescription>复合主键：检测项目 + 检测参数 + 判定标准</DialogDescription>
+        </DialogHeader>
+        <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
+          <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <Label for="inspectionObjectCode">检测项目</Label>
+              <Select v-model="form.inspectionObjectCode">
+                <SelectTrigger id="inspectionObjectCode" class="w-full">
+                  <SelectValue placeholder="未选择" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">未选择</SelectItem>
+                  <SelectItem v-for="o in objects" :key="o.code" :value="o.code">
+                    {{ o.code }} {{ o.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <Label>判定标准</Label>
-              <Input v-model="form.judgmentStandardCode" class="font-mono" placeholder="如 GB 175-2023" />
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <Label>牌号</Label>
-                <Input v-model="form.brand" />
-              </div>
-              <div>
-                <Label>型号</Label>
-                <Input v-model="form.model" />
-              </div>
-              <div>
-                <Label>等级</Label>
-                <Input v-model="form.grade" />
-              </div>
-              <div>
-                <Label>规格</Label>
-                <Input v-model="form.spec" />
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-3">
-              <div>
-                <Label for="comparison">判定方式</Label>
-                <Select v-model="form.comparison">
-                  <SelectTrigger id="comparison" class="w-full">
-                    <SelectValue placeholder="选择判定方式" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem v-for="c in COMPARISONS" :key="c" :value="c">
-                      {{ COMPARISON_LABEL[c] ?? c }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>下限</Label>
-                <Input v-model="form.minValue" type="number" />
-              </div>
-              <div>
-                <Label>上限</Label>
-                <Input v-model="form.maxValue" type="number" />
-              </div>
-            </div>
-            <div>
-              <Label>备注</Label>
-              <Input v-model="form.remark" />
+              <Label for="inspectionParameterCode">检测参数</Label>
+              <Select v-model="form.inspectionParameterCode">
+                <SelectTrigger id="inspectionParameterCode" class="w-full">
+                  <SelectValue placeholder="未选择" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">未选择</SelectItem>
+                  <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
+                    {{ p.code }} {{ p.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-          <div class="px-6 py-3 flex justify-end gap-2 border-t">
-            <Button variant="outline" @click="closeDialog">
-              取消
-            </Button>
-            <Button data-fn="M06.F06.I02" @click="submitForm">
-              保存
-            </Button>
+          <div>
+            <Label>判定标准</Label>
+            <Input v-model="form.judgmentStandardCode" class="font-mono" placeholder="如 GB 175-2023" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <Label>牌号</Label>
+              <Input v-model="form.brand" />
+            </div>
+            <div>
+              <Label>型号</Label>
+              <Input v-model="form.model" />
+            </div>
+            <div>
+              <Label>等级</Label>
+              <Input v-model="form.grade" />
+            </div>
+            <div>
+              <Label>规格</Label>
+              <Input v-model="form.spec" />
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <Label for="comparison">判定方式</Label>
+              <Select v-model="form.comparison">
+                <SelectTrigger id="comparison" class="w-full">
+                  <SelectValue placeholder="选择判定方式" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="c in COMPARISONS" :key="c" :value="c">
+                    {{ COMPARISON_LABEL[c] ?? c }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>下限</Label>
+              <Input v-model="form.minValue" type="number" />
+            </div>
+            <div>
+              <Label>上限</Label>
+              <Input v-model="form.maxValue" type="number" />
+            </div>
+          </div>
+          <div>
+            <Label>备注</Label>
+            <Input v-model="form.remark" />
           </div>
         </div>
-      </div>
-    </Teleport>
+        <DialogFooter class="px-6 py-3 gap-2 border-t">
+          <Button variant="outline" @click="closeDialog">
+            取消
+          </Button>
+          <!-- @entry M06.F06.I02 弹窗内保存 -->
+          <Button data-fn="M06.F06.I02" @click="submitForm">
+            保存
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <ConfirmDialog
       :open="deleteTarget !== null"

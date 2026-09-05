@@ -753,3 +753,60 @@ describe("Phase 2e-3 — CalculationMethodList 表单弹窗走 Dialog 底座", (
     expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });
+
+// Phase 2e-3 —— 新建/编辑弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
+describe("Phase 2e-3 — TechnicalRequirementList 表单弹窗走 Dialog 底座", () => {
+  async function openForm(): Promise<VueWrapper> {
+    lastWrapper = mountWithProviders(TechnicalRequirementList);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    const createBtn = lastWrapper
+      .findAll("button")
+      .find((b) => b.text() === "新建技术要求")!;
+    await createBtn.trigger("click");
+    await flushPromises();
+    return lastWrapper;
+  }
+
+  it("弹窗渲染 div[role=dialog]，标题/描述经 reka context 连上 aria", async () => {
+    const w = await openForm();
+
+    const content = w.find('[role="dialog"]');
+    expect(content.exists()).toBe(true);
+
+    const titleId = content.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toBe("新建技术要求");
+
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("复合主键");
+  });
+
+  it("保存按钮的 data-fn 没被结构改动吞掉，仍落在真实 <button> 上且弹窗内只有一个", async () => {
+    const w = await openForm();
+
+    const save = w.find('button[data-fn="M06.F06.I02"][class*="inline-flex"]');
+    expect(save.exists()).toBe(true);
+    // 页头「新建技术要求」同 data-fn，靠文本区分；弹窗内必须是「保存」
+    const inDialog = w.find('[role="dialog"]').findAll('button[data-fn="M06.F06.I02"]');
+    expect(inDialog.length).toBe(1);
+    expect(inDialog[0]!.text()).toBe("保存");
+  });
+
+  it("ESC 关闭弹窗（走 @update:open → closeDialog）", async () => {
+    const w = await openForm();
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
+  });
+});
