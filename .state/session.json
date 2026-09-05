@@ -1,37 +1,39 @@
 {
   "schema": 2,
   "project": "lab-management-system-vue",
-  "current_task": "Phase 2d-1 Select 原语 + 5 文件迁移 → tag v0.3.49-20260905",
+  "current_task": "Phase 2d-2 Select 收官（全仓无 raw <select>）+ ReceiptsList label 配对重构 → tag v0.3.50-20260905",
   "last_session_at": "2026-09-05",
-  "last_session_summary": "Phase 2d-1 完成：新增 5 个原语（Select/SelectTrigger/SelectContent/SelectItem/SelectValue — reka-ui SelectRoot + SelectPortal + SelectItemText 复合底座），迁移 5 文件 7 处 <select>。CategoryDictList 弹窗 1 处（检测项目 select，:disabled=!!editing 编辑态锁住）；SummaryList 1 处（顶部报告类别 filter 6 option，<Label for=categoryCode> 配对 SelectTrigger id）；ContractsList 2 处（顶部 status filter 3 option + 弹窗 form.status 2 option — 顶部 filter 的 value='' 在 reka-ui 是禁用值，sentinel 改 '__all__'，load() 里翻译回空串）；DataEntryPage 2 处（录入弹窗样品 + 检测参数 — 保留 Phase 1.4 wrapping 模式 <Label class=text-xs block> 包 <Select>，trigger 渲染的 <button role=combobox> 是 label 后代）；ConcretePermeabilityCard 6 行 × 渗水情况 select（原 :value + @change 受控写法改 :model-value + @update:model-value，aria-label 从 <Select> 移到 <SelectTrigger> 才能落到真实 button — reka-ui SelectRoot 是 Fragment）。3 个测试文件 selector 迁移：select[aria-label=...] → [role=combobox][aria-label=...]（Phase 2a-4 ConcretePermeabilityCard 锚 + Phase 1.4 DataEntryPage wrapping 锚）；summary 下拉存在断言初始显示改「全部」（categoryCode 默认 'ALL' 被 SelectItemText 配对回写）。Phase 2d-1 回归锚 8 case：<SelectTrigger> 渲染 <button type=button role=combobox> + $attrs 落真实 DOM + class 经 cn() 合并；<SelectValue> placeholder fallback；<SelectContent> 渲染 div[role=listbox]；<SelectItem> 渲染 div[role=option] + data-state=checked 选中态；v-model 双向写回（trigger 显示新值）；disabled 落到真实 DOM。vitest 283/29 全绿（基线 275 + 锚 8）；vue-tsc 零错；gate exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整。",
+  "last_session_summary": "Phase 2d-2 完成，src/ 下不再有任何 raw <select>（grep 命中全是注释）。上半场（前一会话）迁 InspectionCapabilityList 6 / CalculationMethodList 4 / TechnicalRequirementList 3 / DefaultParamCard 3；本会话收尾 6 文件 15 处。4 张数据录入卡 10 处：RebarMechNumericCard 3（技术要求/整体单项评定/逐行断裂位置）、RebarWeldingTensileCard 3（技术要求/整体单项评定/逐行断裂特征）、RebarWeldingBendCard 2（整体单项评定/逐行弯曲结果）、StrengthCardBase 2（技术要求/单项评定，两个 handler 签名从 (e: Event) 改 (v: string|number)）。DefaultParamCard 补正：删掉 Phase 2d-1 留下的 3 个悬空 for（for=standardCode 等指向不存在的 id —— 卡片按参数重复挂载 id 必撞，没法配对），改 SelectTrigger aria-label。ReceiptsList 5 select + 14 label：流程状态筛选 FlowFilter '' 改 '__all__' sentinel（load() 只认 receiving/submitted 所以天然不下发 flowStatus）；新建/编辑弹窗各 2 处（检测类别/样品来源），选项字面量提成 TEST_CATEGORIES / SAMPLE_SOURCES 去掉 6 处重复；14 个 raw <label> 包裹式关联改 <Label for> + 控件 id 显式配对（Phase 1.4 特意跳过留到这里：reka-ui 触发器是 <button role=combobox>，包在 <label> 里点击语义打架 —— label 激活 button = 开下拉），id 前缀 receipt-create-* / receipt-edit-* 分开防以后同时渲染。测试 295 → 298：cardsAll 新增 11 条锚、receiptsList 新增 4 条，其中 4 条是行为断言不是形态断言（锁 __none__ 哨兵翻译回路 + __all__ 不下发 flowStatus），做过变异验证 —— 把 `v === NONE ? '' : String(v)` 改成 `String(v)` 锚测立刻变红。新增 tests/selectInteraction.ts 共享 openSelect / pickSelectItem。过了 code-reviewer 两段审查，无阻断项；4 条「应该改」全部落实。gate exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS，100 功能条目引用完整，软告警 0 条。",
   "done": [
-    "src/components/ui/Select.vue 新增（reka-ui SelectRoot 包裹；inheritAttrs:false + v-bind=$attrs；modelValue: string|number；emit update:modelValue + update:open）",
-    "src/components/ui/SelectTrigger.vue 新增（reka-ui SelectTrigger + SelectIcon + lucide ChevronDown；shadcn-vue class 串 h-9 w-full rounded-md border border-input；$attrs 落真实 <button>；disabled 无条件绑定）",
-    "src/components/ui/SelectContent.vue 新增（reka-ui SelectPortal + SelectContent + SelectViewport；shadcn-vue class 串 z-50 max-h-96 shadow-md + data-state 动画；position prop）",
-    "src/components/ui/SelectItem.vue 新增（reka-ui SelectItem + SelectItemText + SelectItemIndicator + Check icon 选中指示 absolute left-2；text prop + 默认插槽）",
-    "src/components/ui/SelectValue.vue 新增（reka-ui SelectValue 包裹；placeholder fallback；默认插槽）",
-    "tests/foundation/__fixtures__/SelectFixture.vue + shadcn-select.dom.test.ts 新增（8 case：trigger 渲染 + $attrs + class cn() + Value placeholder + Content listbox + Item option + 双向 v-model + data-state=checked + disabled 落 DOM）",
-    "CategoryDictList.vue 1 处 <select> → <Select>（弹窗检测项目，:disabled=!!editing）",
-    "SummaryList.vue 1 处 <select> → <Select>（顶部报告类别 filter；<Label for=categoryCode> 配 SelectTrigger id）",
-    "ContractsList.vue 2 处 <select> → <Select>（顶部 status filter value='' 改 '__all__' sentinel + load() 翻译；弹窗 form.status）",
-    "DataEntryPage.vue 2 处 <select> → <Select>（录入弹窗样品 + 检测参数；保留 Phase 1.4 <Label class=text-xs block> wrapping 模式）",
-    "ConcretePermeabilityCard.vue 1 处 ×6 行 <select> → <Select>（渗水情况；aria-label 从 <Select> 移到 <SelectTrigger>；:value+@change 改 :model-value+@update:model-value）",
-    "3 个测试文件 selector 迁移：find('select') / select[aria-label=...] → find('[role=combobox]') / [role=combobox][aria-label=...]（cardsAll Phase 2a-4 + dataEntryPage Phase 1.4 wrapping + summary 下拉存在断言）",
-    "vitest 283/29 全绿（基线 275 + 锚 8）",
+    "RebarMechNumericCard.vue 3 处 <select> → <Select>（技术要求 / 整体单项评定 / 逐行断裂位置）",
+    "RebarWeldingTensileCard.vue 3 处（技术要求 / 整体单项评定 / 逐行断裂特征）",
+    "RebarWeldingBendCard.vue 2 处（整体单项评定 / 逐行弯曲结果）",
+    "StrengthCardBase.vue 2 处（技术要求 / 单项评定；onReqChange + onManualVerdictChange 签名改 (v: string|number)）",
+    "DefaultParamCard.vue 删 3 个悬空 for + 补 SelectTrigger aria-label + 字面 '__none__' 收敛成 NONE 常量",
+    "ReceiptsList.vue 5 处 <select> → <Select>（列表筛选 FlowFilter '' → '__all__' sentinel；两弹窗检测类别 + 样品来源）",
+    "ReceiptsList.vue 14 处 raw <label> → <Label for> + 控件 id（receipt-create-* / receipt-edit-* 双前缀）",
+    "ReceiptsList.vue 选项字面量提成 TEST_CATEGORIES / SAMPLE_SOURCES（去两弹窗 6 处重复）",
+    "tests/selectInteraction.ts 新增（openSelect / pickSelectItem 从 foundation 测试提取共享）",
+    "cardsAll.dom.test.ts Phase 2d-2 锚 11 条（含 3 条哨兵翻译行为断言，走 <Select> 组件边界 $emit）",
+    "receiptsList.dom.test.ts Phase 2d-2 锚 4 条（含 load() 参数契约断言：__all__ 不下发 flowStatus）",
+    "变异验证：破坏 NONE 翻译 → 2 条锚测变红；还原 → 51/51 绿",
+    "code-reviewer 两段审查通过，无阻断项，4 条「应该改」全部落实",
+    "vitest 298/29 全绿（基线 283 + 本次 15）",
     "vue-tsc --noEmit 零错",
     "gate -p lab-management-system-vue exit 0，L0/L0.no_fallback/L0.5/L1/L2/L3/L4/L5 全 PASS",
-    "CHANGELOG 0.3.49 条目（5 新原语 + 5 文件 7 处迁移 + 8 回归锚 + 5 条踩坑 + 验证）"
+    "CHANGELOG 0.3.50 条目（6 文件 15 处 + 14 label 配对 + 15 锚 + 5 条踩坑 + 验证）"
   ],
   "next": [
-    "deploy：推 tag v0.3.49-20260905 → CI docker build + VPS pull + restart",
-    "Phase 2d-2: 剩余 9 文件 26 处 <select>（InspectionCapabilityList 6 + ReceiptsList 5 + CalculationMethodList 4 + TechnicalRequirementList 3 + RebarMechNumericCard 3 + DefaultParamCard 3 + RebarWeldingTensileCard 3 + RebarWeldingBendCard 2 + StrengthCardBase 2 + ReportPhasePage 4 + ReportNameList 2）",
-    "Phase 1.4 label-refactor for ReceiptsList 14 处（label 包 select/input 一并重构，Phase 2d-2 一次性做）",
-    "Phase 2e: Dialog 原语；Phase 2f: NavigationMenu + Tailwind 主题收敛（text-green-600/text-red-600/text-gray-400 → semantic token；ParticleGradationCard rowspan 跨行视觉按 grid 一并处理）"
+    "deploy：推 tag v0.3.50-20260905 → CI docker build + VPS pull + restart",
+    "Phase 2e: Dialog + AlertDialog 原语 + 14 个 modal 分类迁移（确认型 6 → AlertDialog；表单型 4 + 列表关联型 2 + 预览型 3 → Dialog）。本 phase 风险最高：Teleport/DialogPortal stub、ESC、backdrop click、焦点循环都要肉眼验",
+    "Phase 2f: NavigationMenu（SidebarNav 结构改造）+ Tailwind 主题收敛（text-green-600 / text-red-600 / text-gray-400 → semantic token）",
+    "Phase 3: eslint-plugin-vue（走 /tree-change 加 version-lock）+ vue/no-restricted-html-elements 禁 raw 原语 + bundle 增量记账到 docs/conventions/bundle-budget.md",
+    "Phase 3 待清理（本次发现）：RebarWeldingBendCard 整体单项评定 <Select> 是死分支（parseBendRecord 把 results 归一成 合格|不合格，overall 恒非空，v-else 永不渲染）—— 要产品确认这个兜底还要不要",
+    "Phase 3 待清理：NONE / TRIGGER_CLS 在 4 张卡各定义一份，可提共享常量"
   ],
   "open_questions": [],
   "dont": [
     "不要 <input type=radio>（留 Phase 2g RadioGroup）",
-    "不要动 ReceiptsList 的 14 处 label（label 包 select/input 耦合太紧，留 Phase 2d-2 一次性重构）",
     "不要在卡片里裸用 <Label>（父级 text-xs 继承会被基类 text-sm 覆盖，必须显式写 text-xs）",
     "不要把 wrapping 模式（<Label> 包 <Input>/<Select>）拆成 for/id 配对（保留 wrapping 模式）",
     "不要给 Label.vue 加 variant（它是手写原语不是 CVA）",
@@ -50,7 +52,11 @@
     "不要用 rows=\"4\" 写法（HTML attribute 永远 string，触发 Vue dev warn；用 :rows=\"4\" JS 表达式才对得上 number prop）",
     "不要给 SelectItem value=\"\"（reka-ui SelectItem 显式禁止：空串保留给 placeholder；「全部 / 不限」sentinel 用 '__all__' 之类非空字符串，load() 里翻译回空串）",
     "不要把 aria-label / data-fn / id 挂在 <Select> 上（reka-ui SelectRoot 是 Fragment，$attrs 不会 propagate 到 SelectTrigger；必须挂在 <SelectTrigger>）",
-    "不要用 trigger.trigger('click') 触发 Select 打开（reka-ui SelectTrigger 监听 pointerdown 开门，不是 click；SelectItem 用 pointerup 选中，不是 click 也不是 pointerdown；jsdom 测试需 dispatch native PointerEvent 或 fallback 到 MouseEvent + 给 element 补 hasPointerCapture = () => false）"
+    "不要用 trigger.trigger('click') 触发 Select 打开（reka-ui SelectTrigger 监听 pointerdown 开门，不是 click；SelectItem 用 pointerup 选中，不是 click 也不是 pointerdown；jsdom 测试需 dispatch native PointerEvent 或 fallback 到 MouseEvent + 给 element 补 hasPointerCapture = () => false）",
+    "不要给 <Label> 加指向不存在 id 的 for（悬空 for 对读屏比没有更糟；重复挂载的组件用 aria-label 不用 for/id —— Phase 2d-1 在 DefaultParamCard 犯过，2d-2 已清）",
+    "不要指望 <SelectValue> 首帧就回显选中项文本（reka-ui 关闭态把 items teleport 进 DocumentFragment 注册 value→text，fragment 本身在 SelectContent onMounted 才建；测试断言回显必须先 await flushPromises，产品侧无影响）",
+    "不要在裸 mount() 下用 openSelect / pickSelectItem（只在 Teleport 被 stub 即 mountWithProviders 时有效；裸 mount 走真实 portal 打不通选中回路，改从 <Select> 组件边界 $emit('update:modelValue', v) 验业务 handler）",
+    "不要只写形态断言就当锚测（Phase 2d-2 审查教训：只断言 combobox 存在 / 无 raw select，锁不住 __none__ 哨兵翻译回路；哨兵/翻译这类逻辑必须写行为断言并做变异验证）"
   ],
   "active_branch": "master"
 }

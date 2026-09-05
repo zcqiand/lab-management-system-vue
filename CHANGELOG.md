@@ -2,6 +2,77 @@
 
 格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.50] — 2026-09-05
+
+shadcn-vue 迁移 **Phase 2d-2**（Select 收官）。至此 `src/` 下**不再有任何 raw
+`<select>` 元素**（剩余 grep 命中全是注释）。本条目记录收尾的 6 个文件 15 处
+`<select>`，外加 ReceiptsList 14 处 `<label>` 的配对重构。
+
+上半场由前一会话迁了 4 个文件（InspectionCapabilityList 6 / CalculationMethodList 4
+/ TechnicalRequirementList 3 / DefaultParamCard 3）。
+
+**4 张数据录入卡（10 处）**：
+
+- `RebarMechNumericCard.vue` — 3 处（技术要求 / 整体单项评定 / 逐行断裂位置）
+- `RebarWeldingTensileCard.vue` — 3 处（技术要求 / 整体单项评定 / 逐行断裂特征）
+- `RebarWeldingBendCard.vue` — 2 处（整体单项评定 / 逐行弯曲结果）
+- `StrengthCardBase.vue` — 2 处（技术要求 / 单项评定）；`onReqChange` /
+  `onManualVerdictChange` 签名从 `(e: Event)` 改 `(v: string | number)`
+
+**DefaultParamCard 补正**：Phase 2d-1 给 3 个 `<Label>` 加了 `for="standardCode"`
+之类的**悬空 for**（指向不存在的 id —— 卡片按参数重复挂载，id 必撞所以没法配对）。
+悬空 for 对读屏比没有更糟，本次全部删掉，改用 `<SelectTrigger aria-label>`。
+
+**ReceiptsList（5 处 select + 14 处 label）**：
+
+- 列表页流程状态筛选：`FlowFilter` 的 `""` 改 `"__all__"` sentinel（与
+  ContractsList / InspectionCapabilityList 同约定）；`load()` 只认
+  `receiving` / `submitted`，所以 `__all__` 天然翻译成「不下发 flowStatus」
+- 新建 / 编辑弹窗各 2 处（检测类别 / 样品来源），选项字面量提成
+  `TEST_CATEGORIES` / `SAMPLE_SOURCES` 常量，去掉两弹窗 6 处重复
+- **14 个 raw `<label>` 包裹式关联 → `<Label for>` + 控件 `id` 显式配对**。
+  这批是 Phase 1.4 特意跳过、留给 Select 到位后一起改的：reka-ui 触发器是
+  `<button role="combobox">`，包在 `<label>` 里点击语义会打架（label 激活
+  button = 开下拉）。id 前缀 `receipt-create-*` / `receipt-edit-*` 分开 ——
+  两弹窗 `v-if` 互斥本不会撞，分开是防以后有人改成同时渲染
+
+**测试**（295 → 298）：
+
+- `cardsAll.dom.test.ts` 新增 Phase 2d-2 锚测 11 条；`receiptsList.dom.test.ts`
+  新增 4 条
+- 其中 4 条是**行为断言**而非形态断言，锁 `__none__` 哨兵翻译回路 +
+  `__all__` 不下发 flowStatus。做过变异验证：把
+  `v === NONE ? '' : String(v)` 改成 `String(v)`，锚测立刻变红
+- 新增 `tests/selectInteraction.ts`：把 foundation 测试里的
+  `openSelect` / `pickSelectItem`（native PointerEvent dispatch）提出来共享
+
+**踩坑记录**：
+
+1. **`<option value="">` 不能直译** —— reka-ui `SelectItem` 禁空串 value（保留给
+   placeholder）。统一走 `NONE = "__none__"` 哨兵 + handler 里翻译回 `''`，
+   `onChange` 语义与迁移前逐字节一致
+2. **`SelectValue` 首帧不回显选中项文本** —— reka-ui 在关闭态把 `SelectContent`
+   的 items teleport 进一个 `DocumentFragment`，靠 `SelectItemText.onMounted`
+   注册 `value→text` 到 `rootContext.optionsSet`；而 fragment 本身在
+   `SelectContent` 的 `onMounted` 里才创建。所以首帧没有 options，
+   测试断言回显文本必须先 `await flushPromises()`。**产品侧无影响**
+   （挂载后一帧就补上），只影响同步断言
+3. **`openSelect` / `pickSelectItem` 只在 Teleport 被 stub 时有效** ——
+   `mountWithProviders` 会 stub；裸 `mount()` 下走真实 portal，pointerup
+   打不通选中回路。裸 mount 的场景改从 `<Select>` 组件边界
+   `$emit("update:modelValue", v)` 直接验业务 handler
+4. **`RebarWeldingBendCard` 的整体单项评定 `<Select>` 是死分支** ——
+   `parseBendRecord` 把 `results[t]` 归一成「合格 | 不合格」（非 `不合格` 一律
+   `合格`），`overall` 恒非空 → 顶部永远走 `<span>` 分支，`v-else` 渲染不出来。
+   本次照译保行为等价，锚测断言它「不出现」；**清理留 Phase 3**（要产品确认
+   这个兜底还要不要）
+5. **触发器视觉对齐** —— `TRIGGER_CLS` 是
+   `"inline-flex h-8 w-auto min-w-24 gap-1 px-2 text-sm"`，压过 CVA 基类的
+   `flex h-9 w-full`（display / width / height 同组，tailwind-merge 二选一取后者）
+
+**验证**：gate exit 0，L0 / L0.no_fallback / L0.5 / L1 / L2 / L3 / L4 / L5 全 PASS；
+298 测试 29 文件全绿；`vue-tsc --noEmit` 零错；100 功能条目引用完整，软告警 0 条。
+
 ## [0.3.49] — 2026-09-05
 
 shadcn-vue 迁移 **Phase 2d-1**（raw `<select>` → `<Select>` / `<SelectTrigger>`
