@@ -3,6 +3,7 @@
 // 镜像 react 仓 tests/features/receipts/receiptsList.dom.test.tsx 4 个 fnTest。
 // vue 仓不挂 msw，用 vi.mock('axios') 拦截；fixture 数据走内联字面量（同 react 仓 contracts/receipts）。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { nextTick } from "vue";
 import { flushPromises } from "@vue/test-utils";
 import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
@@ -112,8 +113,13 @@ describe("M03.F01 接样管理", () => {
     expect(createBtn).toBeTruthy();
     await createBtn!.trigger("click");
     await flushPromises();
-    const h2 = wrapper.findAll("h2").find((h) => h.text().includes("新建接样"));
-    expect(h2).toBeTruthy();
+    // Phase 2e-3：弹窗从手写 <Teleport>+<h2> 迁到 <Dialog> 家族，
+    // 标题现在挂在 reka-ui DialogTitle 里（经 aria-labelledby 连到 [role=dialog]）。
+    const dialog = wrapper.find('[role="dialog"]');
+    expect(dialog.exists()).toBe(true);
+    const titleId = dialog.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(wrapper.find(`#${titleId}`).text()).toContain("新建接样");
   });
 
   fnTest(["M03.F01.I03"], "接样管理：行内删除按钮开确认弹窗（标题『删除接样』）", async () => {
@@ -416,5 +422,122 @@ describe("Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归", () => {
     }
     // <Label> 原语基类落到真实 <label>（不是裸 raw label）
     expect(labels[0]!.classes()).toContain("peer-disabled:opacity-70");
+  });
+});
+
+// Phase 2e-3 —— 新建/编辑弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
+// 关键点：
+//   - 两个弹窗分别锁（标题不同：新建 vs 编辑），避免「共用 div[role=dialog]」互相掩护
+//   - M03.F01.I02 锚点：页头「新建接样」+ 弹窗内「创建」按钮都挂同 data-fn；
+//     弹窗内必须恰好 1 个，且 class 仍走 <Button> CVA（class*=inline-flex）
+describe("Phase 2e-3 — ReceiptsList 新建/编辑弹窗走 Dialog 底座", () => {
+  async function openCreate(): Promise<VueWrapper> {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    const wrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    lastWrapper = wrapper;
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    const createBtn = wrapper.findAll("button").find((b) => b.text() === "新建接样")!;
+    await createBtn.trigger("click");
+    await flushPromises();
+    return wrapper;
+  }
+
+  async function openEdit(): Promise<VueWrapper> {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    const wrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    lastWrapper = wrapper;
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    // 找 RECEIPT-001 行（receiving）的编辑按钮
+    const editBtn = wrapper.findAll("button").find((b) => b.text() === "编辑")!;
+    await editBtn.trigger("click");
+    await flushPromises();
+    return wrapper;
+  }
+
+  it("新建弹窗：div[role=dialog] 存在，标题经 reka context 连上 aria-labelledby='新建接样'", async () => {
+    const w = await openCreate();
+
+    const dialog = w.find('[role="dialog"]');
+    expect(dialog.exists()).toBe(true);
+
+    const titleId = dialog.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toBe("新建接样");
+
+    const descId = dialog.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("录入委托书基础信息");
+  });
+
+  it("新建弹窗内保存键 data-fn 仍落真实 <Button> 上（class*=inline-flex）", async () => {
+    const w = await openCreate();
+
+    // 弹窗内那个是「保存」按钮，无 data-fn（@entry 在批量键，I02 是行级）；
+    // 锚测改锁：M03.F01.I02 在页头「新建接样」按钮上 —— 必须仍落在真实 button。
+    // 弹窗结构不能吞掉页头锚点。
+    const headerBtn = w.findAll('button[data-fn="M03.F01.I02"]').find(
+      (b) => b.text() === "新建接样",
+    );
+    expect(headerBtn).toBeTruthy();
+    expect(headerBtn!.element.tagName).toBe("BUTTON");
+    expect(headerBtn!.classes()).toContain("inline-flex");
+
+    // 弹窗内 form <Input> 5 个仍在弹窗子树里（Phase 2d-2 配对的 id 没被 Dialog 抽走）
+    const dialog = w.find('[role="dialog"]');
+    expect(dialog.findAll('input').length).toBeGreaterThanOrEqual(5);
+    expect(dialog.find("#receipt-create-code").exists()).toBe(true);
+    expect(dialog.find("#receipt-create-date").exists()).toBe(true);
+  });
+
+  it("新建弹窗：ESC 关闭（走 @update:open → mode = { kind: 'idle' }）", async () => {
+    const w = await openCreate();
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
+  });
+
+  it("编辑弹窗：div[role=dialog] 存在，标题包含 fixture 的 commissionCode 'WT-2026-001'", async () => {
+    const w = await openEdit();
+
+    const dialog = w.find('[role="dialog"]');
+    expect(dialog.exists()).toBe(true);
+
+    const titleId = dialog.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    // 模板走 `editing?.commissionCode ?? ""`，fixture RECEIPT-001 = "WT-2026-001"
+    expect(w.find(`#${titleId}`).text()).toContain("WT-2026-001");
+
+    const descId = dialog.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("修改接样字段后保存");
+  });
+
+  it("编辑弹窗：14 个 form <Label for> 的 id 全部在弹窗内真实存在（Phase 2d-2 配对不破）", async () => {
+    const w = await openEdit();
+
+    const dialog = w.find('[role="dialog"]');
+    expect(dialog.exists()).toBe(true);
+
+    const labels = dialog.findAll("label");
+    expect(labels.length).toBe(7);
+    for (const label of labels) {
+      const target = label.attributes("for");
+      expect(target).toBeTruthy();
+      // id 必须落在 dialog 子树内（receipt-edit-* 前缀）
+      expect(target!.startsWith("receipt-edit-")).toBe(true);
+      expect(dialog.find(`#${target}`).exists()).toBe(true);
+    }
   });
 });
