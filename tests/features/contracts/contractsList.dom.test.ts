@@ -4,6 +4,7 @@
 // vue 仓不挂 msw（deps 未引入），用 vi.mock('axios') 拦截；fixture 数据走
 // 内联字面量（与 react 仓 contracts 同构：id + tenantId）。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { nextTick } from "vue";
 import { flushPromises } from "@vue/test-utils";
 import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
@@ -210,7 +211,7 @@ describe("Phase 1.3a — ContractsList 搜索/表单 <Input> 原语回归", () =
     await flushPromises();
 
     // 弹窗内找第一个 input（合同编号），它不带 placeholder（与搜索框区分）
-    const codeInput = lastWrapper.find('input:not([placeholder])');
+    const codeInput = lastWrapper.find("input:not([placeholder])");
     expect(codeInput.exists()).toBe(true);
     await codeInput.setValue("HT-NEW");
     expect((codeInput.element as HTMLInputElement).value).toBe("HT-NEW");
@@ -310,7 +311,66 @@ describe("Phase 1.4 — ContractsList 表单 <Label> 原语回归", () => {
     expect(labels[0].classes()).toContain("font-medium");
     expect(labels[0].classes()).toContain("leading-none");
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
-    // 末尾「状态」label 仍与 raw <select> 同级（select 留 Phase 2d）
+    // 末尾「状态」label 与 <Select> 同级
     expect(labels[16].text()).toBe("状态");
+  });
+});
+
+// Phase 2e-3 —— 新建/编辑弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
+describe("Phase 2e-3 — ContractsList 表单弹窗走 Dialog 底座", () => {
+  async function openForm() {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    const wrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    lastWrapper = wrapper;
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    await wrapper
+      .findAll("button")
+      .find((b) => b.text() === "新建合同")!
+      .trigger("click");
+    await flushPromises();
+    return wrapper;
+  }
+
+  it("弹窗渲染 div[role=dialog]，标题/描述经 reka context 连上 aria", async () => {
+    const w = await openForm();
+
+    const content = w.find('[role="dialog"]');
+    expect(content.exists()).toBe(true);
+
+    const titleId = content.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toBe("新建合同");
+
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("创建一条合同记录");
+  });
+
+  it("保存按钮的 data-fn 没被结构改动吞掉，仍落在真实 <button> 上", async () => {
+    const w = await openForm();
+
+    const save = w.find('button[data-fn="M02.F01.I02"][class*="inline-flex"]');
+    expect(save.exists()).toBe(true);
+    // 弹窗内那个是「创建」；页头那个也是同 data-fn，靠文本区分
+    const inDialog = w.find('[role="dialog"]').findAll('button[data-fn="M02.F01.I02"]');
+    expect(inDialog.length).toBe(1);
+    expect(inDialog[0]!.text()).toBe("创建");
+  });
+
+  it("ESC 关闭弹窗（走 @update:open → closeDialog）", async () => {
+    const w = await openForm();
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });

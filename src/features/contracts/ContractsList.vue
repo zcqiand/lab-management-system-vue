@@ -15,6 +15,12 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Select from "@/components/ui/Select.vue";
@@ -93,17 +99,14 @@ async function load(): Promise<void> {
     // status.value === "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel；
     // 空字符串 SelectItem 在 reka-ui 是禁用值（保留给 placeholder），所以走 __all__。
     const apiStatus = status.value === "__all__" ? "" : status.value;
-    const res = await axios.get<{ items: Contract[]; total: number }>(
-      API_ROUTES["/contracts"],
-      {
-        params: {
-          ...(apiStatus ? { status: apiStatus } : {}),
-          ...(keyword.value ? { keyword: keyword.value } : {}),
-          page: 1,
-          pageSize: 50,
-        },
+    const res = await axios.get<{ items: Contract[]; total: number }>(API_ROUTES["/contracts"], {
+      params: {
+        ...(apiStatus ? { status: apiStatus } : {}),
+        ...(keyword.value ? { keyword: keyword.value } : {}),
+        page: 1,
+        pageSize: 50,
       },
-    );
+    });
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
     total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
@@ -182,9 +185,7 @@ async function submitForm(): Promise<void> {
         </p>
       </div>
       <!-- @entry M02.F01.I02 新建合同按钮 -->
-      <Button data-fn="M02.F01.I02" @click="openCreate">
-        新建合同
-      </Button>
+      <Button data-fn="M02.F01.I02" @click="openCreate"> 新建合同 </Button>
     </div>
 
     <div class="mb-4 flex gap-2">
@@ -204,132 +205,123 @@ async function submitForm(): Promise<void> {
         placeholder="按合同编号 / 项目名称搜索"
         @keydown.enter="load"
       />
-      <Button variant="outline" @click="load">
-        搜索
-      </Button>
+      <Button variant="outline" @click="load"> 搜索 </Button>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="mode.kind === 'create' || mode.kind === 'edit'"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="closeDialog"
-      >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-          <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold">
-              {{
-                mode.kind === "create"
-                  ? "新建合同"
-                  : `编辑合同 ${editing?.contractCode ?? ""}`
-              }}
-            </h2>
-            <p class="text-sm text-slate-500">
-              {{
-                mode.kind === "create"
-                  ? "创建一条合同记录（带 * 字段必填）。"
-                  : "修改合同字段后保存。"
-              }}
-            </p>
-          </div>
-          <div class="px-6 py-4 max-h-[60vh] overflow-y-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <Label>合同编号 *</Label>
-                <Input v-model="form.contractCode" />
-              </div>
-              <div>
-                <Label>委托单位 *</Label>
-                <Input v-model="form.clientUnit" />
-              </div>
-              <div>
-                <Label>项目名称 *</Label>
-                <Input v-model="form.projectName" />
-              </div>
-              <div>
-                <Label>项目地点</Label>
-                <Input v-model="form.projectLocation" />
-              </div>
-              <div>
-                <Label>施工单位 *</Label>
-                <Input v-model="form.constructionUnit" />
-              </div>
-              <div>
-                <Label>检测专项</Label>
-                <Input v-model="form.inspectionSpecialtyCode" />
-              </div>
-              <div>
-                <Label>建设单位</Label>
-                <Input v-model="form.buildingUnit" />
-              </div>
-              <div>
-                <Label>监理单位</Label>
-                <Input v-model="form.supervisorUnit" />
-              </div>
-              <div>
-                <Label>检测人</Label>
-                <Input v-model="form.inspectionPerson" />
-              </div>
-              <div>
-                <Label>检测人电话</Label>
-                <Input v-model="form.inspectionPhone" />
-              </div>
-              <div>
-                <Label>见证单位 *</Label>
-                <Input v-model="form.witnessUnit" />
-              </div>
-              <div>
-                <Label>见证人 *</Label>
-                <Input v-model="form.witness" />
-              </div>
-              <div>
-                <Label>见证人电话</Label>
-                <Input v-model="form.witnessPhone" />
-              </div>
-              <div>
-                <Label>联系人</Label>
-                <Input v-model="form.contactPerson" />
-              </div>
-              <div>
-                <Label>联系人电话</Label>
-                <Input v-model="form.contactPhone" />
-              </div>
-              <div>
-                <Label>委托日期 (YYYY-MM-DD)</Label>
-                <Input v-model="form.entrustedDate" />
-              </div>
-              <div>
-                <Label>状态</Label>
-                <Select v-model="form.status">
-                  <SelectTrigger class="border rounded h-9 px-2 text-sm bg-white w-full">
-                    <SelectValue placeholder="请选择状态" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">在用</SelectItem>
-                    <SelectItem value="archived">已归档</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+    <Dialog
+      :open="mode.kind === 'create' || mode.kind === 'edit'"
+      @update:open="
+        (v: boolean) => {
+          if (!v) closeDialog();
+        }
+      "
+    >
+      <DialogContent class="max-w-2xl gap-0 p-0">
+        <DialogHeader class="px-6 py-4 border-b">
+          <DialogTitle>
+            {{ mode.kind === "create" ? "新建合同" : `编辑合同 ${editing?.contractCode ?? ""}` }}
+          </DialogTitle>
+          <DialogDescription>
+            {{
+              mode.kind === "create"
+                ? "创建一条合同记录（带 * 字段必填）。"
+                : "修改合同字段后保存。"
+            }}
+          </DialogDescription>
+        </DialogHeader>
+        <div class="px-6 py-4 max-h-[60vh] overflow-y-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <Label>合同编号 *</Label>
+              <Input v-model="form.contractCode" />
+            </div>
+            <div>
+              <Label>委托单位 *</Label>
+              <Input v-model="form.clientUnit" />
+            </div>
+            <div>
+              <Label>项目名称 *</Label>
+              <Input v-model="form.projectName" />
+            </div>
+            <div>
+              <Label>项目地点</Label>
+              <Input v-model="form.projectLocation" />
+            </div>
+            <div>
+              <Label>施工单位 *</Label>
+              <Input v-model="form.constructionUnit" />
+            </div>
+            <div>
+              <Label>检测专项</Label>
+              <Input v-model="form.inspectionSpecialtyCode" />
+            </div>
+            <div>
+              <Label>建设单位</Label>
+              <Input v-model="form.buildingUnit" />
+            </div>
+            <div>
+              <Label>监理单位</Label>
+              <Input v-model="form.supervisorUnit" />
+            </div>
+            <div>
+              <Label>检测人</Label>
+              <Input v-model="form.inspectionPerson" />
+            </div>
+            <div>
+              <Label>检测人电话</Label>
+              <Input v-model="form.inspectionPhone" />
+            </div>
+            <div>
+              <Label>见证单位 *</Label>
+              <Input v-model="form.witnessUnit" />
+            </div>
+            <div>
+              <Label>见证人 *</Label>
+              <Input v-model="form.witness" />
+            </div>
+            <div>
+              <Label>见证人电话</Label>
+              <Input v-model="form.witnessPhone" />
+            </div>
+            <div>
+              <Label>联系人</Label>
+              <Input v-model="form.contactPerson" />
+            </div>
+            <div>
+              <Label>联系人电话</Label>
+              <Input v-model="form.contactPhone" />
+            </div>
+            <div>
+              <Label>委托日期 (YYYY-MM-DD)</Label>
+              <Input v-model="form.entrustedDate" />
+            </div>
+            <div>
+              <Label>状态</Label>
+              <Select v-model="form.status">
+                <SelectTrigger class="border rounded h-9 px-2 text-sm bg-white w-full">
+                  <SelectValue placeholder="请选择状态" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">在用</SelectItem>
+                  <SelectItem value="archived">已归档</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-          <div class="px-6 py-3 flex justify-end border-t">
-            <!-- @entry M02.F01.I02 表单内保存 -->
-            <Button data-fn="M02.F01.I02" @click="submitForm">
-              {{ mode.kind === "create" ? "创建" : "保存" }}
-            </Button>
-          </div>
         </div>
-      </div>
-    </Teleport>
+        <DialogFooter class="px-6 py-3 justify-end border-t">
+          <!-- @entry M02.F01.I02 表单内保存 -->
+          <Button data-fn="M02.F01.I02" @click="submitForm">
+            {{ mode.kind === "create" ? "创建" : "保存" }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <ConfirmDialog
       :open="deleteTarget !== null"
       title="删除合同"
-      :message="
-        deleteTarget
-          ? `确认删除合同 ${deleteTarget.contractCode}？此操作不可撤销。`
-          : ''
-      "
+      :message="deleteTarget ? `确认删除合同 ${deleteTarget.contractCode}？此操作不可撤销。` : ''"
       @confirm="
         async () => {
           if (!deleteTarget) return;
@@ -348,9 +340,7 @@ async function submitForm(): Promise<void> {
 
     <div class="mt-4 bg-white rounded-xl border shadow-sm">
       <div class="flex flex-row items-center justify-between px-6 py-4 border-b">
-        <div class="font-semibold text-base">
-          合同列表（{{ total || "…" }}）
-        </div>
+        <div class="font-semibold text-base">合同列表（{{ total || "…" }}）</div>
         <div v-if="loading" class="text-xs text-slate-400">加载中…</div>
       </div>
       <Table class="w-full text-sm">
@@ -390,9 +380,7 @@ async function submitForm(): Promise<void> {
               {{ c.entrustedDate ?? "—" }}
             </TableCell>
             <TableCell class="px-4 py-2 text-right">
-              <Button size="sm" variant="outline" @click="openEdit(c)">
-                编辑
-              </Button>
+              <Button size="sm" variant="outline" @click="openEdit(c)"> 编辑 </Button>
               <Button
                 variant="link"
                 class="ml-2 text-destructive hover:underline"
