@@ -7,6 +7,12 @@ import { onMounted, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -295,114 +301,116 @@ async function confirmDelete(): Promise<void> {
 
     <div class="text-sm text-slate-500">共 {{ items.length }} 条</div>
 
-    <Teleport to="body">
-      <div
-        v-if="mode.kind === 'create' || mode.kind === 'edit'"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="closeDialog"
-      >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl">
-          <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold">
-              {{ mode.kind === "create" ? "新建计算方法" : "编辑计算方法" }}
-            </h2>
-            <p class="text-sm text-slate-500">复合主键：检测项目 + 检测参数</p>
+    <Dialog
+      :open="mode.kind === 'create' || mode.kind === 'edit'"
+      @update:open="
+        (v: boolean) => {
+          if (!v) closeDialog();
+        }
+      "
+    >
+      <DialogContent class="max-w-xl gap-0 p-0">
+        <DialogHeader class="px-6 py-4 border-b">
+          <DialogTitle>
+            {{ mode.kind === "create" ? "新建计算方法" : "编辑计算方法" }}
+          </DialogTitle>
+          <DialogDescription>复合主键：检测项目 + 检测参数</DialogDescription>
+        </DialogHeader>
+        <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
+          <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">
+            {{ saveError }}
           </div>
-          <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-            <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">
-              {{ saveError }}
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <Label for="inspectionObjectCode">检测项目</Label>
-                <Select v-model="form.inspectionObjectCode">
-                  <SelectTrigger id="inspectionObjectCode" class="w-full">
-                    <SelectValue placeholder="未选择" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">未选择</SelectItem>
-                    <SelectItem v-for="o in objects" :key="o.code" :value="o.code">
-                      {{ o.code }} {{ o.name }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label for="inspectionParameterCode">检测参数</Label>
-                <Select v-model="form.inspectionParameterCode">
-                  <SelectTrigger id="inspectionParameterCode" class="w-full">
-                    <SelectValue placeholder="未选择" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">未选择</SelectItem>
-                    <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
-                      {{ p.code }} {{ p.name }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <Label for="testingStandardCode">判定标准（可选）</Label>
-              <Select v-model="form.testingStandardCode">
-                <SelectTrigger id="testingStandardCode" class="w-full">
-                  <SelectValue placeholder="不指定" />
+              <Label for="inspectionObjectCode">检测项目</Label>
+              <Select v-model="form.inspectionObjectCode">
+                <SelectTrigger id="inspectionObjectCode" class="w-full">
+                  <SelectValue placeholder="未选择" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__none__">不指定</SelectItem>
-                  <SelectItem v-for="s in standards" :key="s.code" :value="s.code">
-                    {{ s.code }} {{ s.name }}
+                  <SelectItem value="__none__">未选择</SelectItem>
+                  <SelectItem v-for="o in objects" :key="o.code" :value="o.code">
+                    {{ o.code }} {{ o.name }}
                   </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div class="grid grid-cols-3 gap-3">
-              <div>
-                <Label for="algorithmType">算法类型</Label>
-                <Select v-model="form.algorithmType">
-                  <SelectTrigger id="algorithmType" class="w-full">
-                    <SelectValue placeholder="选择算法类型" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem v-for="a in ALGORITHMS" :key="a.value" :value="a.value">
-                      {{ a.label }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>试件数量</Label>
-                <Input
-                  v-model="form.specimenCount"
-                  type="number"
-                />
-              </div>
-              <div>
-                <Label>修约规则</Label>
-                <Input
-                  v-model="form.roundingRule"
-                  placeholder="如 修约到 0.1"
-                />
-              </div>
+            <div>
+              <Label for="inspectionParameterCode">检测参数</Label>
+              <Select v-model="form.inspectionParameterCode">
+                <SelectTrigger id="inspectionParameterCode" class="w-full">
+                  <SelectValue placeholder="未选择" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">未选择</SelectItem>
+                  <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
+                    {{ p.code }} {{ p.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div>
+            <Label for="testingStandardCode">判定标准（可选）</Label>
+            <Select v-model="form.testingStandardCode">
+              <SelectTrigger id="testingStandardCode" class="w-full">
+                <SelectValue placeholder="不指定" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">不指定</SelectItem>
+                <SelectItem v-for="s in standards" :key="s.code" :value="s.code">
+                  {{ s.code }} {{ s.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <Label for="algorithmType">算法类型</Label>
+              <Select v-model="form.algorithmType">
+                <SelectTrigger id="algorithmType" class="w-full">
+                  <SelectValue placeholder="选择算法类型" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="a in ALGORITHMS" :key="a.value" :value="a.value">
+                    {{ a.label }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <Label>备注</Label>
+              <Label>试件数量</Label>
               <Input
-                v-model="form.remark"
+                v-model="form.specimenCount"
+                type="number"
+              />
+            </div>
+            <div>
+              <Label>修约规则</Label>
+              <Input
+                v-model="form.roundingRule"
+                placeholder="如 修约到 0.1"
               />
             </div>
           </div>
-          <div class="px-6 py-3 flex justify-end gap-2 border-t">
-            <Button variant="outline" @click="closeDialog">
-              取消
-            </Button>
-            <Button data-fn="M06.F05.I01" @click="submitForm">
-              保存
-            </Button>
+          <div>
+            <Label>备注</Label>
+            <Input
+              v-model="form.remark"
+            />
           </div>
         </div>
-      </div>
-    </Teleport>
+        <DialogFooter class="px-6 py-3 gap-2 border-t">
+          <Button variant="outline" @click="closeDialog">
+            取消
+          </Button>
+          <!-- @entry M06.F05.I01 弹窗内保存 -->
+          <Button data-fn="M06.F05.I01" @click="submitForm">
+            保存
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <ConfirmDialog
       :open="deleteTarget !== null"
