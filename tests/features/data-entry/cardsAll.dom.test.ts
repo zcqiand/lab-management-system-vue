@@ -3,8 +3,9 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { nextTick } from "vue";
-import { mount, type VueWrapper } from "@vue/test-utils";
+import { mount, flushPromises, type VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
+import Select from "@/components/ui/Select.vue";
 import ConcreteCompressCard from "@/features/data-entry/models/ConcreteCompressCard.vue";
 import ConcretePermeabilityCard from "@/features/data-entry/models/ConcretePermeabilityCard.vue";
 import RebarWeldingTensileCard from "@/features/data-entry/models/RebarWeldingTensileCard.vue";
@@ -823,12 +824,11 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
     // SelectItemText onMounted 时才把 value→text 注册进 rootContext.optionsSet，
     // SelectValue 靠它回显选中项文本。fragment 本身在 SelectContent 的 onMounted
     // 里才创建 → 首帧没有 options，必须等一次 flush 才能断言回显文本。
-    await nextTick();
-    await nextTick();
+    await flushPromises();
     expect(trigger.text()).toContain("≥ 42.5 MPa");
   });
 
-  it("DefaultParamCard：3 个 combobox 带 aria-label，<Label> 不留悬空 for", () => {
+  it("DefaultParamCard：3 个 combobox 带 aria-label，<Label> 一律不带 for", () => {
     lastCardWrapper = mount(DefaultParamCard, {
       props: makeProps({ parameter: param("IP-9999", "兜底参数") }),
     });
@@ -839,13 +839,66 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
         lastCardWrapper.find(`button[role="combobox"][aria-label="${name}"]`).exists(),
       ).toBe(true);
     }
-    // 卡片可在一页里按参数重复挂载，id 会撞；因此不用 for/id 配对而用 aria-label。
-    // 悬空 for（指向不存在的 id）比没有更糟，必须清掉。
-    for (const label of lastCardWrapper.findAll("label")) {
-      const target = label.attributes("for");
-      if (target) {
-        expect(lastCardWrapper.find(`#${target}`).exists()).toBe(true);
-      }
-    }
+    // 卡片可在一页里按参数重复挂载，id 会撞；所以走 aria-label 不走 for/id 配对。
+    // Phase 2d-1 曾给 3 个 <Label> 加过 for="standardCode" 之类的悬空 for
+    // （指向不存在的 id，对读屏比没有更糟）——这里锁死「一个 for 都不许有」。
+    expect(lastCardWrapper.findAll("label").every((l) => !l.attributes("for"))).toBe(true);
+  });
+
+  // 这两条锁「__none__ 哨兵 → '' 」的翻译回路 —— Phase 2d-2 最容易被静默改坏的地方。
+  //
+  // 不走 reka-ui 的真实 pointerdown/pointerup 编排：那套内部事件契约由
+  // tests/foundation/shadcn-select.dom.test.ts 负责，这里要锁的是**卡片自己写的
+  // handler**。所以直接从 <Select> 组件边界 emit update:modelValue，
+  // 等价于「用户选中了某项」，但不受 reka 内部实现变化影响。
+  function emitSelect(wrapper: VueWrapper, ariaLabel: string, value: string): Promise<void> {
+    const trigger = wrapper.findAll('[role="combobox"]').find(
+      (t) => t.attributes("aria-label") === ariaLabel,
+    );
+    expect(trigger, `找不到 aria-label=${ariaLabel} 的 combobox`).toBeTruthy();
+    // SelectTrigger 是 <Select> 的子孙 —— 往上找到那个 Select 组件实例
+    const select = wrapper
+      .findAllComponents(Select)
+      .find((s) => s.element.contains(trigger!.element) || s.find(`[aria-label="${ariaLabel}"]`).exists());
+    expect(select, `找不到包住 ${ariaLabel} 的 <Select>`).toBeTruthy();
+    select!.vm.$emit("update:modelValue", value);
+    return nextTick();
+  }
+
+  it("整体单项评定选回「未评定」→ onChange 收到空串而不是 __none__ 哨兵", async () => {
+    const onChange = vi.fn();
+    lastCardWrapper = mount(RebarMechNumericCard, {
+      props: makeProps({ record: { verdict: "合格" } as never, onChange }),
+    });
+
+    await emitSelect(lastCardWrapper, "整体单项评定", "__none__");
+
+    // 哨兵必须在 handler 里翻译回 ''：漏了就把 "__none__" 写进 record.verdict
+    expect(onChange).toHaveBeenCalledWith({ verdict: "" });
+  });
+
+  it("整体单项评定选「不合格」→ onChange 收到原值（非哨兵路径不被误翻译）", async () => {
+    const onChange = vi.fn();
+    lastCardWrapper = mount(RebarMechNumericCard, {
+      props: makeProps({ record: { verdict: "合格" } as never, onChange }),
+    });
+
+    await emitSelect(lastCardWrapper, "整体单项评定", "不合格");
+
+    expect(onChange).toHaveBeenCalledWith({ verdict: "不合格" });
+  });
+
+  it("技术要求选回「未选」→ updateReq 收到空串，techReqId 不被写成哨兵", async () => {
+    const onChange = vi.fn();
+    lastCardWrapper = mount(RebarMechNumericCard, {
+      props: makeProps({ onChange }),
+    });
+
+    await emitSelect(lastCardWrapper, "技术要求", "__none__");
+
+    expect(onChange).toHaveBeenCalled();
+    const payload = onChange.mock.calls[0]![0] as { result?: string };
+    const parsed = JSON.parse(payload.result ?? "{}") as { techReqId?: string };
+    expect(parsed.techReqId).toBe("");
   });
 });

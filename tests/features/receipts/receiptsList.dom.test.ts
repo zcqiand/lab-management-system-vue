@@ -3,11 +3,11 @@
 // 镜像 react 仓 tests/features/receipts/receiptsList.dom.test.tsx 4 个 fnTest。
 // vue 仓不挂 msw，用 vi.mock('axios') 拦截；fixture 数据走内联字面量（同 react 仓 contracts/receipts）。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { nextTick } from "vue";
 import { flushPromises } from "@vue/test-utils";
 import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
+import { openSelect, pickSelectItem } from "../../selectInteraction";
 
 const RECEIPTS = [
   {
@@ -357,6 +357,35 @@ describe("Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归", () => {
     ).toBe(true);
   });
 
+  it("flowFilter=__all__ 不下发 flowStatus；选「接样中」下发 receiving", async () => {
+    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+    const wrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+    lastWrapper = wrapper;
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 首屏 load()：默认 __all__ sentinel 必须翻译成「不带 flowStatus」，
+    // 否则 API 会收到 flowStatus=__all__ 直接查空。
+    const firstParams = vi.mocked(axios.get).mock.calls[0]![1]?.params as Record<string, unknown>;
+    expect(firstParams).toBeTruthy();
+    expect(firstParams["flowStatus"]).toBeUndefined();
+
+    // 选「接样中」→ 再次 load()，这次必须带 flowStatus=receiving
+    const trigger = wrapper.find('button[role="combobox"][aria-label="流程状态筛选"]');
+    await openSelect(trigger.element);
+    const receiving = wrapper.findAll('[role="option"]').find((o) => o.text() === "接样中");
+    expect(receiving).toBeTruthy();
+    await pickSelectItem(receiving!.element);
+
+    await wrapper.findAll("button").find((b) => b.text() === "搜索")!.trigger("click");
+    await flushPromises();
+
+    const calls = vi.mocked(axios.get).mock.calls;
+    const lastParams = calls[calls.length - 1]![1]?.params as Record<string, unknown>;
+    expect(lastParams["flowStatus"]).toBe("receiving");
+  });
+
   it("新建弹窗：检测类别 / 样品来源 → combobox，且回显 EMPTY_BODY 默认值", async () => {
     const wrapper = await mountAndOpenCreate();
 
@@ -368,8 +397,7 @@ describe("Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归", () => {
 
     // reka-ui 关闭态把 items teleport 进 DocumentFragment 才注册 value→text，
     // fragment 在 SelectContent onMounted 才建 → 回显要等一次 flush。
-    await nextTick();
-    await nextTick();
+    await flushPromises();
     expect(category.text()).toContain("委托检验");
     expect(source.text()).toContain("施工送检");
   });

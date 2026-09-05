@@ -12,66 +12,14 @@
 //   7. <SelectValue> placeholder 在 modelValue 为空时显示 fallback
 //   8. disabled 落到真实 DOM（button disabled 属性）
 //
-// 实现注意：reka-ui SelectTrigger 监听 pointerdown 开门（不是 click）。
-// jsdom 自带的 synthetic pointerdown 缺 hasPointerCapture，所以用原生
-// PointerEvent dispatch（jsdom 25 提供 PointerEvent）+ 加 hasPointerCapture=undefined
-// fallback（target 上若无方法直接跳过）。
+// 实现注意：reka-ui SelectTrigger 监听 pointerdown 开门（不是 click），
+// SelectItem 监听 pointerup 选中。jsdom 缺 hasPointerCapture / pointerType，
+// 两个 dispatch 助手统一放在 tests/selectInteraction.ts（Phase 2d-2 起共享）。
 import { describe, it, expect, afterEach } from "vitest";
 import type { VueWrapper } from "@vue/test-utils";
 import { mountWithProviders } from "../helper";
+import { openSelect, pickSelectItem } from "../selectInteraction";
 import SelectFixture from "./__fixtures__/SelectFixture.vue";
-
-/** dispatch pointerdown that reka-ui SelectTrigger accepts.
- *  jsdom 25 lacks PointerEvent + HTMLElement.hasPointerCapture; fall back to
- *  a MouseEvent with pointerType set on the event itself. */
-async function dispatchPointerDown(el: Element): Promise<void> {
-  if (typeof (el as HTMLElement).hasPointerCapture !== "function") {
-    (el as HTMLElement).hasPointerCapture = () => false;
-  }
-  const Ctor =
-    typeof globalThis.PointerEvent === "function"
-      ? globalThis.PointerEvent
-      : globalThis.MouseEvent;
-  const evt = new Ctor("pointerdown", {
-    bubbles: true,
-    cancelable: true,
-    button: 0,
-    ctrlKey: false,
-  }) as PointerEvent;
-  // reka-ui checks event.pointerType — guard it via Object.defineProperty
-  // since the MouseEvent fallback may not allow setting it via init dict.
-  try {
-    Object.defineProperty(evt, "pointerType", { value: "mouse" });
-    Object.defineProperty(evt, "isPrimary", { value: true });
-  } catch {
-    /* readonly */
-  }
-  el.dispatchEvent(evt);
-}
-
-/** dispatch pointerup that reka-ui SelectItem uses for selection. */
-async function dispatchPointerUp(el: Element): Promise<void> {
-  if (typeof (el as HTMLElement).hasPointerCapture !== "function") {
-    (el as HTMLElement).hasPointerCapture = () => false;
-  }
-  const Ctor =
-    typeof globalThis.PointerEvent === "function"
-      ? globalThis.PointerEvent
-      : globalThis.MouseEvent;
-  const evt = new Ctor("pointerup", {
-    bubbles: true,
-    cancelable: true,
-    button: 0,
-    ctrlKey: false,
-  }) as PointerEvent;
-  try {
-    Object.defineProperty(evt, "pointerType", { value: "mouse" });
-    Object.defineProperty(evt, "isPrimary", { value: true });
-  } catch {
-    /* readonly */
-  }
-  el.dispatchEvent(evt);
-}
 
 let lastWrapper: VueWrapper | null = null;
 afterEach(() => {
@@ -111,8 +59,7 @@ describe("Phase 2d-1 foundation — shadcn-vue Select 底座", () => {
 
     const trigger = lastWrapper.find('[data-testid="sel-trigger"]');
     // reka-ui SelectTrigger onPointerDown 开门，不是 click
-    await dispatchPointerDown(trigger.element);
-    await new Promise((r) => setTimeout(r, 10));
+    await openSelect(trigger.element);
 
     // 列表内容渲染（reka-ui SelectPortal → Teleport，helper.ts 已 stub 为 data-teleport-stub）
     const listbox = lastWrapper.find('[role="listbox"]');
@@ -124,8 +71,7 @@ describe("Phase 2d-1 foundation — shadcn-vue Select 底座", () => {
     lastWrapper = mountWithProviders(SelectFixture);
 
     const trigger = lastWrapper.find('[data-testid="sel-trigger"]');
-    await dispatchPointerDown(trigger.element);
-    await new Promise((r) => setTimeout(r, 10));
+    await openSelect(trigger.element);
 
     // 只看 active listbox 内的选项（第一个 Select 的 3 个，不是 disabled 那个的 2 个）
     const listbox = lastWrapper.find('[role="listbox"]');
@@ -138,13 +84,11 @@ describe("Phase 2d-1 foundation — shadcn-vue Select 底座", () => {
     lastWrapper = mountWithProviders(SelectFixture);
 
     const trigger = lastWrapper.find('[data-testid="sel-trigger"]');
-    await dispatchPointerDown(trigger.element);
-    await new Promise((r) => setTimeout(r, 10));
+    await openSelect(trigger.element);
 
     const optB = lastWrapper.find('[data-testid="sel-opt-B"]');
     // reka-ui SelectItem 用 pointerup 选中（不是 click）
-    await dispatchPointerUp(optB.element);
-    await new Promise((r) => setTimeout(r, 10));
+    await pickSelectItem(optB.element);
 
     expect(lastWrapper.find('[data-testid="sel-state"]').text()).toBe("B");
     // trigger 现在应显示选项 B 文本（reka-ui 配对 SelectItemText 回写到 SelectValue）
@@ -157,16 +101,13 @@ describe("Phase 2d-1 foundation — shadcn-vue Select 底座", () => {
 
     // 默认 v-model 为空，所有 item 都是 unchecked
     const trigger = lastWrapper.find('[data-testid="sel-trigger"]');
-    await dispatchPointerDown(trigger.element);
-    await new Promise((r) => setTimeout(r, 10));
+    await openSelect(trigger.element);
 
     const optA = lastWrapper.find('[data-testid="sel-opt-A"]');
-    await dispatchPointerUp(optA.element);
-    await new Promise((r) => setTimeout(r, 10));
+    await pickSelectItem(optA.element);
 
     // 重新打开 listbox 查看选中态
-    await dispatchPointerDown(trigger.element);
-    await new Promise((r) => setTimeout(r, 10));
+    await openSelect(trigger.element);
 
     const optAOpen = lastWrapper.find('[data-testid="sel-opt-A"]');
     expect(optAOpen.attributes("data-state")).toBe("checked");

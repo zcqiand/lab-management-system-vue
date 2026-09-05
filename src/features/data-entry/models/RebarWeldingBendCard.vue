@@ -145,7 +145,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
           </TableCell>
           <TableCell class="py-1">
             <Select
-              :model-value="spec.results[t] || undefined"
+              :model-value="spec.results[t]"
               :disabled="readOnly"
               @update:model-value="(v: string | number) => updateResult(t, String(v))"
             >
