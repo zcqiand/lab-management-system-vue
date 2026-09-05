@@ -4,6 +4,7 @@
 // vue 仓走 vi.mock('axios') + 内联 fixtures（与 Batch 2A/2B-1 同型）。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import { nextTick } from "vue";
 import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
@@ -258,5 +259,79 @@ describe("Phase 2a-4 — DataEntryPage <Table> 原语回归", () => {
     const btn = cells[5]!.find('button[data-fn="M03.F03.I03"]');
     expect(btn.exists()).toBe(true);
     expect(btn.text()).toBe("录入结果");
+  });
+});
+
+// Phase 2e-3 batch 2 —— 录入结果弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
+describe("Phase 2e-3 — DataEntryPage 录入弹窗走 Dialog 底座", () => {
+  async function openEntry(): Promise<VueWrapper> {
+    const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
+    lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    await lastWrapper.find('button[data-fn="M03.F03.I03"]').trigger("click");
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    return lastWrapper;
+  }
+
+  it("弹窗渲染 div[role=dialog]，标题/描述经 reka context 连上 aria", async () => {
+    const w = await openEntry();
+
+    const content = w.find('[role="dialog"]');
+    expect(content.exists()).toBe(true);
+
+    const titleId = content.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toBe("录入结果 — WT-2026-003");
+
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("选择样品 + 检测参数");
+  });
+
+  it("保存键的 data-fn 没被结构改动吞掉，仍落在真实 <button> 上且弹窗内只有一个", async () => {
+    const w = await openEntry();
+
+    const save = w.find('button[data-fn="M03.F03.I02"][class*="inline-flex"]');
+    expect(save.exists()).toBe(true);
+    const inDialog = w.find('[role="dialog"]').findAll('button[data-fn="M03.F03.I02"]');
+    expect(inDialog.length).toBe(1);
+    expect(inDialog[0]!.text()).toBe("保存");
+
+    // 行内「录入结果」键的锚点在列表区，不受弹窗结构改动影响
+    const rowBtn = w.find('button[data-fn="M03.F03.I03"]');
+    expect(rowBtn.exists()).toBe(true);
+    expect(rowBtn.element.tagName).toBe("BUTTON");
+    expect(w.find('[role="dialog"]').findAll('button[data-fn="M03.F03.I03"]').length).toBe(0);
+  });
+
+  it("弹窗内 <Label> 包 <Select> 的 wrapping 模式没被 Dialog 底座拆开", async () => {
+    const w = await openEntry();
+
+    const labels = w.find('[role="dialog"]').findAll("label");
+    expect(labels.length).toBe(2);
+    // DialogTitle / DialogDescription 不是 <label>，两个 label 仍是样品 / 检测参数
+    expect(labels[0]!.text()).toContain("样品");
+    expect(labels[1]!.text()).toContain("检测参数");
+    expect(labels[0]!.find('[role="combobox"]').exists()).toBe(true);
+    expect(labels[1]!.find('[role="combobox"]').exists()).toBe(true);
+  });
+
+  it("ESC 关闭弹窗（走 @update:open → entryTarget = null）", async () => {
+    const w = await openEntry();
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });

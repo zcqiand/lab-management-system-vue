@@ -5,7 +5,7 @@
 //   1. JSX → template；className → class
 //   2. useState → ref / useEffect → onMounted/watch
 //   3. 数据获取走全局 axios（http-client.ts 已装 baseUrl + Bearer）
-//   4. 弹窗自实现 Dialog（Teleport to body；与 ConfirmDialog 同模式）
+//   4. 弹窗走 <Dialog> 原语家族（Phase 2e-3；reka-ui 底座，与 ConfirmDialog 同代）
 //
 // 功能 ID：
 //   M03.F03.I01 数据录入页（@entry）
@@ -15,6 +15,12 @@ import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Select from "@/components/ui/Select.vue";
@@ -259,96 +265,99 @@ function onParamChange(patch: Partial<TestRecord>): void {
       </Table>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="entryTarget"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="entryTarget = null"
-      >
-        <div class="bg-white rounded shadow-xl sm:max-w-3xl w-full p-6">
-          <h2 class="text-lg font-semibold">录入结果 — {{ entryTarget.commissionCode }}</h2>
-          <p class="text-sm text-slate-500 mb-3">
+    <Dialog
+      :open="entryTarget !== null"
+      @update:open="
+        (v: boolean) => {
+          if (!v) entryTarget = null;
+        }
+      "
+    >
+      <DialogContent class="sm:max-w-3xl gap-0">
+        <DialogHeader class="mb-3">
+          <DialogTitle>录入结果 — {{ entryTarget?.commissionCode ?? "" }}</DialogTitle>
+          <DialogDescription>
             选择样品 + 检测参数后填写检测结果与单项评定。
-          </p>
+          </DialogDescription>
+        </DialogHeader>
 
-          <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-            <Label class="text-xs block">样品
-              <Select
-                v-model="selectedSampleId"
-                class="mt-1"
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="（无样品）" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem v-for="s in samples" :key="s.id" :value="s.id">
-                    {{ s.sampleCode }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </Label>
-            <Label class="text-xs block">检测参数
-              <Select
-                v-model="activeParamCode"
-                class="mt-1"
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="（无参数）" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
-                    {{ p.canonicalName || p.name }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </Label>
-          </div>
-
-          <div class="mt-3">
-            <template v-if="activeParam && isCement">
-              <CementCompressCard
-                :parameter="activeParam"
-                :record="activeRec"
-                :sample-id="selectedSampleId"
-                :standards="[]"
-                :std-params="[]"
-                :tech-reqs="[]"
-                :config="undefined"
-                :on-change="onParamChange"
-              />
-            </template>
-            <template v-else-if="activeParam">
-              <DefaultParamCard
-                :parameter="activeParam"
-                :record="activeRec"
-                :sample-id="selectedSampleId"
-                :standards="[]"
-                :std-params="[]"
-                :tech-reqs="[]"
-                :config="undefined"
-                :on-change="onParamChange"
-              />
-            </template>
-            <div v-else class="border rounded p-4 text-sm text-slate-400">
-              暂无可用检测参数
-            </div>
-          </div>
-
-          <div class="mt-4 flex justify-end gap-2">
-            <Button variant="outline" @click="entryTarget = null">取消</Button>
-            <!-- @entry M03.F03.I02 保存检测记录 -->
-            <Button
-              variant="default"
-              class="bg-blue-600 hover:bg-blue-700"
-              :disabled="submitting || !selectedSampleId || !activeParamCode"
-              data-fn="M03.F03.I02"
-              @click="handleSave()"
+        <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+          <Label class="text-xs block">样品
+            <Select
+              v-model="selectedSampleId"
+              class="mt-1"
             >
-              保存
-            </Button>
+              <SelectTrigger>
+                <SelectValue placeholder="（无样品）" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="s in samples" :key="s.id" :value="s.id">
+                  {{ s.sampleCode }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </Label>
+          <Label class="text-xs block">检测参数
+            <Select
+              v-model="activeParamCode"
+              class="mt-1"
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="（无参数）" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="p in parameters" :key="p.code" :value="p.code">
+                  {{ p.canonicalName || p.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </Label>
+        </div>
+
+        <div class="mt-3">
+          <template v-if="activeParam && isCement">
+            <CementCompressCard
+              :parameter="activeParam"
+              :record="activeRec"
+              :sample-id="selectedSampleId"
+              :standards="[]"
+              :std-params="[]"
+              :tech-reqs="[]"
+              :config="undefined"
+              :on-change="onParamChange"
+            />
+          </template>
+          <template v-else-if="activeParam">
+            <DefaultParamCard
+              :parameter="activeParam"
+              :record="activeRec"
+              :sample-id="selectedSampleId"
+              :standards="[]"
+              :std-params="[]"
+              :tech-reqs="[]"
+              :config="undefined"
+              :on-change="onParamChange"
+            />
+          </template>
+          <div v-else class="border rounded p-4 text-sm text-slate-400">
+            暂无可用检测参数
           </div>
         </div>
-      </div>
-    </Teleport>
+
+        <DialogFooter class="mt-4 justify-end gap-2">
+          <Button variant="outline" @click="entryTarget = null">取消</Button>
+          <!-- @entry M03.F03.I02 保存检测记录 -->
+          <Button
+            variant="default"
+            class="bg-blue-600 hover:bg-blue-700"
+            :disabled="submitting || !selectedSampleId || !activeParamCode"
+            data-fn="M03.F03.I02"
+            @click="handleSave()"
+          >
+            保存
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
