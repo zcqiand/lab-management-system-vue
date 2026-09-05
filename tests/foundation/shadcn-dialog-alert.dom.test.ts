@@ -88,13 +88,17 @@ describe("Phase 2e-1 foundation — shadcn-vue Dialog 底座", () => {
     await nextTick();
 
     // fixture 里两个弹窗同时开着；AlertDialog 后挂载 → 在栈顶
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
     await nextTick();
     await flushPromises();
     expect(w.find('[data-testid="alert-state"]').text()).toBe("closed");
     expect(w.find('[data-testid="dlg-state"]').text()).toBe("open");
 
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
     await nextTick();
     await flushPromises();
     expect(w.find('[data-testid="dlg-state"]').text()).toBe("closed");

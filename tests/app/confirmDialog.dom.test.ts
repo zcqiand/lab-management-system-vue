@@ -7,8 +7,9 @@
 //   3. danger=true 触发 destructive 红底；danger=false 走 default 蓝底。
 //
 // 不挂功能 ID —— 这是 Phase 1 的工程迁移冒烟，不是业务用例。
-import { describe, it, expect, afterEach } from "vitest";
-import type { VueWrapper } from "@vue/test-utils";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { nextTick } from "vue";
+import { flushPromises, type VueWrapper } from "@vue/test-utils";
 import { mountWithProviders } from "../helper";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
@@ -86,5 +87,94 @@ describe("Phase 1.0 — ConfirmDialog 内部 Button primitive", () => {
 
     expect(cancel.classes()).toContain("border");
     expect(cancel.classes()).toContain("bg-background");
+  });
+});
+
+// Phase 2e-2 —— 外层从手写 <Teleport>+遮罩+自挂 keydown 换成 <AlertDialog> 家族。
+// 对外 props 一个字没改（上面 Phase 1.0 的 5 条锚原样通过就是证据），
+// 这里锁的是**换底座后新拿到的东西**和**最容易写错的回调路径**。
+describe("Phase 2e-2 — ConfirmDialog 走 AlertDialog 底座", () => {
+  it("渲染 role=alertdialog 并挂上 aria-labelledby / aria-describedby", () => {
+    lastWrapper = mountDialog();
+
+    const content = lastWrapper!.find('[data-testid="confirm-dialog"]');
+    expect(content.attributes("role")).toBe("alertdialog");
+
+    const titleId = content.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(lastWrapper!.find(`#${titleId}`).text()).toBe("删除接样");
+
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(lastWrapper!.find(`#${descId}`).text()).toBe("确认删除？");
+  });
+
+  it("点确认只调 onConfirm，不会连带触发 onCancel", async () => {
+    const onConfirm = vi.fn();
+    const onCancel = vi.fn();
+    lastWrapper = mountDialog({ onConfirm, onCancel });
+
+    await lastWrapper!.find('[data-fn="confirm-dialog-confirm"]').trigger("click");
+    await flushPromises();
+
+    expect(onConfirm).toHaveBeenCalledTimes(1);
+    // 确认键是普通 <Button> 不是 <AlertDialogAction>：它不参与 reka 的关闭流程，
+    // 所以不会走 @update:open → onCancel。若改用 AlertDialogAction，
+    // 这里会变成 onConfirm + onCancel 各一次，同时 loading 语义也没了。
+    expect(onCancel).not.toHaveBeenCalled();
+  });
+
+  it("点取消只调一次 onCancel（不是 @click 和 update:open 各一次）", async () => {
+    const onCancel = vi.fn();
+    lastWrapper = mountDialog({ onCancel });
+
+    await lastWrapper!.find('[data-fn="confirm-dialog-cancel"]').trigger("click");
+    await flushPromises();
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("ESC 调 onCancel（迁移前要自己挂 document keydown，现在 reka 自带）", async () => {
+    const onCancel = vi.fn();
+    lastWrapper = mountDialog({ onCancel });
+
+    // DismissableLayer 挂载后再一拍才把 keydown 挂到 document
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("loading 时 ESC 不放行，两个按钮都 disabled", async () => {
+    const onCancel = vi.fn();
+    lastWrapper = mountDialog({ onCancel, loading: true });
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    // 迁移前是 handleKey 里的 !props.loading 判断，
+    // 现在靠 @escape-key-down 里 e.preventDefault()
+    expect(onCancel).not.toHaveBeenCalled();
+
+    const cancel = lastWrapper!.find('[data-fn="confirm-dialog-cancel"]');
+    const confirm = lastWrapper!.find('[data-fn="confirm-dialog-confirm"]');
+    expect((cancel.element as HTMLButtonElement).disabled).toBe(true);
+    expect((confirm.element as HTMLButtonElement).disabled).toBe(true);
+    expect(confirm.text()).toBe("处理中...");
+  });
+
+  it("没有第三个逃生门：只有取消 + 确认两个按钮", () => {
+    lastWrapper = mountDialog();
+
+    const content = lastWrapper!.find('[data-testid="confirm-dialog"]');
+    expect(content.findAll("button").length).toBe(2);
   });
 });

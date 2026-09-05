@@ -2,20 +2,35 @@
 // ConfirmDialog — vue 仓通用确认弹窗原语（Sprint 2 Batch 1 引入）。
 //
 // 镜像 react 仓 src/components/ConfirmModal.tsx（nextjs 同款，1:1 API 形状）。
-// vue 用 Teleport 把弹窗挂到 document.body，避免 z-index/overflow 嵌套坑。
 //
 // 用途：CRUD 删除/保存等需要二次确认的危险操作（CLAUDE.md vue 仓明文禁止
 // window.confirm / window.alert，删除/编辑/发布类必须走此原语）。
 //
-// Phase 1.0：内部两 raw <button> 切到 <Button> primitive（shadcn-vue 风格）。
-//   - cancel: variant="outline"（border + bg-background + hover:bg-accent）
-//   - confirm: variant="default"（bg-primary text-primary-foreground）
-//     · danger=true 时 caller class 覆盖成 bg-destructive（tailwind-merge 胜出）
-//   - data-fn / aria-label / @click / :disabled 全部由 Phase 0 的 inheritAttrs:false
-//     + v-bind="$attrs" 转发到真实 <button>，无需手动接管
+// Phase 1.0：内部两 raw <button> 切到 <Button> primitive。
+// Phase 2e-2：外层手写 <Teleport> + 遮罩 + 自挂 keydown 全部换成
+//   <AlertDialog> 原语家族。**对外 props 一个字没改**（9 个 prop + 默认插槽），
+//   9 个调用方无需改动。净收益：
+//     - role="alertdialog" + aria-labelledby / aria-describedby（原来完全没有）
+//     - focus trap + 打开时焦点落在「取消」上（危险操作的安全默认）
+//     - 打开时锁 body 滚动
+//     - 点遮罩**不再**关闭 —— 危险确认不该被误点划走（行为变更，见 CHANGELOG）
 //
-// 后续 Phase 2e 会用 reka-ui DialogPrimitive 替换外层 <Teleport> 与遮罩逻辑。
-import { onUnmounted, watch } from "vue";
+// 两个刻意的结构选择：
+//
+//   1. 确认按钮是普通 <Button>，**不是** <AlertDialogAction>。
+//      AlertDialogAction 点击后会自动关闭 root，那样 `loading` 语义就没了 ——
+//      本组件的契约是「确认后弹窗留在原地显示处理中…，由父组件做完异步再翻
+//      open」。所以确认键不参与 reka 的关闭流程。
+//   2. 取消键是 <AlertDialogCancel> 但**不挂 @click**。
+//      取消的唯一出口是 `@update:open` —— ESC 和点取消都会走它，只调一次
+//      onCancel。若两边都接，点取消会把 onCancel 调两遍。
+import AlertDialog from "@/components/ui/AlertDialog.vue";
+import AlertDialogCancel from "@/components/ui/AlertDialogCancel.vue";
+import AlertDialogContent from "@/components/ui/AlertDialogContent.vue";
+import AlertDialogDescription from "@/components/ui/AlertDialogDescription.vue";
+import AlertDialogFooter from "@/components/ui/AlertDialogFooter.vue";
+import AlertDialogHeader from "@/components/ui/AlertDialogHeader.vue";
+import AlertDialogTitle from "@/components/ui/AlertDialogTitle.vue";
 import Button from "@/components/ui/Button.vue";
 
 interface Props {
@@ -27,7 +42,7 @@ interface Props {
   message?: string;
   /** 确认回调 */
   onConfirm: () => void;
-  /** 取消回调（点取消按钮或遮罩层触发） */
+  /** 取消回调（点取消按钮、ESC 触发） */
   onCancel: () => void;
   /** 确认按钮文本，默认"确认" */
   confirmText?: string;
@@ -50,72 +65,48 @@ const props = withDefaults(defineProps<Props>(), {
   danger: true,
 });
 
-function handleBackdrop(e: MouseEvent): void {
-  // 仅点击遮罩层本身（非内容区）时触发取消
-  if (e.target === e.currentTarget) props.onCancel();
+// reka 关闭 root 的唯一出口（ESC / 点取消键）。loading 时 ESC 已被
+// handleEscape 拦下，取消键也是 disabled，所以处理中不会被触发。
+function handleOpenChange(next: boolean): void {
+  if (!next) props.onCancel();
 }
 
-// ESC 关闭：vue 端没用到 keydown 全局监听就完事，nextjs 也没用，保持镜像
-function handleKey(e: KeyboardEvent): void {
-  if (e.key === "Escape" && props.open && !props.loading) props.onCancel();
+// 处理中不许 ESC 逃走（迁移前的 handleKey 也有这个 !loading 判断）。
+function handleEscape(e: KeyboardEvent): void {
+  if (props.loading) e.preventDefault();
 }
-
-watch(
-  () => props.open,
-  (v) => {
-    if (typeof document === "undefined") return;
-    if (v) {
-      document.addEventListener("keydown", handleKey);
-    } else {
-      document.removeEventListener("keydown", handleKey);
-    }
-  },
-  { immediate: false },
-);
-
-onUnmounted(() => {
-  if (typeof document !== "undefined") {
-    document.removeEventListener("keydown", handleKey);
-  }
-});
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      v-if="open"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+  <AlertDialog :open="open" @update:open="handleOpenChange">
+    <AlertDialogContent
       data-testid="confirm-dialog"
-      @click="handleBackdrop"
+      class="w-96 max-w-[90vw] gap-0 rounded-lg bg-white p-0 shadow-xl"
+      @escape-key-down="handleEscape"
     >
-      <div class="w-96 max-w-[90vw] rounded-lg bg-white shadow-xl">
-        <div class="border-b border-gray-200 px-6 py-4">
-          <h3 class="text-lg font-semibold">{{ title }}</h3>
-        </div>
-        <div class="px-6 py-4">
-          <p v-if="message" class="text-sm text-gray-600">{{ message }}</p>
-          <slot />
-        </div>
-        <div class="flex justify-end gap-2 border-t border-gray-200 px-6 py-3">
-          <Button
-            variant="outline"
-            :disabled="loading"
-            data-fn="confirm-dialog-cancel"
-            @click="onCancel"
-          >
-            {{ cancelText }}
-          </Button>
-          <Button
-            variant="default"
-            :disabled="loading"
-            data-fn="confirm-dialog-confirm"
-            :class="danger ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''"
-            @click="onConfirm"
-          >
-            {{ loading ? loadingText : confirmText }}
-          </Button>
-        </div>
+      <AlertDialogHeader class="border-b border-gray-200 px-6 py-4">
+        <AlertDialogTitle>{{ title }}</AlertDialogTitle>
+      </AlertDialogHeader>
+      <div class="px-6 py-4">
+        <AlertDialogDescription v-if="message" class="text-sm text-gray-600">
+          {{ message }}
+        </AlertDialogDescription>
+        <slot />
       </div>
-    </div>
-  </Teleport>
+      <AlertDialogFooter class="justify-end gap-2 border-t border-gray-200 px-6 py-3">
+        <AlertDialogCancel :disabled="loading" data-fn="confirm-dialog-cancel">
+          {{ cancelText }}
+        </AlertDialogCancel>
+        <Button
+          variant="default"
+          :disabled="loading"
+          data-fn="confirm-dialog-confirm"
+          :class="danger ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''"
+          @click="onConfirm"
+        >
+          {{ loading ? loadingText : confirmText }}
+        </Button>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>
