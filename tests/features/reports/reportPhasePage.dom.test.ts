@@ -1,6 +1,7 @@
 // M03.F05/F06/F07/F08 — 报告 4 阶段 smoke（镜像 react 仓 tests/features/reports/reportPhasePage.dom.test.tsx 8 个 fnTest）
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
+import { nextTick } from "vue";
 import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
@@ -390,5 +391,70 @@ describe("Phase 2a-3 — ReportPhasePage 列表 <Table> 原语回归", () => {
     const rowCell = rowCheckbox.element.parentElement;
     expect(rowCell).not.toBeNull();
     expect(rowCell!.getAttribute("role")).toBe("cell");
+  });
+});
+
+// Phase 2e-3 batch 2 —— 退回弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 锁「换底座后新拿到的东西」+「data-fn 这类 L5 锚点没被结构改动吞掉」。
+// （本文件 4 个 page wrapper 共用同一个 ReportPhasePage，用 review 阶段代表全家。）
+describe("Phase 2e-3 — ReportPhasePage 退回弹窗走 Dialog 底座", () => {
+  beforeEach(() => installAdapters("review"));
+
+  async function openReturn(): Promise<VueWrapper> {
+    const { default: ReportReviewPage } = await import("@/pages/ReportReviewPage.vue");
+    lastWrapper = mountWithProviders(ReportReviewPage, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    const back = lastWrapper.findAll("button").find((b) => b.text() === "退回")!;
+    await back.trigger("click");
+    await flushPromises();
+    return lastWrapper;
+  }
+
+  it("弹窗渲染 div[role=dialog]，标题/描述经 reka context 连上 aria", async () => {
+    const w = await openReturn();
+
+    const content = w.find('[role="dialog"]');
+    expect(content.exists()).toBe(true);
+
+    const titleId = content.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toBe("退回 — WT-RV-001");
+
+    // 描述含上一环节名（review 的 PREV_STAGE 是 data_entry → 录入中）
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("录入中");
+  });
+
+  it("两个 data-fn 锚点没被结构改动吞掉：批量提交键在真实 <button>、行锚点在 role=row 上", async () => {
+    const w = await openReturn();
+
+    const submit = w.find('button[data-fn="M03.F05.I02"]');
+    expect(submit.exists()).toBe(true);
+    expect(submit.element.tagName).toBe("BUTTON");
+
+    const row = w.find('[data-fn="M03.F05.I01"]');
+    expect(row.exists()).toBe(true);
+    expect(row.attributes("role")).toBe("row");
+
+    // 弹窗内不该多出任何带锚点的元素（退回键本来就不带 data-fn）
+    const dialog = w.find('[role="dialog"]');
+    expect(dialog.findAll("[data-fn]").length).toBe(0);
+  });
+
+  it("ESC 关闭弹窗（走 @update:open → returnTarget = null）", async () => {
+    const w = await openReturn();
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });

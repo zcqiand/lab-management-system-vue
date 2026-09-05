@@ -12,6 +12,12 @@ import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Checkbox from "@/components/ui/Checkbox.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -266,37 +272,40 @@ function alertError(msg: string): void {
       </Table>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="returnTarget"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="returnTarget = null"
-      >
-        <div class="bg-white rounded shadow-xl sm:max-w-md w-full p-6">
-          <h2 class="text-lg font-semibold">退回 — {{ returnTarget.commissionCode }}</h2>
-          <p class="text-sm text-slate-500 mb-3">
+    <Dialog
+      :open="returnTarget !== null"
+      @update:open="
+        (v: boolean) => {
+          if (!v) returnTarget = null;
+        }
+      "
+    >
+      <DialogContent class="sm:max-w-md gap-0">
+        <DialogHeader class="mb-3">
+          <DialogTitle>退回 — {{ returnTarget?.commissionCode ?? "" }}</DialogTitle>
+          <DialogDescription>
             退回后该接样单回到上一环节（{{ FLOW_STAGE_LABELS[PREV_STAGE[stage]] }}）。
-          </p>
-          <Label class="text-xs block mb-2">退回原因（可选）
-            <Input
-              v-model="returnReason"
-              placeholder="如：数据待补正"
-              class="mt-1"
-            />
-          </Label>
-          <div class="mt-4 flex justify-end gap-2">
-            <Button variant="outline" @click="returnTarget = null">取消</Button>
-            <Button
-              variant="default"
-              class="bg-red-600 hover:bg-red-700"
-              :disabled="submitting"
-              @click="handleReturn()"
-            >
-              确认退回
-            </Button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+          </DialogDescription>
+        </DialogHeader>
+        <Label class="text-xs block mb-2">退回原因（可选）
+          <Input
+            v-model="returnReason"
+            placeholder="如：数据待补正"
+            class="mt-1"
+          />
+        </Label>
+        <DialogFooter class="mt-4 justify-end gap-2">
+          <Button variant="outline" @click="returnTarget = null">取消</Button>
+          <Button
+            variant="default"
+            class="bg-red-600 hover:bg-red-700"
+            :disabled="submitting"
+            @click="handleReturn()"
+          >
+            确认退回
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
