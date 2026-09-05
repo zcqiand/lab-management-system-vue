@@ -11,13 +11,13 @@ const baseUrl = getApiBaseUrl() || "(同源)";
 
 <template>
   <div
-    class="flex flex-col gap-1 px-2 py-1 text-xs text-slate-600"
+    class="flex flex-col gap-1 px-2 py-1 text-xs text-muted-foreground"
     data-testid="backend-badge-wrapper"
   >
     <div class="flex items-center gap-2">
-      <span class="font-mono text-slate-400">backend:</span>
+      <span class="font-mono text-muted-foreground">backend:</span>
       <strong data-testid="backend-badge">{{ mode }}</strong>
     </div>
-    <div class="font-mono text-slate-400 truncate" :title="baseUrl">{{ baseUrl }}</div>
+    <div class="font-mono text-muted-foreground truncate" :title="baseUrl">{{ baseUrl }}</div>
   </div>
 </template>

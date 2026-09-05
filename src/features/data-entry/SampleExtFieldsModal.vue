@@ -42,23 +42,23 @@ function emitConfirm() {
         <h2 class="text-base font-semibold">样品扩展字段补录</h2>
         <button
           type="button"
-          class="text-gray-400 hover:text-gray-600 text-xl leading-none"
+          class="text-muted-foreground hover:text-muted-foreground text-xl leading-none"
           @click="emitClose"
         >
           ×
         </button>
       </header>
       <div class="px-5 py-4 space-y-2">
-        <p class="text-sm text-gray-600">报告预览前按当前类别 extFields 补录样品扩展字段（vue 仓 Batch 2B-8 stub）</p>
-        <ul class="text-xs text-gray-700 space-y-1">
+        <p class="text-sm text-muted-foreground">报告预览前按当前类别 extFields 补录样品扩展字段（vue 仓 Batch 2B-8 stub）</p>
+        <ul class="text-xs text-foreground space-y-1">
           <li v-for="f in extFields" :key="f.key" data-fn="M03.F01.I07">{{ f.label }}（{{ f.key }}{{ f.required ? ' *' : '' }}）</li>
         </ul>
       </div>
-      <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-gray-50">
+      <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-muted">
         <Button variant="outline" class="px-4 py-1.5 text-sm rounded" @click="emitClose">取消</Button>
         <Button
           variant="default"
-          class="bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm rounded"
+          class="bg-info hover:bg-info/90 px-4 py-1.5 text-sm rounded"
           @click="emitConfirm"
         >
           确认

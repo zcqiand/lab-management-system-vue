@@ -118,15 +118,15 @@ const categoryName = computed(() => {
         <Table class="w-full text-xs">
           <TableBody>
             <TableRow>
-              <TableCell class="py-1 text-slate-500 w-24">委托单位</TableCell>
+              <TableCell class="py-1 text-muted-foreground w-24">委托单位</TableCell>
               <TableCell class="py-1">{{ receipt.clientUnit ?? "—" }}</TableCell>
-              <TableCell class="py-1 text-slate-500 w-24">报告类别</TableCell>
+              <TableCell class="py-1 text-muted-foreground w-24">报告类别</TableCell>
               <TableCell class="py-1">{{ categoryName }}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell class="py-1 text-slate-500">工程名称</TableCell>
+              <TableCell class="py-1 text-muted-foreground">工程名称</TableCell>
               <TableCell class="py-1">{{ receipt.projectName ?? "—" }}</TableCell>
-              <TableCell class="py-1 text-slate-500">检测类别</TableCell>
+              <TableCell class="py-1 text-muted-foreground">检测类别</TableCell>
               <TableCell class="py-1">{{ receipt.testCategory ?? "—" }}</TableCell>
             </TableRow>
           </TableBody>
@@ -135,7 +135,7 @@ const categoryName = computed(() => {
         <h3 class="mt-4 mb-2 font-medium">检测参数结果</h3>
         <Table class="w-full text-xs border-collapse border">
           <TableHeader>
-            <TableRow class="bg-gray-50">
+            <TableRow class="bg-muted">
               <TableHead class="border px-2 py-1 text-left">项目</TableHead>
               <TableHead class="border px-2 py-1 text-left">技术要求</TableHead>
               <TableHead class="border px-2 py-1 text-left">检测结果</TableHead>
@@ -155,7 +155,7 @@ const categoryName = computed(() => {
           </TableBody>
         </Table>
       </div>
-      <DialogFooter class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-gray-50 sm:justify-end">
+      <DialogFooter class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-muted sm:justify-end">
         <Button
           variant="outline"
           class="px-4 py-1.5 text-sm rounded"
@@ -165,7 +165,7 @@ const categoryName = computed(() => {
         </Button>
         <Button
           variant="default"
-          class="bg-blue-600 hover:bg-blue-700 px-4 py-1.5 text-sm rounded"
+          class="bg-info hover:bg-info/90 px-4 py-1.5 text-sm rounded"
         >
           打印
         </Button>

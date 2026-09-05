@@ -60,19 +60,19 @@ function update(i: number, field: keyof CompactionPoint, v: string) {
 
 const cellCls = "border px-2 py-1 text-center";
 const inputCls =
-  "w-20 border rounded px-1 py-0.5 text-right disabled:bg-gray-100 disabled:text-gray-500";
+  "w-20 border rounded px-1 py-0.5 text-right disabled:bg-muted disabled:text-muted-foreground";
 </script>
 
 <template>
   <div class="border rounded p-3 space-y-3" data-fn="M03.F03.I03">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium">{{ param.canonicalName || param.name }}</span>
-      <span class="text-xs text-gray-500">GB/T 50123-2019 击实试验</span>
+      <span class="text-xs text-muted-foreground">GB/T 50123-2019 击实试验</span>
     </div>
 
     <Table class="text-sm border-collapse">
       <TableHeader>
-        <TableRow class="bg-gray-50">
+        <TableRow class="bg-muted">
           <TableHead :class="cellCls">序号</TableHead>
           <TableHead v-for="(_, i) in points" :key="i" :class="cellCls">{{ i + 1 }}</TableHead>
         </TableRow>

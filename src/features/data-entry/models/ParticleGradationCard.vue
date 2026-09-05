@@ -189,62 +189,62 @@ const avg = computed(() => averageByCol(rows.value));
   <!-- @entry M03.F03.I03 颗粒级配录入卡（GB/T 14684 砂 / GB/T 14685 碎卵石）。 -->
   <div class="border rounded p-3 space-y-3" data-fn="M03.F03.I03">
     <div class="flex items-center justify-between">
-      <span class="text-sm font-medium text-red-600">
+      <span class="text-sm font-medium text-destructive">
         颗 粒 级 配<span v-if="param?.unit">（{{ param.unit }}）</span>
       </span>
     </div>
 
-    <Table class="w-full text-xs border-collapse border border-gray-300">
-      <TableHeader class="bg-blue-50 text-gray-700">
+    <Table class="w-full text-xs border-collapse border border-input">
+      <TableHeader class="bg-info/10 text-foreground">
         <TableRow>
-          <TableHead class="border border-gray-300 px-2 py-1 text-left w-6">序号</TableHead>
-          <TableHead class="border border-gray-300 px-2 py-1 text-left w-20">项目</TableHead>
+          <TableHead class="border border-input px-2 py-1 text-left w-6">序号</TableHead>
+          <TableHead class="border border-input px-2 py-1 text-left w-20">项目</TableHead>
           <TableHead
             v-for="s in sieveCols"
             :key="s"
-            class="border border-gray-300 px-2 py-1 text-center whitespace-nowrap"
+            class="border border-input px-2 py-1 text-center whitespace-nowrap"
           >
             {{ s }}
           </TableHead>
-          <TableHead class="border border-gray-300 px-2 py-1 text-left w-32">分筛前总量(g):</TableHead>
+          <TableHead class="border border-input px-2 py-1 text-left w-32">分筛前总量(g):</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <template v-for="(row, ri) in rows" :key="ri">
           <TableRow>
             <TableCell
-              class="border border-gray-300 px-2 py-1 text-center font-medium"
+              class="border border-input px-2 py-1 text-center font-medium"
               :rowspan="3"
             >
               {{ ri + 1 }}
             </TableCell>
-            <TableCell class="border border-gray-300 px-2 py-1">筛余量(g):</TableCell>
+            <TableCell class="border border-input px-2 py-1">筛余量(g):</TableCell>
             <TableCell
               v-for="(pct, ci) in row.retainedPct"
               :key="ci"
-              class="border border-gray-300 px-1 py-1 text-center text-gray-500"
+              class="border border-input px-1 py-1 text-center text-muted-foreground"
             >
               {{ pct === 0 ? '' : Math.round((pct * (row.totalBefore > 0 ? row.totalBefore : 1)) / 100) }}
             </TableCell>
-            <TableCell class="border border-gray-300 px-1 py-1 text-center">
+            <TableCell class="border border-input px-1 py-1 text-center">
               <Input
                 type="number"
                 step="1"
                 :aria-label="`第 ${ri + 1} 行 分筛前总量`"
                 :model-value="row.totalBefore === 0 ? '' : row.totalBefore"
                 :readonly="readOnly"
-                class="w-20 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
+                class="w-20 text-xs text-center read-only:bg-muted read-only:text-muted-foreground"
                 @change="(e: Event) => updateTotal(ri, 'totalBefore', (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell class="border border-gray-300 px-2 py-1">分计筛余量(%):</TableCell>
+            <TableCell class="border border-input px-2 py-1">分计筛余量(%):</TableCell>
             <TableCell
               v-for="(pct, ci) in row.retainedPct"
               :key="ci"
-              class="border border-gray-300 px-1 py-1 text-center"
+              class="border border-input px-1 py-1 text-center"
             >
               <Input
                 type="number"
@@ -252,12 +252,12 @@ const avg = computed(() => averageByCol(rows.value));
                 :aria-label="`第 ${ri + 1} 行 ${sieveCols[ci]} 分计筛余`"
                 :model-value="pct === 0 ? '' : pct"
                 :readonly="readOnly"
-                class="w-16 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
+                class="w-16 text-xs text-center read-only:bg-muted read-only:text-muted-foreground"
                 @change="(e: Event) => updatePct(ri, ci, (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
             </TableCell>
-            <TableCell class="border border-gray-300 px-1 py-1 text-center">
+            <TableCell class="border border-input px-1 py-1 text-center">
               分筛后总量(g):&nbsp;
               <Input
                 type="number"
@@ -265,41 +265,41 @@ const avg = computed(() => averageByCol(rows.value));
                 :aria-label="`第 ${ri + 1} 行 分筛后总量`"
                 :model-value="row.totalAfter === 0 ? '' : row.totalAfter"
                 :readonly="readOnly"
-                class="w-20 text-xs text-center read-only:bg-gray-50 read-only:text-gray-500"
+                class="w-20 text-xs text-center read-only:bg-muted read-only:text-muted-foreground"
                 @change="(e: Event) => updateTotal(ri, 'totalAfter', (e.target as HTMLInputElement).value)"
                 @blur="emit"
               />
-              <span v-if="rowComputed[ri]!.delta !== 0" class="ml-1 text-[10px] text-orange-500">
+              <span v-if="rowComputed[ri]!.delta !== 0" class="ml-1 text-[10px] text-warning">
                 Δ{{ rowComputed[ri]!.delta }}
               </span>
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell class="border border-gray-300 px-2 py-1">累计筛余量(%):</TableCell>
+            <TableCell class="border border-input px-2 py-1">累计筛余量(%):</TableCell>
             <TableCell
               v-for="(c, ci) in rowComputed[ri]!.cum"
               :key="ci"
-              class="border border-gray-300 px-1 py-1 text-center text-gray-700"
+              class="border border-input px-1 py-1 text-center text-foreground"
             >
               {{ c === 0 ? '' : c }}
             </TableCell>
-            <TableCell class="border border-gray-300 px-1 py-1 text-center">
+            <TableCell class="border border-input px-1 py-1 text-center">
               细&nbsp;度&nbsp;模&nbsp;数:&nbsp;
               <span class="font-mono">{{ rowComputed[ri]!.fm === 0 ? '—' : rowComputed[ri]!.fm }}</span>
             </TableCell>
           </TableRow>
         </template>
-        <TableRow class="bg-gray-50 font-medium">
-          <TableCell class="border border-gray-300 px-2 py-1"></TableCell>
-          <TableCell class="border border-gray-300 px-2 py-1">平均值(%):</TableCell>
+        <TableRow class="bg-muted font-medium">
+          <TableCell class="border border-input px-2 py-1"></TableCell>
+          <TableCell class="border border-input px-2 py-1">平均值(%):</TableCell>
           <TableCell
             v-for="(v, ci) in avg"
             :key="ci"
-            class="border border-gray-300 px-2 py-1 text-center"
+            class="border border-input px-2 py-1 text-center"
           >
             {{ v === 0 ? '—' : v }}
           </TableCell>
-          <TableCell class="border border-gray-300 px-2 py-1"></TableCell>
+          <TableCell class="border border-input px-2 py-1"></TableCell>
         </TableRow>
       </TableBody>
     </Table>

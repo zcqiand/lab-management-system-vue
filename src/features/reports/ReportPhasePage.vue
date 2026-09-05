@@ -188,7 +188,7 @@ function alertError(msg: string): void {
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">{{ title }}</h1>
-        <p class="text-sm text-slate-500">{{ subtitle }}</p>
+        <p class="text-sm text-muted-foreground">{{ subtitle }}</p>
       </div>
     </div>
 
@@ -215,10 +215,10 @@ function alertError(msg: string): void {
     <div class="bg-white rounded shadow">
       <div class="flex items-center justify-between px-4 py-2 border-b">
         <h3 class="text-base font-semibold">{{ title }}（{{ total || "…" }}）</h3>
-        <span v-if="loading" class="text-xs text-slate-400">加载中…</span>
+        <span v-if="loading" class="text-xs text-muted-foreground">加载中…</span>
       </div>
       <Table class="w-full text-sm">
-        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+        <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">
               <Checkbox
@@ -236,9 +236,9 @@ function alertError(msg: string): void {
         </TableHeader>
         <TableBody>
           <TableRow v-if="rows.length === 0 && !loading">
-            <TableCell colspan="6" class="px-4 py-8 text-center text-slate-400">（无数据）</TableCell>
+            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground">（无数据）</TableCell>
           </TableRow>
-          <TableRow v-for="r in rows" :key="r.id" :data-fn="i01DataFn" class="border-t hover:bg-slate-50">
+          <TableRow v-for="r in rows" :key="r.id" :data-fn="i01DataFn" class="border-t hover:bg-muted">
             <TableCell class="px-4 py-2">
               <Checkbox
                 :model-value="selected.has(r.id)"
@@ -247,7 +247,7 @@ function alertError(msg: string): void {
               />
             </TableCell>
             <TableCell class="px-4 py-2 font-mono text-xs">
-              <router-link :to="`/receipts/${r.id}`" class="text-blue-600 hover:underline">
+              <router-link :to="`/receipts/${r.id}`" class="text-info hover:underline">
                 {{ r.commissionCode }}
               </router-link>
             </TableCell>
@@ -298,7 +298,7 @@ function alertError(msg: string): void {
           <Button variant="outline" @click="returnTarget = null">取消</Button>
           <Button
             variant="default"
-            class="bg-red-600 hover:bg-red-700"
+            class="bg-destructive hover:bg-destructive/90"
             :disabled="submitting"
             @click="handleReturn()"
           >

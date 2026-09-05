@@ -94,7 +94,7 @@ watch(categoryCode, () => { void load(); });
     <div class="bg-white rounded shadow p-4">
       <div class="mb-3">
         <h1 class="text-2xl font-semibold">报告汇总</h1>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-muted-foreground">
           M05.F01 报告汇总表（按报告类别 categoryCode 过滤）——数据来自 lab-msw fixtures
         </p>
       </div>
@@ -117,33 +117,33 @@ watch(categoryCode, () => { void load(); });
         </div>
       </div>
 
-      <div v-if="error" role="alert" class="text-sm text-red-600 bg-red-50 p-2 rounded">{{ error }}</div>
+      <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">{{ error }}</div>
 
-      <div v-if="!loading && data && data.rows.length === 0" class="text-sm text-slate-400 text-center py-8">
+      <div v-if="!loading && data && data.rows.length === 0" class="text-sm text-muted-foreground text-center py-8">
         暂无报告
       </div>
 
       <Table v-else-if="data && data.rows.length > 0" class="w-full text-sm">
-        <TableHeader class="bg-slate-50 text-slate-600">
+        <TableHeader class="bg-muted text-muted-foreground">
           <TableRow>
             <TableHead v-for="c in data.columns" :key="c.key" class="px-4 py-2 text-left">{{ c.label }}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow v-for="(row, idx) in data.rows" :key="idx" class="border-t hover:bg-slate-50">
+          <TableRow v-for="(row, idx) in data.rows" :key="idx" class="border-t hover:bg-muted">
             <TableCell v-for="c in data.columns" :key="c.key" class="px-4 py-2 align-top">
               <span v-if="c.key === 'flowStatus'" class="inline-flex items-center rounded border px-2 py-0.5 text-xs">
                 {{ (STATUS_LABEL[String(row[c.key] ?? '')] ?? (String(row[c.key] ?? '') || '-')) }}
               </span>
-              <span v-else-if="c.key === 'result' && row[c.key] === 'qualified'" class="inline-flex items-center rounded bg-green-100 text-green-700 px-2 py-0.5 text-xs">合格</span>
-              <span v-else-if="c.key === 'result' && row[c.key] === 'unqualified'" class="inline-flex items-center rounded bg-red-100 text-red-700 px-2 py-0.5 text-xs">不合格</span>
+              <span v-else-if="c.key === 'result' && row[c.key] === 'qualified'" class="inline-flex items-center rounded bg-success/10 text-success px-2 py-0.5 text-xs">合格</span>
+              <span v-else-if="c.key === 'result' && row[c.key] === 'unqualified'" class="inline-flex items-center rounded bg-destructive/10 text-destructive px-2 py-0.5 text-xs">不合格</span>
               <span v-else>{{ String(row[c.key] ?? '-') }}</span>
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
 
-      <div class="mt-2 text-sm text-slate-500">
+      <div class="mt-2 text-sm text-muted-foreground">
         <span v-if="data">共 {{ data.rows.length }} 条 — {{ data.summaryName }}</span>
       </div>
     </div>
@@ -151,23 +151,23 @@ watch(categoryCode, () => { void load(); });
     <!-- @entry M05.F01.I02 仪表盘统计卡片 -->
     <div data-fn="M05.F01.I02" class="grid grid-cols-2 md:grid-cols-5 gap-3">
       <div class="bg-white rounded shadow p-3">
-        <div class="text-xs text-slate-500">合同数</div>
+        <div class="text-xs text-muted-foreground">合同数</div>
         <div class="text-3xl font-semibold">{{ stats?.contractCount ?? '-' }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
-        <div class="text-xs text-slate-500">接样数</div>
+        <div class="text-xs text-muted-foreground">接样数</div>
         <div class="text-3xl font-semibold">{{ stats?.receiptCount ?? '-' }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
-        <div class="text-xs text-slate-500">样品数</div>
+        <div class="text-xs text-muted-foreground">样品数</div>
         <div class="text-3xl font-semibold">{{ stats?.sampleCount ?? '-' }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
-        <div class="text-xs text-slate-500">待办任务</div>
-        <div class="text-3xl font-semibold text-amber-600">{{ stats?.pendingTaskCount ?? '-' }}</div>
+        <div class="text-xs text-muted-foreground">待办任务</div>
+        <div class="text-3xl font-semibold text-warning">{{ stats?.pendingTaskCount ?? '-' }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
-        <div class="text-xs text-slate-500">按状态分布</div>
+        <div class="text-xs text-muted-foreground">按状态分布</div>
         <div class="text-sm space-y-1 pt-1">
           <div>草稿：{{ stats?.reportCountByStatus.draft ?? 0 }}</div>
           <div>审核中：{{ stats?.reportCountByStatus.reviewing ?? 0 }}</div>

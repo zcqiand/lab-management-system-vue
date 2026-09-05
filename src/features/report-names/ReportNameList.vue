@@ -175,7 +175,7 @@ async function submitForm(): Promise<void> {
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">报告名称维护</h1>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-muted-foreground">
           M06.F07 报告名称 + extFields 模板（数据来自 lab-msw fixtures）
         </p>
       </div>
@@ -292,10 +292,10 @@ async function submitForm(): Promise<void> {
         <div class="font-semibold text-base">
           报告名称列表（{{ total || "…" }}）
         </div>
-        <div v-if="loading" class="text-xs text-slate-400">加载中…</div>
+        <div v-if="loading" class="text-xs text-muted-foreground">加载中…</div>
       </div>
       <Table class="w-full text-sm">
-        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+        <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">编码</TableHead>
             <TableHead class="px-4 py-2 text-left">简称</TableHead>
@@ -307,7 +307,7 @@ async function submitForm(): Promise<void> {
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="6" class="px-4 py-8 text-center text-slate-400">
+            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground">
               （无数据）
             </TableCell>
           </TableRow>
@@ -315,13 +315,13 @@ async function submitForm(): Promise<void> {
             v-for="r in items"
             :key="r.id"
             data-fn="M06.F07.I01"
-            class="border-t hover:bg-slate-50"
+            class="border-t hover:bg-muted"
           >
             <TableCell class="px-4 py-2 font-mono text-xs">{{ r.code }}</TableCell>
             <TableCell class="px-4 py-2">{{ r.name }}</TableCell>
             <TableCell class="px-4 py-2">{{ r.fullName ?? "—" }}</TableCell>
             <TableCell class="px-4 py-2 font-mono text-xs">{{ r.templatePath ?? "—" }}</TableCell>
-            <TableCell class="px-4 py-2 text-xs text-slate-500">{{ r.sortOrder }}</TableCell>
+            <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{ r.sortOrder }}</TableCell>
             <TableCell class="px-4 py-2 text-right">
               <Button
                 size="sm"

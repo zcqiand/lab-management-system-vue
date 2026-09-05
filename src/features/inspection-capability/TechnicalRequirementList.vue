@@ -217,7 +217,7 @@ async function confirmDelete(): Promise<void> {
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">技术要求维护</h1>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-muted-foreground">
           M06.F06 技术要求 — 四维度匹配：牌号 / 型号 / 等级 / 规格
         </p>
       </div>
@@ -233,14 +233,14 @@ async function confirmDelete(): Promise<void> {
       <Input v-model="specFilter" aria-label="规格筛选" class="max-w-32" placeholder="规格" />
     </div>
 
-    <div v-if="error" role="alert" class="text-sm text-red-600 bg-red-50 p-2 rounded">{{ error }}</div>
+    <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">{{ error }}</div>
 
-    <div v-if="!loading && items.length === 0" class="text-sm text-slate-400 text-center py-8">
+    <div v-if="!loading && items.length === 0" class="text-sm text-muted-foreground text-center py-8">
       暂无技术要求
     </div>
 
     <Table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
-      <TableHeader class="bg-slate-50 text-slate-600">
+      <TableHeader class="bg-muted text-muted-foreground">
         <TableRow>
           <TableHead class="px-4 py-2 text-left">检测项目</TableHead>
           <TableHead class="px-4 py-2 text-left">检测参数</TableHead>
@@ -256,7 +256,7 @@ async function confirmDelete(): Promise<void> {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="row in items" :key="row.id" class="border-t hover:bg-slate-50">
+        <TableRow v-for="row in items" :key="row.id" class="border-t hover:bg-muted">
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionObjectCode }}</TableCell>
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionParameterCode }}</TableCell>
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.judgmentStandardCode }}</TableCell>
@@ -293,7 +293,7 @@ async function confirmDelete(): Promise<void> {
       </TableBody>
     </Table>
 
-    <div class="text-sm text-slate-500">共 {{ items.length }} 条</div>
+    <div class="text-sm text-muted-foreground">共 {{ items.length }} 条</div>
 
     <Dialog
       :open="mode.kind === 'create' || mode.kind === 'edit'"
@@ -311,7 +311,7 @@ async function confirmDelete(): Promise<void> {
           <DialogDescription>复合主键：检测项目 + 检测参数 + 判定标准</DialogDescription>
         </DialogHeader>
         <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-          <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
+          <div v-if="saveError" role="alert" class="text-destructive bg-destructive/10 p-2 rounded">{{ saveError }}</div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <Label for="inspectionObjectCode">检测项目</Label>
@@ -416,7 +416,7 @@ async function confirmDelete(): Promise<void> {
           {{ deleteTarget?.inspectionObjectCode }}/{{ deleteTarget?.inspectionParameterCode }}
         </span> 的技术要求？被引用的技术要求不可删除（M06.F06.I03 引用保护）。
       </p>
-      <p v-if="deleteError" role="alert" class="mt-2 text-red-600">{{ deleteError }}</p>
+      <p v-if="deleteError" role="alert" class="mt-2 text-destructive">{{ deleteError }}</p>
     </ConfirmDialog>
   </div>
 </template>

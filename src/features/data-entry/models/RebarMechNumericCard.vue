@@ -201,10 +201,10 @@ function handleManualVerdict(v: string) {
 
 const verdictClass = computed(() =>
   verdict.value === "合格"
-    ? "text-green-600"
+    ? "text-success"
     : verdict.value === "不合格"
-      ? "text-red-600"
-      : "text-gray-400",
+      ? "text-destructive"
+      : "text-muted-foreground",
 );
 
 const indices = computed(() => Array.from({ length: count.value }, (_, i) => i));
@@ -216,7 +216,7 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
       <span class="text-sm font-medium">
         {{ p.canonicalName || p.name
         }}<span v-if="p.unit">（{{ p.unit }}）</span>
-        <span class="ml-2 text-xs text-gray-500">
+        <span class="ml-2 text-xs text-muted-foreground">
           {{ count }} 组<span v-if="isRatio">{{ autoMode ? ' / 自动计算' : ' / 手动录入' }}</span>
         </span>
       </span>
@@ -239,8 +239,8 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
       </span>
     </div>
 
-    <div class="flex items-center gap-3 text-xs bg-gray-50 rounded p-2">
-      <span v-if="needsDiameter" class="text-gray-500">
+    <div class="flex items-center gap-3 text-xs bg-muted rounded p-2">
+      <span v-if="needsDiameter" class="text-muted-foreground">
         直径 d (mm)
         <Input
           type="number"
@@ -249,11 +249,11 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
           :model-value="(state.diameter ?? 0) === 0 ? '' : state.diameter"
           :readonly="readOnly"
           aria-label="公称直径"
-          class="ml-1 w-24 read-only:bg-gray-50 read-only:text-gray-500"
+          class="ml-1 w-24 read-only:bg-muted read-only:text-muted-foreground"
           @change="(e: Event) => updateDiameter((e.target as HTMLInputElement).value)"
         />
       </span>
-      <span class="text-gray-500">
+      <span class="text-muted-foreground">
         技术要求
         <Select
           :model-value="state.techReqId || NONE"
@@ -274,7 +274,7 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
     </div>
 
     <Table class="w-full text-xs">
-      <TableHeader class="text-gray-500">
+      <TableHeader class="text-muted-foreground">
         <TableRow>
           <TableHead class="text-left py-1 w-6">#</TableHead>
           <TableHead class="text-left py-1">{{ inputLabel }}</TableHead>
@@ -294,14 +294,14 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
               :model-value="(state.loads[i] ?? 0) === 0 ? '' : state.loads[i]"
               :readonly="readOnly"
               :aria-label="`第 ${i + 1} 组 ${inputLabel}`"
-              class="w-28 read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-28 read-only:bg-muted read-only:text-muted-foreground"
               @change="(e: Event) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
           </TableCell>
-          <TableCell v-if="isStrength" class="py-1 text-gray-700">
+          <TableCell v-if="isStrength" class="py-1 text-foreground">
             {{ (strengths[i] ?? 0) > 0 ? Number(strengths[i]).toFixed(1) : '-' }}
           </TableCell>
-          <TableCell v-if="isRatio && autoMode" class="py-1 text-gray-700">
+          <TableCell v-if="isRatio && autoMode" class="py-1 text-foreground">
             {{ (strengths[i] ?? 0) > 0 ? Number(strengths[i]).toFixed(2) : '-' }}
           </TableCell>
           <TableCell v-if="connectionMode" class="py-1">
@@ -323,10 +323,10 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
       </TableBody>
     </Table>
 
-    <div class="text-xs text-gray-600">
-      均值：<span class="font-medium text-gray-900">{{ mean ?? '—' }}</span>
-      <span v-if="isStrength && (state.diameter ?? 0) <= 0" class="ml-2 text-orange-500">（需填公称直径以计算强度）</span>
-      <span v-if="isRatio && !autoMode" class="ml-2 text-orange-500">（同样品抗拉/屈服未录入，暂手动填写比值）</span>
+    <div class="text-xs text-muted-foreground">
+      均值：<span class="font-medium text-foreground">{{ mean ?? '—' }}</span>
+      <span v-if="isStrength && (state.diameter ?? 0) <= 0" class="ml-2 text-warning">（需填公称直径以计算强度）</span>
+      <span v-if="isRatio && !autoMode" class="ml-2 text-warning">（同样品抗拉/屈服未录入，暂手动填写比值）</span>
     </div>
   </div>
 </template>

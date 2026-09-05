@@ -151,10 +151,10 @@ function onManualVerdictChange(v: string | number) {
 
 const verdictClass = computed(() =>
   verdict.value === "合格"
-    ? "text-green-600"
+    ? "text-success"
     : verdict.value === "不合格"
-      ? "text-red-600"
-      : "text-gray-400",
+      ? "text-destructive"
+      : "text-muted-foreground",
 );
 </script>
 
@@ -168,7 +168,7 @@ const verdictClass = computed(() =>
       <span :class="['text-xs', verdictClass]">{{ verdict || '未评定' }}</span>
     </div>
     <Table class="w-full text-xs">
-      <TableHeader class="text-gray-500">
+      <TableHeader class="text-muted-foreground">
         <TableRow>
           <TableHead class="text-left py-1">#</TableHead>
           <TableHead class="text-left py-1">破坏荷载 (kN)</TableHead>
@@ -185,24 +185,24 @@ const verdictClass = computed(() =>
               :model-value="lv === 0 ? '' : lv"
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 破坏荷载`"
-              class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-32 read-only:bg-muted read-only:text-muted-foreground"
               @change="(e: Event) => onLoadChange(i, (e.target as HTMLInputElement).value)"
             />
           </TableCell>
           <TableCell
-            :class="`py-1 ${lv > 0 && !computed2.kept[i] ? 'text-gray-400 line-through' : 'text-gray-700'}`"
+            :class="`py-1 ${lv > 0 && !computed2.kept[i] ? 'text-muted-foreground line-through' : 'text-foreground'}`"
           >
             {{ lv > 0 ? computed2.strengths[i] : '-' }}
           </TableCell>
         </TableRow>
       </TableBody>
     </Table>
-    <div class="text-xs text-gray-600">
-      强度平均值：<span class="font-medium text-gray-900">{{ computed2.mean ?? '—' }}</span>
-      <span v-if="computed2.invalid" class="ml-2 text-red-500">（离群值超 ±10%，按 GB/T 17671 结果作废）</span>
+    <div class="text-xs text-muted-foreground">
+      强度平均值：<span class="font-medium text-foreground">{{ computed2.mean ?? '—' }}</span>
+      <span v-if="computed2.invalid" class="ml-2 text-destructive">（离群值超 ±10%，按 GB/T 17671 结果作废）</span>
     </div>
     <div v-if="reqOptions.length > 0" class="text-xs">
-      <Label class="text-xs text-gray-500 mr-1">技术要求</Label>
+      <Label class="text-xs text-muted-foreground mr-1">技术要求</Label>
       <Select :model-value="reqId" :disabled="readOnly" @update:model-value="onReqChange">
         <SelectTrigger aria-label="技术要求" :class="TRIGGER_CLS">
           <SelectValue />
@@ -215,7 +215,7 @@ const verdictClass = computed(() =>
       </Select>
     </div>
     <div v-else class="text-xs">
-      <Label class="text-xs text-gray-500 mr-1">单项评定</Label>
+      <Label class="text-xs text-muted-foreground mr-1">单项评定</Label>
       <Select
         :model-value="record?.verdict || NONE"
         :disabled="readOnly"

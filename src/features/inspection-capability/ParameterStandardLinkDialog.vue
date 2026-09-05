@@ -137,9 +137,9 @@ function close(): void {
         </DialogDescription>
       </DialogHeader>
       <div class="px-6 py-4">
-        <p v-if="loading" class="text-sm text-slate-500 py-4">加载中…</p>
+        <p v-if="loading" class="text-sm text-muted-foreground py-4">加载中…</p>
         <Table v-else class="w-full text-sm">
-          <TableHeader class="bg-slate-50 text-slate-600">
+          <TableHeader class="bg-muted text-muted-foreground">
             <TableRow>
               <TableHead class="px-3 py-2 text-left">标准编码</TableHead>
               <TableHead class="px-3 py-2 text-left">名称</TableHead>
@@ -149,14 +149,14 @@ function close(): void {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="s in standards" :key="s.code" class="border-t hover:bg-slate-50">
+            <TableRow v-for="s in standards" :key="s.code" class="border-t hover:bg-muted">
               <TableCell class="px-3 py-2 font-mono text-xs">{{ s.code }}</TableCell>
               <TableCell class="px-3 py-2">{{ s.name ?? "-" }}</TableCell>
               <TableCell class="px-3 py-2 text-xs">{{ s.version ?? "-" }}</TableCell>
               <TableCell class="px-3 py-2">
                 <span
                   class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
-                  :class="s.status === 'active' ? 'bg-slate-900 text-white' : 'border text-slate-600'"
+                  :class="s.status === 'active' ? 'bg-primary text-primary-foreground' : 'border text-muted-foreground'"
                 >
                   {{ statusCn(s.status) }}
                 </span>
@@ -167,7 +167,7 @@ function close(): void {
                   :aria-label="`${linked.has(s.code) ? '解除关联' : '关联'} ${s.code}`"
                   :disabled="busyCode === s.code"
                   class="px-2 py-1 rounded text-xs"
-                  :class="linked.has(s.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
+                  :class="linked.has(s.code) ? 'border text-foreground' : 'bg-primary text-primary-foreground'"
                   @click="toggle(s.code)"
                 >
                   {{ linked.has(s.code) ? "解除关联" : "关联" }}

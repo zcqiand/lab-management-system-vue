@@ -181,14 +181,14 @@ function close(): void {
         </DialogDescription>
       </DialogHeader>
       <div class="px-6 py-4 space-y-4">
-        <p v-if="loading" class="text-sm text-slate-500 py-4">加载中…</p>
+        <p v-if="loading" class="text-sm text-muted-foreground py-4">加载中…</p>
         <template v-else>
           <section>
             <h4 class="text-sm font-semibold mb-2">检测标准（role=检测）</h4>
             <div
               v-for="s in standards"
               :key="s.code"
-              class="flex items-center justify-between px-2 py-1 rounded hover:bg-slate-50"
+              class="flex items-center justify-between px-2 py-1 rounded hover:bg-muted"
             >
               <span class="text-sm">
                 <span class="font-mono text-xs">{{ s.code }}</span>
@@ -199,7 +199,7 @@ function close(): void {
                 :aria-label="`${isStdOn(s.code) ? '解除标准' : '关联标准'} ${s.code}`"
                 :disabled="busy === s.code"
                 class="px-2 py-1 rounded text-xs"
-                :class="isStdOn(s.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
+                :class="isStdOn(s.code) ? 'border text-foreground' : 'bg-primary text-primary-foreground'"
                 @click="toggleStd(s.code)"
               >
                 {{ isStdOn(s.code) ? "解除" : "关联" }}
@@ -211,19 +211,19 @@ function close(): void {
             <div
               v-for="p in parameters"
               :key="p.code"
-              class="flex items-center justify-between px-2 py-1 rounded hover:bg-slate-50"
+              class="flex items-center justify-between px-2 py-1 rounded hover:bg-muted"
             >
               <span class="text-sm">
                 <span class="font-mono text-xs">{{ p.code }}</span>
                 {{ p.name }}
-                <span v-if="p.unit" class="text-xs text-slate-500">({{ p.unit }})</span>
+                <span v-if="p.unit" class="text-xs text-muted-foreground">({{ p.unit }})</span>
               </span>
               <button
                 data-fn="M06.F07.I02"
                 :aria-label="`${paramLinks.has(p.code) ? '解除参数' : '关联参数'} ${p.code}`"
                 :disabled="busy === p.code"
                 class="px-2 py-1 rounded text-xs"
-                :class="paramLinks.has(p.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
+                :class="paramLinks.has(p.code) ? 'border text-foreground' : 'bg-primary text-primary-foreground'"
                 @click="toggleParam(p.code)"
               >
                 {{ paramLinks.has(p.code) ? "解除" : "关联" }}

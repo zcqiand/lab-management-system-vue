@@ -207,12 +207,12 @@ function dialogTitle(): string {
     <div class="flex shrink-0 items-center justify-between">
       <div>
         <h2 class="text-2xl font-bold">{{ title }}</h2>
-        <p v-if="hint" class="mt-1 text-xs text-gray-500">{{ hint }}</p>
+        <p v-if="hint" class="mt-1 text-xs text-muted-foreground">{{ hint }}</p>
       </div>
       <Button
         :data-fn="createDataFn"
         :disabled="!selectedCode && objects.length === 0"
-        class="bg-blue-600 hover:bg-blue-700 disabled:cursor-not-allowed"
+        class="bg-info hover:bg-info/90 disabled:cursor-not-allowed"
         @click="openCreate"
       >
         新建
@@ -222,7 +222,7 @@ function dialogTitle(): string {
     <div
       v-if="errorMsg"
       role="alert"
-      class="rounded bg-red-50 p-2 text-sm text-red-600"
+      class="rounded bg-destructive/10 p-2 text-sm text-destructive"
     >
       {{ errorMsg }}
     </div>
@@ -233,14 +233,14 @@ function dialogTitle(): string {
         class="flex min-h-0 flex-col overflow-hidden rounded bg-white shadow"
       >
         <div
-          class="shrink-0 border-b bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-500"
+          class="shrink-0 border-b bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground"
         >
           检测项目
         </div>
         <ul class="min-h-0 flex-1 overflow-y-auto">
           <li
             v-if="objects.length === 0"
-            class="px-3 py-4 text-center text-sm text-gray-400"
+            class="px-3 py-4 text-center text-sm text-muted-foreground"
           >
             暂无检测项目
           </li>
@@ -250,12 +250,12 @@ function dialogTitle(): string {
               class="flex w-full items-center gap-1 border-l-2 px-3 py-2 text-left text-sm"
               :class="
                 o.code === selectedCode
-                  ? 'border-blue-600 bg-blue-50 font-medium text-blue-700'
-                  : 'border-transparent text-gray-700 hover:bg-gray-50'
+                  ? 'border-info bg-info/10 font-medium text-info'
+                  : 'border-transparent text-foreground hover:bg-muted'
               "
               @click="selectedCode = o.code"
             >
-              <span class="text-gray-400">▸</span>
+              <span class="text-muted-foreground">▸</span>
               <span class="truncate">{{ o.name }}</span>
             </button>
           </li>
@@ -267,11 +267,11 @@ function dialogTitle(): string {
         class="flex min-h-0 flex-col overflow-hidden rounded bg-white shadow"
       >
         <div
-          class="flex shrink-0 items-center justify-between border-b bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-500"
+          class="flex shrink-0 items-center justify-between border-b bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground"
         >
           <span>
             <template v-if="selectedObject">
-              <span class="text-gray-400">▸</span> {{ selectedObject.name }}
+              <span class="text-muted-foreground">▸</span> {{ selectedObject.name }}
             </template>
             <template v-else>请选择左侧检测项目</template>
           </span>
@@ -279,13 +279,13 @@ function dialogTitle(): string {
 
         <div
           v-if="loading && list.length === 0"
-          class="px-4 py-8 text-center text-sm text-gray-400"
+          class="px-4 py-8 text-center text-sm text-muted-foreground"
         >
           加载中...
         </div>
         <div
           v-else-if="!loading && list.length === 0"
-          class="px-4 py-8 text-center text-sm text-gray-400"
+          class="px-4 py-8 text-center text-sm text-muted-foreground"
         >
           {{ selectedCode ? "暂无数据" : "请先选择左侧检测项目" }}
         </div>
@@ -299,16 +299,16 @@ function dialogTitle(): string {
             v-for="item in list"
             :key="item.id"
             :data-testid="`row-${item.id}`"
-            class="flex items-center border-b bg-white px-3 py-2 text-sm last:border-b-0 hover:bg-gray-50"
+            class="flex items-center border-b bg-white px-3 py-2 text-sm last:border-b-0 hover:bg-muted"
           >
             <span
               :data-testid="`sort-${item.id}`"
-              class="w-12 text-center text-xs tabular-nums text-gray-500"
+              class="w-12 text-center text-xs tabular-nums text-muted-foreground"
             >
               {{ item.sortOrder ?? "-" }}
             </span>
             <span class="flex-1 truncate">{{ item.name }}</span>
-            <span class="flex-1 truncate text-xs text-gray-500">
+            <span class="flex-1 truncate text-xs text-muted-foreground">
               {{ item.remark ?? "" }}
             </span>
             <div class="space-x-2">
@@ -345,11 +345,11 @@ function dialogTitle(): string {
     >
       <div class="space-y-3 text-left text-sm">
         <div>
-          <Label class="mb-1 block text-xs text-gray-600">
+          <Label class="mb-1 block text-xs text-muted-foreground">
             检测项目
           </Label>
           <Select v-model="formObject" :disabled="!!editing">
-            <SelectTrigger class="w-full rounded border px-2 py-1.5 disabled:bg-gray-100">
+            <SelectTrigger class="w-full rounded border px-2 py-1.5 disabled:bg-muted">
               <SelectValue placeholder="请选择检测项目" />
             </SelectTrigger>
             <SelectContent>
@@ -360,7 +360,7 @@ function dialogTitle(): string {
           </Select>
         </div>
         <div>
-          <Label class="mb-1 block text-xs text-gray-600">
+          <Label class="mb-1 block text-xs text-muted-foreground">
             名称
           </Label>
           <Input
@@ -368,7 +368,7 @@ function dialogTitle(): string {
           />
         </div>
         <div>
-          <Label class="mb-1 block text-xs text-gray-600">
+          <Label class="mb-1 block text-xs text-muted-foreground">
             备注
           </Label>
           <Input

@@ -348,7 +348,7 @@ describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
     expect(create.exists()).toBe(true);
     expect(create.classes()).toContain("inline-flex");
     // 调用方蓝色定制压过 CVA default 的 bg-primary（tailwind-merge）
-    expect(create.classes()).toContain("bg-blue-600");
+    expect(create.classes()).toContain("bg-info");
     expect(create.classes()).not.toContain("bg-primary");
   });
 

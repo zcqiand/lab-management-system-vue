@@ -255,12 +255,12 @@ function alertError(msg: string): void {
       <div>
         <!-- @entry M03.F01.I01 接样管理列表页 -->
         <h1 class="text-2xl font-semibold">接样管理</h1>
-        <p class="text-sm text-slate-500">M03.F01 接样单 CRUD 与提交</p>
+        <p class="text-sm text-muted-foreground">M03.F01 接样单 CRUD 与提交</p>
       </div>
       <!-- @entry M03.F01.I02 新建接样按钮 -->
       <Button
         variant="default"
-        class="bg-blue-600 hover:bg-blue-700"
+        class="bg-info hover:bg-info/90"
         data-fn="M03.F01.I02"
         @click="openCreate"
       >
@@ -291,10 +291,10 @@ function alertError(msg: string): void {
     <div class="bg-white rounded shadow">
       <div class="flex items-center justify-between px-4 py-2 border-b">
         <h3 class="text-base font-semibold">接样列表（{{ total || "…" }}）</h3>
-        <span v-if="loading" class="text-xs text-slate-400">加载中…</span>
+        <span v-if="loading" class="text-xs text-muted-foreground">加载中…</span>
       </div>
       <Table class="w-full text-sm">
-        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+        <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">委托书编号</TableHead>
             <TableHead class="px-4 py-2 text-left">工程名称</TableHead>
@@ -307,16 +307,16 @@ function alertError(msg: string): void {
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="7" class="px-4 py-8 text-center text-slate-400">（无数据）</TableCell>
+            <TableCell colspan="7" class="px-4 py-8 text-center text-muted-foreground">（无数据）</TableCell>
           </TableRow>
           <TableRow
             v-for="r in items"
             :key="r.id"
             data-fn="M03.F01.I01"
-            class="border-t hover:bg-slate-50"
+            class="border-t hover:bg-muted"
           >
             <TableCell class="px-4 py-2 font-mono text-xs">
-              <router-link :to="`/receipts/${r.id}`" class="text-blue-600 hover:underline">
+              <router-link :to="`/receipts/${r.id}`" class="text-info hover:underline">
                 {{ r.commissionCode }}
               </router-link>
             </TableCell>
@@ -327,16 +327,16 @@ function alertError(msg: string): void {
               <span
                 class="inline-block rounded px-2 py-0.5 text-xs"
                 :class="{
-                  'bg-blue-100 text-blue-700': r.flowStatus === 'receiving',
-                  'bg-green-100 text-green-700': r.flowStatus === 'completed',
-                  'bg-slate-200 text-slate-600':
+                  'bg-info/10 text-info': r.flowStatus === 'receiving',
+                  'bg-success/10 text-success': r.flowStatus === 'completed',
+                  'bg-muted text-muted-foreground':
                     r.flowStatus !== 'receiving' && r.flowStatus !== 'completed',
                 }"
               >
                 {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
               </span>
             </TableCell>
-            <TableCell class="px-4 py-2 text-xs text-slate-500">
+            <TableCell class="px-4 py-2 text-xs text-muted-foreground">
               {{ (r.createdAt ?? "").slice(0, 10) }}
             </TableCell>
             <TableCell class="px-4 py-2 text-right space-x-1">
@@ -445,7 +445,7 @@ function alertError(msg: string): void {
         </div>
         <DialogFooter class="mt-4 gap-2">
           <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
-          <Button variant="default" class="bg-blue-600 hover:bg-blue-700" @click="handleCreate()">
+          <Button variant="default" class="bg-info hover:bg-info/90" @click="handleCreate()">
             保存
           </Button>
         </DialogFooter>
@@ -517,7 +517,7 @@ function alertError(msg: string): void {
         </div>
         <DialogFooter class="mt-4 gap-2">
           <Button variant="outline" @click="mode = { kind: 'idle' }">取消</Button>
-          <Button variant="default" class="bg-blue-600 hover:bg-blue-700" @click="handleSubmit()">
+          <Button variant="default" class="bg-info hover:bg-info/90" @click="handleSubmit()">
             保存
           </Button>
         </DialogFooter>

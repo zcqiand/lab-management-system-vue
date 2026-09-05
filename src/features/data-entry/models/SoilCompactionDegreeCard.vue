@@ -95,8 +95,8 @@ function updateMax(v: string) {
 
 const cellCls = "border px-1 py-1 text-center";
 const numCls =
-  "w-20 border rounded px-1 py-0.5 text-right disabled:bg-gray-100 disabled:text-gray-500";
-const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:text-gray-500";
+  "w-20 border rounded px-1 py-0.5 text-right disabled:bg-muted disabled:text-muted-foreground";
+const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-muted disabled:text-muted-foreground";
 
 // Phase 2a-4：TableCell 的 `class` prop 是 string 不是 string[]，
 // 不能沿用 `:class="[cellCls, 条件色]"` 数组绑定（同 Phase 1.4 的 :class 数组陷阱），
@@ -104,10 +104,10 @@ const txtCls = "w-24 border rounded px-1 py-0.5 disabled:bg-gray-100 disabled:te
 function verdictCls(verdict: string): string {
   const tone =
     verdict === "不合格"
-      ? "text-red-600"
+      ? "text-destructive"
       : verdict === "合格"
-        ? "text-green-600"
-        : "text-gray-400";
+        ? "text-success"
+        : "text-muted-foreground";
   return `${cellCls} ${tone}`;
 }
 </script>
@@ -116,7 +116,7 @@ function verdictCls(verdict: string): string {
   <div class="border rounded p-3 space-y-3" data-fn="M03.F03.I03">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium">{{ param.canonicalName || param.name }}</span>
-      <Label class="text-xs text-gray-600">
+      <Label class="text-xs text-muted-foreground">
         最大干密度（g/cm³）：
         <Input
           type="number"
@@ -132,7 +132,7 @@ function verdictCls(verdict: string): string {
 
     <Table class="text-sm border-collapse">
       <TableHeader>
-        <TableRow class="bg-gray-50">
+        <TableRow class="bg-muted">
           <TableHead :class="cellCls">试样编号</TableHead>
           <TableHead :class="cellCls">取样部位</TableHead>
           <TableHead :class="cellCls">层次</TableHead>

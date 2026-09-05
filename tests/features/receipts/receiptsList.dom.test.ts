@@ -165,7 +165,7 @@ afterEach(() => {
 });
 
 describe("Phase 1.2a — ReceiptsList 列表 <Button> 原语回归", () => {
-  it("新建接样按钮：<Button variant=default class=bg-blue-600> 渲染 <button>，data-fn 落到真实 DOM", async () => {
+  it("新建接样按钮：<Button variant=default class=bg-info> 渲染 <button>，data-fn 落到真实 DOM", async () => {
     const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
     lastWrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -176,7 +176,7 @@ describe("Phase 1.2a — ReceiptsList 列表 <Button> 原语回归", () => {
     expect(create.exists()).toBe(true);
     expect(create.classes()).toContain("inline-flex");
     // 调用方覆盖：blue 替代 primary
-    expect(create.classes()).toContain("bg-blue-600");
+    expect(create.classes()).toContain("bg-info");
     // CVA default 是 bg-primary，被调用方 tailwind-merge 压掉
     expect(create.classes()).not.toContain("bg-primary");
   });
@@ -321,7 +321,10 @@ describe("Phase 2a-3 — ReceiptsList 列表 <Table> 原语回归", () => {
     // 流程状态徽章 span 仍在 cell 内（不破结构）
     const badgeCell = lastWrapper.findAll('[role="cell"]').find((c) => c.text().includes("接样中"));
     expect(badgeCell).toBeTruthy();
-    expect(badgeCell!.find("span.bg-blue-100").exists()).toBe(true);
+    // 注：bg-info/10 含 `/`，不是合法 CSS 选择器字符，改用 classes() 数组检查
+    const badgeSpan = badgeCell!.find("span");
+    expect(badgeSpan.exists()).toBe(true);
+    expect(badgeSpan.classes().some((c) => c === "bg-info/10")).toBe(true);
   });
 });
 

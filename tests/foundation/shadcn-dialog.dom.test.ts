@@ -87,6 +87,6 @@ describe("Phase 0 foundation — shadcn-vue dialog 底座", () => {
     expect(label.exists()).toBe(true);
     expect(label.attributes("for")).toBe("dialog-note");
     expect(label.classes()).toContain("peer-disabled:opacity-70");
-    expect(label.classes()).toContain("text-red-500");
+    expect(label.classes()).toContain("text-destructive");
   });
 });

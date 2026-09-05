@@ -137,7 +137,7 @@ function onAction(action: string): void {
         <span class="font-semibold">建筑工程实验室管理系统</span>
       </div>
       <div class="flex flex-1 flex-col items-center justify-center p-6 text-center">
-        <h2 class="text-rose-700 mb-2 font-semibold">菜单加载失败</h2>
+        <h2 class="text-destructive mb-2 font-semibold">菜单加载失败</h2>
         <p
           class="text-muted-foreground mb-4 break-all text-xs"
           data-testid="appshell-menu-error-msg"

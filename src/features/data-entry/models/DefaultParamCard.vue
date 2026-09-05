@@ -58,7 +58,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
     </div>
     <div class="grid grid-cols-4 gap-x-3 gap-y-1 text-xs">
       <div>
-        <Label class="block text-xs text-slate-500 mb-0.5">检测依据</Label>
+        <Label class="block text-xs text-muted-foreground mb-0.5">检测依据</Label>
         <Select
           :model-value="rec?.standardCode || NONE"
           :disabled="readOnly"
@@ -76,7 +76,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         </Select>
       </div>
       <div>
-        <Label class="block text-xs text-slate-500 mb-0.5">技术要求</Label>
+        <Label class="block text-xs text-muted-foreground mb-0.5">技术要求</Label>
         <Select
           :model-value="rec?.requirementCode || NONE"
           :disabled="readOnly"
@@ -98,7 +98,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         </Select>
       </div>
       <div>
-        <Label class="block text-xs text-slate-500 mb-0.5">检测结果</Label>
+        <Label class="block text-xs text-muted-foreground mb-0.5">检测结果</Label>
         <Input
           class="w-full"
           :model-value="rec?.result ?? ''"
@@ -108,7 +108,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         />
       </div>
       <div>
-        <Label class="block text-xs text-slate-500 mb-0.5">单项评定</Label>
+        <Label class="block text-xs text-muted-foreground mb-0.5">单项评定</Label>
         <Select
           :model-value="rec?.verdict || NONE"
           :disabled="readOnly"

@@ -77,7 +77,7 @@ function updatePermeated(i: number, v: Permeation) {
       }}<span v-if="p.unit">（{{ p.unit }}）</span>
     </div>
     <Table class="w-full text-xs">
-      <TableHeader class="text-gray-500">
+      <TableHeader class="text-muted-foreground">
         <TableRow>
           <TableHead class="text-left py-1">#</TableHead>
           <TableHead class="text-left py-1">渗水压力 (MPa)</TableHead>
@@ -95,7 +95,7 @@ function updatePermeated(i: number, v: Permeation) {
               :model-value="s.pressure === 0 ? '' : s.pressure"
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 渗水压力`"
-              class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-32 read-only:bg-muted read-only:text-muted-foreground"
               @change="(e: Event) => updatePressure(i, (e.target as HTMLInputElement).value)"
             />
           </TableCell>
@@ -103,7 +103,7 @@ function updatePermeated(i: number, v: Permeation) {
             <Select
               :model-value="s.permeated"
               :disabled="readOnly"
-              class="disabled:bg-gray-50 disabled:text-gray-500"
+              class="disabled:bg-muted disabled:text-muted-foreground"
               @update:model-value="(v) => updatePermeated(i, v as '已渗' | '未渗')"
             >
               <SelectTrigger
@@ -121,9 +121,9 @@ function updatePermeated(i: number, v: Permeation) {
         </TableRow>
       </TableBody>
     </Table>
-    <div class="text-xs text-gray-600">
-      抗渗等级：<span class="font-medium text-gray-900">{{ gradeLabel }}</span>
-      <span v-if="reason" class="ml-2 text-gray-500">（{{ reason }}）</span>
+    <div class="text-xs text-muted-foreground">
+      抗渗等级：<span class="font-medium text-foreground">{{ gradeLabel }}</span>
+      <span v-if="reason" class="ml-2 text-muted-foreground">（{{ reason }}）</span>
     </div>
   </div>
 </template>

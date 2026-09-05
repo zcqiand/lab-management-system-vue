@@ -149,8 +149,8 @@ function closeDialog(): void {
 }
 function statusBadgeClass(s: ContractStatus): string {
   return s === "active"
-    ? "inline-block rounded bg-green-100 px-2 py-0.5 text-xs text-green-700"
-    : "inline-block rounded bg-slate-200 px-2 py-0.5 text-xs text-slate-600";
+    ? "inline-block rounded bg-success/10 px-2 py-0.5 text-xs text-success"
+    : "inline-block rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground";
 }
 
 // 暴露给 template 的告警通道（vue 模板表达式作用域不识别 window/globalThis）
@@ -180,7 +180,7 @@ async function submitForm(): Promise<void> {
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">合同管理</h1>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-muted-foreground">
           M02.F01 合同 CRUD 与工程信息维护（数据来自 lab-msw fixtures）
         </p>
       </div>
@@ -341,10 +341,10 @@ async function submitForm(): Promise<void> {
     <div class="mt-4 bg-white rounded-xl border shadow-sm">
       <div class="flex flex-row items-center justify-between px-6 py-4 border-b">
         <div class="font-semibold text-base">合同列表（{{ total || "…" }}）</div>
-        <div v-if="loading" class="text-xs text-slate-400">加载中…</div>
+        <div v-if="loading" class="text-xs text-muted-foreground">加载中…</div>
       </div>
       <Table class="w-full text-sm">
-        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+        <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">合同编号</TableHead>
             <TableHead class="px-4 py-2 text-left">项目名称</TableHead>
@@ -357,7 +357,7 @@ async function submitForm(): Promise<void> {
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="7" class="px-4 py-8 text-center text-slate-400">
+            <TableCell colspan="7" class="px-4 py-8 text-center text-muted-foreground">
               （无数据）
             </TableCell>
           </TableRow>
@@ -365,7 +365,7 @@ async function submitForm(): Promise<void> {
             v-for="c in items"
             :key="c.id"
             data-fn="M02.F01.I01"
-            class="border-t hover:bg-slate-50"
+            class="border-t hover:bg-muted"
           >
             <TableCell class="px-4 py-2 font-mono text-xs">{{ c.contractCode }}</TableCell>
             <TableCell class="px-4 py-2">{{ c.projectName }}</TableCell>
@@ -376,7 +376,7 @@ async function submitForm(): Promise<void> {
                 {{ c.status === "active" ? "在用" : "已归档" }}
               </span>
             </TableCell>
-            <TableCell class="px-4 py-2 text-xs text-slate-500">
+            <TableCell class="px-4 py-2 text-xs text-muted-foreground">
               {{ c.entrustedDate ?? "—" }}
             </TableCell>
             <TableCell class="px-4 py-2 text-right">

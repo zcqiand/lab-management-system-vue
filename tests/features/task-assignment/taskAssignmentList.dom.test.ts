@@ -112,7 +112,7 @@ describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
     expect(arrange.classes()).toContain("border");
   });
 
-  it("弹窗保存按钮：<Button variant=default class=bg-blue-600> 压过 CVA bg-primary，disabled 落到真实 DOM", async () => {
+  it("弹窗保存按钮：<Button variant=default class=bg-info> 压过 CVA bg-primary，disabled 落到真实 DOM", async () => {
     const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -125,7 +125,7 @@ describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
     const save = lastWrapper.findAll("button").find((b) => b.text() === "保存");
     expect(save).toBeTruthy();
     expect(save!.classes()).toContain("inline-flex");
-    expect(save!.classes()).toContain("bg-blue-600");
+    expect(save!.classes()).toContain("bg-info");
     expect(save!.classes()).not.toContain("bg-primary");
     // assigneeName 为空 → disabled 必须落到真实 <button>
     expect((save!.element as HTMLButtonElement).disabled).toBe(true);

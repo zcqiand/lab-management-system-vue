@@ -9,7 +9,7 @@
 //   5. <TableHead> 渲染为 div[role="columnheader"]
 //   6. <TableCell> 渲染为 div[role="cell"]
 //   7. data-fn 在 <TableRow> 上经 $attrs 落到真实 <div>
-//   8. class prop 经 cn() 合并，调用方 bg-amber-100 压过默认
+//   8. class prop 经 cn() 合并，调用方 bg-warning/10 压过默认
 import { describe, it, expect, afterEach } from "vitest";
 import type { VueWrapper } from "@vue/test-utils";
 import { mountWithProviders } from "../helper";
@@ -89,7 +89,7 @@ describe("Phase 2a-1 foundation — shadcn-vue Table 底座", () => {
     expect(cell.text()).toBe("行 1");
   });
 
-  it("<TableRow> class prop 经 cn() 合并，调用方 bg-amber-100 压过默认", () => {
+  it("<TableRow> class prop 经 cn() 合并，调用方 bg-warning/10 压过默认", () => {
     lastWrapper = mountWithProviders(TableFixture);
 
     const row1 = lastWrapper.find('[data-testid="row-1"]');
@@ -97,7 +97,7 @@ describe("Phase 2a-1 foundation — shadcn-vue Table 底座", () => {
     expect(row1.classes()).toContain("border-b");
     expect(row1.classes()).toContain("transition-colors");
     // 调用方传的 class 合并进来
-    expect(row1.classes()).toContain("bg-amber-100");
+    expect(row1.classes()).toContain("bg-warning/10");
   });
 
   it("完整表格渲染：2 行 + 表头 2 列", () => {

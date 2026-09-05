@@ -21,7 +21,7 @@ const note = ref("");
         <DialogTitle>Test Dialog</DialogTitle>
         <DialogDescription>This is a test fixture for Phase 0 validation</DialogDescription>
         <p data-testid="dialog-body">Body content</p>
-        <Label for="dialog-note" data-fn="dialog-label" class="text-red-500">Note</Label>
+        <Label for="dialog-note" data-fn="dialog-label" class="text-destructive">Note</Label>
         <Input id="dialog-note" v-model="note" data-fn="dialog-input" :disabled="true" />
         <Button
           data-fn="dialog-cancel"

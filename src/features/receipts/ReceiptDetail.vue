@@ -112,13 +112,13 @@ function alertError(msg: string): void {
 
 <template>
   <div class="space-y-4">
-    <div v-if="loading" class="p-8 text-center text-slate-500">加载中…</div>
-    <div v-else-if="error" class="p-8 text-red-600">{{ error }}</div>
+    <div v-if="loading" class="p-8 text-center text-muted-foreground">加载中…</div>
+    <div v-else-if="error" class="p-8 text-destructive">{{ error }}</div>
     <template v-else-if="receipt">
       <!-- @entry M03.F09.I01 接样单详情页 -->
       <div class="bg-white rounded shadow p-4">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base font-semibold text-slate-700">
+          <h3 class="text-base font-semibold text-foreground">
             接样单详情 — {{ receipt.commissionCode }}
           </h3>
           <div class="flex items-center gap-2">
@@ -142,38 +142,38 @@ function alertError(msg: string): void {
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
-          <div><span class="text-slate-500">委托书编号：</span>{{ receipt.commissionCode }}</div>
-          <div><span class="text-slate-500">委托日期：</span>{{ receipt.commissionDate }}</div>
-          <div><span class="text-slate-500">工程名称：</span>{{ receipt.projectName ?? "—" }}</div>
-          <div><span class="text-slate-500">委托单位：</span>{{ receipt.clientUnit ?? "—" }}</div>
-          <div><span class="text-slate-500">建设单位：</span>{{ receipt.buildingUnit ?? "—" }}</div>
-          <div><span class="text-slate-500">监理单位：</span>{{ receipt.supervisorUnit ?? "—" }}</div>
-          <div><span class="text-slate-500">施工单位：</span>{{ receipt.constructionUnit ?? "—" }}</div>
-          <div><span class="text-slate-500">见证单位：</span>{{ receipt.witnessUnit ?? "—" }}</div>
-          <div><span class="text-slate-500">见证人：</span>{{ receipt.witness ?? "—" }}</div>
-          <div><span class="text-slate-500">送检人：</span>{{ receipt.inspector ?? "—" }}</div>
-          <div><span class="text-slate-500">取样地点：</span>{{ receipt.samplingLocation ?? "—" }}</div>
-          <div><span class="text-slate-500">接样人：</span>{{ receipt.receivedBy }}</div>
-          <div><span class="text-slate-500">报告类别：</span>{{ receipt.categoryCode }}</div>
-          <div><span class="text-slate-500">检测类别：</span>{{ receipt.testCategory }}</div>
-          <div><span class="text-slate-500">样品来源：</span>{{ receipt.sampleSource }}</div>
-          <div><span class="text-slate-500">合同 ID：</span>{{ receipt.contractId }}</div>
+          <div><span class="text-muted-foreground">委托书编号：</span>{{ receipt.commissionCode }}</div>
+          <div><span class="text-muted-foreground">委托日期：</span>{{ receipt.commissionDate }}</div>
+          <div><span class="text-muted-foreground">工程名称：</span>{{ receipt.projectName ?? "—" }}</div>
+          <div><span class="text-muted-foreground">委托单位：</span>{{ receipt.clientUnit ?? "—" }}</div>
+          <div><span class="text-muted-foreground">建设单位：</span>{{ receipt.buildingUnit ?? "—" }}</div>
+          <div><span class="text-muted-foreground">监理单位：</span>{{ receipt.supervisorUnit ?? "—" }}</div>
+          <div><span class="text-muted-foreground">施工单位：</span>{{ receipt.constructionUnit ?? "—" }}</div>
+          <div><span class="text-muted-foreground">见证单位：</span>{{ receipt.witnessUnit ?? "—" }}</div>
+          <div><span class="text-muted-foreground">见证人：</span>{{ receipt.witness ?? "—" }}</div>
+          <div><span class="text-muted-foreground">送检人：</span>{{ receipt.inspector ?? "—" }}</div>
+          <div><span class="text-muted-foreground">取样地点：</span>{{ receipt.samplingLocation ?? "—" }}</div>
+          <div><span class="text-muted-foreground">接样人：</span>{{ receipt.receivedBy }}</div>
+          <div><span class="text-muted-foreground">报告类别：</span>{{ receipt.categoryCode }}</div>
+          <div><span class="text-muted-foreground">检测类别：</span>{{ receipt.testCategory }}</div>
+          <div><span class="text-muted-foreground">样品来源：</span>{{ receipt.sampleSource }}</div>
+          <div><span class="text-muted-foreground">合同 ID：</span>{{ receipt.contractId }}</div>
           <div>
-            <span class="text-slate-500">流程状态：</span>
+            <span class="text-muted-foreground">流程状态：</span>
             {{ FLOW_STAGE_LABELS[receipt.flowStatus] ?? receipt.flowStatus }}
           </div>
           <div>
-            <span class="text-slate-500">检测结果：</span>
+            <span class="text-muted-foreground">检测结果：</span>
             {{ receipt.result === "pass" ? "合格" : receipt.result === "fail" ? "不合格" : "—" }}
           </div>
           <div v-if="receipt.assigneeName">
-            <span class="text-slate-500">检测负责人：</span>{{ receipt.assigneeName }}
+            <span class="text-muted-foreground">检测负责人：</span>{{ receipt.assigneeName }}
           </div>
           <div v-if="receipt.plannedTestDate">
-            <span class="text-slate-500">计划检测日期：</span>{{ receipt.plannedTestDate }}
+            <span class="text-muted-foreground">计划检测日期：</span>{{ receipt.plannedTestDate }}
           </div>
           <div v-if="receipt.reportCode">
-            <span class="text-slate-500">报告编号：</span>{{ receipt.reportCode }}
+            <span class="text-muted-foreground">报告编号：</span>{{ receipt.reportCode }}
           </div>
         </div>
       </div>
@@ -181,24 +181,24 @@ function alertError(msg: string): void {
       <!-- @entry M03.F09.I02 流程历史时间线（按 at 倒序） -->
       <div data-fn="M03.F09.I02" class="bg-white rounded shadow p-4">
         <h3 class="text-base font-semibold mb-3">流程历史</h3>
-        <div v-if="history.length === 0" class="py-4 text-center text-sm text-slate-400">
+        <div v-if="history.length === 0" class="py-4 text-center text-sm text-muted-foreground">
           （暂无流程操作记录）
         </div>
         <ol v-else class="space-y-2">
           <li
             v-for="(h, i) in history"
             :key="i"
-            class="flex items-center gap-3 border-l-2 border-slate-200 pl-3"
+            class="flex items-center gap-3 border-l-2 border pl-3"
           >
-            <span class="text-xs text-slate-400">{{ h.at }}</span>
+            <span class="text-xs text-muted-foreground">{{ h.at }}</span>
             <span class="font-medium">
               {{ h.action === "submit" ? "提交" : h.action === "return" ? "退回" : "撤回" }}
             </span>
-            <span class="text-sm text-slate-600">
+            <span class="text-sm text-muted-foreground">
               {{ FLOW_STAGE_LABELS[h.from] }} → {{ FLOW_STAGE_LABELS[h.to] }}
             </span>
-            <span class="text-xs text-slate-500">操作人：{{ h.operator }}</span>
-            <span v-if="h.reason" class="text-xs text-slate-500">备注：{{ h.reason }}</span>
+            <span class="text-xs text-muted-foreground">操作人：{{ h.operator }}</span>
+            <span v-if="h.reason" class="text-xs text-muted-foreground">备注：{{ h.reason }}</span>
           </li>
         </ol>
       </div>

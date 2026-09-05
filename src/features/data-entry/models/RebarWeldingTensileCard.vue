@@ -129,10 +129,10 @@ function handleOverallVerdict(v: string) {
 
 const verdictClass = computed(() =>
   verdict.value === "合格"
-    ? "text-green-600"
+    ? "text-success"
     : verdict.value === "不合格"
-      ? "text-red-600"
-      : "text-gray-400",
+      ? "text-destructive"
+      : "text-muted-foreground",
 );
 
 const trialIndices: [0, 1, 2] = [0, 1, 2];
@@ -144,7 +144,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
       <span class="text-sm font-medium">
         {{ p.canonicalName || p.name
         }}<span v-if="p.unit">（{{ p.unit }}）</span>
-        <span class="ml-2 text-xs text-gray-500">3 试件 / JGJ/T 27-2014</span>
+        <span class="ml-2 text-xs text-muted-foreground">3 试件 / JGJ/T 27-2014</span>
       </span>
       <span class="text-xs">
         <span v-if="verdict" :class="verdictClass">{{ verdict }}</span>
@@ -165,12 +165,12 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
       </span>
     </div>
 
-    <div class="flex items-center gap-3 text-xs bg-gray-50 rounded p-2">
-      <span class="text-gray-500" aria-label="公称直径（硬编码）">
+    <div class="flex items-center gap-3 text-xs bg-muted rounded p-2">
+      <span class="text-muted-foreground" aria-label="公称直径（硬编码）">
         规格 Φ{{ REBAR_DIAMETER_MM }}
-        <span class="ml-1 text-gray-400">（硬编码，不录入）</span>
+        <span class="ml-1 text-muted-foreground">（硬编码，不录入）</span>
       </span>
-      <span class="text-gray-500">
+      <span class="text-muted-foreground">
         技术要求
         <Select
           :model-value="spec.techReqId || NONE"
@@ -191,7 +191,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
     </div>
 
     <Table class="w-full text-xs">
-      <TableHeader class="text-gray-500">
+      <TableHeader class="text-muted-foreground">
         <TableRow>
           <TableHead class="text-left py-1 w-6">#</TableHead>
           <TableHead class="text-left py-1">最大荷重 (kN)</TableHead>
@@ -211,11 +211,11 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               :model-value="spec.loads[t] === 0 ? '' : spec.loads[t]"
               :readonly="readOnly"
               :aria-label="`试件 ${t + 1} 最大荷重`"
-              class="w-24 read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-24 read-only:bg-muted read-only:text-muted-foreground"
               @change="(e: Event) => updateLoad(t, (e.target as HTMLInputElement).value)"
             />
           </TableCell>
-          <TableCell class="py-1 text-gray-700">
+          <TableCell class="py-1 text-foreground">
             {{ spec.strengths[t] > 0 ? Number(spec.strengths[t]).toFixed(1) : '-' }}
           </TableCell>
           <TableCell class="py-1">
@@ -226,7 +226,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               :model-value="spec.fractureDistances[t] === 0 ? '' : spec.fractureDistances[t]"
               :readonly="readOnly"
               :aria-label="`试件 ${t + 1} 断口距`"
-              class="w-20 read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-20 read-only:bg-muted read-only:text-muted-foreground"
               @change="(e: Event) => updateDistance(t, (e.target as HTMLInputElement).value)"
             />
           </TableCell>
@@ -249,8 +249,8 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
       </TableBody>
     </Table>
 
-    <div class="text-xs text-gray-600">
-      均值：<span class="font-medium text-gray-900">{{ mean ?? '—' }}</span>
+    <div class="text-xs text-muted-foreground">
+      均值：<span class="font-medium text-foreground">{{ mean ?? '—' }}</span>
     </div>
   </div>
 </template>

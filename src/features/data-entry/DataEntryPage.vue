@@ -202,7 +202,7 @@ function onParamChange(patch: Partial<TestRecord>): void {
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">数据录入</h1>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-muted-foreground">
           M03.F03 样品检测数据录入与人工改判（flowStatus=data_entry）
         </p>
       </div>
@@ -221,10 +221,10 @@ function onParamChange(patch: Partial<TestRecord>): void {
     <div class="bg-white rounded shadow">
       <div class="flex items-center justify-between px-4 py-2 border-b">
         <h3 class="text-base font-semibold">待录入接样单（{{ total || "…" }}）</h3>
-        <span v-if="loading" class="text-xs text-slate-400">加载中…</span>
+        <span v-if="loading" class="text-xs text-muted-foreground">加载中…</span>
       </div>
       <Table class="w-full text-sm">
-        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+        <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">委托书编号</TableHead>
             <TableHead class="px-4 py-2 text-left">工程名称</TableHead>
@@ -236,11 +236,11 @@ function onParamChange(patch: Partial<TestRecord>): void {
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="6" class="px-4 py-8 text-center text-slate-400">（无待录入接样单）</TableCell>
+            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground">（无待录入接样单）</TableCell>
           </TableRow>
-          <TableRow v-for="r in items" :key="r.id" class="border-t hover:bg-slate-50">
+          <TableRow v-for="r in items" :key="r.id" class="border-t hover:bg-muted">
             <TableCell class="px-4 py-2 font-mono text-xs">
-              <router-link :to="`/receipts/${r.id}`" class="text-blue-600 hover:underline">
+              <router-link :to="`/receipts/${r.id}`" class="text-info hover:underline">
                 {{ r.commissionCode }}
               </router-link>
             </TableCell>
@@ -339,7 +339,7 @@ function onParamChange(patch: Partial<TestRecord>): void {
               :on-change="onParamChange"
             />
           </template>
-          <div v-else class="border rounded p-4 text-sm text-slate-400">
+          <div v-else class="border rounded p-4 text-sm text-muted-foreground">
             暂无可用检测参数
           </div>
         </div>
@@ -349,7 +349,7 @@ function onParamChange(patch: Partial<TestRecord>): void {
           <!-- @entry M03.F03.I02 保存检测记录 -->
           <Button
             variant="default"
-            class="bg-blue-600 hover:bg-blue-700"
+            class="bg-info hover:bg-info/90"
             :disabled="submitting || !selectedSampleId || !activeParamCode"
             data-fn="M03.F03.I02"
             @click="handleSave()"

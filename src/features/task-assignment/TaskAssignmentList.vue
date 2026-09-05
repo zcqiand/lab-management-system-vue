@@ -120,7 +120,7 @@ async function handleSave(): Promise<void> {
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">任务分配</h1>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-muted-foreground">
           M03.F02 为接样单指定检测人员与计划日期（flowStatus=task_assignment）
         </p>
       </div>
@@ -139,10 +139,10 @@ async function handleSave(): Promise<void> {
     <div class="bg-white rounded shadow">
       <div class="flex items-center justify-between px-4 py-2 border-b">
         <h3 class="text-base font-semibold">待安排接样单（{{ total || "…" }}）</h3>
-        <span v-if="loading" class="text-xs text-slate-400">加载中…</span>
+        <span v-if="loading" class="text-xs text-muted-foreground">加载中…</span>
       </div>
       <Table class="w-full text-sm">
-        <TableHeader class="bg-slate-50 text-xs uppercase text-slate-500">
+        <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">委托书编号</TableHead>
             <TableHead class="px-4 py-2 text-left">工程名称</TableHead>
@@ -154,20 +154,20 @@ async function handleSave(): Promise<void> {
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="6" class="px-4 py-8 text-center text-slate-400">
+            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground">
               （无待安排接样单）
             </TableCell>
           </TableRow>
-          <TableRow v-for="r in items" :key="r.id" class="border-t hover:bg-slate-50">
+          <TableRow v-for="r in items" :key="r.id" class="border-t hover:bg-muted">
             <TableCell class="px-4 py-2 font-mono text-xs">
-              <router-link :to="`/receipts/${r.id}`" class="text-blue-600 hover:underline">
+              <router-link :to="`/receipts/${r.id}`" class="text-info hover:underline">
                 {{ r.commissionCode }}
               </router-link>
             </TableCell>
             <TableCell class="px-4 py-2">{{ r.projectName ?? "—" }}</TableCell>
             <TableCell class="px-4 py-2">
               <span v-if="r.assigneeName">{{ r.assigneeName }}</span>
-              <span v-else class="text-slate-400">待安排</span>
+              <span v-else class="text-muted-foreground">待安排</span>
             </TableCell>
             <TableCell class="px-4 py-2">{{ r.plannedTestDate ?? "—" }}</TableCell>
             <TableCell class="px-4 py-2 text-xs">
@@ -221,7 +221,7 @@ async function handleSave(): Promise<void> {
           <Button variant="outline" @click="assignTarget = null">取消</Button>
           <Button
             variant="default"
-            class="bg-blue-600 hover:bg-blue-700"
+            class="bg-info hover:bg-info/90"
             :disabled="saving || !assigneeName.trim() || !plannedTestDate"
             @click="handleSave()"
           >

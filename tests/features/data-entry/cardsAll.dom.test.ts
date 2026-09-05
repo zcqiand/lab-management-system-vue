@@ -187,7 +187,7 @@ describe("RebarWeldingBendCard", () => {
       wrapper.findAll('input[aria-label^="试件"][aria-label$="弯曲角度"]').length,
     ).toBe(3);
     expect(wrapper.text()).toContain("JGJ/T 27-2014");
-    expect(wrapper.find(".text-green-600")?.text()).toBe("合格");
+    expect(wrapper.find(".text-success")?.text()).toBe("合格");
   });
 });
 
@@ -641,7 +641,7 @@ describe("Phase 2a-4 — 数据录入卡 <Table> 原语回归", () => {
     expect(verdict.attributes("role")).toBe("cell");
     // verdictCls() 拼成单个 string：cellCls + 条件色 一起过 cn()，
     // 而不是走 :class="[...]" 数组（TableCell 的 class prop 是 string 不是 string[]）
-    expect(verdict.classes()).toContain("text-gray-400");
+    expect(verdict.classes()).toContain("text-muted-foreground");
     expect(verdict.classes()).toContain("border");
     expect(verdict.classes()).toContain("text-center");
     expect(lastCardWrapper.find('[data-testid="dry-density-0"]').attributes("role")).toBe("cell");
@@ -767,7 +767,7 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
     expect(
       lastCardWrapper.find('button[role="combobox"][aria-label="整体单项评定"]').exists(),
     ).toBe(false);
-    expect(lastCardWrapper.find(".text-green-600").text()).toBe("合格");
+    expect(lastCardWrapper.find(".text-success").text()).toBe("合格");
   });
 
   it("StrengthCardBase 无技术要求：单项评定 → combobox，无 raw select", () => {

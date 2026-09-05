@@ -84,10 +84,10 @@ function handleOverallVerdict(v: string) {
 
 const overallClass = computed(() =>
   overallComputed.value === "合格"
-    ? "text-green-600"
+    ? "text-success"
     : overallComputed.value === "不合格"
-      ? "text-red-600"
-      : "text-gray-400",
+      ? "text-destructive"
+      : "text-muted-foreground",
 );
 
 const trialIndices: [0, 1, 2] = [0, 1, 2];
@@ -99,7 +99,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
       <span class="text-sm font-medium">
         {{ p.canonicalName || p.name
         }}<span v-if="p.unit">（{{ p.unit }}）</span>
-        <span class="ml-2 text-xs text-gray-500">3 试件 / JGJ/T 27-2014</span>
+        <span class="ml-2 text-xs text-muted-foreground">3 试件 / JGJ/T 27-2014</span>
       </span>
       <span class="text-xs">
         <span v-if="overallComputed" :class="overallClass">{{ overallComputed }}</span>
@@ -121,7 +121,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
     </div>
 
     <Table class="w-full text-xs">
-      <TableHeader class="text-gray-500">
+      <TableHeader class="text-muted-foreground">
         <TableRow>
           <TableHead class="text-left py-1 w-6">#</TableHead>
           <TableHead class="text-left py-1">弯曲角度 (°)</TableHead>
@@ -139,7 +139,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
               :model-value="spec.angles[t] === 0 ? '' : spec.angles[t]"
               :readonly="readOnly"
               :aria-label="`试件 ${t + 1} 弯曲角度`"
-              class="w-20 read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-20 read-only:bg-muted read-only:text-muted-foreground"
               @change="(e: Event) => updateAngle(t, (e.target as HTMLInputElement).value)"
             />
           </TableCell>

@@ -76,7 +76,7 @@ function updateLoad(i: number, v: string) {
       }}<span v-if="p.unit">（{{ p.unit }}）</span>
     </div>
     <Table class="w-full text-xs">
-      <TableHeader class="text-gray-500">
+      <TableHeader class="text-muted-foreground">
         <TableRow>
           <TableHead class="text-left py-1">#</TableHead>
           <TableHead class="text-left py-1">破坏荷载 (kN)</TableHead>
@@ -93,14 +93,14 @@ function updateLoad(i: number, v: string) {
               :model-value="lv === 0 ? '' : lv"
               :readonly="readOnly"
               :aria-label="`试件 ${i + 1} 破坏荷载`"
-              class="w-32 read-only:bg-gray-50 read-only:text-gray-500"
+              class="w-32 read-only:bg-muted read-only:text-muted-foreground"
               @change="(e: Event) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
           </TableCell>
-          <TableCell class="py-1 text-gray-700">{{ lv ? Number((((lv * 1000) / area) * 100) / 100).toFixed(2) : '-' }}</TableCell>
+          <TableCell class="py-1 text-foreground">{{ lv ? Number((((lv * 1000) / area) * 100) / 100).toFixed(2) : '-' }}</TableCell>
         </TableRow>
       </TableBody>
     </Table>
-    <div class="text-xs text-gray-600">抗压强度代表值：{{ result.representative ?? '—' }}</div>
+    <div class="text-xs text-muted-foreground">抗压强度代表值：{{ result.representative ?? '—' }}</div>
   </div>
 </template>

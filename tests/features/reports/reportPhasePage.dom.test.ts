@@ -226,7 +226,7 @@ describe("Phase 1.2b — ReportPhasePage <Button> 原语回归", () => {
     const confirm = lastWrapper.findAll("button").find((b) => b.text() === "确认退回");
     expect(confirm).toBeTruthy();
     expect(confirm!.classes()).toContain("inline-flex");
-    expect(confirm!.classes()).toContain("bg-red-600");
+    expect(confirm!.classes()).toContain("bg-destructive");
   });
 
   it("「全选」checkbox 已迁 <Checkbox> 原语（<button role=checkbox> + aria-label=全选）", async () => {

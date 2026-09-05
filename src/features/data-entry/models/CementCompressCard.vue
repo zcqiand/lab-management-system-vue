@@ -67,14 +67,14 @@ function updateLoad(i: number, v: string) {
       <span class="text-sm font-medium">
         {{ p.canonicalName || p.name }}（{{ p.unit ?? "MPa" }}）
       </span>
-      <span class="text-xs text-slate-500">
+      <span class="text-xs text-muted-foreground">
         代表值：{{ result.mean ?? '—' }} MPa
-        <span v-if="result.invalid" class="text-red-600">（作废）</span>
+        <span v-if="result.invalid" class="text-destructive">（作废）</span>
       </span>
     </div>
     <div class="grid grid-cols-6 gap-1">
       <div v-for="(_, i) in loads" :key="i">
-        <Label class="block text-xs text-slate-500 mb-0.5">试件 {{ i + 1 }}</Label>
+        <Label class="block text-xs text-muted-foreground mb-0.5">试件 {{ i + 1 }}</Label>
         <Input
           type="number"
           step="0.01"
@@ -84,11 +84,11 @@ function updateLoad(i: number, v: string) {
           placeholder="kN"
           @update:model-value="updateLoad(i, String($event))"
         />
-        <div class="text-xs text-slate-400 text-center mt-0.5">
+        <div class="text-xs text-muted-foreground text-center mt-0.5">
           {{ result.strengths[i] ? Number(result.strengths[i]).toFixed(2) : "—" }}
         </div>
       </div>
     </div>
-    <div v-if="verdict" class="text-xs text-gray-600">评定：{{ verdict }}</div>
+    <div v-if="verdict" class="text-xs text-muted-foreground">评定：{{ verdict }}</div>
   </div>
 </template>

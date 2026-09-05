@@ -387,7 +387,7 @@ function cellOf(item: ListItem, idx: number): string {
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">{{ title }}</h1>
-        <p class="text-sm text-slate-500">M06 检测能力多资源列表（数据来自 lab-msw fixtures）</p>
+        <p class="text-sm text-muted-foreground">M06 检测能力多资源列表（数据来自 lab-msw fixtures）</p>
       </div>
       <Button :data-fn="fnCreate" @click="openCreate">
         {{ createLabel }}
@@ -453,21 +453,21 @@ function cellOf(item: ListItem, idx: number): string {
       </Select>
     </div>
 
-    <div v-if="error" role="alert" class="text-sm text-red-600 bg-red-50 p-2 rounded">{{ error }}</div>
+    <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">{{ error }}</div>
 
-    <div v-if="!loading && items.length === 0" class="text-sm text-slate-400 text-center py-8">
+    <div v-if="!loading && items.length === 0" class="text-sm text-muted-foreground text-center py-8">
       暂无{{ title }}，点击右上角新建一行
     </div>
 
     <Table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
-      <TableHeader class="bg-slate-50 text-slate-600">
+      <TableHeader class="bg-muted text-muted-foreground">
         <TableRow>
           <TableHead v-for="(h, i) in columnHeaders()" :key="i" class="px-4 py-2 text-left">{{ h }}</TableHead>
           <TableHead class="px-4 py-2 text-left w-32">操作</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="item in items" :key="item.id" class="border-t hover:bg-slate-50">
+        <TableRow v-for="item in items" :key="item.id" class="border-t hover:bg-muted">
           <TableCell v-for="(_, i) in columnHeaders()" :key="i" class="px-4 py-2 align-top">
             <span v-if="i === 0" class="font-mono text-xs">{{ cellOf(item, i) }}</span>
             <span v-else>{{ cellOf(item, i) }}</span>
@@ -507,7 +507,7 @@ function cellOf(item: ListItem, idx: number): string {
       </TableBody>
     </Table>
 
-    <div class="text-sm text-slate-500">共 {{ total }} 条</div>
+    <div class="text-sm text-muted-foreground">共 {{ total }} 条</div>
 
     <Dialog
       :open="mode.kind === 'create' || mode.kind === 'edit'"
@@ -531,7 +531,7 @@ function cellOf(item: ListItem, idx: number): string {
           </DialogDescription>
         </DialogHeader>
         <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-          <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
+          <div v-if="saveError" role="alert" class="text-destructive bg-destructive/10 p-2 rounded">{{ saveError }}</div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <Label>编码</Label>
@@ -584,7 +584,7 @@ function cellOf(item: ListItem, idx: number): string {
               <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /><Label>启用</Label></div>
               <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOptionalForQualification')" @update:model-value="(v) => writeBool('isOptionalForQualification', v)" /><Label>资质可选</Label></div>
             </div>
-            <div class="text-xs text-slate-500">
+            <div class="text-xs text-muted-foreground">
               已选检测参数候选：{{ parameterOptions.length }} 个（M06.F02.I02 关联）
             </div>
           </div>
@@ -655,7 +655,7 @@ function cellOf(item: ListItem, idx: number): string {
       <p>
         确定删除 <span class="font-mono">{{ deleteTarget?.code ?? "" }}</span>？官方数据与被引用数据不可删除。
       </p>
-      <p v-if="deleteError" role="alert" class="mt-2 text-red-600">{{ deleteError }}</p>
+      <p v-if="deleteError" role="alert" class="mt-2 text-destructive">{{ deleteError }}</p>
     </ConfirmDialog>
 
     <!-- M06.F03.I02 参数↔标准关联弹窗（parameters 资源） -->

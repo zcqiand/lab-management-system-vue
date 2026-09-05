@@ -140,7 +140,7 @@ describe("Phase 1.2b — DataEntryPage <Button> 原语回归", () => {
     expect(entry.classes()).toContain("border");
   });
 
-  it("弹窗保存按钮：data-fn 落到真实 <button>，bg-blue-600 压过 CVA bg-primary", async () => {
+  it("弹窗保存按钮：data-fn 落到真实 <button>，bg-info 压过 CVA bg-primary", async () => {
     const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
     lastWrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -155,7 +155,7 @@ describe("Phase 1.2b — DataEntryPage <Button> 原语回归", () => {
     const save = lastWrapper.find('button[data-fn="M03.F03.I02"]');
     expect(save.exists()).toBe(true);
     expect(save.classes()).toContain("inline-flex");
-    expect(save.classes()).toContain("bg-blue-600");
+    expect(save.classes()).toContain("bg-info");
     expect(save.classes()).not.toContain("bg-primary");
 
     const cancel = lastWrapper.findAll("button").find((b) => b.text() === "取消");

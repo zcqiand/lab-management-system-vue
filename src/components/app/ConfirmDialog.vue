@@ -84,16 +84,16 @@ function handleEscape(e: KeyboardEvent): void {
       class="w-96 max-w-[90vw] gap-0 rounded-lg bg-white p-0 shadow-xl"
       @escape-key-down="handleEscape"
     >
-      <AlertDialogHeader class="border-b border-gray-200 px-6 py-4">
+      <AlertDialogHeader class="border-b border px-6 py-4">
         <AlertDialogTitle>{{ title }}</AlertDialogTitle>
       </AlertDialogHeader>
       <div class="px-6 py-4">
-        <AlertDialogDescription v-if="message" class="text-sm text-gray-600">
+        <AlertDialogDescription v-if="message" class="text-sm text-muted-foreground">
           {{ message }}
         </AlertDialogDescription>
         <slot />
       </div>
-      <AlertDialogFooter class="justify-end gap-2 border-t border-gray-200 px-6 py-3">
+      <AlertDialogFooter class="justify-end gap-2 border-t border px-6 py-3">
         <AlertDialogCancel :disabled="loading" data-fn="confirm-dialog-cancel">
           {{ cancelText }}
         </AlertDialogCancel>
