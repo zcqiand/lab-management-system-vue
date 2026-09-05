@@ -1,6 +1,8 @@
 // M06.F03.I02 — 参数↔标准关联弹窗 smoke（镜像 react 仓 parameterStandardLink.dom.test.tsx）
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { nextTick } from "vue";
 import { flushPromises } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
@@ -199,5 +201,75 @@ describe("Phase 2a-3 — ParameterStandardLinkDialog 关联表 <Table> 原语回
     expect(codeCell).toBeTruthy();
     expect(codeCell!.classes()).toContain("font-mono");
     expect(codeCell!.classes()).toContain("text-xs");
+  });
+});
+
+// Phase 2e-3 —— ParameterStandardLinkDialog 关联型弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 与样板不同的关键点：本弹窗的 data-fn='M06.F03.I02' 是挂在**行内 button**
+// 而非外层遮罩 div，DialogContent 没拿到这个属性。锚测要锁：行内 button 上
+// data-fn 仍落真实 <button>，且被 [role=cell] 包裹（不被 Dialog 抽走）。
+describe("Phase 2e-3 — ParameterStandardLinkDialog 关联弹窗走 Dialog 底座", () => {
+  async function mountDialog(props?: Record<string, unknown>): Promise<VueWrapper> {
+    const { default: Dialog } = await import(
+      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
+    );
+    const wrapper = mountWithProviders(Dialog, {
+      props: { open: true, parameterCode: "IP-0001", parameterName: "抗压强度", ...props },
+      global: MOUNT_GLOBAL,
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    return wrapper;
+  }
+
+  it("弹窗渲染 div[role=dialog]，标题经 reka context 连上 aria-labelledby='关联标准 — 抗压强度'", async () => {
+    const w = await mountDialog();
+
+    const dialog = w.find('[role="dialog"]');
+    expect(dialog.exists()).toBe(true);
+
+    const titleId = dialog.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toContain("关联标准 — 抗压强度");
+
+    const descId = dialog.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("参数编码 IP-0001");
+  });
+
+  it("行内 button data-fn='M06.F03.I02' 仍落真实 <button> 且嵌套在 [role=cell] 内", async () => {
+    const w = await mountDialog();
+    const dialog = w.find('[role="dialog"]');
+    expect(dialog.exists()).toBe(true);
+
+    const buttons = dialog.findAll('button[data-fn="M06.F03.I02"]');
+    // fixture 2 个标准 → 2 个行内按钮
+    expect(buttons.length).toBe(2);
+    for (const btn of buttons) {
+      expect(btn.element.tagName).toBe("BUTTON");
+      const cell = btn.element.parentElement;
+      expect(cell).not.toBeNull();
+      expect(cell!.getAttribute("role")).toBe("cell");
+    }
+  });
+
+  it("ESC 走 @update:open → emit('update:open', false)（update:open 事件被触发）", async () => {
+    const w = await mountDialog();
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    // 受控 props.open=true，弹窗始终开。要触发 ESC 关闭需先验证 emit，
+    // 但 props.open=true 让 Dialog 始终受控 open=true → reka 不会真的关。
+    // 改成父组件改 props 为 false 验证 close 路径 + reka ESC handler 路径同时存在。
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    // emit('update:open', false) 必须在某处被触发：wrapper.emitted() 是接受方记录
+    expect(w.emitted("update:open")).toBeTruthy();
+    expect(w.emitted("update:open")!.some((args) => args[0] === false)).toBe(true);
   });
 });

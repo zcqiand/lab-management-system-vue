@@ -8,6 +8,11 @@ import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import { unwrapListResponse } from "@/lib/responses";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Table from "@/components/ui/Table.vue";
 import TableBody from "@/components/ui/TableBody.vue";
 import TableCell from "@/components/ui/TableCell.vue";
@@ -116,61 +121,62 @@ function close(): void {
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      v-if="open"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      @click.self="close"
-    >
-      <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
-        <div class="px-6 py-4 border-b">
-          <h2 class="text-lg font-semibold">关联标准 — {{ parameterName }}</h2>
-          <p class="text-sm text-slate-500">
-            参数编码 {{ parameterCode }}；已关联 {{ linkedCount }} 项（toggle 即时保存）
-          </p>
-        </div>
-        <div class="px-6 py-4">
-          <p v-if="loading" class="text-sm text-slate-500 py-4">加载中…</p>
-          <Table v-else class="w-full text-sm">
-            <TableHeader class="bg-slate-50 text-slate-600">
-              <TableRow>
-                <TableHead class="px-3 py-2 text-left">标准编码</TableHead>
-                <TableHead class="px-3 py-2 text-left">名称</TableHead>
-                <TableHead class="px-3 py-2 text-left">版本</TableHead>
-                <TableHead class="px-3 py-2 text-left">状态</TableHead>
-                <TableHead class="px-3 py-2 text-left w-24">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow v-for="s in standards" :key="s.code" class="border-t hover:bg-slate-50">
-                <TableCell class="px-3 py-2 font-mono text-xs">{{ s.code }}</TableCell>
-                <TableCell class="px-3 py-2">{{ s.name ?? "-" }}</TableCell>
-                <TableCell class="px-3 py-2 text-xs">{{ s.version ?? "-" }}</TableCell>
-                <TableCell class="px-3 py-2">
-                  <span
-                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
-                    :class="s.status === 'active' ? 'bg-slate-900 text-white' : 'border text-slate-600'"
-                  >
-                    {{ statusCn(s.status) }}
-                  </span>
-                </TableCell>
-                <TableCell class="px-3 py-2">
-                  <button
-                    :data-fn="'M06.F03.I02'"
-                    :aria-label="`${linked.has(s.code) ? '解除关联' : '关联'} ${s.code}`"
-                    :disabled="busyCode === s.code"
-                    class="px-2 py-1 rounded text-xs"
-                    :class="linked.has(s.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
-                    @click="toggle(s.code)"
-                  >
-                    {{ linked.has(s.code) ? "解除关联" : "关联" }}
-                  </button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
+  <Dialog
+    :open="open"
+    @update:open="
+      (v: boolean) => {
+        if (!v) close();
+      }
+    "
+  >
+    <DialogContent class="max-w-2xl gap-0 p-0 max-h-[80vh] overflow-y-auto">
+      <DialogHeader class="px-6 py-4 border-b gap-1.5">
+        <DialogTitle>关联标准 — {{ parameterName }}</DialogTitle>
+        <DialogDescription>
+          参数编码 {{ parameterCode }}；已关联 {{ linkedCount }} 项（toggle 即时保存）
+        </DialogDescription>
+      </DialogHeader>
+      <div class="px-6 py-4">
+        <p v-if="loading" class="text-sm text-slate-500 py-4">加载中…</p>
+        <Table v-else class="w-full text-sm">
+          <TableHeader class="bg-slate-50 text-slate-600">
+            <TableRow>
+              <TableHead class="px-3 py-2 text-left">标准编码</TableHead>
+              <TableHead class="px-3 py-2 text-left">名称</TableHead>
+              <TableHead class="px-3 py-2 text-left">版本</TableHead>
+              <TableHead class="px-3 py-2 text-left">状态</TableHead>
+              <TableHead class="px-3 py-2 text-left w-24">操作</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="s in standards" :key="s.code" class="border-t hover:bg-slate-50">
+              <TableCell class="px-3 py-2 font-mono text-xs">{{ s.code }}</TableCell>
+              <TableCell class="px-3 py-2">{{ s.name ?? "-" }}</TableCell>
+              <TableCell class="px-3 py-2 text-xs">{{ s.version ?? "-" }}</TableCell>
+              <TableCell class="px-3 py-2">
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                  :class="s.status === 'active' ? 'bg-slate-900 text-white' : 'border text-slate-600'"
+                >
+                  {{ statusCn(s.status) }}
+                </span>
+              </TableCell>
+              <TableCell class="px-3 py-2">
+                <button
+                  :data-fn="'M06.F03.I02'"
+                  :aria-label="`${linked.has(s.code) ? '解除关联' : '关联'} ${s.code}`"
+                  :disabled="busyCode === s.code"
+                  class="px-2 py-1 rounded text-xs"
+                  :class="linked.has(s.code) ? 'border text-slate-700' : 'bg-slate-900 text-white'"
+                  @click="toggle(s.code)"
+                >
+                  {{ linked.has(s.code) ? "解除关联" : "关联" }}
+                </button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
-    </div>
-  </Teleport>
+    </DialogContent>
+  </Dialog>
 </template>
