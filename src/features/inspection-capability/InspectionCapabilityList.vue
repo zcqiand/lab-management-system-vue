@@ -9,6 +9,12 @@ import axios, { type AxiosResponse } from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
 import Button from "@/components/ui/Button.vue";
 import Checkbox from "@/components/ui/Checkbox.vue";
+import Dialog from "@/components/ui/Dialog.vue";
+import DialogContent from "@/components/ui/DialogContent.vue";
+import DialogDescription from "@/components/ui/DialogDescription.vue";
+import DialogFooter from "@/components/ui/DialogFooter.vue";
+import DialogHeader from "@/components/ui/DialogHeader.vue";
+import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
@@ -503,140 +509,141 @@ function cellOf(item: ListItem, idx: number): string {
 
     <div class="text-sm text-slate-500">共 {{ total }} 条</div>
 
-    <Teleport to="body">
-      <div
-        v-if="mode.kind === 'create' || mode.kind === 'edit'"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        @click.self="closeDialog"
-      >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl">
-          <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold">
-              {{ mode.kind === "create" ? createLabel : `编辑${title}` }}
-            </h2>
-            <p class="text-sm text-slate-500">
-              {{
-                props.resource === "objects"
-                  ? "M06.F02.I02 项目↔专项/参数关联：选择检测专项编码把项目挂到专项下"
-                  : "填写后保存"
-              }}
-            </p>
-          </div>
-          <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-            <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <Label>编码</Label>
-                <Input v-model="form.code" :disabled="mode.kind === 'edit'" />
-              </div>
-              <div>
-                <Label>名称</Label>
-                <Input v-model="form.name" />
-              </div>
-            </div>
-            <div v-if="props.resource === 'specialties'" class="grid grid-cols-3 gap-3">
-              <div>
-                <Label>官方序号</Label>
-                <Input v-model="form.officialNo" />
-              </div>
-              <div class="pt-6 flex items-center gap-2">
-                <Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /> <Label>官方</Label>
-              </div>
-              <div class="pt-6 flex items-center gap-2">
-                <Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /> <Label>启用</Label>
-              </div>
-            </div>
-            <div v-else-if="props.resource === 'objects'" class="space-y-3">
-              <div>
-                <Label for="inspectionSpecialtyCode">检测专项编码</Label>
-                <Select v-model="form.inspectionSpecialtyCode">
-                  <SelectTrigger id="inspectionSpecialtyCode" class="w-full">
-                    <SelectValue placeholder="未选择" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">未选择</SelectItem>
-                    <SelectItem v-for="s in specialtyOptions" :key="s.code" :value="s.code">
-                      {{ s.code }} {{ s.name }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>来源行号</Label>
-                  <Input v-model="form.sourceProjectNo" />
-                </div>
-                <div>
-                  <Label>来源行名称</Label>
-                  <Input v-model="form.sourceProjectName" />
-                </div>
-              </div>
-              <div class="grid grid-cols-3 gap-3">
-                <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /><Label>官方</Label></div>
-                <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /><Label>启用</Label></div>
-                <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOptionalForQualification')" @update:model-value="(v) => writeBool('isOptionalForQualification', v)" /><Label>资质可选</Label></div>
-              </div>
-              <div class="text-xs text-slate-500">
-                已选检测参数候选：{{ parameterOptions.length }} 个（M06.F02.I02 关联）
-              </div>
-            </div>
-            <div v-else-if="props.resource === 'parameters'" class="grid grid-cols-3 gap-3">
-              <div>
-                <Label>单位</Label>
-                <Input v-model="form.unit" />
-              </div>
-              <div>
-                <Label for="sourceType">来源类型</Label>
-                <Select v-model="form.sourceType">
-                  <SelectTrigger id="sourceType" class="w-full">
-                    <SelectValue placeholder="选择来源类型" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="official">官方</SelectItem>
-                    <SelectItem value="custom">自定义</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div v-else class="grid grid-cols-3 gap-3">
-              <div>
-                <Label>版本</Label>
-                <Input v-model="form.version" />
-              </div>
-              <div>
-                <Label for="status">状态</Label>
-                <Select v-model="form.status">
-                  <SelectTrigger id="status" class="w-full">
-                    <SelectValue placeholder="选择状态" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">现行</SelectItem>
-                    <SelectItem value="superseded">被替代</SelectItem>
-                    <SelectItem value="draft">草案</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>来源文件</Label>
-                <Input v-model="form.sourceDocumentId" />
-              </div>
+    <Dialog
+      :open="mode.kind === 'create' || mode.kind === 'edit'"
+      @update:open="
+        (v: boolean) => {
+          if (!v) closeDialog();
+        }
+      "
+    >
+      <DialogContent class="max-w-xl gap-0 p-0">
+        <DialogHeader class="px-6 py-4 border-b">
+          <DialogTitle>
+            {{ mode.kind === "create" ? createLabel : `编辑${title}` }}
+          </DialogTitle>
+          <DialogDescription>
+            {{
+              props.resource === "objects"
+                ? "M06.F02.I02 项目↔专项/参数关联：选择检测专项编码把项目挂到专项下"
+                : "填写后保存"
+            }}
+          </DialogDescription>
+        </DialogHeader>
+        <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
+          <div v-if="saveError" role="alert" class="text-red-600 bg-red-50 p-2 rounded">{{ saveError }}</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <Label>编码</Label>
+              <Input v-model="form.code" :disabled="mode.kind === 'edit'" />
             </div>
             <div>
-              <Label>排序</Label>
-              <Input v-model.number="form.sortOrder" type="number" />
+              <Label>名称</Label>
+              <Input v-model="form.name" />
             </div>
           </div>
-          <div class="px-6 py-3 flex justify-end gap-2 border-t">
-            <Button variant="outline" @click="closeDialog">
-              取消
-            </Button>
-            <Button :data-fn="fnCreate" @click="submitForm">
-              保存
-            </Button>
+          <div v-if="props.resource === 'specialties'" class="grid grid-cols-3 gap-3">
+            <div>
+              <Label>官方序号</Label>
+              <Input v-model="form.officialNo" />
+            </div>
+            <div class="pt-6 flex items-center gap-2">
+              <Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /> <Label>官方</Label>
+            </div>
+            <div class="pt-6 flex items-center gap-2">
+              <Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /> <Label>启用</Label>
+            </div>
+          </div>
+          <div v-else-if="props.resource === 'objects'" class="space-y-3">
+            <div>
+              <Label for="inspectionSpecialtyCode">检测专项编码</Label>
+              <Select v-model="form.inspectionSpecialtyCode">
+                <SelectTrigger id="inspectionSpecialtyCode" class="w-full">
+                  <SelectValue placeholder="未选择" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">未选择</SelectItem>
+                  <SelectItem v-for="s in specialtyOptions" :key="s.code" :value="s.code">
+                    {{ s.code }} {{ s.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <Label>来源行号</Label>
+                <Input v-model="form.sourceProjectNo" />
+              </div>
+              <div>
+                <Label>来源行名称</Label>
+                <Input v-model="form.sourceProjectName" />
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /><Label>官方</Label></div>
+              <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /><Label>启用</Label></div>
+              <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOptionalForQualification')" @update:model-value="(v) => writeBool('isOptionalForQualification', v)" /><Label>资质可选</Label></div>
+            </div>
+            <div class="text-xs text-slate-500">
+              已选检测参数候选：{{ parameterOptions.length }} 个（M06.F02.I02 关联）
+            </div>
+          </div>
+          <div v-else-if="props.resource === 'parameters'" class="grid grid-cols-3 gap-3">
+            <div>
+              <Label>单位</Label>
+              <Input v-model="form.unit" />
+            </div>
+            <div>
+              <Label for="sourceType">来源类型</Label>
+              <Select v-model="form.sourceType">
+                <SelectTrigger id="sourceType" class="w-full">
+                  <SelectValue placeholder="选择来源类型" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="official">官方</SelectItem>
+                  <SelectItem value="custom">自定义</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div v-else class="grid grid-cols-3 gap-3">
+            <div>
+              <Label>版本</Label>
+              <Input v-model="form.version" />
+            </div>
+            <div>
+              <Label for="status">状态</Label>
+              <Select v-model="form.status">
+                <SelectTrigger id="status" class="w-full">
+                  <SelectValue placeholder="选择状态" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">现行</SelectItem>
+                  <SelectItem value="superseded">被替代</SelectItem>
+                  <SelectItem value="draft">草案</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>来源文件</Label>
+              <Input v-model="form.sourceDocumentId" />
+            </div>
+          </div>
+          <div>
+            <Label>排序</Label>
+            <Input v-model.number="form.sortOrder" type="number" />
           </div>
         </div>
-      </div>
-    </Teleport>
+        <DialogFooter class="px-6 py-3 justify-end gap-2 border-t">
+          <Button variant="outline" @click="closeDialog">
+            取消
+          </Button>
+          <Button :data-fn="fnCreate" @click="submitForm">
+            保存
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <ConfirmDialog
       :open="deleteTarget !== null"

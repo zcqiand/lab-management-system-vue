@@ -810,3 +810,84 @@ describe("Phase 2e-3 — TechnicalRequirementList 表单弹窗走 Dialog 底座"
     expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });
+
+
+// Phase 2e-3 batch 2 —— 新建/编辑弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
+// 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
+describe("Phase 2e-3 — InspectionCapabilityList 表单弹窗走 Dialog 底座", () => {
+  async function openForm(resource: string, label: string): Promise<VueWrapper> {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, { props: { resource } });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === label)!;
+    await createBtn.trigger("click");
+    await flushPromises();
+    return lastWrapper;
+  }
+
+  it("弹窗渲染 div[role=dialog]，标题/描述经 reka context 连上 aria", async () => {
+    const w = await openForm("specialties", "新建检测专项");
+
+    const content = w.find('[role="dialog"]');
+    expect(content.exists()).toBe(true);
+
+    const titleId = content.attributes("aria-labelledby");
+    expect(titleId).toBeTruthy();
+    expect(w.find(`#${titleId}`).text()).toBe("新建检测专项");
+
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("填写后保存");
+  });
+
+  it("objects 视图描述文案（关联说明）仍经 DialogDescription 连上 aria-describedby", async () => {
+    const w = await openForm("objects", "新建检测项目");
+
+    const content = w.find('[role="dialog"]');
+    const descId = content.attributes("aria-describedby");
+    expect(descId).toBeTruthy();
+    expect(w.find(`#${descId}`).text()).toContain("项目↔专项/参数关联");
+  });
+
+  it("保存按钮的 data-fn 没被结构改动吞掉，仍落在真实 <button> 上且弹窗内只有一个", async () => {
+    // standards 视图：fnCreate = 标准 CRUD，与页头「新建检测标准」同 data-fn，靠文本区分
+    const w = await openForm("standards", "新建检测标准");
+
+    const save = w.find('button[data-fn="M06.F04.I02"][class*="inline-flex"]');
+    expect(save.exists()).toBe(true);
+    const inDialog = w.find('[role="dialog"]').findAll('button[data-fn="M06.F04.I02"]');
+    expect(inDialog.length).toBe(1);
+    expect(inDialog[0]!.text()).toBe("保存");
+  });
+
+  it("列表行内 data-fn 锚点不受弹窗换底座影响（parameters 视图 根容器 + 关联标准键）", async () => {
+    lastWrapper = mountWithProviders(InspectionCapabilityList, {
+      props: { resource: "parameters" },
+    });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    // 根容器 data-fn 仍在
+    expect(lastWrapper.find('[data-fn="M06.F03.I01"]').exists()).toBe(true);
+    // 行内「关联标准」按钮 data-fn 仍落在真实 <button>
+    const link = lastWrapper.find('button[data-fn="M06.F03.I02"]');
+    expect(link.exists()).toBe(true);
+    expect(link.element.tagName).toBe("BUTTON");
+  });
+
+  it("ESC 关闭弹窗（走 @update:open → closeDialog）", async () => {
+    const w = await openForm("specialties", "新建检测专项");
+    expect(w.find('[role="dialog"]').exists()).toBe(true);
+
+    await nextTick();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    await nextTick();
+    await flushPromises();
+
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
+  });
+});
