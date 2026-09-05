@@ -8,6 +8,11 @@ import type { ParamModelProps, ParamTechReq } from "./types";
 import type { TestRecord } from "@/api/endpoints/endpoints.schemas";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import Table from "@/components/ui/Table.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableBody from "@/components/ui/TableBody.vue";
@@ -17,6 +22,11 @@ import TableCell from "@/components/ui/TableCell.vue";
 import { autoVerdict, parseStrengthRecord, type StrengthResult } from "./cement-strength";
 
 const MANUAL_VERDICTS = ["合格", "不合格"] as const;
+// reka-ui SelectItem 禁 value=""（空串是「未选中」的内部语义），
+// 所以原 <option value="">未评定</option> 用哨兵值承载，handler 里翻译回 ''。
+const NONE = "__none__";
+// 触发器视觉对齐原 raw <select>：行内、内容自适应、比默认 h-9 矮一档。
+const TRIGGER_CLS = "inline-flex h-8 w-auto min-w-24 gap-1 px-2 text-sm";
 
 interface StrengthCardProps extends ParamModelProps {
   /** 试件数（抗折 3 / 抗压 6）。 */
@@ -126,17 +136,17 @@ function onLoadChange(i: number, v: string) {
   emit(next, reqId.value);
 }
 
-function onReqChange(e: Event) {
+function onReqChange(v: string | number) {
   if (readOnly) return;
-  const target = e.target as HTMLSelectElement;
-  reqId.value = target.value;
-  emit(loads.value, target.value);
+  const next = String(v);
+  reqId.value = next;
+  emit(loads.value, next);
 }
 
-function onManualVerdictChange(e: Event) {
+function onManualVerdictChange(v: string | number) {
   if (readOnly) return;
-  const target = e.target as HTMLSelectElement;
-  emit(loads.value, reqId.value, target.value);
+  // reka-ui SelectItem 不接受空串 value，空选项走 __none__ sentinel，这里翻译回 ''
+  emit(loads.value, reqId.value, v === NONE ? "" : String(v));
 }
 
 const verdictClass = computed(() =>
@@ -193,28 +203,32 @@ const verdictClass = computed(() =>
     </div>
     <div v-if="reqOptions.length > 0" class="text-xs">
       <Label class="text-xs text-gray-500 mr-1">技术要求</Label>
-      <select
-        :value="reqId"
-        :disabled="readOnly"
-        class="border rounded px-1 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-500"
-        @change="onReqChange"
-      >
-        <option v-for="r in reqOptions" :key="r.id" :value="r.id">
-          {{ requirementLabel(r) }}
-        </option>
-      </select>
+      <Select :model-value="reqId" :disabled="readOnly" @update:model-value="onReqChange">
+        <SelectTrigger aria-label="技术要求" :class="TRIGGER_CLS">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem v-for="r in reqOptions" :key="r.id" :value="r.id ?? ''">
+            {{ requirementLabel(r) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
     </div>
     <div v-else class="text-xs">
       <Label class="text-xs text-gray-500 mr-1">单项评定</Label>
-      <select
-        :value="record?.verdict ?? ''"
+      <Select
+        :model-value="record?.verdict || NONE"
         :disabled="readOnly"
-        class="border rounded px-1 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-500"
-        @change="onManualVerdictChange"
+        @update:model-value="onManualVerdictChange"
       >
-        <option value="">未评定</option>
-        <option v-for="v in MANUAL_VERDICTS" :key="v" :value="v">{{ v }}</option>
-      </select>
+        <SelectTrigger aria-label="单项评定" :class="TRIGGER_CLS">
+          <SelectValue placeholder="未评定" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem :value="NONE">未评定</SelectItem>
+          <SelectItem v-for="v in MANUAL_VERDICTS" :key="v" :value="v">{{ v }}</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   </div>
 </template>

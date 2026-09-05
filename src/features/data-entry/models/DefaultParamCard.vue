@@ -11,6 +11,9 @@ import SelectTrigger from "@/components/ui/SelectTrigger.vue";
 import SelectValue from "@/components/ui/SelectValue.vue";
 
 const VERDICT_OPTIONS = ["合格", "不合格", "符合", "不符合"] as const;
+// reka-ui SelectItem 禁 value=""；原 <option value="">—/未评定</option> 走哨兵值，
+// handler 里翻译回 '' 让 onChange 语义与迁移前一致。
+const NONE = "__none__";
 
 const props = defineProps<ParamModelProps>();
 const { parameter: p, record: rec, standards, stdParams, techReqs, onChange, readOnly = false } = props;
@@ -55,17 +58,17 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
     </div>
     <div class="grid grid-cols-4 gap-x-3 gap-y-1 text-xs">
       <div>
-        <Label for="standardCode" class="block text-xs text-slate-500 mb-0.5">检测依据</Label>
+        <Label class="block text-xs text-slate-500 mb-0.5">检测依据</Label>
         <Select
-          :model-value="rec?.standardCode ?? ''"
+          :model-value="rec?.standardCode || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => onChange({ standardCode: v === '__none__' ? '' : String(v) })"
+          @update:model-value="(v: string | number) => onChange({ standardCode: v === NONE ? '' : String(v) })"
         >
-          <SelectTrigger class="w-full h-8 px-2 text-sm">
+          <SelectTrigger aria-label="检测依据" class="w-full h-8 px-2 text-sm">
             <SelectValue placeholder="—" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__none__">—</SelectItem>
+            <SelectItem :value="NONE">—</SelectItem>
             <SelectItem v-for="s in basisOptions" :key="s.code" :value="s.code">
               {{ s.code }} {{ s.name }}
             </SelectItem>
@@ -73,21 +76,21 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         </Select>
       </div>
       <div>
-        <Label for="requirementCode" class="block text-xs text-slate-500 mb-0.5">技术要求</Label>
+        <Label class="block text-xs text-slate-500 mb-0.5">技术要求</Label>
         <Select
-          :model-value="rec?.requirementCode ?? ''"
+          :model-value="rec?.requirementCode || NONE"
           :disabled="readOnly"
           @update:model-value="(v: string | number) => {
-            const sv = v === '__none__' ? '' : String(v);
+            const sv = v === NONE ? '' : String(v);
             const found = reqOptions.find((r) => r.id === sv);
             onChange({ requirementCode: sv, requirement: found ? requirementLabel(found) : '' });
           }"
         >
-          <SelectTrigger class="w-full h-8 px-2 text-sm">
+          <SelectTrigger aria-label="技术要求" class="w-full h-8 px-2 text-sm">
             <SelectValue placeholder="—" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__none__">—</SelectItem>
+            <SelectItem :value="NONE">—</SelectItem>
             <SelectItem v-for="r in reqOptions" :key="r.id" :value="r.id ?? ''">
               {{ requirementLabel(r) }}
             </SelectItem>
@@ -105,17 +108,17 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         />
       </div>
       <div>
-        <Label for="verdict" class="block text-xs text-slate-500 mb-0.5">单项评定</Label>
+        <Label class="block text-xs text-slate-500 mb-0.5">单项评定</Label>
         <Select
-          :model-value="rec?.verdict ?? ''"
+          :model-value="rec?.verdict || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => onChange({ verdict: v === '__none__' ? '' : String(v) })"
+          @update:model-value="(v: string | number) => onChange({ verdict: v === NONE ? '' : String(v) })"
         >
-          <SelectTrigger class="w-full h-8 px-2 text-sm">
+          <SelectTrigger aria-label="单项评定" class="w-full h-8 px-2 text-sm">
             <SelectValue placeholder="未评定" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__none__">未评定</SelectItem>
+            <SelectItem :value="NONE">未评定</SelectItem>
             <SelectItem v-for="v in VERDICT_OPTIONS" :key="v" :value="v">{{ v }}</SelectItem>
           </SelectContent>
         </Select>

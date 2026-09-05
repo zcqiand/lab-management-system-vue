@@ -4,6 +4,11 @@
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps } from "./types";
 import Input from "@/components/ui/Input.vue";
+import Select from "@/components/ui/Select.vue";
+import SelectContent from "@/components/ui/SelectContent.vue";
+import SelectItem from "@/components/ui/SelectItem.vue";
+import SelectTrigger from "@/components/ui/SelectTrigger.vue";
+import SelectValue from "@/components/ui/SelectValue.vue";
 import Table from "@/components/ui/Table.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableBody from "@/components/ui/TableBody.vue";
@@ -13,6 +18,10 @@ import TableCell from "@/components/ui/TableCell.vue";
 import { parseBendRecord, type BendSpecimen } from "./rebar-welding";
 
 const BEND_RESULTS = ["合格", "不合格"] as const;
+// reka-ui SelectItem 禁 value=""；原 <option value="">未评定</option> 走哨兵值。
+const NONE = "__none__";
+// 触发器视觉对齐原 raw <select>：行内、内容自适应、比默认 h-9 矮一档。
+const TRIGGER_CLS = "inline-flex h-8 w-auto min-w-24 gap-1 px-2 text-sm";
 
 const props = defineProps<ParamModelProps>();
 const { parameter: p, record, sampleId, onChange, readOnly = false } = props;
@@ -94,17 +103,20 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
       </span>
       <span class="text-xs">
         <span v-if="overallComputed" :class="overallClass">{{ overallComputed }}</span>
-        <select
+        <Select
           v-else
-          :value="record?.verdict ?? ''"
+          :model-value="record?.verdict || NONE"
           :disabled="readOnly"
-          aria-label="整体单项评定"
-          class="border rounded px-1 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-500"
-          @change="(e) => handleOverallVerdict((e.target as HTMLSelectElement).value)"
+          @update:model-value="(v: string | number) => handleOverallVerdict(v === NONE ? '' : String(v))"
         >
-          <option value="">未评定</option>
-          <option v-for="v in BEND_RESULTS" :key="v" :value="v">{{ v }}</option>
-        </select>
+          <SelectTrigger aria-label="整体单项评定" :class="TRIGGER_CLS">
+            <SelectValue placeholder="未评定" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem :value="NONE">未评定</SelectItem>
+            <SelectItem v-for="v in BEND_RESULTS" :key="v" :value="v">{{ v }}</SelectItem>
+          </SelectContent>
+        </Select>
       </span>
     </div>
 
@@ -132,15 +144,18 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
             />
           </TableCell>
           <TableCell class="py-1">
-            <select
-              :value="spec.results[t]"
+            <Select
+              :model-value="spec.results[t] || undefined"
               :disabled="readOnly"
-              :aria-label="`试件 ${t + 1} 弯曲结果`"
-              class="border rounded px-2 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-500"
-              @change="(e) => updateResult(t, (e.target as HTMLSelectElement).value)"
+              @update:model-value="(v: string | number) => updateResult(t, String(v))"
             >
-              <option v-for="opt in BEND_RESULTS" :key="opt" :value="opt">{{ opt }}</option>
-            </select>
+              <SelectTrigger :aria-label="`试件 ${t + 1} 弯曲结果`" :class="TRIGGER_CLS">
+                <SelectValue placeholder="未选" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="opt in BEND_RESULTS" :key="opt" :value="opt">{{ opt }}</SelectItem>
+              </SelectContent>
+            </Select>
           </TableCell>
         </TableRow>
       </TableBody>

@@ -2,6 +2,7 @@
 // 镜像 react 仓同名测试文件，针对 vue 仓 <script setup lang="ts"> 的 selectors 做了调整。
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { nextTick } from "vue";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import ConcreteCompressCard from "@/features/data-entry/models/ConcreteCompressCard.vue";
@@ -449,7 +450,7 @@ describe("Phase 1.4 — 模型卡 <Label> 原语回归", () => {
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
   });
 
-  it("StrengthCardBase：技术要求 <Label> 落成真实 <label>，旁边 <select> 仍是 raw", () => {
+  it("StrengthCardBase：技术要求 <Label> 落成真实 <label>", () => {
     lastCardWrapper = mount(StrengthCardBase, {
       props: {
         ...makeProps(),
@@ -464,8 +465,6 @@ describe("Phase 1.4 — 模型卡 <Label> 原语回归", () => {
     expect(labels[0].text()).toBe("单项评定");
     expect(labels[0].classes()).toContain("text-xs");
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
-    // <select> 留 Phase 2d，仍是 raw
-    expect(lastCardWrapper.find("select").exists()).toBe(true);
   });
 
   it("CementCompressCard：6 个试件 <Label> 落成真实 <label>，文本「试件 N」", () => {
@@ -670,5 +669,183 @@ describe("Phase 2a-4 — 数据录入卡 <Table> 原语回归", () => {
     expect(seq.text()).toBe("1");
     // 平均行文本仍在第 2 格
     expect(bodyRows[6]!.findAll('[role="cell"]')[1]!.text()).toBe("平均值(%):");
+  });
+});
+
+// Phase 2d-2 Select 迁移回归锚（不挂功能 ID，工程设施测试）。
+// 锁：4 张数据录入卡（钢筋力学数值 / 焊接抗拉 / 焊接弯曲 / 强度基类）的
+// raw <select>+<option> 迁到 shadcn-vue Select 5 原语后——
+//   1. 卡内不再有任何 raw <select>
+//   2. reka-ui 渲染 <button role="combobox">，aria-label 经 $attrs 落到真实 <button>
+//      （无 aria-label 的旧站点在迁移时补齐，取原 <Label> 文本）
+//   3. `<option value="">` 不能直译（reka-ui SelectItem 禁空串 value），
+//      走 `__none__` sentinel + handler 翻译回空串，回调语义不变
+//   4. readOnly 时 disabled 落到真实 <button>
+describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
+  it("RebarMechNumericCard：技术要求 + 整体评定 → combobox，无 raw select", () => {
+    lastCardWrapper = mount(RebarMechNumericCard, { props: makeProps() });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    expect(
+      lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]').exists(),
+    ).toBe(true);
+    // techReqs 为空 → verdict 落空 → v-else 分支的整体评定 combobox 出现
+    expect(
+      lastCardWrapper.find('button[role="combobox"][aria-label="整体单项评定"]').exists(),
+    ).toBe(true);
+  });
+
+  it("RebarMechNumericCard connectionMode：每行断裂位置 combobox 嵌在 cell 内", () => {
+    lastCardWrapper = mount(RebarMechNumericCard, {
+      props: makeProps({
+        config: { formulaKey: "passthrough", specimenCount: 3, connectionMode: true },
+      }),
+    });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+    expect(bodyRows.length).toBe(3);
+    expect(
+      bodyRows[1]!
+        .find('[role="cell"] [role="combobox"][aria-label="第 2 试件断裂位置"]')
+        .exists(),
+    ).toBe(true);
+  });
+
+  it("RebarMechNumericCard readOnly：combobox 拿到 disabled", () => {
+    lastCardWrapper = mount(RebarMechNumericCard, { props: makeProps({ readOnly: true }) });
+
+    const trigger = lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]');
+    expect(trigger.exists()).toBe(true);
+    expect(trigger.attributes("disabled")).toBeDefined();
+  });
+
+  it("RebarWeldingTensileCard：技术要求 + 3 行断裂特征 → combobox，无 raw select", () => {
+    lastCardWrapper = mount(RebarWeldingTensileCard, { props: makeProps() });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    expect(
+      lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]').exists(),
+    ).toBe(true);
+    expect(
+      lastCardWrapper.findAll('button[role="combobox"][aria-label$="断裂特征"]').length,
+    ).toBe(3);
+    // 列头顺序不变（Phase 2a-4 契约不回归）
+    expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      "#",
+      "最大荷重 (kN)",
+      "抗拉强度 (MPa)",
+      "断口距 (mm)",
+      "断裂特征",
+    ]);
+  });
+
+  it("RebarWeldingBendCard：3 行弯曲结果 → combobox，无 raw select", () => {
+    lastCardWrapper = mount(RebarWeldingBendCard, { props: makeProps() });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    expect(
+      lastCardWrapper.findAll('button[role="combobox"][aria-label$="弯曲结果"]').length,
+    ).toBe(3);
+  });
+
+  it("RebarWeldingBendCard：整体评定恒为自动判文本，v-else 的 combobox 分支不可达", () => {
+    // parseBendRecord 把每个 results[t] 归一成 '合格' | '不合格'（非 '不合格' 一律 '合格'），
+    // 所以 overall 恒非空 → 顶部永远走 <span> 分支。
+    // v-else 的整体单项评定 <Select> 是**死分支**：迁移时照译保持行为等价，
+    // 但它渲染不出来，不能拿测试锚它。清理留 Phase 3（需产品确认是否还要这个兜底）。
+    lastCardWrapper = mount(RebarWeldingBendCard, {
+      props: makeProps({
+        record: {
+          result: JSON.stringify({ angles: [90, 90, 90], results: ["合格", "", ""] }),
+        } as never,
+      }),
+    });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    expect(
+      lastCardWrapper.find('button[role="combobox"][aria-label="整体单项评定"]').exists(),
+    ).toBe(false);
+    expect(lastCardWrapper.find(".text-green-600").text()).toBe("合格");
+  });
+
+  it("StrengthCardBase 无技术要求：单项评定 → combobox，无 raw select", () => {
+    lastCardWrapper = mount(StrengthCardBase, {
+      props: {
+        ...makeProps(),
+        specimenCount: 3,
+        compute: (l: number[]) => ({
+          strengths: l.map(() => 0),
+          mean: 0,
+          kept: [true, true, true],
+          invalid: false,
+        }),
+        strengthLabel: "抗压 (MPa)",
+      },
+    });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    expect(
+      lastCardWrapper.find('button[role="combobox"][aria-label="单项评定"]').exists(),
+    ).toBe(true);
+  });
+
+  it("StrengthCardBase 有技术要求：技术要求 → combobox 且显示当前选中项文本", async () => {
+    lastCardWrapper = mount(StrengthCardBase, {
+      props: {
+        ...makeProps({
+          techReqs: [
+            {
+              id: "tr-1",
+              verificationStatus: "verified",
+              comparison: "≥",
+              minValue: 42.5,
+              unit: "MPa",
+            },
+          ] as never,
+        }),
+        specimenCount: 3,
+        compute: (l: number[]) => ({
+          strengths: l.map(() => 0),
+          mean: 0,
+          kept: [true, true, true],
+          invalid: false,
+        }),
+        strengthLabel: "抗压 (MPa)",
+      },
+    });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    const trigger = lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]');
+    expect(trigger.exists()).toBe(true);
+
+    // reka-ui 关闭态把 SelectContent 的 items teleport 进一个 DocumentFragment，
+    // SelectItemText onMounted 时才把 value→text 注册进 rootContext.optionsSet，
+    // SelectValue 靠它回显选中项文本。fragment 本身在 SelectContent 的 onMounted
+    // 里才创建 → 首帧没有 options，必须等一次 flush 才能断言回显文本。
+    await nextTick();
+    await nextTick();
+    expect(trigger.text()).toContain("≥ 42.5 MPa");
+  });
+
+  it("DefaultParamCard：3 个 combobox 带 aria-label，<Label> 不留悬空 for", () => {
+    lastCardWrapper = mount(DefaultParamCard, {
+      props: makeProps({ parameter: param("IP-9999", "兜底参数") }),
+    });
+
+    expect(lastCardWrapper.findAll("select").length).toBe(0);
+    for (const name of ["检测依据", "技术要求", "单项评定"]) {
+      expect(
+        lastCardWrapper.find(`button[role="combobox"][aria-label="${name}"]`).exists(),
+      ).toBe(true);
+    }
+    // 卡片可在一页里按参数重复挂载，id 会撞；因此不用 for/id 配对而用 aria-label。
+    // 悬空 for（指向不存在的 id）比没有更糟，必须清掉。
+    for (const label of lastCardWrapper.findAll("label")) {
+      const target = label.attributes("for");
+      if (target) {
+        expect(lastCardWrapper.find(`#${target}`).exists()).toBe(true);
+      }
+    }
   });
 });
