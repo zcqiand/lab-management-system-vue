@@ -1,10 +1,10 @@
-import { describe, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fnTest } from "./fn";
 
-// 5 I 级 ID 存在性锚点测试：仅作 L5 「已上线但无测试引用」警告的解除
-// 注意：实质行为测试需在对应功能单测里加；这里是接入点声明
+// 接入点存在性 smoke（ADR-0033 阶段二：M98 infra 段自 function-tree 退役，
+// M98 锚点解挂为普通 it（标题去 ID 字面防 fnReporter 误吸）；M03.F01.I07 保留）。
 const SRC = path.resolve(__dirname, "..");
 
 describe("Infrastructure anchor registration", () => {
@@ -20,9 +20,8 @@ describe("Infrastructure anchor registration", () => {
     },
   );
 
-  fnTest(
-    ["M98.F01.I01"],
-    "[M98.F01.I01] BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)",
+  it(
+    "BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)",
     () => {
       expect(
         fs.existsSync(path.join(SRC, "src/components/app/BackendBadge.vue")),
@@ -30,9 +29,8 @@ describe("Infrastructure anchor registration", () => {
     },
   );
 
-  fnTest(
-    ["M98.F02.I01"],
-    "[M98.F02.I01] axios interceptor module source file exists",
+  it(
+    "axios interceptor module source file exists",
     () => {
       expect(fs.existsSync(path.join(SRC, "src/api/http-client.ts"))).toBe(
         true,
@@ -40,9 +38,8 @@ describe("Infrastructure anchor registration", () => {
     },
   );
 
-  fnTest(
-    ["M98.F03.I01"],
-    "[M98.F03.I01] orval-generated auth endpoint directory exists",
+  it(
+    "orval-generated auth endpoint directory exists",
     () => {
       expect(fs.existsSync(path.join(SRC, "src/api/endpoints"))).toBe(true);
     },

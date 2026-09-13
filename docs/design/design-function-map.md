@@ -66,10 +66,6 @@
 | M06.F07.I01 | src/pages/ReportNamesPage.vue → src/features/report-names/ReportNameList.vue | GET /api/inspection-report-names ; POST/PUT/DELETE 同 | inspection_report_name | M06.F07.I01 | – | 已上线 |
 | M06.F07.I02 | src/features/report-names/ReportNameList.vue + ReportNameLinkDialog.vue (行内 关联 button) | POST /api/inspection-report-name-standards ; DELETE 同 ; POST /api/inspection-report-name-parameters ; DELETE 同 | inspection_report_name_standard + inspection_report_name_parameter | M06.F07.I02 | – | 已上线 |
 | M06.F08.I01 | src/pages/ParamInterfacesPage.vue → src/features/param-interfaces/ParamInterfaceList.vue | GET /api/inspection-param-interfaces ; POST/PUT/DELETE 同 | inspection_param_interface | M06.F08.I01 | – | 已上线 |
-| M98.F01.I01 | src/components/app/BackendSwitcher.vue (dropdown trigger) | – (UI 下拉；useBackendStore) | – | M98.F01.I01 | – | 已上线 |
-| M98.F01.I02 | src/components/app/BackendSwitcher.vue (edit baseUrl panel) | – (useBackendStore.setBaseUrl → localStorage) | – | M98.F01.I02 | – | 已上线 |
-| M98.F02.I01 | src/components/app/BackendSwitcher.vue + src/api/http-client.ts (axios 拦截器) | – (axios Bearer 拦截器) | – | M98.F02.I01 | – | 已上线 |
-| M98.F03.I01 | tests/endpoints-smoke.test.ts | – (validation: orval 端点函数存在性) | – | M98.F03.I01 | – | 已上线 |
 
 ## 约定
 
