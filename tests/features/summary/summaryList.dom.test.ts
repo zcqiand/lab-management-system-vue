@@ -110,6 +110,22 @@ describe("M05.F01 报告汇总", () => {
     expect(wrapper.text()).toContain("25");
   });
 
+  fnTest(
+    ["M05.F01.I06"],
+    "I06 仪表盘统计基础端点：GET /summary/stats 基础字段穿透渲染",
+    async () => {
+      const wrapper = mountWithProviders(SummaryList);
+      await flushPromises();
+      // 基础 4 计数（fixture：10/25/80/8，占位 '-' 消失）
+      expect(wrapper.text()).toContain("80");
+      expect(wrapper.text()).toContain("8");
+      // 报告状态 3 桶（draft=草稿 / reviewing=审核中 / issued=已发）
+      expect(wrapper.text()).toContain("草稿：5");
+      expect(wrapper.text()).toContain("审核中：3");
+      expect(wrapper.text()).toContain("已发：17");
+    },
+  );
+
   fnTest(["M05.F01.I01", "M05.F01.I02"], "F01+F02 报告类别下拉存在", async () => {
     const wrapper = mountWithProviders(SummaryList);
     await flushPromises();
