@@ -1,19 +1,17 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "ADR-0033 阶段二：M98 段退役 + BASE 41 子项镜像",
+  "current_task": "REQ-2026-001：legacy-client 映射收敛契约路径——已上线",
   "done": [
-    "function-tree: M98 整段删除；补 41 个 BASE 镜像「规划」行（消费树严格 ⊆ BASE）；M05.F01.I06 已上线",
-    "tests: infrastructure-anchors M98 fnTest 解挂（标题去 [M98.*] 前缀防 fnReporter 误吸）",
-    "src: SummaryList.vue @entry I06；design/flow maps M98 行删除；commit 7b1ba21"
+    "API_ROUTES 两键恒等映射改契约路径；引用旧路径字面量的测试同步修；commit ed4427c"
   ],
   "next": [
-    "阶段三 e2e 接入（E2E_*_URL fail-fast）"
+    "无遗留；候选 REQ 见 shared §7.1"
   ],
   "open_questions": [],
   "dont": [
     "stale trace.json 会让 L5 报假 ID 引用——gate 前必要时 TRACE_MAP=1 npx --no vitest run 重生成"
   ],
   "active_branch": "master",
-  "last_session_at": "2026-09-13"
+  "last_session_at": "2026-09-14"
 }
