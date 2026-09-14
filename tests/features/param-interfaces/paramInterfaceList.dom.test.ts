@@ -42,7 +42,7 @@ import axios from "axios";
 function installAdapters(): void {
   vi.mocked(axios.get).mockImplementation(async (url: string) => {
     const u = String(url);
-    if (u.includes("/api/inspection-param-interfaces")) {
+    if (u.includes("/api/param-interfaces")) {
       return { data: wrap(PARAM_INTERFACES) } as never;
     }
     return { data: wrap([]) } as never;
