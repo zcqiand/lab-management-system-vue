@@ -35,7 +35,7 @@ import {
   computeConcretePermeability,
 } from "@/features/data-entry/models/concrete-permeability";
 import type { ParamModelProps } from "@/features/data-entry/models/types";
-import type { InspectionParameter } from "@/api/endpoints/endpoints.schemas";
+import type { InspectionParameter } from "@/api/endpoints/model";
 
 const param = (code: string, name: string, unit?: string): InspectionParameter =>
   ({

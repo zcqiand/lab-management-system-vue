@@ -5,7 +5,7 @@
 // 评定：有 verified 技术要求时按均值自动判；否则回退手选（合格/不合格）。
 import { computed, ref, watch } from "vue";
 import type { ParamModelProps, ParamTechReq } from "./types";
-import type { TestRecord } from "@/api/endpoints/endpoints.schemas";
+import type { TestRecord } from "@/api/endpoints/model";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Select from "@/components/ui/Select.vue";

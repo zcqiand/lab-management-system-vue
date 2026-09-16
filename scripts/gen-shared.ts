@@ -1,5 +1,6 @@
 // Trigger shared codegen (emit:openapi only) then run local orval to generate
-// src/api/endpoints/{endpoints.ts,endpoints.schemas.ts} from the resulting OpenAPI.yaml.
+// src/api/endpoints/<tag>/<tag>.ts + src/api/endpoints/model/<schema>.ts from
+// the resulting OpenAPI.yaml (spec §2.1 tags-split 形态).
 //
 // Architecture: shared 仓 is a pure contract source (TypeSpec → OpenAPI.yaml).
 // Language-specific clients are generated per consuming project (vue 仓用 vue-query client).

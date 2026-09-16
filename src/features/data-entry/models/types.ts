@@ -7,7 +7,7 @@
 // 类型继续放 models/ 跨 SFC 共享；SFC 内只 import 类型 + 算法域函数。
 
 import type { VNode } from "vue";
-import type { TestRecord } from "@/api/endpoints/endpoints.schemas";
+import type { TestRecord } from "@/api/endpoints/model";
 
 /**
  * 钢筋力学性能「比值卡」（强屈比/超强比）跨记录联立入参。

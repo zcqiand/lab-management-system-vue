@@ -16,7 +16,7 @@ import {
 import CementCompressCard from "@/features/data-entry/models/CementCompressCard.vue";
 import CementFlexuralCard from "@/features/data-entry/models/CementFlexuralCard.vue";
 import type { ParamModelProps } from "@/features/data-entry/models/types";
-import type { InspectionParameter } from "@/api/endpoints/endpoints.schemas";
+import type { InspectionParameter } from "@/api/endpoints/model";
 
 fnTest(["M03.F03.I01"], "水泥胶砂强度：抗折 Rf=1.5·F·L/b³（2kN → 4.7 MPa）", () => {
   expect(flexuralStrength(2)).toBe(4.7);

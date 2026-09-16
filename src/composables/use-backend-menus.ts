@@ -19,8 +19,8 @@
 // normalizeMenuPath 统一收口：别名映射 → 去 query → 补斜杠。
 
 import { onErrorCaptured, onMounted, onUnmounted, ref } from "vue";
-import { authGetMenus } from "@/api/endpoints/endpoints";
-import type { MenuNode as ContractMenuNode } from "@/api/endpoints/endpoints.schemas";
+import { authGetMenus } from "@/api/endpoints/auth/auth";
+import type { MenuNode as ContractMenuNode } from "@/api/endpoints/model";
 
 export interface MenuNode {
   id: string;

@@ -1,7 +1,7 @@
 {
-  "api_synced_sha": "4587566fec82a491793d93e924d3a1cc19f83554",
-  "api_synced_at": "2026-09-13T01:48:13.408Z",
+  "api_synced_sha": "b114f344f266180412493f94e6239cf4eb86a82f",
+  "api_synced_at": "2026-09-16T16:48:50.490Z",
   "api_synced_cmd": "gen-shared.ts",
-  "shared_sha": "4587566fec82a491793d93e924d3a1cc19f83554",
+  "shared_sha": "b114f344f266180412493f94e6239cf4eb86a82f",
   "consumer_repo": "lab-management-system-vue"
 }

@@ -1,8 +1,8 @@
 // 来源：nextjs/src/features/data-entry/reportTemplateData.ts（镜像 2B-7）。
 // vue 仓无 @/types/api + @/data/generated/，本批 stub：使用本地内联类型 +
-// @/api/endpoints/endpoints.schemas 已有 Sample/SampleReceipt/TestRecord。
+// @/api/endpoints/model 已有 Sample/SampleReceipt/TestRecord。
 // 完整版（755 行）等 react 仓镜像验收后再迁。
-import type { SampleReceipt, Sample, TestRecord } from "@/api/endpoints/endpoints.schemas";
+import type { SampleReceipt, Sample, TestRecord } from "@/api/endpoints/model";
 import { MANIFEST_BY_BASENAME as MANIFESTS_RAW } from "@/data/templates/manifests";
 import {
   mockResult,

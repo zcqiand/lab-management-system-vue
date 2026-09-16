@@ -17,12 +17,12 @@ import { useRoute, useRouter } from "vue-router";
 import { FlaskConical } from "lucide-vue-next";
 import { useAuthStore, setSession } from "@/state/auth";
 import { getApiBaseUrl, getApiMode } from "@/api/backend-config";
-import { authSsoAuthorize, authSsoCallback } from "@/api/endpoints/endpoints";
+import { authSsoAuthorize, authSsoCallback } from "@/api/endpoints/auth/auth";
 import type {
   LoginResponse,
   OAuthGrantType,
   OAuthResponseType,
-} from "@/api/endpoints/endpoints.schemas";
+} from "@/api/endpoints/model";
 
 // OAuth 2.0 client_id：契约必填参数，但真 client_id 由 lab 后端 env 权威持有
 // （springboot LAB_SAAS_CLIENT_ID；nextjs SAAS_OAUTH_CLIENT_ID），

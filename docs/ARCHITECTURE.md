@@ -147,9 +147,9 @@ lab-management-system-vue/
 | `env.ts` | 删，移至 `src/lib/env.ts` | — | — |
 | `backend-config.ts` | env-driven 后端配置 | `getApiBaseUrl()`、`getApiMode()` | [ADR-0014 §6.4](#64-隐含-adr) |
 | `http-client.ts` | axios 拦截器 + `ApiError` 封装 + `installHttpClient(getToken)` | `installHttpClient`、`toApiError`、`ApiError` | memory: orval-axios-baseurl-must-be-installed |
-| `endpoints/endpoints.ts` | **orval 产物**：`vue-query` client 具名函数（如 `authLogin`、`authGetPermissions`、`getContractsList`） | 26 资源 × N actions | [ADR-0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) (M98.F03) |
-| `endpoints/endpoints.schemas.ts` | **orval 产物**：TS 类型（DTO / LoginRequest / ErrorResponse / AuthState / BackendRegistry / 等） | 同上 | [ADR-0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) (M98.F03) |
-| `contracts.ts` | 把 `endpoints.schemas` re-export + 派生行为签名（`AuthContextActions`、`SwitchBackendFn`、`UnsubscribeFn`）+ 持久化 key 常量 + `BACKEND_REGISTRY_DEFAULT` 信息性示例 | `AuthContext` 类型、`TOKEN_STORAGE_KEYS`、`BACKEND_REGISTRY_DEFAULT` | shared `frontend-bind.tsp` SSOT |
+| `endpoints/<tag>/<tag>.ts` | **orval 产物**：`vue-query` client 具名函数（如 `authLogin`、`authGetPermissions`、`getContractsList`），按 shared @tag 拆 13 个目录（spec §2.1 tags-split） | 13 tags × N actions | [ADR-0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) (M98.F03) |
+| `endpoints/model/<schema>.ts` | **orval 产物**：TS 类型（DTO / LoginRequest / ErrorResponse / AuthState / BackendRegistry / 等），1 schema 1 文件 | 同上 | [ADR-0011](../../../docs/adr/0011-lab-vue-m98-whitelist-mirror.md) (M98.F03) |
+| `contracts.ts` | 把 `model` re-export + 派生行为签名（`AuthContextActions`、`SwitchBackendFn`、`UnsubscribeFn`）+ 持久化 key 常量 + `BACKEND_REGISTRY_DEFAULT` 信息性示例 | `AuthContext` 类型、`TOKEN_STORAGE_KEYS`、`BACKEND_REGISTRY_DEFAULT` | shared `frontend-bind.tsp` SSOT |
 | `legacy-client.ts` | 旧路由字面量表 `API_ROUTES`，由 features 层面向 msw 旧 `/api/catalog/*` 等路由消费 | `API_ROUTES`、`ApiRouteKey` | 镜像 `lab-management-system-nextjs/src/api/legacy-client.ts` |
 
 **数据流**：
@@ -158,8 +158,8 @@ lab-management-system-vue/
 orval.config.ts 读 ../shared/generated/openapi/openapi.yaml
        │
        ▼ (npm run gen:shared)
-src/api/endpoints/endpoints.ts        ← vue-query 具名函数
-src/api/endpoints/endpoints.schemas.ts  ← TS 类型
+src/api/endpoints/<tag>/<tag>.ts        ← vue-query 具名函数（按 @tag 拆 13 文件）
+src/api/endpoints/model/<schema>.ts     ← TS 类型（按 schema 拆 1 文件 1 schema）
        │
        ▼ 拦截器装在全局 axios 上（main.ts 调 installHttpClient）
 authLogin() 等 → axios.request({ baseURL: getApiBaseUrl() })

@@ -26,14 +26,14 @@ import {
   authLogout,
   authRefresh,
   authSwitchTenant,
-} from "@/api/endpoints/endpoints";
+} from "@/api/endpoints/auth/auth";
 import type {
   ErrorResponse,
   LoginRequest,
   LoginResponse,
   MyTenant,
   SwitchTenantRequest,
-} from "@/api/endpoints/endpoints.schemas";
+} from "@/api/endpoints/model";
 import { TOKEN_STORAGE_KEYS, type AuthState, type UnsubscribeFn } from "@/api/contracts";
 import { toApiError } from "@/api/http-client";
 
