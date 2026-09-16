@@ -1,4 +1,4 @@
-// M03.F02.I01 / I02 — 任务分配 smoke
+// M03.F02.I01 — 任务分配 smoke（I02 保留为客户端视角 anchor，不进 fnTest trace）
 //
 // 镜像 react 仓 tests/features/task-assignment/taskAssignmentList.dom.test.tsx 2 个 fnTest。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
@@ -71,7 +71,7 @@ describe("M03.F02 任务分配", () => {
     expect(wrapper.text()).toContain("WT-2026-002");
   });
 
-  fnTest(["M03.F02.I02"], "任务分配：安排按钮开弹窗（标题含『任务安排』）", async () => {
+  fnTest(["M03.F02.I01"], "任务分配：安排按钮开弹窗（标题含『任务安排』）", async () => {
     const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
     const wrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -105,7 +105,7 @@ describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    const arrange = lastWrapper.find('button[data-fn="M03.F02.I02"]');
+    const arrange = lastWrapper.find('button[data-fn="M03.F02.I01"]');
     expect(arrange.exists()).toBe(true);
     expect(arrange.element.tagName).toBe("BUTTON");
     expect(arrange.classes()).toContain("inline-flex");
@@ -119,7 +119,7 @@ describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await lastWrapper.find('button[data-fn="M03.F02.I01"]').trigger("click");
     await flushPromises();
 
     const save = lastWrapper.findAll("button").find((b) => b.text() === "保存");
@@ -162,7 +162,7 @@ describe("Phase 1.3b — TaskAssignmentList 搜索/弹窗 <Input> 原语回归",
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await lastWrapper.find('button[data-fn="M03.F02.I01"]').trigger("click");
     await flushPromises();
 
     const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
@@ -192,7 +192,7 @@ describe("Phase 1.4 — TaskAssignmentList 弹窗 <Label> 原语回归", () => {
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await lastWrapper.find('button[data-fn="M03.F02.I01"]').trigger("click");
     await flushPromises();
 
     const labels = lastWrapper.findAll('[data-teleport-stub] label');
@@ -245,7 +245,7 @@ describe("Phase 2a-2 — TaskAssignmentList 列表 <Table> 原语回归", () => 
     const bodyRows = lastWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
     expect(bodyRows.length).toBe(1);
     // 安排按钮 data-fn 落到真实 <button>，而非 div
-    const arrangeBtn = lastWrapper.find('button[data-fn="M03.F02.I02"]');
+    const arrangeBtn = lastWrapper.find('button[data-fn="M03.F02.I01"]');
     expect(arrangeBtn.exists()).toBe(true);
     expect(arrangeBtn.element.tagName).toBe("BUTTON");
   });
@@ -277,7 +277,7 @@ describe("Phase 2e-3 — TaskAssignmentList 安排弹窗走 Dialog 底座", () =
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
-    await lastWrapper.find('button[data-fn="M03.F02.I02"]').trigger("click");
+    await lastWrapper.find('button[data-fn="M03.F02.I01"]').trigger("click");
     await flushPromises();
     return lastWrapper;
   }
@@ -300,12 +300,12 @@ describe("Phase 2e-3 — TaskAssignmentList 安排弹窗走 Dialog 底座", () =
   it("行内安排键的 data-fn 没被结构改动吞掉，仍落在真实 <button> 上且弹窗外只有一个", async () => {
     const w = await openAssign();
 
-    const anchors = w.findAll('button[data-fn="M03.F02.I02"]');
+    const anchors = w.findAll('button[data-fn="M03.F02.I01"]');
     expect(anchors.length).toBe(1);
     expect(anchors[0]!.element.tagName).toBe("BUTTON");
     expect(anchors[0]!.text()).toBe("安排");
     // 弹窗内没有多出同 data-fn 的按钮（保存键本来就不带锚点）
-    expect(w.find('[role="dialog"]').findAll('button[data-fn="M03.F02.I02"]').length).toBe(0);
+    expect(w.find('[role="dialog"]').findAll('button[data-fn="M03.F02.I01"]').length).toBe(0);
   });
 
   it("ESC 关闭弹窗（走 @update:open → assignTarget = null）", async () => {

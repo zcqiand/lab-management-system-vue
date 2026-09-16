@@ -5,7 +5,7 @@
 //
 // 功能 ID：
 //   M03.F02.I01 任务分配队列（页面 @entry）
-//   M03.F02.I02 安排按钮（data-fn，调 PUT /receipts/:id 更新 assignee + plannedDate）
+//   M03.F02.I01 安排按钮（data-fn，调 PUT /receipts/:id 更新 assignee + plannedDate）
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { API_ROUTES } from "@/api/legacy-client";
@@ -177,7 +177,7 @@ async function handleSave(): Promise<void> {
               <Button
                 variant="outline"
                 size="sm"
-                data-fn="M03.F02.I02"
+                data-fn="M03.F02.I01"
                 @click="openAssign(r)"
               >
                 安排
