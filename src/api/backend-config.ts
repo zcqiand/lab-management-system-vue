@@ -15,9 +15,9 @@
 import { env } from "@/lib/env";
 
 export function getApiBaseUrl(): string {
-  return env.apiBaseUrl || "http://localhost:5200";
+  return env.apiBaseUrl || "http://localhost:5201";
 }
 
 export function getApiMode(): string {
-  return env.apiMode || "msw-http";
+  return env.apiMode || "nextjs";
 }
