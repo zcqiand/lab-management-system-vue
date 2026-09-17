@@ -8,8 +8,18 @@
 //   M06.F07.I01 列表（行 data-fn + 新建/编辑按钮 data-fn）
 //   M06.F07.I02 关联（F07↔标准/参数）→ 行内「关联」→ ReportNameLinkDialog
 import { computed, onMounted, reactive, ref } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  reportNamesCreateReportName,
+  reportNamesDeleteReportName,
+  reportNamesListReportNames,
+  reportNamesUpdateReportName,
+} from "@/api/endpoints/report-names/report-names";
+import type {
+  CreateInspectionReportNameRequest,
+  ExtFieldDef,
+  InspectionReportName,
+  UpdateInspectionReportNameRequest,
+} from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -30,21 +40,9 @@ import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ReportNameLinkDialog from "@/features/report-names/ReportNameLinkDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
-// 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/inspection/inspection-report-name.ts）
-interface InspectionReportName {
-  id: string;
-  code: string;
-  name: string;
-  fullName?: string;
-  templatePath?: string;
-  description?: string;
-  extFields?: unknown[];
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; id: string };
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+// 契约：报告名称以 code 为主键（无 id），PUT/DELETE 均按 code 寻址。
+type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; code: string };
 
 interface FormState {
   code: string;
@@ -78,19 +76,17 @@ const form = reactive<FormState>({ ...EMPTY_FORM });
 
 const editing = computed<InspectionReportName | null>(() => {
   if (mode.value.kind !== "edit") return null;
-  const id = (mode.value as { kind: "edit"; id: string }).id;
-  return items.value.find((r) => r.id === id) ?? null;
+  const code = (mode.value as { kind: "edit"; code: string }).code;
+  return items.value.find((r) => r.code === code) ?? null;
 });
 
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    const res = await axios.get<unknown>(API_ROUTES["/report-names"], {
-      params: {
-        ...(keyword.value ? { keyword: keyword.value } : {}),
-        page: 1,
-        pageSize: 50,
-      },
+    const res = await reportNamesListReportNames({
+      ...(keyword.value ? { keyword: keyword.value } : {}),
+      page: 1,
+      pageSize: 50,
     });
     const { items: listItems, total: listTotal } = unwrapListResponse<InspectionReportName>(res);
     items.value = listItems;
@@ -118,7 +114,7 @@ function openEdit(r: InspectionReportName): void {
     sortOrder: r.sortOrder,
     extFieldsText: JSON.stringify(r.extFields ?? [], null, 2),
   });
-  mode.value = { kind: "edit", id: r.id };
+  mode.value = { kind: "edit", code: r.code };
 }
 function closeDialog(): void {
   mode.value = { kind: "idle" };
@@ -130,11 +126,11 @@ function alertError(msg: string): void {
   globalThis.alert(msg);
 }
 
-function parseExtFields(text: string): { ok: true; value: unknown[] } | { ok: false; error: string } {
+function parseExtFields(text: string): { ok: true; value: ExtFieldDef[] } | { ok: false; error: string } {
   try {
     const v: unknown = JSON.parse(text);
     if (!Array.isArray(v)) return { ok: false, error: "extFields 必须是 JSON 数组" };
-    return { ok: true, value: v };
+    return { ok: true, value: v as ExtFieldDef[] };
   } catch (e) {
     return { ok: false, error: (e as Error).message };
   }
@@ -146,23 +142,43 @@ async function submitForm(): Promise<void> {
     alertError(`extFields 解析失败：${parsed.error}`);
     return;
   }
-  const payload = {
-    code: form.code,
-    name: form.name,
-    fullName: form.fullName || undefined,
-    templatePath: form.templatePath || undefined,
-    description: form.description || undefined,
-    sortOrder: form.sortOrder,
-    extFields: parsed.value,
-  };
   try {
     if (mode.value.kind === "create") {
-      await axios.post(API_ROUTES["/report-names"], payload);
+      const body: CreateInspectionReportNameRequest = {
+        code: form.code,
+        name: form.name,
+        fullName: form.fullName || undefined,
+        templatePath: form.templatePath || undefined,
+        description: form.description || undefined,
+        sortOrder: form.sortOrder,
+        extFields: parsed.value,
+      };
+      await reportNamesCreateReportName(body);
     } else if (mode.value.kind === "edit") {
-      const id = (mode.value as { kind: "edit"; id: string }).id;
-      await axios.put(`${API_ROUTES["/report-names"]}/${id}`, payload);
+      const code = (mode.value as { kind: "edit"; code: string }).code;
+      const body: UpdateInspectionReportNameRequest = {
+        name: form.name,
+        fullName: form.fullName || undefined,
+        templatePath: form.templatePath || undefined,
+        description: form.description || undefined,
+        sortOrder: form.sortOrder,
+        extFields: parsed.value,
+      };
+      await reportNamesUpdateReportName(code, body);
     }
     closeDialog();
+    await load();
+  } catch (e) {
+    alertError((e as Error).message);
+  }
+}
+
+async function handleDeleteConfirm(): Promise<void> {
+  const t = deleteTarget.value;
+  if (!t) return;
+  deleteTarget.value = null;
+  try {
+    await reportNamesDeleteReportName(t.code);
     await load();
   } catch (e) {
     alertError((e as Error).message);
@@ -271,19 +287,7 @@ async function submitForm(): Promise<void> {
           ? `确认删除报告名称 ${deleteTarget.code}？此操作不可撤销。`
           : ''
       "
-      @confirm="
-        async () => {
-          if (!deleteTarget) return;
-          const t = deleteTarget;
-          deleteTarget = null;
-          try {
-            await axios.delete(`${API_ROUTES['/report-names']}/${t.id}`);
-            await load();
-          } catch (e) {
-            alertError((e as Error).message);
-          }
-        }
-      "
+      @confirm="handleDeleteConfirm"
       @cancel="deleteTarget = null"
     />
 
@@ -313,7 +317,7 @@ async function submitForm(): Promise<void> {
           </TableRow>
           <TableRow
             v-for="r in items"
-            :key="r.id"
+            :key="r.code"
             data-fn="M06.F07.I01"
             class="border-t hover:bg-muted"
           >

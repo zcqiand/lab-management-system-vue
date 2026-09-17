@@ -3,9 +3,23 @@
 //
 // 复合主键：(object, parameter, judgmentStandard)；
 // 多维筛选：brand / model / grade / spec — 客户端二次过滤。
-import { onMounted, reactive, ref, watch } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import { computed, onMounted, reactive, ref } from "vue";
+import {
+  technicalRequirementsCreateTechnicalRequirement,
+  technicalRequirementsDeleteTechnicalRequirement,
+  technicalRequirementsListTechnicalRequirements,
+  technicalRequirementsUpdateTechnicalRequirement,
+} from "@/api/endpoints/technical-requirements/technical-requirements";
+import {
+  inspectionDictionaryListObjects,
+  inspectionDictionaryListParameters,
+} from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import type {
+  CreateTechnicalRequirementRequest,
+  RequirementComparison,
+  TechnicalRequirement,
+  UpdateTechnicalRequirementRequest,
+} from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -31,21 +45,13 @@ import SelectValue from "@/components/ui/SelectValue.vue";
 // @entry M06.F06.I01
 // @entry M06.F06.I02
 // @entry M06.F06.I03
-interface TechReq {
-  id: string;
-  inspectionObjectCode: string;
-  inspectionParameterCode: string;
-  judgmentStandardCode: string;
-  brand?: string;
-  model?: string;
-  grade?: string;
-  spec?: string;
-  minValue?: number;
-  maxValue?: number;
-  comparison: string;
-  remark?: string;
-  objectName?: string;
-  parameterName?: string;
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+// 契约复合主键：(inspectionObjectCode, inspectionParameterCode, judgmentStandardCode)。
+type TechReq = TechnicalRequirement;
+
+/** 行主键：契约无 id，用 3 维复合主键串 */
+function rowKey(row: TechReq): string {
+  return `${row.inspectionObjectCode}/${row.inspectionParameterCode}/${row.judgmentStandardCode}`;
 }
 
 interface Opt { code: string; name: string }
@@ -69,7 +75,7 @@ const EMPTY_FORM: Record<string, string> = {
   remark: "",
 };
 
-const items = ref<TechReq[]>([]);
+const allItems = ref<TechReq[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const objects = ref<Opt[]>([]);
@@ -79,6 +85,17 @@ const brandFilter = ref("");
 const modelFilter = ref("");
 const gradeFilter = ref("");
 const specFilter = ref("");
+
+// 契约 list 端点无 brand/model/grade/spec 参数 → 4 维筛选客户端过滤
+const items = computed<TechReq[]>(() =>
+  allItems.value.filter((it) => {
+    if (brandFilter.value && (it.brand ?? "") !== brandFilter.value) return false;
+    if (modelFilter.value && (it.model ?? "") !== modelFilter.value) return false;
+    if (gradeFilter.value && (it.grade ?? "") !== gradeFilter.value) return false;
+    if (specFilter.value && (it.spec ?? "") !== specFilter.value) return false;
+    return true;
+  }),
+);
 
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; item: TechReq };
 const mode = ref<Mode>({ kind: "idle" });
@@ -92,21 +109,13 @@ async function load(): Promise<void> {
   loading.value = true;
   error.value = null;
   try {
-    const res = await axios.get<{ items: TechReq[]; total: number }>(
-      API_ROUTES["/inspection-technical-requirements"],
-      { params: { page: 1, pageSize: 500 } },
-    );
-    const all = Array.isArray(res.data?.items) ? res.data.items : [];
-    items.value = all.filter((it) => {
-      if (brandFilter.value && (it.brand ?? "") !== brandFilter.value) return false;
-      if (modelFilter.value && (it.model ?? "") !== modelFilter.value) return false;
-      if (gradeFilter.value && (it.grade ?? "") !== gradeFilter.value) return false;
-      if (specFilter.value && (it.spec ?? "") !== specFilter.value) return false;
-      return true;
-    });
+    const res = await technicalRequirementsListTechnicalRequirements();
+    // 契约 200 是裸数组；测试/部分后端回 Page 形状，双形状兜住
+    const data = res.data as unknown as TechReq[] | { items?: TechReq[] } | undefined;
+    allItems.value = Array.isArray(data) ? data : (data?.items ?? []);
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载失败";
-    items.value = [];
+    allItems.value = [];
   } finally {
     loading.value = false;
   }
@@ -114,21 +123,24 @@ async function load(): Promise<void> {
 
 async function loadOptions(): Promise<void> {
   const [oRes, pRes] = await Promise.all([
-    axios.get<{ items: Opt[] }>(API_ROUTES["/inspection-objects"], { params: { page: 1, pageSize: 500 } }).catch(() => ({ data: { items: [] } })),
-    axios.get<{ items: Opt[] }>(API_ROUTES["/inspection-parameters"], { params: { page: 1, pageSize: 500 } }).catch(() => ({ data: { items: [] } })),
+    inspectionDictionaryListObjects({ page: 1, pageSize: 500 }).catch(
+      () => ({ data: { items: [] } }) as never,
+    ),
+    inspectionDictionaryListParameters({ page: 1, pageSize: 500 }).catch(
+      () => ({ data: { items: [] } }) as never,
+    ),
   ]);
-  objects.value = Array.isArray(oRes.data?.items) ? oRes.data.items : [];
-  parameters.value = Array.isArray(pRes.data?.items) ? pRes.data.items : [];
+  objects.value = Array.isArray((oRes.data as { items?: Opt[] })?.items)
+    ? (oRes.data as { items: Opt[] }).items
+    : [];
+  parameters.value = Array.isArray((pRes.data as { items?: Opt[] })?.items)
+    ? (pRes.data as { items: Opt[] }).items
+    : [];
 }
 
 onMounted(async () => {
   await Promise.all([load(), loadOptions()]);
 });
-
-watch(
-  () => [brandFilter.value, modelFilter.value, gradeFilter.value, specFilter.value] as const,
-  () => { void load(); },
-);
 
 function openCreate(): void {
   Object.assign(form, EMPTY_FORM);
@@ -162,25 +174,42 @@ async function submitForm(): Promise<void> {
   // 翻译回空串让后端按缺失处理
   const objVal = form.inspectionObjectCode;
   const paramVal = form.inspectionParameterCode;
-  const payload = {
-    inspectionObjectCode: objVal && objVal !== "__none__" ? objVal : "",
-    inspectionParameterCode: paramVal && paramVal !== "__none__" ? paramVal : "",
-    judgmentStandardCode: form.judgmentStandardCode,
-    brand: form.brand || undefined,
-    model: form.model || undefined,
-    grade: form.grade || undefined,
-    spec: form.spec || undefined,
-    minValue: form.minValue === "" ? undefined : Number(form.minValue),
-    maxValue: form.maxValue === "" ? undefined : Number(form.maxValue),
-    comparison: form.comparison,
-    remark: form.remark || undefined,
-  };
+  const comparison = form.comparison as RequirementComparison;
   try {
     if (mode.value.kind === "create") {
-      await axios.post(API_ROUTES["/inspection-technical-requirements"], payload);
+      const payload: CreateTechnicalRequirementRequest = {
+        inspectionObjectCode: objVal && objVal !== "__none__" ? objVal : "",
+        inspectionParameterCode: paramVal && paramVal !== "__none__" ? paramVal : "",
+        judgmentStandardCode: form.judgmentStandardCode,
+        brand: form.brand || undefined,
+        model: form.model || undefined,
+        grade: form.grade || undefined,
+        spec: form.spec || undefined,
+        minValue: form.minValue === "" ? undefined : Number(form.minValue),
+        maxValue: form.maxValue === "" ? undefined : Number(form.maxValue),
+        comparison,
+        remark: form.remark || undefined,
+      };
+      await technicalRequirementsCreateTechnicalRequirement(payload);
     } else if (mode.value.kind === "edit") {
-      const id = mode.value.item.id;
-      await axios.put(`${API_ROUTES["/inspection-technical-requirements"]}/${id}`, payload);
+      const t = mode.value.item;
+      const payload: UpdateTechnicalRequirementRequest = {
+        brand: form.brand || undefined,
+        model: form.model || undefined,
+        grade: form.grade || undefined,
+        spec: form.spec || undefined,
+        minValue: form.minValue === "" ? undefined : Number(form.minValue),
+        maxValue: form.maxValue === "" ? undefined : Number(form.maxValue),
+        comparison,
+        remark: form.remark || undefined,
+      };
+      // 契约 3 维复合主键寻址：/{object}/{parameter}/{judgmentStandard}
+      await technicalRequirementsUpdateTechnicalRequirement(
+        t.inspectionObjectCode,
+        t.inspectionParameterCode,
+        t.judgmentStandardCode,
+        payload,
+      );
     }
     closeDialog();
     await load();
@@ -199,7 +228,11 @@ async function confirmDelete(): Promise<void> {
   deleting.value = true;
   deleteError.value = null;
   try {
-    await axios.delete(`${API_ROUTES["/inspection-technical-requirements"]}/${deleteTarget.value.id}`);
+    await technicalRequirementsDeleteTechnicalRequirement(
+      deleteTarget.value.inspectionObjectCode,
+      deleteTarget.value.inspectionParameterCode,
+      deleteTarget.value.judgmentStandardCode,
+    );
     deleteTarget.value = null;
     await load();
   } catch (e: unknown) {
@@ -256,7 +289,7 @@ async function confirmDelete(): Promise<void> {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="row in items" :key="row.id" class="border-t hover:bg-muted">
+        <TableRow v-for="row in items" :key="rowKey(row)" class="border-t hover:bg-muted">
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionObjectCode }}</TableCell>
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionParameterCode }}</TableCell>
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.judgmentStandardCode }}</TableCell>
@@ -274,7 +307,7 @@ async function confirmDelete(): Promise<void> {
               variant="link"
               class="text-primary hover:underline mr-3"
               data-fn="M06.F06.I02"
-              :aria-label="`编辑 ${row.id}`"
+              :aria-label="`编辑 ${rowKey(row)}`"
               @click="openEdit(row)"
             >
               编辑
@@ -283,7 +316,7 @@ async function confirmDelete(): Promise<void> {
               variant="link"
               class="text-destructive hover:underline"
               data-fn="M06.F06.I03"
-              :aria-label="`删除 ${row.id}`"
+              :aria-label="`删除 ${rowKey(row)}`"
               @click="startDelete(row)"
             >
               删除

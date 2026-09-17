@@ -96,10 +96,13 @@ describe("Sprint 1 前端绑定契约", () => {
     });
   });
 
-  it("BackendId 契约 4 槽位锁定（工程设施断言，不挂功能 ID）", () => {
+  it("BackendId 契约 3 槽位锁定（工程设施断言，不挂功能 ID）", () => {
+    // 2026-09-17 msw 仓已删（src/api/contracts.ts 同步注释）：msw 槽位移除，
+    // 锁 3 真后端槽位；BackendId 枚举的 msw 成员待 shared tsp 契约清理同步收。
     expect(Object.values(BackendId)).toEqual(
-      expect.arrayContaining(["msw", "nextjs", "springboot", "aspnetcore"]),
+      expect.arrayContaining(["nextjs", "springboot", "aspnetcore"]),
     );
+    expect(Object.values(BackendId)).not.toContain("msw");
   });
 });
 

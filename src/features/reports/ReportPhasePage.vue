@@ -8,8 +8,18 @@
 //   - 行内「退回」按钮 + 退回 Dialog（reason 可选）
 
 import { onMounted, ref } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  receiptsActFlowApprove,
+  receiptsActFlowArchived,
+  receiptsActFlowIssuance,
+  receiptsActFlowReview,
+  receiptsListReceipts,
+} from "@/api/endpoints/receipts/receipts";
+import type {
+  ReceiptsListReceiptsParams,
+  SampleReceipt,
+} from "@/api/endpoints/model";
+import { currentOperator } from "@/lib/flow-operator";
 import Button from "@/components/ui/Button.vue";
 import Checkbox from "@/components/ui/Checkbox.vue";
 import Dialog from "@/components/ui/Dialog.vue";
@@ -27,25 +37,18 @@ import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 
-type FlowStage =
-  | "receiving"
-  | "task_assignment"
-  | "data_entry"
-  | "review"
-  | "approval"
-  | "issuance"
-  | "archived"
-  | "completed";
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type FlowStage = SampleReceipt["flowStatus"];
 
 type PhaseStage = "review" | "approval" | "issuance" | "archived";
 
-interface SampleReceipt {
-  id: string;
-  commissionCode: string;
-  projectName?: string;
-  flowStatus: FlowStage;
-  result?: "pass" | "fail" | "";
-}
+// ADR-0035 act 模式：每个阶段页提交/退回走自己的 stage act 端点。
+const STAGE_ACT: Record<PhaseStage, typeof receiptsActFlowReview> = {
+  review: receiptsActFlowReview,
+  approval: receiptsActFlowApprove,
+  issuance: receiptsActFlowIssuance,
+  archived: receiptsActFlowArchived,
+};
 
 const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
   receiving: "接样中",
@@ -103,16 +106,13 @@ function toggleOne(id: string): void {
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    const params: Record<string, string | number> = {
+    const params: ReceiptsListReceiptsParams = {
       page: 1,
       pageSize: 50,
       flowStatus: props.stage,
     };
-    if (keyword.value) params["keyword"] = keyword.value;
-    const res = await axios.get<{ items: SampleReceipt[]; total: number }>(
-      API_ROUTES["/receipts"],
-      { params },
-    );
+    if (keyword.value) params.keyword = keyword.value;
+    const res = await receiptsListReceipts(params);
     rows.value = Array.isArray(res.data?.items) ? res.data.items : [];
     total.value = typeof res.data?.total === "number" ? res.data.total : 0;
     selected.value = new Set();
@@ -130,14 +130,13 @@ async function batchSubmit(): Promise<void> {
   }
   submitting.value = true;
   try {
-    const res = await axios.post<{
-      results: Array<{ id: string; ok: boolean; message?: string }>;
-    }>(API_ROUTES["/receipts/flow"], {
+    const res = await STAGE_ACT[props.stage]({
       ids: Array.from(selected.value),
       action: "submit",
-      operator: "current-user",
+      operator: currentOperator(),
     });
-    const failed = (res.data?.results ?? []).filter((r) => !r.ok);
+    const results = Array.isArray(res?.data) ? res.data : [];
+    const failed = results.filter((r) => !r.ok);
     if (failed.length === 0) {
       // toast 替代品：直接 alert；Batch 2A 模板表达式作用域限制
       if (typeof globalThis.alert === "function") globalThis.alert(`${props.submitLabel}完成（${selected.value.size} 单）`);
@@ -162,10 +161,10 @@ async function handleReturn(): Promise<void> {
   if (!t) return;
   submitting.value = true;
   try {
-    await axios.post(API_ROUTES["/receipts/flow"], {
+    await STAGE_ACT[props.stage]({
       ids: [t.id],
       action: "return",
-      operator: "current-user",
+      operator: currentOperator(),
       reason: returnReason.value.trim() || undefined,
     });
     returnTarget.value = null;

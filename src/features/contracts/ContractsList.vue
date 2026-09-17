@@ -12,8 +12,16 @@
 //   M02.F01.I02 新建/编辑（按钮 data-fn + @entry）
 //   M02.F01.I03 删除（按钮 data-fn）
 import { computed, onMounted, reactive, ref } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  contractsCreateContract,
+  contractsDeleteContract,
+  contractsListContracts,
+  contractsUpdateContract,
+} from "@/api/endpoints/contracts/contracts";
+import type {
+  Contract,
+  ContractsListContractsParams,
+} from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -36,34 +44,10 @@ import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
-// 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/resources/contract.ts）
-export type ContractStatus = "active" | "archived";
-interface Contract {
-  id: string;
-  contractCode: string;
-  clientUnit: string;
-  projectName: string;
-  projectLocation?: string;
-  constructionUnit: string;
-  inspectionSpecialtyCode?: string;
-  buildingUnit?: string;
-  supervisorUnit?: string;
-  inspectionPerson?: string;
-  inspectionPhone?: string;
-  witnessUnit: string;
-  witness: string;
-  witnessPhone?: string;
-  contactPerson?: string;
-  contactPhone?: string;
-  entrustedDate?: string;
-  status: ContractStatus;
-  createdAt: string;
-  updatedAt: string;
-}
-
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; id: string };
 
-type ContractBody = Omit<Contract, "id" | "createdAt" | "updatedAt">;
+type ContractBody = Omit<Contract, "id" | "tenantId" | "createdAt" | "updatedAt">;
 
 const EMPTY_BODY: ContractBody = {
   contractCode: "",
@@ -99,14 +83,13 @@ async function load(): Promise<void> {
     // status.value === "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel；
     // 空字符串 SelectItem 在 reka-ui 是禁用值（保留给 placeholder），所以走 __all__。
     const apiStatus = status.value === "__all__" ? "" : status.value;
-    const res = await axios.get<{ items: Contract[]; total: number }>(API_ROUTES["/contracts"], {
-      params: {
-        ...(apiStatus ? { status: apiStatus } : {}),
-        ...(keyword.value ? { keyword: keyword.value } : {}),
-        page: 1,
-        pageSize: 50,
-      },
-    });
+    const params: ContractsListContractsParams = {
+      ...(apiStatus ? { status: apiStatus } : {}),
+      ...(keyword.value ? { keyword: keyword.value } : {}),
+      page: 1,
+      pageSize: 50,
+    };
+    const res = await contractsListContracts(params);
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
     total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
@@ -147,7 +130,7 @@ function openEdit(c: Contract): void {
 function closeDialog(): void {
   mode.value = { kind: "idle" };
 }
-function statusBadgeClass(s: ContractStatus): string {
+function statusBadgeClass(s: Contract["status"]): string {
   return s === "active"
     ? "inline-block rounded bg-success/10 px-2 py-0.5 text-xs text-success"
     : "inline-block rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground";
@@ -162,10 +145,10 @@ function alertError(msg: string): void {
 async function submitForm(): Promise<void> {
   try {
     if (mode.value.kind === "create") {
-      await axios.post(API_ROUTES["/contracts"], { ...form });
+      await contractsCreateContract({ ...form });
     } else if (mode.value.kind === "edit") {
       const id = (mode.value as { kind: "edit"; id: string }).id;
-      await axios.put(`${API_ROUTES["/contracts"]}/${id}`, { ...form });
+      await contractsUpdateContract(id, { ...form });
     }
     closeDialog();
     await load();
@@ -328,7 +311,7 @@ async function submitForm(): Promise<void> {
           const t = deleteTarget;
           deleteTarget = null;
           try {
-            await axios.delete(`${API_ROUTES['/contracts']}/${t.id}`);
+            await contractsDeleteContract(t.id);
             await load();
           } catch (e) {
             alertError((e as Error).message);

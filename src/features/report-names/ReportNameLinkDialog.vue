@@ -5,36 +5,35 @@
 // 报告名称列表行内「关联」按钮的弹窗：两段列表（标准 role=TESTING / 参数），
 // toggle POST/DELETE /api/report-names/links/{standard,parameter}。
 import { computed, onMounted, ref, watch } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  reportNamesLinkReportNameParameter,
+  reportNamesLinkReportNameStandard,
+  reportNamesListReportNameParameterLinks,
+  reportNamesListReportNameStandardLinks,
+  reportNamesUnlinkReportNameParameter,
+  reportNamesUnlinkReportNameStandard,
+} from "@/api/endpoints/report-names/report-names";
+import {
+  inspectionDictionaryListParameters,
+  inspectionDictionaryListStandards,
+} from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import type {
+  InspectionParameter,
+  InspectionStandard,
+  ReportNameParameterLink,
+  ReportNameStandardLink,
+} from "@/api/endpoints/model";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
 import DialogDescription from "@/components/ui/DialogDescription.vue";
 import DialogHeader from "@/components/ui/DialogHeader.vue";
 import DialogTitle from "@/components/ui/DialogTitle.vue";
 
-interface StdRow {
-  code: string;
-  name?: string;
-  status?: string;
-}
-
-interface ParamRow {
-  code: string;
-  name?: string;
-  unit?: string;
-}
-
-interface StdLink {
-  reportNameCode: string;
-  inspectionStandardCode: string;
-  role: "TESTING" | "JUDGMENT";
-}
-
-interface ParamLink {
-  reportNameCode: string;
-  inspectionParameterCode: string;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type StdRow = InspectionStandard;
+type ParamRow = InspectionParameter;
+type StdLink = ReportNameStandardLink;
+type ParamLink = ReportNameParameterLink;
 
 const props = defineProps<{
   open: boolean;
@@ -67,24 +66,17 @@ async function load(): Promise<void> {
   loading.value = true;
   try {
     const [stdRes, paramRes, stdLinkRes, paramLinkRes] = await Promise.all([
-      axios.get<{ items: StdRow[] }>(API_ROUTES["/inspection-standards"], {
-        params: { page: 1, pageSize: 500 },
-      }),
-      axios.get<{ items: ParamRow[] }>(API_ROUTES["/inspection-parameters"], {
-        params: { page: 1, pageSize: 500 },
-      }),
-      axios.get(API_ROUTES["/inspection-report-name-standards"], {
-        params: { reportNameCode: props.reportNameCode },
-      }),
-      axios.get(API_ROUTES["/inspection-report-name-parameters"], {
-        params: { reportNameCode: props.reportNameCode },
-      }),
+      inspectionDictionaryListStandards({ page: 1, pageSize: 500 }),
+      inspectionDictionaryListParameters({ page: 1, pageSize: 500 }),
+      reportNamesListReportNameStandardLinks({ reportNameCode: props.reportNameCode }),
+      reportNamesListReportNameParameterLinks({ reportNameCode: props.reportNameCode }),
     ]);
-    standards.value = stdRes.data.items ?? [];
-    parameters.value = paramRes.data.items ?? [];
-    stdLinks.value = toList<StdLink>(stdLinkRes.data as StdLink[] | { items?: StdLink[] });
+    standards.value = Array.isArray(stdRes.data?.items) ? stdRes.data.items : [];
+    parameters.value = Array.isArray(paramRes.data?.items) ? paramRes.data.items : [];
+    // 契约 200 是 Page 形状；测试/后端可能回裸数组，toList 双形状兜住
+    stdLinks.value = toList<StdLink>(stdLinkRes.data as unknown as StdLink[] | { items?: StdLink[] });
     paramLinks.value = new Set(
-      toList<ParamLink>(paramLinkRes.data as ParamLink[] | { items?: ParamLink[] }).map(
+      toList<ParamLink>(paramLinkRes.data as unknown as ParamLink[] | { items?: ParamLink[] }).map(
         (l) => l.inspectionParameterCode,
       ),
     );
@@ -113,14 +105,16 @@ async function toggleStd(stdCode: string): Promise<void> {
   busy.value = stdCode;
   try {
     if (isStdOn(stdCode)) {
-      await axios.delete(API_ROUTES["/inspection-report-name-standards"], {
-        data: { reportNameCode: props.reportNameCode, inspectionStandardCode: stdCode, role: "TESTING" },
+      await reportNamesUnlinkReportNameStandard({
+        reportNameCode: props.reportNameCode,
+        inspectionStandardCode: stdCode,
+        role: "TESTING",
       });
       stdLinks.value = stdLinks.value.filter(
         (l) => !(l.inspectionStandardCode === stdCode && l.role === "TESTING"),
       );
     } else {
-      await axios.post(API_ROUTES["/inspection-report-name-standards"], {
+      await reportNamesLinkReportNameStandard({
         reportNameCode: props.reportNameCode,
         inspectionStandardCode: stdCode,
         role: "TESTING",
@@ -140,14 +134,15 @@ async function toggleParam(paramCode: string): Promise<void> {
   busy.value = paramCode;
   try {
     if (paramLinks.value.has(paramCode)) {
-      await axios.delete(API_ROUTES["/inspection-report-name-parameters"], {
-        data: { reportNameCode: props.reportNameCode, inspectionParameterCode: paramCode },
+      await reportNamesUnlinkReportNameParameter({
+        reportNameCode: props.reportNameCode,
+        inspectionParameterCode: paramCode,
       });
       const next = new Set(paramLinks.value);
       next.delete(paramCode);
       paramLinks.value = next;
     } else {
-      await axios.post(API_ROUTES["/inspection-report-name-parameters"], {
+      await reportNamesLinkReportNameParameter({
         reportNameCode: props.reportNameCode,
         inspectionParameterCode: paramCode,
       });

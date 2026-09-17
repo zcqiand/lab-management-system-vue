@@ -11,10 +11,20 @@
 //   M03.F01.I01 列表（行 data-fn）
 //   M03.F01.I02 新建/编辑（按钮 data-fn + @entry）
 //   M03.F01.I03 删除（按钮 data-fn）
-//   M03.F01.I04 提交（按钮 data-fn，调 /api/receipts/flow 推进状态机）
+//   M03.F01.I04 提交（按钮 data-fn，调 /api/receipts/receiving/act 推进状态机）
 import { computed, onMounted, reactive, ref } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  receiptsActFlowReceiving,
+  receiptsCreateReceipt,
+  receiptsDeleteReceipt,
+  receiptsListReceipts,
+  receiptsUpdateReceipt,
+} from "@/api/endpoints/receipts/receipts";
+import type {
+  ReceiptsListReceiptsParams,
+  SampleReceipt,
+} from "@/api/endpoints/model";
+import { currentOperator } from "@/lib/flow-operator";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -37,57 +47,8 @@ import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 
-// 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/process/{sample-receipt,flow}.ts）
-type FlowStage =
-  | "receiving"
-  | "task_assignment"
-  | "data_entry"
-  | "review"
-  | "approval"
-  | "issuance"
-  | "archived"
-  | "completed";
-
-interface FlowHistoryEntry {
-  action: "submit" | "return" | "withdraw";
-  from: FlowStage;
-  to: FlowStage;
-  operator: string;
-  at: string;
-  reason?: string;
-}
-
-interface SampleReceipt {
-  id: string;
-  contractId: string;
-  commissionCode: string;
-  commissionDate: string;
-  categoryCode: string;
-  projectName?: string;
-  clientUnit?: string;
-  buildingUnit?: string;
-  supervisorUnit?: string;
-  constructionUnit?: string;
-  witnessUnit?: string;
-  samplingLocation?: string;
-  witness?: string;
-  witnessPhone?: string;
-  inspector?: string;
-  inspectorPhone?: string;
-  receivedBy: string;
-  sampleSource: string;
-  testCategory: string;
-  testParameters?: string[];
-  flowStatus: FlowStage;
-  flowHistory: FlowHistoryEntry[];
-  lastSubmittedBy: string | null;
-  assigneeId?: string;
-  assigneeName?: string;
-  plannedTestDate?: string;
-  result?: "pass" | "fail" | "";
-  createdAt: string;
-  updatedAt: string;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type FlowStage = SampleReceipt["flowStatus"];
 
 const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
   receiving: "接样中",
@@ -149,14 +110,11 @@ const editing = computed<SampleReceipt | null>(() => {
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    const params: Record<string, string | number> = { page: 1, pageSize: 50 };
-    if (flowFilter.value === "receiving") params["flowStatus"] = "receiving";
-    if (flowFilter.value === "submitted") params["flowStatus"] = "task_assignment";
-    if (keyword.value) params["keyword"] = keyword.value;
-    const res = await axios.get<{ items: SampleReceipt[]; total: number }>(
-      API_ROUTES["/receipts"],
-      { params },
-    );
+    const params: ReceiptsListReceiptsParams = { page: 1, pageSize: 50 };
+    if (flowFilter.value === "receiving") params.flowStatus = "receiving";
+    if (flowFilter.value === "submitted") params.flowStatus = "task_assignment";
+    if (keyword.value) params.keyword = keyword.value;
+    const res = await receiptsListReceipts(params);
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
     total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
@@ -190,7 +148,7 @@ async function handleSubmit(): Promise<void> {
   const r = editing.value;
   mode.value = { kind: "idle" };
   try {
-    await axios.put(`${API_ROUTES["/receipts"]}/${r.id}`, form);
+    await receiptsUpdateReceipt(r.id, form);
     await load();
   } catch (e) {
     alertError((e as Error).message);
@@ -200,10 +158,11 @@ async function handleSubmit(): Promise<void> {
 async function handleCreate(): Promise<void> {
   mode.value = { kind: "idle" };
   try {
-    await axios.post(API_ROUTES["/receipts"], {
+    await receiptsCreateReceipt({
       ...form,
+      // GAP：表单没有合同选择器，契约 contractId 必填——占位待合同下拉补齐（见迁移报告）
       contractId: "placeholder-contract",
-      receivedBy: "current-user",
+      receivedBy: currentOperator(),
     });
     await load();
   } catch (e) {
@@ -214,11 +173,14 @@ async function handleCreate(): Promise<void> {
 async function handleSubmitReceipt(id: string): Promise<void> {
   submitting.value = id;
   try {
-    const res = await axios.post<{ results: Array<{ ok: boolean; message?: string }> }>(
-      API_ROUTES["/receipts/flow"],
-      { ids: [id], action: "submit", operator: "current-user" },
-    );
-    const r = res.data?.results?.[0];
+    // ADR-0035 act 模式：receiving 行的提交走 POST /api/receipts/receiving/act
+    const res = await receiptsActFlowReceiving({
+      ids: [id],
+      action: "submit",
+      operator: currentOperator(),
+    });
+    const results = Array.isArray(res?.data) ? res.data : [];
+    const r = results[0];
     if (r?.ok) {
       await load();
     } else {
@@ -236,7 +198,7 @@ async function handleDeleteConfirm(): Promise<void> {
   if (!t) return;
   deleteTarget.value = null;
   try {
-    await axios.delete(`${API_ROUTES["/receipts"]}/${t.id}`);
+    await receiptsDeleteReceipt(t.id);
     await load();
   } catch (e) {
     alertError((e as Error).message);

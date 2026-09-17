@@ -12,8 +12,20 @@
 //   M03.F03.I02 保存检测记录（弹窗内「保存」按钮 data-fn）
 //   M03.F03.I03 行内「录入结果」按钮（data-fn）
 import { computed, onMounted, reactive, ref } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import { receiptsListReceipts } from "@/api/endpoints/receipts/receipts";
+import { samplesListSamples } from "@/api/endpoints/samples/samples";
+import { inspectionDictionaryListParameters } from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import {
+  testRecordsCreateTestRecord,
+  testRecordsListTestRecords,
+  testRecordsUpdateTestRecord,
+} from "@/api/endpoints/test-records/test-records";
+import type {
+  InspectionParameter,
+  Sample,
+  SampleReceipt,
+  TestRecord,
+} from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -37,25 +49,8 @@ import TableCell from "@/components/ui/TableCell.vue";
 import DefaultParamCard from "@/features/data-entry/models/DefaultParamCard.vue";
 import CementCompressCard from "@/features/data-entry/models/CementCompressCard.vue";
 
-type FlowStage =
-  | "receiving"
-  | "task_assignment"
-  | "data_entry"
-  | "review"
-  | "approval"
-  | "issuance"
-  | "archived"
-  | "completed";
-
-interface SampleReceipt {
-  id: string;
-  commissionCode: string;
-  projectName?: string;
-  flowStatus: FlowStage;
-  assigneeName?: string;
-  plannedTestDate?: string;
-  categoryCode: string;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type FlowStage = SampleReceipt["flowStatus"];
 
 const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
   receiving: "接样中",
@@ -67,10 +62,6 @@ const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
   archived: "归档中",
   completed: "已归档",
 };
-
-import type { TestRecord } from "@/api/endpoints/model";
-interface Sample { id: string; sampleCode: string }
-interface InspectionParameter { code: string; name: string; canonicalName?: string; unit?: string }
 
 const items = ref<SampleReceipt[]>([]);
 const total = ref(0);
@@ -88,16 +79,12 @@ const activeParamCode = ref<string>("");
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    const params: Record<string, string | number> = {
+    const res = await receiptsListReceipts({
       page: 1,
       pageSize: 50,
       flowStatus: "data_entry",
-    };
-    if (keyword.value) params["keyword"] = keyword.value;
-    const res = await axios.get<{ items: SampleReceipt[]; total: number }>(
-      API_ROUTES["/receipts"],
-      { params },
-    );
+      ...(keyword.value ? { keyword: keyword.value } : {}),
+    });
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
     total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
@@ -110,27 +97,26 @@ onMounted(() => void load());
 async function openEntry(r: SampleReceipt): Promise<void> {
   entryTarget.value = r;
   try {
-    const [sRes, pRes, tRes] = await Promise.all([
-      axios
-        .get<{ items: Sample[] }>(API_ROUTES["/samples"], {
-          params: { receiptId: r.id, page: 1, pageSize: 50 },
-        })
-        .catch(() => ({ data: { items: [] as Sample[] } })),
-      axios
-        .get<{ items: InspectionParameter[] }>(API_ROUTES["/inspection-parameters"], {
-          params: { page: 1, pageSize: 200 },
-        })
-        .catch(() => ({ data: { items: [] as InspectionParameter[] } })),
-      axios
-        .get<{ items: TestRecord[] }>(API_ROUTES["/test-records"], {
-          params: { receiptId: r.id, page: 1, pageSize: 200 },
-        })
-        .catch(() => ({ data: { items: [] as TestRecord[] } })),
+    const [sRes, pRes] = await Promise.all([
+      samplesListSamples({ receiptId: r.id, page: 1, pageSize: 50 }).catch(() => ({
+        data: { items: [] as Sample[] },
+      })),
+      inspectionDictionaryListParameters({ page: 1, pageSize: 200 }).catch(() => ({
+        data: { items: [] as InspectionParameter[] },
+      })),
     ]);
     samples.value = sRes.data?.items ?? [];
     parameters.value = pRes.data?.items ?? [];
-    const tItems = tRes.data?.items ?? [];
-    for (const t of tItems) {
+    // 契约 test-records 列表只有 sampleId 维度（无 receiptId 过滤）——
+    // 先按接样单拉样品，再逐样品取检测记录（GAP 见迁移报告）。
+    const tLists = await Promise.all(
+      samples.value.map((s) =>
+        testRecordsListTestRecords({ sampleId: s.id, page: 1, pageSize: 200 }).catch(
+          () => ({ data: { items: [] as TestRecord[] } }),
+        ),
+      ),
+    );
+    for (const t of tLists.flatMap((res) => res.data?.items ?? [])) {
       const key = `${t.sampleId}#${t.parameterCode}`;
       records[key] = t;
     }
@@ -149,7 +135,6 @@ async function handleSave(): Promise<void> {
     const key = `${selectedSampleId.value}#${activeParamCode.value}`;
     const rec = records[key];
     const body = {
-      receiptId: t.id,
       sampleId: selectedSampleId.value,
       parameterCode: activeParamCode.value,
       result: rec?.result ?? "",
@@ -158,9 +143,9 @@ async function handleSave(): Promise<void> {
       requirement: rec?.requirement ?? "",
     };
     if (rec?.id) {
-      await axios.put(`${API_ROUTES["/test-records"]}/${rec.id}`, body);
+      await testRecordsUpdateTestRecord(rec.id, body);
     } else {
-      await axios.post(API_ROUTES["/test-records"], body);
+      await testRecordsCreateTestRecord(body);
     }
     entryTarget.value = null;
     await load();

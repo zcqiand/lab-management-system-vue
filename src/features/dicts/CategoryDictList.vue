@@ -25,8 +25,30 @@
 //   M04.F09.I01 / I02 / I03  → brands
 
 import { computed, onMounted, ref, watch } from "vue";
-import axios from "axios";
-import { API_ROUTES, type ApiRouteKey } from "@/api/legacy-client";
+import type { AxiosResponse } from "axios";
+import {
+  catalogCreateBrand,
+  catalogCreateGrade,
+  catalogCreateModel,
+  catalogCreateSpec,
+  catalogDeleteBrand,
+  catalogDeleteGrade,
+  catalogDeleteModel,
+  catalogDeleteSpec,
+  catalogListBrands,
+  catalogListGrades,
+  catalogListModels,
+  catalogListSpecs,
+  catalogUpdateBrand,
+  catalogUpdateGrade,
+  catalogUpdateModel,
+  catalogUpdateSpec,
+} from "@/api/endpoints/inspection-catalog/inspection-catalog";
+import { inspectionDictionaryListObjects } from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import type {
+  InspectionModel,
+  InspectionObject,
+} from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
@@ -38,26 +60,67 @@ import SelectValue from "@/components/ui/SelectValue.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
-interface DictItem {
-  id: string;
-  code: string;
-  name: string;
-  inspectionObjectCode?: string;
-  remark?: string;
-  sortOrder?: number;
-  createdAt: string;
-  updatedAt: string;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+// 契约：4 码表实体以 code 为主键（无 id），CreateCatalogEntryRequest.code 必填。
+type DictItem = InspectionModel;
 
-interface InspectionObject {
-  code: string;
-  name: string;
-  sortOrder?: number;
-}
+type CatalogListParams = {
+  page?: number;
+  pageSize?: number;
+  inspectionObjectCode?: string;
+  keyword?: string;
+};
+
+/** prop endpoint 值保持 /models 等字面量（测试与 4 个 page wrapper 共用），映射到 orval 具名函数 */
+type CatalogResource = "/models" | "/specifications" | "/grades" | "/brands";
+
+const CATALOG_API: Record<
+  CatalogResource,
+  {
+    list: (params?: CatalogListParams) => Promise<AxiosResponse<{ items: unknown[] }>>;
+    create: (body: {
+      code: string;
+      inspectionObjectCode?: string;
+      name: string;
+      remark?: string;
+      sortOrder?: number;
+    }) => Promise<AxiosResponse<unknown>>;
+    update: (
+      code: string,
+      body: { inspectionObjectCode?: string; name?: string; remark?: string; sortOrder?: number },
+    ) => Promise<AxiosResponse<unknown>>;
+    remove: (code: string) => Promise<AxiosResponse<void>>;
+  }
+> = {
+  "/models": {
+    list: catalogListModels,
+    create: catalogCreateModel,
+    update: catalogUpdateModel,
+    remove: catalogDeleteModel,
+  },
+  "/specifications": {
+    list: catalogListSpecs,
+    create: catalogCreateSpec,
+    update: catalogUpdateSpec,
+    remove: catalogDeleteSpec,
+  },
+  "/grades": {
+    list: catalogListGrades,
+    create: catalogCreateGrade,
+    update: catalogUpdateGrade,
+    remove: catalogDeleteGrade,
+  },
+  "/brands": {
+    list: catalogListBrands,
+    create: catalogCreateBrand,
+    update: catalogUpdateBrand,
+    remove: catalogDeleteBrand,
+  },
+};
 
 interface Props {
-  /** API_ROUTES 键：/models /specifications /grades /brands */
-  endpoint: ApiRouteKey;
+  /** 码表资源：/models /specifications /grades /brands */
+  endpoint: CatalogResource;
   title: string;
   hint?: string;
   /** 功能 ID（用于 data-fn 入口标记），格式 Mxx.Fyy.Izz */
@@ -80,6 +143,7 @@ const errorMsg = ref<string | null>(null);
 
 const formOpen = ref(false);
 const editing = ref<DictItem | null>(null);
+const formCode = ref("");
 const formObject = ref("");
 const formName = ref("");
 const formRemark = ref("");
@@ -91,7 +155,7 @@ const selectedObject = computed(
   () => objects.value.find((o) => o.code === selectedCode.value) ?? null,
 );
 
-const base = computed(() => API_ROUTES[props.endpoint]);
+const api = computed(() => CATALOG_API[props.endpoint]);
 
 async function fetchList(): Promise<void> {
   if (!selectedCode.value) {
@@ -101,8 +165,10 @@ async function fetchList(): Promise<void> {
   loading.value = true;
   errorMsg.value = null;
   try {
-    const res = await axios.get<unknown>(base.value, {
-      params: { page: "1", pageSize: "200", inspectionObjectCode: selectedCode.value },
+    const res = await api.value.list({
+      page: 1,
+      pageSize: 200,
+      inspectionObjectCode: selectedCode.value,
     });
     const items = [...unwrapListResponse<DictItem>(res).items];
     items.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
@@ -119,9 +185,7 @@ async function fetchList(): Promise<void> {
 
 onMounted(async () => {
   try {
-    const r = await axios.get<unknown>(API_ROUTES["/inspection-objects"], {
-      params: { page: 1, pageSize: "200" },
-    });
+    const r = await inspectionDictionaryListObjects({ page: 1, pageSize: 200 });
     const items = unwrapListResponse<InspectionObject>(r).items;
     items.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     objects.value = items;
@@ -137,6 +201,7 @@ watch(selectedCode, async () => {
 
 function openCreate(): void {
   editing.value = null;
+  formCode.value = "";
   formObject.value = selectedCode.value ?? objects.value[0]?.code ?? "";
   formName.value = "";
   formRemark.value = "";
@@ -145,6 +210,7 @@ function openCreate(): void {
 
 function openEdit(item: DictItem): void {
   editing.value = item;
+  formCode.value = item.code;
   formObject.value = item.inspectionObjectCode ?? "";
   formName.value = item.name;
   formRemark.value = item.remark ?? "";
@@ -152,17 +218,20 @@ function openEdit(item: DictItem): void {
 }
 
 async function handleSave(): Promise<void> {
-  if (!formObject.value || !formName.value.trim()) return;
+  // 契约 code 必填（复合主键维度：码表 code + 检测项目）
+  if (!formCode.value.trim() || !formObject.value || !formName.value.trim()) return;
   saving.value = true;
   errorMsg.value = null;
   try {
     if (editing.value) {
-      await axios.put(`${base.value}/${editing.value.id}`, {
+      await api.value.update(editing.value.code, {
+        inspectionObjectCode: formObject.value,
         name: formName.value.trim(),
         remark: formRemark.value,
       });
     } else {
-      await axios.post(base.value, {
+      await api.value.create({
+        code: formCode.value.trim(),
         inspectionObjectCode: formObject.value,
         name: formName.value.trim(),
         remark: formRemark.value,
@@ -184,7 +253,7 @@ async function handleDelete(): Promise<void> {
   if (!deleteTarget.value) return;
   deleting.value = true;
   try {
-    await axios.delete(`${base.value}/${deleteTarget.value.id}`);
+    await api.value.remove(deleteTarget.value.code);
     deleteTarget.value = null;
     await fetchList();
   } catch (e) {
@@ -297,12 +366,12 @@ function dialogTitle(): string {
         >
           <li
             v-for="item in list"
-            :key="item.id"
-            :data-testid="`row-${item.id}`"
+            :key="item.code"
+            :data-testid="`row-${item.code}`"
             class="flex items-center border-b bg-white px-3 py-2 text-sm last:border-b-0 hover:bg-muted"
           >
             <span
-              :data-testid="`sort-${item.id}`"
+              :data-testid="`sort-${item.code}`"
               class="w-12 text-center text-xs tabular-nums text-muted-foreground"
             >
               {{ item.sortOrder ?? "-" }}
@@ -361,7 +430,17 @@ function dialogTitle(): string {
         </div>
         <div>
           <Label class="mb-1 block text-xs text-muted-foreground">
-            名称
+            编码 *
+          </Label>
+          <Input
+            v-model="formCode"
+            :disabled="!!editing"
+            class="disabled:bg-muted"
+          />
+        </div>
+        <div>
+          <Label class="mb-1 block text-xs text-muted-foreground">
+            名称 *
           </Label>
           <Input
             v-model="formName"

@@ -9,7 +9,7 @@
 // ParameterStandardLinkDialog.vue 之前直接读 `res.data?.items` 与 `Array.isArray(...)`
 // 双形态 fallback，逻辑分散。该 adapter 把 fallback 收敛到一处。
 //
-// 不要塞进 src/api/legacy-client.ts（那是 API_ROUTES 常量 + 注释）；
+// 属于 features 层共享的运行时归一逻辑，放 src/lib/；
 // 不要放在 src/api/（orval 生成的领地）。
 
 import type { AxiosResponse } from "axios";

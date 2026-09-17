@@ -7,8 +7,13 @@
 // 功能 ID：
 //   M06.F08.I01 列表 + 新建/编辑/删除（行 data-fn + 按钮 data-fn）
 import { computed, onMounted, reactive, ref } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  paramInterfacesCreateParamInterface,
+  paramInterfacesDeleteParamInterface,
+  paramInterfacesListParamInterfaces,
+  paramInterfacesUpdateParamInterface,
+} from "@/api/endpoints/param-interfaces/param-interfaces";
+import type { ParamInterface } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -27,13 +32,8 @@ import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
-// 内联类型（vue 仓无 src/types/ 目录；镜像 react/src/types/common/inspection-param-interface.ts）
-interface ParamInterfaceRow {
-  code: string;
-  componentPath: string;
-  sortOrder: number;
-  config?: Record<string, unknown>;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type ParamInterfaceRow = ParamInterface;
 
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; code: string };
 
@@ -66,12 +66,10 @@ const editing = computed<ParamInterfaceRow | null>(() => {
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    const res = await axios.get<unknown>(API_ROUTES["/inspection-param-interfaces"], {
-      params: {
-        ...(keyword.value ? { keyword: keyword.value } : {}),
-        page: 1,
-        pageSize: 50,
-      },
+    const res = await paramInterfacesListParamInterfaces({
+      ...(keyword.value ? { keyword: keyword.value } : {}),
+      page: 1,
+      pageSize: 50,
     });
     const { items: listItems, total: listTotal } = unwrapListResponse<ParamInterfaceRow>(res);
     items.value = listItems;
@@ -110,13 +108,17 @@ function alertError(msg: string): void {
 async function submitForm(): Promise<void> {
   try {
     if (mode.value.kind === "create") {
-      await axios.post(API_ROUTES["/inspection-param-interfaces"], { ...form });
+      await paramInterfacesCreateParamInterface({
+        code: form.code,
+        componentPath: form.componentPath,
+        sortOrder: form.sortOrder,
+      });
     } else if (mode.value.kind === "edit") {
       const code = (mode.value as { kind: "edit"; code: string }).code;
-      await axios.put(
-        `${API_ROUTES["/inspection-param-interfaces"]}/${code}`,
-        { ...form },
-      );
+      await paramInterfacesUpdateParamInterface(code, {
+        componentPath: form.componentPath,
+        sortOrder: form.sortOrder,
+      });
     }
     closeDialog();
     await load();
@@ -218,7 +220,7 @@ async function submitForm(): Promise<void> {
           const t = deleteTarget;
           deleteTarget = null;
           try {
-            await axios.delete(`${API_ROUTES['/inspection-param-interfaces']}/${t.code}`);
+            await paramInterfacesDeleteParamInterface(t.code);
             await load();
           } catch (e) {
             alertError((e as Error).message);

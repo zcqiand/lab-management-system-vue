@@ -390,9 +390,10 @@ describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
 });
 
 // Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
-// 锁：弹窗内 2 个 form <Input> 名称 + 备注 v-model 双向写回。
+// 锁：弹窗内 3 个 form <Input> 编码 + 名称 + 备注 v-model 双向写回。
+// （TypeSpec 迁移：契约 CreateCatalogEntryRequest.code 必填，新建表单补编码输入）
 describe("Phase 1.3b — CategoryDictList 弹窗 <Input> 原语回归", () => {
-  it("弹窗 2 个 form <Input>：名称 + 备注 v-model 双向写回", async () => {
+  it("弹窗 3 个 form <Input>：编码 + 名称 + 备注 v-model 双向写回", async () => {
     const { default: CategoryDictList } = await import(
       "@/features/dicts/CategoryDictList.vue"
     );
@@ -414,28 +415,34 @@ describe("Phase 1.3b — CategoryDictList 弹窗 <Input> 原语回归", () => {
     await createBtn!.trigger("click");
     await flushPromises();
 
-    // 弹窗内的 2 个 <Input>：名称 + 备注（不含 select 检测项目）
+    // 弹窗内的 3 个 <Input>：编码 + 名称 + 备注（不含 select 检测项目）
     const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
-    expect(dialogInputs.length).toBe(2);
+    expect(dialogInputs.length).toBe(3);
 
-    // 第一个：名称（input[required] 由 formName 控制必填）
-    const nameInput = dialogInputs[0];
-    expect(nameInput.classes()).toContain("h-9");
+    // 第一个：编码（契约主键，新建必填）
+    const codeInput = dialogInputs[0];
+    expect(codeInput.classes()).toContain("h-9");
+    await codeInput.setValue("HRB400E-CODE");
+    expect((codeInput.element as HTMLInputElement).value).toBe("HRB400E-CODE");
+
+    // 第二个：名称
+    const nameInput = dialogInputs[1];
     await nameInput.setValue("HRB400E");
     expect((nameInput.element as HTMLInputElement).value).toBe("HRB400E");
 
-    // 第二个：备注
-    const remarkInput = dialogInputs[1];
+    // 第三个：备注
+    const remarkInput = dialogInputs[2];
     await remarkInput.setValue("抗震钢筋");
     expect((remarkInput.element as HTMLInputElement).value).toBe("抗震钢筋");
   });
 });
 
 // Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
-// 锁：弹窗 3 个 <Label> 落成真实 <label>，调用方 text-xs 经 tailwind-merge
+// 锁：弹窗 4 个 <Label> 落成真实 <label>，调用方 text-xs 经 tailwind-merge
 // 压过 Label 基类 text-sm（视觉不回归）。
+// （TypeSpec 迁移：新建表单补「编码 *」label，3 → 4）
 describe("Phase 1.4 — CategoryDictList 弹窗 <Label> 原语回归", () => {
-  it("弹窗 3 个 <Label class=text-xs>：text-xs 压过基类 text-sm，font-medium 保留", async () => {
+  it("弹窗 4 个 <Label class=text-xs>：text-xs 压过基类 text-sm，font-medium 保留", async () => {
     const { default: CategoryDictList } = await import(
       "@/features/dicts/CategoryDictList.vue"
     );
@@ -456,8 +463,8 @@ describe("Phase 1.4 — CategoryDictList 弹窗 <Label> 原语回归", () => {
     await flushPromises();
 
     const labels = lastWrapper.findAll('[data-teleport-stub] label');
-    expect(labels.length).toBe(3);
-    expect(labels.map((l) => l.text())).toEqual(["检测项目", "名称", "备注"]);
+    expect(labels.length).toBe(4);
+    expect(labels.map((l) => l.text())).toEqual(["检测项目", "编码 *", "名称 *", "备注"]);
     expect(labels[0].element.tagName).toBe("LABEL");
     // tailwind-merge：调用方 text-xs 压掉基类 text-sm
     expect(labels[0].classes()).toContain("text-xs");

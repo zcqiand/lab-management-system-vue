@@ -1,11 +1,25 @@
 <script setup lang="ts">
 // M06.F05 计算方法维护 — 列表 + Dialog 弹窗（镜像 react 仓）。
 //
-// 复合主键：(inspectionObjectCode, inspectionParameterCode)；
-// 主键由 tests 端 shape adapter 兜底生成 id=cr-… 。
-import { onMounted, reactive, ref, watch } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+// 契约复合主键：PUT/DELETE /api/calculation-methods/{inspectionObjectCode}/{inspectionParameterCode}。
+// 契约 list 无 keyword/page 参数（只支持按两个主键维度过滤）→ 搜索框走客户端过滤（GAP 见迁移报告）。
+import { computed, onMounted, reactive, ref } from "vue";
+import {
+  calculationMethodsCreateCalculationMethod,
+  calculationMethodsDeleteCalculationMethod,
+  calculationMethodsListCalculationMethods,
+  calculationMethodsUpdateCalculationMethod,
+} from "@/api/endpoints/calculation-methods/calculation-methods";
+import {
+  inspectionDictionaryListObjects,
+  inspectionDictionaryListParameters,
+  inspectionDictionaryListStandards,
+} from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import type {
+  CalculationMethod,
+  CreateCalculationMethodRequest,
+  UpdateCalculationMethodRequest,
+} from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -29,17 +43,12 @@ import SelectTrigger from "@/components/ui/SelectTrigger.vue";
 import SelectValue from "@/components/ui/SelectValue.vue";
 
 // @entry M06.F05.I01
-interface CalcRule {
-  id: string;
-  inspectionObjectCode: string;
-  inspectionParameterCode: string;
-  testingStandardCode?: string;
-  algorithmType: string;
-  specimenCount: number;
-  roundingRule?: string;
-  remark?: string;
-  objectName?: string;
-  parameterName?: string;
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type CalcRule = CalculationMethod;
+
+/** 行主键：契约无 id，用复合主键串 */
+function rowKey(row: CalcRule): string {
+  return `${row.inspectionObjectCode}/${row.inspectionParameterCode}`;
 }
 
 interface Opt {
@@ -67,13 +76,32 @@ const EMPTY_FORM: Record<string, string> = {
   remark: "",
 };
 
-const items = ref<CalcRule[]>([]);
+const allItems = ref<CalcRule[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const objects = ref<Opt[]>([]);
 const parameters = ref<Opt[]>([]);
 const standards = ref<Opt[]>([]);
 const keyword = ref("");
+
+// 契约 list 端点无 keyword 参数 → 搜索框客户端过滤（GAP 见迁移报告）
+const items = computed<CalcRule[]>(() => {
+  const kw = keyword.value.trim().toLowerCase();
+  if (!kw) return allItems.value;
+  return allItems.value.filter(
+    (r) =>
+      r.inspectionObjectCode.toLowerCase().includes(kw) ||
+      r.inspectionParameterCode.toLowerCase().includes(kw) ||
+      (r.remark ?? "").toLowerCase().includes(kw),
+  );
+});
+
+function objectNameOf(code: string): string | undefined {
+  return objects.value.find((o) => o.code === code)?.name;
+}
+function parameterNameOf(code: string): string | undefined {
+  return parameters.value.find((p) => p.code === code)?.name;
+}
 
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; item: CalcRule };
 const mode = ref<Mode>({ kind: "idle" });
@@ -87,16 +115,13 @@ async function load(): Promise<void> {
   loading.value = true;
   error.value = null;
   try {
-    const params: Record<string, string | number> = { page: 1, pageSize: 100 };
-    if (keyword.value.trim()) params.keyword = keyword.value.trim();
-    const res = await axios.get<{ items: CalcRule[]; total: number }>(
-      API_ROUTES["/inspection-calculation-methods"],
-      { params },
-    );
-    items.value = Array.isArray(res.data?.items) ? res.data.items : [];
+    const res = await calculationMethodsListCalculationMethods();
+    // 契约 200 是裸数组；测试/部分后端回 Page 形状，双形状兜住
+    const data = res.data as unknown as CalcRule[] | { items?: CalcRule[] } | undefined;
+    allItems.value = Array.isArray(data) ? data : (data?.items ?? []);
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载失败";
-    items.value = [];
+    allItems.value = [];
   } finally {
     loading.value = false;
   }
@@ -104,33 +129,29 @@ async function load(): Promise<void> {
 
 async function loadOptions(): Promise<void> {
   const [oRes, pRes, sRes] = await Promise.all([
-    axios
-      .get<{ items: Opt[] }>(API_ROUTES["/inspection-objects"], {
-        params: { page: 1, pageSize: 200 },
-      })
-      .catch(() => ({ data: { items: [] } })),
-    axios
-      .get<{ items: Opt[] }>(API_ROUTES["/inspection-parameters"], {
-        params: { page: 1, pageSize: 200 },
-      })
-      .catch(() => ({ data: { items: [] } })),
-    axios
-      .get<{ items: Opt[] }>(API_ROUTES["/inspection-standards"], {
-        params: { page: 1, pageSize: 200 },
-      })
-      .catch(() => ({ data: { items: [] } })),
+    inspectionDictionaryListObjects({ page: 1, pageSize: 200 }).catch(
+      () => ({ data: { items: [] } }) as never,
+    ),
+    inspectionDictionaryListParameters({ page: 1, pageSize: 200 }).catch(
+      () => ({ data: { items: [] } }) as never,
+    ),
+    inspectionDictionaryListStandards({ page: 1, pageSize: 200 }).catch(
+      () => ({ data: { items: [] } }) as never,
+    ),
   ]);
-  objects.value = Array.isArray(oRes.data?.items) ? oRes.data.items : [];
-  parameters.value = Array.isArray(pRes.data?.items) ? pRes.data.items : [];
-  standards.value = Array.isArray(sRes.data?.items) ? sRes.data.items : [];
+  objects.value = Array.isArray((oRes.data as { items?: Opt[] })?.items)
+    ? (oRes.data as { items: Opt[] }).items
+    : [];
+  parameters.value = Array.isArray((pRes.data as { items?: Opt[] })?.items)
+    ? (pRes.data as { items: Opt[] }).items
+    : [];
+  standards.value = Array.isArray((sRes.data as { items?: Opt[] })?.items)
+    ? (sRes.data as { items: Opt[] }).items
+    : [];
 }
 
 onMounted(async () => {
   await Promise.all([load(), loadOptions()]);
-});
-
-watch(keyword, () => {
-  void load();
 });
 
 function openCreate(): void {
@@ -165,21 +186,34 @@ async function submitForm(): Promise<void> {
   const objVal = form.inspectionObjectCode;
   const paramVal = form.inspectionParameterCode;
   const stdVal = form.testingStandardCode;
-  const payload = {
-    inspectionObjectCode: objVal && objVal !== "__none__" ? objVal : "",
-    inspectionParameterCode: paramVal && paramVal !== "__none__" ? paramVal : "",
-    testingStandardCode: stdVal && stdVal !== "__none__" ? stdVal : undefined,
-    algorithmType: form.algorithmType,
-    specimenCount: Number(form.specimenCount) || 1,
-    roundingRule: form.roundingRule || undefined,
-    remark: form.remark || undefined,
-  };
+  const algo = form.algorithmType as CalcRule["algorithmType"];
   try {
     if (mode.value.kind === "create") {
-      await axios.post(API_ROUTES["/inspection-calculation-methods"], payload);
+      const payload: CreateCalculationMethodRequest = {
+        inspectionObjectCode: objVal && objVal !== "__none__" ? objVal : "",
+        inspectionParameterCode: paramVal && paramVal !== "__none__" ? paramVal : "",
+        testingStandardCode: stdVal && stdVal !== "__none__" ? stdVal : undefined,
+        algorithmType: algo,
+        specimenCount: Number(form.specimenCount) || 1,
+        roundingRule: form.roundingRule || undefined,
+        remark: form.remark || undefined,
+      };
+      await calculationMethodsCreateCalculationMethod(payload);
     } else if (mode.value.kind === "edit") {
-      const id = mode.value.item.id;
-      await axios.put(`${API_ROUTES["/inspection-calculation-methods"]}/${id}`, payload);
+      const t = mode.value.item;
+      const payload: UpdateCalculationMethodRequest = {
+        testingStandardCode: stdVal && stdVal !== "__none__" ? stdVal : undefined,
+        algorithmType: algo,
+        specimenCount: Number(form.specimenCount) || 1,
+        roundingRule: form.roundingRule || undefined,
+        remark: form.remark || undefined,
+      };
+      // 契约复合主键寻址：/{inspectionObjectCode}/{inspectionParameterCode}
+      await calculationMethodsUpdateCalculationMethod(
+        t.inspectionObjectCode,
+        t.inspectionParameterCode,
+        payload,
+      );
     }
     closeDialog();
     await load();
@@ -199,7 +233,10 @@ async function confirmDelete(): Promise<void> {
   deleting.value = true;
   deleteError.value = null;
   try {
-    await axios.delete(`${API_ROUTES["/inspection-calculation-methods"]}/${deleteTarget.value.id}`);
+    await calculationMethodsDeleteCalculationMethod(
+      deleteTarget.value.inspectionObjectCode,
+      deleteTarget.value.inspectionParameterCode,
+    );
     deleteTarget.value = null;
     await load();
   } catch (e: unknown) {
@@ -256,15 +293,17 @@ async function confirmDelete(): Promise<void> {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="row in items" :key="row.id" class="border-t hover:bg-muted">
+        <TableRow v-for="row in items" :key="rowKey(row)" class="border-t hover:bg-muted">
           <TableCell class="px-4 py-2 align-top">
             <div class="font-mono text-xs">{{ row.inspectionObjectCode }}</div>
-            <div v-if="row.objectName" class="text-xs text-muted-foreground">{{ row.objectName }}</div>
+            <div v-if="objectNameOf(row.inspectionObjectCode)" class="text-xs text-muted-foreground">
+              {{ objectNameOf(row.inspectionObjectCode) }}
+            </div>
           </TableCell>
           <TableCell class="px-4 py-2 align-top">
             <div class="font-mono text-xs">{{ row.inspectionParameterCode }}</div>
-            <div v-if="row.parameterName" class="text-xs text-muted-foreground">
-              {{ row.parameterName }}
+            <div v-if="parameterNameOf(row.inspectionParameterCode)" class="text-xs text-muted-foreground">
+              {{ parameterNameOf(row.inspectionParameterCode) }}
             </div>
           </TableCell>
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.testingStandardCode ?? "-" }}</TableCell>
@@ -280,7 +319,7 @@ async function confirmDelete(): Promise<void> {
               variant="link"
               class="text-primary hover:underline mr-3"
               data-fn="M06.F05.I01"
-              :aria-label="`编辑 ${row.id}`"
+              :aria-label="`编辑 ${rowKey(row)}`"
               @click="openEdit(row)"
             >
               编辑
@@ -289,7 +328,7 @@ async function confirmDelete(): Promise<void> {
               variant="link"
               class="text-destructive hover:underline"
               data-fn="M06.F05.I01"
-              :aria-label="`删除 ${row.id}`"
+              :aria-label="`删除 ${rowKey(row)}`"
               @click="startDelete(row)"
             >
               删除

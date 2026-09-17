@@ -5,8 +5,16 @@
 // parameters 列表行内「关联标准」按钮的弹窗：列出全部检测标准（含状态），
 // toggle 该参数的关联（POST/DELETE /api/inspection/links/standard-parameter）。
 import { computed, onMounted, ref, watch } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  inspectionDictionaryLinkStandardParameter,
+  inspectionDictionaryListStandardParameterLinks,
+  inspectionDictionaryListStandards,
+  inspectionDictionaryUnlinkStandardParameter,
+} from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import type {
+  InspectionStandard,
+  StandardParameterLink,
+} from "@/api/endpoints/model";
 import { unwrapListResponse } from "@/lib/responses";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -20,18 +28,9 @@ import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 
-// 内联类型（vue 仓类型内联惯例）
-interface StdRow {
-  code: string;
-  name?: string;
-  version?: string;
-  status?: string;
-}
-
-interface StdParamLink {
-  inspectionStandardCode: string;
-  inspectionParameterCode: string;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type StdRow = InspectionStandard;
+type StdParamLink = StandardParameterLink;
 
 const props = defineProps<{
   open: boolean;
@@ -61,10 +60,8 @@ async function load(): Promise<void> {
   loading.value = true;
   try {
     const [stdRes, linkRes] = await Promise.all([
-      axios.get<unknown>(API_ROUTES["/inspection-standards"], {
-        params: { page: 1, pageSize: 500 },
-      }),
-      axios.get<unknown>(API_ROUTES["/inspection-standard-parameters"]),
+      inspectionDictionaryListStandards({ page: 1, pageSize: 500 }),
+      inspectionDictionaryListStandardParameterLinks(),
     ]);
     const linkList = unwrapListResponse<StdParamLink>(linkRes).items;
     standards.value = unwrapListResponse<StdRow>(stdRes).items;
@@ -92,14 +89,15 @@ async function toggle(stdCode: string): Promise<void> {
   busyCode.value = stdCode;
   try {
     if (linked.value.has(stdCode)) {
-      await axios.delete(API_ROUTES["/inspection-standard-parameters"], {
-        data: { inspectionStandardCode: stdCode, inspectionParameterCode: props.parameterCode },
+      await inspectionDictionaryUnlinkStandardParameter({
+        inspectionStandardCode: stdCode,
+        inspectionParameterCode: props.parameterCode,
       });
       const next = new Set(linked.value);
       next.delete(stdCode);
       linked.value = next;
     } else {
-      await axios.post(API_ROUTES["/inspection-standard-parameters"], {
+      await inspectionDictionaryLinkStandardParameter({
         inspectionStandardCode: stdCode,
         inspectionParameterCode: props.parameterCode,
       });

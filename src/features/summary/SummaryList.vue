@@ -8,8 +8,14 @@
 // 适配层：msw handlers-extra.ts summaryExtraHandlers 直接返回 REF 期望形状，
 // 无需 installShapeAdapters 额外兜底。
 import { onMounted, ref, watch } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  summaryGetDashboardStats,
+  summaryGetReportSummary,
+} from "@/api/endpoints/summary/summary";
+import type {
+  DashboardStats,
+  SummaryData,
+} from "@/api/endpoints/model";
 import Label from "@/components/ui/Label.vue";
 import Select from "@/components/ui/Select.vue";
 import SelectTrigger from "@/components/ui/SelectTrigger.vue";
@@ -23,28 +29,7 @@ import TableRow from "@/components/ui/TableRow.vue";
 import TableHead from "@/components/ui/TableHead.vue";
 import TableCell from "@/components/ui/TableCell.vue";
 
-interface SummaryColumn {
-  key: string;
-  label: string;
-}
-
-interface SummaryData {
-  summaryName: string;
-  columns: SummaryColumn[];
-  rows: Array<Record<string, string>>;
-}
-
-interface DashboardStats {
-  contractCount: number;
-  receiptCount: number;
-  sampleCount: number;
-  reportCountByStatus: {
-    draft: number;
-    reviewing: number;
-    issued: number;
-  };
-  pendingTaskCount: number;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
 
 const STATUS_LABEL: Record<string, string> = {
   receiving: "接样",
@@ -67,11 +52,12 @@ async function load(): Promise<void> {
   loading.value = true;
   error.value = null;
   try {
-    const params: Record<string, string> = {};
-    if (categoryCode.value && categoryCode.value !== "ALL") params.categoryCode = categoryCode.value;
+    const params = categoryCode.value && categoryCode.value !== "ALL"
+      ? { categoryCode: categoryCode.value }
+      : undefined;
     const [summaryRes, statsRes] = await Promise.all([
-      axios.get<SummaryData>(API_ROUTES["/summary"], { params }),
-      axios.get<DashboardStats>(`${API_ROUTES["/summary"]}/stats`).catch(() => ({ data: null })),
+      summaryGetReportSummary(params),
+      summaryGetDashboardStats().catch(() => ({ data: null as DashboardStats | null })),
     ]);
     data.value = summaryRes.data ?? null;
     stats.value = statsRes.data ?? null;

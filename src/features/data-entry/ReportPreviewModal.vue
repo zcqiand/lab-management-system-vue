@@ -5,9 +5,18 @@
 // vue 仓本批 stub：字段表 + 类别 + 检测参数列表（与 Batch 2B-2 占位同结构，
 // 升级到 react 仓同款 docx 渲染见后续 batch）。
 //
-// 数据获取走 vue-query（@/api/legacy-client 或 orval endpoints）。
+// 数据获取走 orval 具名函数（src/api/endpoints/*）——SSOT 是 shared TypeSpec。
 import { computed, ref, watch } from "vue";
-import { API_ROUTES } from "@/api/legacy-client";
+import { samplesListSamples } from "@/api/endpoints/samples/samples";
+import { inspectionDictionaryListParameters } from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import { testRecordsListTestRecords } from "@/api/endpoints/test-records/test-records";
+import type {
+  InspectionParameter,
+  Sample,
+  SampleReceipt,
+  TestRecord,
+} from "@/api/endpoints/model";
+import { normalizeListResponse } from "@/lib/responses";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -22,33 +31,17 @@ import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 
-interface SampleReceiptLike {
-  id: string;
-  commissionCode: string;
-  categoryCode: string;
-  projectName?: string;
-  clientUnit?: string;
-  testCategory?: string;
-}
-
-interface SampleLike {
-  sampleCode?: string;
-  sampleName?: string;
-  structuralPart?: string;
-}
-
-interface TestRecordLike {
-  sampleId?: string;
-  parameterCode: string;
-  result?: string;
-  verdict?: string;
-  requirement?: string;
-}
-
-interface ParamDefLike {
-  code: string;
-  name: string;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type SampleReceiptLike = Pick<
+  SampleReceipt,
+  "id" | "commissionCode" | "categoryCode" | "projectName" | "clientUnit" | "testCategory"
+>;
+type SampleLike = Pick<Sample, "id" | "sampleCode" | "sampleName" | "structuralPart">;
+type TestRecordLike = Pick<
+  TestRecord,
+  "sampleId" | "parameterCode" | "result" | "verdict" | "requirement"
+>;
+type ParamDefLike = Pick<InspectionParameter, "code" | "name">;
 
 const props = defineProps<{
   open: boolean;
@@ -74,16 +67,22 @@ watch(
   async (isOpen) => {
     if (!isOpen) return;
     try {
-      const [s, p] = await Promise.all([
-        fetch(API_ROUTES["/samples"]).then((r) => r.json()) as Promise<SampleLike[]>,
-        fetch(API_ROUTES["/inspection-parameters"]).then((r) => r.json()) as Promise<ParamDefLike[]>,
+      const [sRes, pRes] = await Promise.all([
+        samplesListSamples({ receiptId: props.receipt.id, page: 1, pageSize: 200 }),
+        inspectionDictionaryListParameters({ page: 1, pageSize: 200 }),
       ]);
-      samples.value = s;
-      parameters.value = p;
-      const r = await fetch(`${API_ROUTES["/test-records"]}?receiptId=${props.receipt.id}`).then(
-        (resp) => resp.json(),
-      ) as TestRecordLike[];
-      records.value = r;
+      samples.value = normalizeListResponse<SampleLike>(sRes.data).items;
+      parameters.value = normalizeListResponse<ParamDefLike>(pRes.data).items;
+      // 契约 test-records 列表只有 sampleId 维度（无 receiptId 过滤）——
+      // 按接样单样品逐个取检测记录（GAP 见迁移报告）。
+      const tLists = await Promise.all(
+        samples.value.map((s) =>
+          testRecordsListTestRecords({ sampleId: s.id, page: 1, pageSize: 200 })
+            .then((res) => normalizeListResponse<TestRecordLike>(res.data).items)
+            .catch(() => [] as TestRecordLike[]),
+        ),
+      );
+      records.value = tLists.flat();
     } catch {
       // stub：失败不渲染
     }

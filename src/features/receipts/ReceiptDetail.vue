@@ -9,58 +9,13 @@
 //   M03.F09.I03 报告预览按钮（Batch 2B-2 升级为 ReportPreviewModal 真组件）
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import { receiptsGetReceipt } from "@/api/endpoints/receipts/receipts";
+import type { FlowStatus, SampleReceipt } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import ReportPreviewModal from "@/features/data-entry/ReportPreviewModal.vue";
 
-type FlowStage =
-  | "receiving"
-  | "task_assignment"
-  | "data_entry"
-  | "review"
-  | "approval"
-  | "issuance"
-  | "archived"
-  | "completed";
-
-interface FlowHistoryEntry {
-  action: "submit" | "return" | "withdraw";
-  from: FlowStage;
-  to: FlowStage;
-  operator: string;
-  at: string;
-  reason?: string;
-}
-
-interface SampleReceipt {
-  id: string;
-  contractId: string;
-  commissionCode: string;
-  commissionDate: string;
-  categoryCode: string;
-  projectName?: string;
-  clientUnit?: string;
-  buildingUnit?: string;
-  supervisorUnit?: string;
-  constructionUnit?: string;
-  witnessUnit?: string;
-  witness?: string;
-  witnessPhone?: string;
-  inspector?: string;
-  inspectorPhone?: string;
-  samplingLocation?: string;
-  receivedBy: string;
-  sampleSource: string;
-  testCategory: string;
-  testParameters?: string[];
-  flowStatus: FlowStage;
-  flowHistory: FlowHistoryEntry[];
-  assigneeName?: string;
-  plannedTestDate?: string;
-  reportCode?: string;
-  result?: "pass" | "fail" | "";
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type FlowStage = FlowStatus;
 
 const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
   receiving: "接样中",
@@ -87,7 +42,7 @@ async function fetchReceipt(): Promise<void> {
   loading.value = true;
   error.value = null;
   try {
-    const res = await axios.get<SampleReceipt>(`${API_ROUTES["/receipts"]}/${id.value}`);
+    const res = await receiptsGetReceipt(id.value);
     receipt.value = res.data;
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载失败";

@@ -138,19 +138,40 @@ describe("M03.F01 接样管理", () => {
     expect(dialog.text()).toContain("删除接样");
   });
 
-  fnTest(["M03.F01.I04"], "接样管理：提交按钮调用 axios.post 推送状态机（receiving → task_assignment）", async () => {
+  fnTest(["M03.F01.I04"], "接样管理：提交按钮调用 /api/receipts/receiving/act 推送状态机（receiving → task_assignment）", async () => {
     const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
     const wrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
+    // ADR-0019：operator 取自 authenticated 态 user.username（不许 demo 字面量兜底）
+    const { useAuthStore } = await import("@/state/auth");
+    useAuthStore().authState = {
+      kind: "authenticated",
+      value: {
+        kind: "authenticated",
+        user: { id: "USER-001", username: "zhangsan" },
+        tenant: { tenantId: "TENANT-001", code: "LAB", name: "实验室", roleIds: [] },
+        permissions: [],
+        tokenExpiresAt: Date.now() + 30 * 60 * 1000,
+      },
+    };
+    vi.mocked(axios.post).mockImplementation(async () => {
+      return { data: [{ id: "RECEIPT-001", ok: true, flowStatus: "task_assignment" }] } as never;
+    });
     const submitBtn = wrapper.findAll("button").find((b) => b.text() === "提交");
     expect(submitBtn).toBeTruthy();
     await submitBtn!.trigger("click");
     await flushPromises();
+    // orval 具名函数按 (url, body, options) 三参调 axios.post（options=undefined）
     expect(vi.mocked(axios.post)).toHaveBeenCalledWith(
-      "/api/receipts/flow",
-      expect.objectContaining({ action: "submit", ids: ["RECEIPT-001"] }),
+      "/api/receipts/receiving/act",
+      expect.objectContaining({
+        action: "submit",
+        ids: ["RECEIPT-001"],
+        operator: "zhangsan",
+      }),
+      undefined,
     );
   });
 });

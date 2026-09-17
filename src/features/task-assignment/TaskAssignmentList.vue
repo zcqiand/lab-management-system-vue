@@ -7,8 +7,11 @@
 //   M03.F02.I01 任务分配队列（页面 @entry）
 //   M03.F02.I01 安排按钮（data-fn，调 PUT /receipts/:id 更新 assignee + plannedDate）
 import { onMounted, ref } from "vue";
-import axios from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  receiptsAssignTask,
+  receiptsListReceipts,
+} from "@/api/endpoints/receipts/receipts";
+import type { SampleReceipt } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -25,24 +28,8 @@ import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 
-type FlowStage =
-  | "receiving"
-  | "task_assignment"
-  | "data_entry"
-  | "review"
-  | "approval"
-  | "issuance"
-  | "archived"
-  | "completed";
-
-interface SampleReceipt {
-  id: string;
-  commissionCode: string;
-  projectName?: string;
-  flowStatus: FlowStage;
-  assigneeName?: string;
-  plannedTestDate?: string;
-}
+// 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+type FlowStage = SampleReceipt["flowStatus"];
 
 const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
   receiving: "接样中",
@@ -67,16 +54,12 @@ const saving = ref(false);
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    const params: Record<string, string | number> = {
+    const res = await receiptsListReceipts({
       page: 1,
       pageSize: 50,
       flowStatus: "task_assignment",
-    };
-    if (keyword.value) params["keyword"] = keyword.value;
-    const res = await axios.get<{ items: SampleReceipt[]; total: number }>(
-      API_ROUTES["/receipts"],
-      { params },
-    );
+      ...(keyword.value ? { keyword: keyword.value } : {}),
+    });
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
     total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
@@ -99,7 +82,7 @@ async function handleSave(): Promise<void> {
   if (!t) return;
   saving.value = true;
   try {
-    await axios.put(`${API_ROUTES["/receipts"]}/${t.id}`, {
+    await receiptsAssignTask(t.id, {
       assigneeName: assigneeName.value.trim(),
       assigneeId: assigneeName.value.trim() ? `u-${assigneeName.value.trim()}` : undefined,
       plannedTestDate: plannedTestDate.value,

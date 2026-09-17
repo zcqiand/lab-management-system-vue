@@ -6,7 +6,34 @@
 // （id=code + keyword 过滤 + junction 反查）。
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import axios, { type AxiosResponse } from "axios";
-import { API_ROUTES } from "@/api/legacy-client";
+import {
+  inspectionDictionaryCreateObject,
+  inspectionDictionaryCreateParameter,
+  inspectionDictionaryCreateSpecialty,
+  inspectionDictionaryCreateStandard,
+  inspectionDictionaryDeleteObject,
+  inspectionDictionaryDeleteParameter,
+  inspectionDictionaryDeleteSpecialty,
+  inspectionDictionaryDeleteStandard,
+  inspectionDictionaryListObjectParameterLinks,
+  inspectionDictionaryListObjectStandardLinks,
+  inspectionDictionaryListObjects,
+  inspectionDictionaryListParameters,
+  inspectionDictionaryListSpecialties,
+  inspectionDictionaryListStandardParameterLinks,
+  inspectionDictionaryListStandards,
+  inspectionDictionaryUpdateObject,
+  inspectionDictionaryUpdateParameter,
+  inspectionDictionaryUpdateSpecialty,
+  inspectionDictionaryUpdateStandard,
+} from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
+import type {
+  InspectionStandardStatus,
+  InspectionParameterSourceType,
+  ObjectParameterLink,
+  ObjectStandardLink,
+  StandardParameterLink,
+} from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Checkbox from "@/components/ui/Checkbox.vue";
 import Dialog from "@/components/ui/Dialog.vue";
@@ -85,13 +112,6 @@ const CREATE_LABELS: Record<Resource, string> = {
   standards: "新建检测标准",
 };
 
-const ROUTES: Record<Resource, string> = {
-  specialties: API_ROUTES["/inspection-specialties"],
-  objects: API_ROUTES["/inspection-objects"],
-  parameters: API_ROUTES["/inspection-parameters"],
-  standards: API_ROUTES["/inspection-standards"],
-};
-
 const FN_ID: Record<Resource, string> = {
   specialties: "M06.F01.I01",
   objects: "M06.F02.I01",
@@ -121,14 +141,13 @@ const STANDARD_STATUS_CN: Record<string, string> = {
 
 const title = computed(() => TITLES[props.resource]);
 const createLabel = computed(() => CREATE_LABELS[props.resource]);
-const route = computed(() => ROUTES[props.resource]);
 const fnId = computed(() => FN_ID[props.resource]);
 const fnCreate = computed(() => FN_CREATE[props.resource]);
 const fnDelete = computed(() => FN_DELETE[props.resource]);
 
-interface Opt { code: string; name: string }
+interface Opt { code: string; name: string; inspectionSpecialtyCode?: string }
 
-const items = ref<ListItem[]>([]);
+const rawItems = ref<ListItem[]>([]);
 const total = ref(0);
 const loading = ref(false);
 const error = ref<string | null>(null);
@@ -140,6 +159,117 @@ const specialtyOptions = ref<Opt[]>([]);
 const objectOptions = ref<Opt[]>([]);
 const standardOptions = ref<Opt[]>([]);
 const parameterOptions = ref<Opt[]>([]);
+
+// 契约 link 表（junction 反查）：列表列展示 + parameters/standards 视图的
+// 专项/项目/标准筛选（契约 list 参数不支持这些维度 → 客户端经 link 表过滤）
+const objectParamLinks = ref<ObjectParameterLink[]>([]);
+const objectStdLinks = ref<ObjectStandardLink[]>([]);
+const stdParamLinks = ref<StandardParameterLink[]>([]);
+
+// filter "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui SelectItem
+// 显式禁止空字符串 value；空串是 placeholder 保留值），过滤时翻译回空串跳过
+function filterVal(v: string): string {
+  return v === "__all__" ? "" : v;
+}
+
+const items = computed<ListItem[]>(() => {
+  const specialtyVal = filterVal(specialtyFilter.value);
+  const objectVal = filterVal(objectFilter.value);
+  const standardVal = filterVal(standardFilter.value);
+  let rows = rawItems.value;
+  if (props.resource === "parameters") {
+    if (objectVal) {
+      const allowed = new Set(
+        objectParamLinks.value
+          .filter((l) => l.inspectionObjectCode === objectVal)
+          .map((l) => l.inspectionParameterCode),
+      );
+      rows = rows.filter((r) => allowed.has(r.code));
+    }
+    if (standardVal) {
+      const allowed = new Set(
+        stdParamLinks.value
+          .filter((l) => l.inspectionStandardCode === standardVal)
+          .map((l) => l.inspectionParameterCode),
+      );
+      rows = rows.filter((r) => allowed.has(r.code));
+    }
+    if (specialtyVal) {
+      const objCodes = new Set(
+        objectOptions.value
+          .filter((o) => o.inspectionSpecialtyCode === specialtyVal)
+          .map((o) => o.code),
+      );
+      const allowed = new Set(
+        objectParamLinks.value
+          .filter((l) => objCodes.has(l.inspectionObjectCode))
+          .map((l) => l.inspectionParameterCode),
+      );
+      rows = rows.filter((r) => allowed.has(r.code));
+    }
+  }
+  if (props.resource === "standards") {
+    if (objectVal) {
+      const allowed = new Set(
+        objectStdLinks.value
+          .filter((l) => l.inspectionObjectCode === objectVal)
+          .map((l) => l.inspectionStandardCode),
+      );
+      rows = rows.filter((r) => allowed.has(r.code));
+    }
+    if (specialtyVal) {
+      const objCodes = new Set(
+        objectOptions.value
+          .filter((o) => o.inspectionSpecialtyCode === specialtyVal)
+          .map((o) => o.code),
+      );
+      const allowed = new Set(
+        objectStdLinks.value
+          .filter((l) => objCodes.has(l.inspectionObjectCode))
+          .map((l) => l.inspectionStandardCode),
+      );
+      rows = rows.filter((r) => allowed.has(r.code));
+    }
+  }
+  return rows;
+});
+
+// junction 列展示 helper（link 表 + 选项名反查；无关联时显示 "-"）
+function joinOrDash(values: string[]): string {
+  return values.length > 0 ? values.join("、") : "-";
+}
+function paramNamesOfObject(objCode: string): string {
+  const codes = objectParamLinks.value
+    .filter((l) => l.inspectionObjectCode === objCode)
+    .map((l) => l.inspectionParameterCode);
+  return joinOrDash(codes.map((c) => parameterOptions.value.find((p) => p.code === c)?.name ?? c));
+}
+function stdCodesOfObject(objCode: string): string {
+  return joinOrDash(
+    objectStdLinks.value
+      .filter((l) => l.inspectionObjectCode === objCode)
+      .map((l) => l.inspectionStandardCode),
+  );
+}
+function objectNamesOfParam(paramCode: string): string {
+  const codes = objectParamLinks.value
+    .filter((l) => l.inspectionParameterCode === paramCode)
+    .map((l) => l.inspectionObjectCode);
+  return joinOrDash(codes.map((c) => objectOptions.value.find((o) => o.code === c)?.name ?? c));
+}
+function stdCodesOfParam(paramCode: string): string {
+  return joinOrDash(
+    stdParamLinks.value
+      .filter((l) => l.inspectionParameterCode === paramCode)
+      .map((l) => l.inspectionStandardCode),
+  );
+}
+function paramNamesOfStandard(stdCode: string): string {
+  const codes = stdParamLinks.value
+    .filter((l) => l.inspectionStandardCode === stdCode)
+    .map((l) => l.inspectionParameterCode);
+  return joinOrDash(codes.map((c) => parameterOptions.value.find((p) => p.code === c)?.name ?? c));
+}
 
 // 弹窗状态
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; item: ListItem };
@@ -189,64 +319,102 @@ async function load(): Promise<void> {
   loading.value = true;
   error.value = null;
   try {
-    const params: Record<string, string | number> = { page: 1, pageSize: 50 };
-    if (keyword.value.trim()) params.keyword = keyword.value.trim();
-    // filter "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui SelectItem
-    // 显式禁止空字符串 value；空串是 placeholder 保留值），load() 里翻译回空串跳过条件过滤
-    const specialtyVal = specialtyFilter.value === "__all__" ? "" : specialtyFilter.value;
-    const objectVal = objectFilter.value === "__all__" ? "" : objectFilter.value;
-    const standardVal = standardFilter.value === "__all__" ? "" : standardFilter.value;
-    if (props.resource === "objects" && specialtyVal) {
-      params.inspectionSpecialtyCode = specialtyVal;
+    const kw = keyword.value.trim();
+    const specialtyVal = filterVal(specialtyFilter.value);
+    // 契约 list 参数只支持各自文档里的维度：4 资源都支持 keyword；objects 另支持
+    // inspectionSpecialtyCode。standards/parameters 的专项/项目/标准维度契约无参
+    // → items computed 里经 link 表客户端过滤（GAP 见迁移报告）。
+    let res: AxiosResponse<unknown>;
+    if (props.resource === "specialties") {
+      res = await inspectionDictionaryListSpecialties({
+        page: 1,
+        pageSize: 50,
+        ...(kw ? { keyword: kw } : {}),
+      });
+    } else if (props.resource === "objects") {
+      res = await inspectionDictionaryListObjects({
+        page: 1,
+        pageSize: 50,
+        ...(kw ? { keyword: kw } : {}),
+        ...(specialtyVal ? { inspectionSpecialtyCode: specialtyVal } : {}),
+      });
+    } else if (props.resource === "parameters") {
+      res = await inspectionDictionaryListParameters({
+        page: 1,
+        pageSize: 50,
+        ...(kw ? { keyword: kw } : {}),
+      });
+    } else {
+      res = await inspectionDictionaryListStandards({
+        page: 1,
+        pageSize: 50,
+        ...(kw ? { keyword: kw } : {}),
+      });
     }
-    if (props.resource === "standards") {
-      if (specialtyVal) params.inspectionSpecialtyCode = specialtyVal;
-      if (objectVal) params.inspectionObjectCode = objectVal;
-    }
-    if (props.resource === "parameters") {
-      if (specialtyVal) params.inspectionSpecialtyCode = specialtyVal;
-      if (objectVal) params.inspectionObjectCode = objectVal;
-      if (standardVal) params.inspectionStandardCode = standardVal;
-    }
-    const res = await axios.get<unknown>(route.value, { params });
     const { items: listItems, total: listTotal } = unwrapListResponse<ListItem>(res);
-    items.value = listItems;
+    rawItems.value = listItems;
     total.value = listTotal;
+    await loadLinks();
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载失败";
-    items.value = [];
+    rawItems.value = [];
     total.value = 0;
   } finally {
     loading.value = false;
   }
 }
 
+/** 拉本视图需要的 junction link 表（列展示 + 客户端过滤） */
+async function loadLinks(): Promise<void> {
+  const wantObjectParam = props.resource === "objects" || props.resource === "parameters";
+  const wantObjectStd = props.resource === "objects" || props.resource === "standards";
+  const wantStdParam = props.resource === "parameters" || props.resource === "standards";
+  // link 表 list 契约无分页参数（只支持按 code 维度过滤），整表拉回
+  const [opRes, osRes, spRes] = await Promise.all([
+    wantObjectParam
+      ? inspectionDictionaryListObjectParameterLinks().catch(() => emptyListResponse())
+      : Promise.resolve(null),
+    wantObjectStd
+      ? inspectionDictionaryListObjectStandardLinks().catch(() => emptyListResponse())
+      : Promise.resolve(null),
+    wantStdParam
+      ? inspectionDictionaryListStandardParameterLinks().catch(() => emptyListResponse())
+      : Promise.resolve(null),
+  ]);
+  if (opRes) objectParamLinks.value = normalizeListResponse<ObjectParameterLink>(opRes.data).items;
+  if (osRes) objectStdLinks.value = normalizeListResponse<ObjectStandardLink>(osRes.data).items;
+  if (spRes) stdParamLinks.value = normalizeListResponse<StandardParameterLink>(spRes.data).items;
+}
+
 async function loadOptions(): Promise<void> {
   if (props.resource === "specialties") return;
-  const spRes = await axios
-    .get<unknown>(ROUTES.specialties, { params: { page: 1, pageSize: 100 } })
-    .catch(() => emptyListResponse());
+  const spRes = await inspectionDictionaryListSpecialties({ page: 1, pageSize: 100 }).catch(() =>
+    emptyListResponse(),
+  );
   specialtyOptions.value = normalizeListResponse<Opt>(spRes.data).items;
   if (props.resource === "standards" || props.resource === "parameters") {
-    const objParams: Record<string, string | number> = { page: 1, pageSize: 200 };
-    if (specialtyFilter.value) objParams.inspectionSpecialtyCode = specialtyFilter.value;
-    const objRes = await axios
-      .get<unknown>(ROUTES.objects, { params: objParams })
-      .catch(() => emptyListResponse());
+    const objParams: { page: number; pageSize: number; inspectionSpecialtyCode?: string } = {
+      page: 1,
+      pageSize: 200,
+    };
+    const specialtyVal = filterVal(specialtyFilter.value);
+    if (specialtyVal) objParams.inspectionSpecialtyCode = specialtyVal;
+    const objRes = await inspectionDictionaryListObjects(objParams).catch(() =>
+      emptyListResponse(),
+    );
     objectOptions.value = normalizeListResponse<Opt>(objRes.data).items;
   }
   if (props.resource === "parameters") {
-    const stdParams: Record<string, string | number> = { page: 1, pageSize: 200 };
-    if (objectFilter.value) stdParams.inspectionObjectCode = objectFilter.value;
-    const stdRes = await axios
-      .get<unknown>(ROUTES.standards, { params: stdParams })
-      .catch(() => emptyListResponse());
+    const stdRes = await inspectionDictionaryListStandards({ page: 1, pageSize: 200 }).catch(
+      () => emptyListResponse(),
+    );
     standardOptions.value = normalizeListResponse<Opt>(stdRes.data).items;
   }
-  if (props.resource === "objects") {
-    const pRes = await axios
-      .get<unknown>(ROUTES.parameters, { params: { page: 1, pageSize: 200 } })
-      .catch(() => emptyListResponse());
+  if (props.resource !== "specialties") {
+    // 参数选项：objects 视图列展示 / parameters+standards 视图 junction 列反查都要用
+    const pRes = await inspectionDictionaryListParameters({ page: 1, pageSize: 500 }).catch(() =>
+      emptyListResponse(),
+    );
     parameterOptions.value = normalizeListResponse<Opt>(pRes.data).items;
   }
 }
@@ -290,35 +458,94 @@ function alertError(msg: string): void {
 
 async function submitForm(): Promise<void> {
   saveError.value = null;
-  const payload: Record<string, unknown> = { code: form.code, name: form.name };
-  if (props.resource === "specialties") {
-    payload.officialNo = form.officialNo || undefined;
-    payload.isOfficial = form.isOfficial === true;
-    payload.enabled = form.enabled === true;
-  } else if (props.resource === "objects") {
-    // __none__ 是 reka-ui SelectItem 替代 raw <option value=""> 的 sentinel
-    const specVal = form.inspectionSpecialtyCode;
-    payload.inspectionSpecialtyCode = specVal && specVal !== "__none__" ? specVal : undefined;
-    payload.sourceProjectNo = form.sourceProjectNo || undefined;
-    payload.sourceProjectName = form.sourceProjectName || undefined;
-    payload.isOfficial = form.isOfficial === true;
-    payload.enabled = form.enabled === true;
-    payload.isOptionalForQualification = form.isOptionalForQualification === true;
-  } else if (props.resource === "parameters") {
-    payload.unit = form.unit || undefined;
-    payload.sourceType = form.sourceType || "custom";
-  } else {
-    payload.version = form.version || undefined;
-    payload.status = form.status || "active";
-    payload.sourceDocumentId = form.sourceDocumentId || undefined;
-  }
-  payload.sortOrder = Number(form.sortOrder) || 999;
+  const code = String(form.code ?? "");
+  const name = String(form.name ?? "");
+  const sortOrder = Number(form.sortOrder) || 999;
   try {
-    if (mode.value.kind === "create") {
-      await axios.post(route.value, payload);
-    } else if (mode.value.kind === "edit") {
-      const id = mode.value.item.id;
-      await axios.put(`${route.value}/${id}`, payload);
+    if (props.resource === "specialties") {
+      const officialNo = String(form.officialNo ?? "");
+      if (mode.value.kind === "create") {
+        await inspectionDictionaryCreateSpecialty({
+          code,
+          officialNo,
+          name,
+          isOfficial: form.isOfficial === true,
+          enabled: form.enabled === true,
+          sortOrder,
+        });
+      } else if (mode.value.kind === "edit") {
+        await inspectionDictionaryUpdateSpecialty(mode.value.item.code, {
+          officialNo,
+          name,
+          isOfficial: form.isOfficial === true,
+          enabled: form.enabled === true,
+          sortOrder,
+        });
+      }
+    } else if (props.resource === "objects") {
+      // __none__ 是 reka-ui SelectItem 替代 raw <option value=""> 的 sentinel
+      const specVal = String(form.inspectionSpecialtyCode ?? "");
+      const body = {
+        inspectionSpecialtyCode: specVal && specVal !== "__none__" ? specVal : "",
+        sourceProjectNo: String(form.sourceProjectNo ?? ""),
+        sourceProjectName: String(form.sourceProjectName ?? ""),
+        name,
+        isOfficial: form.isOfficial === true,
+        enabled: form.enabled === true,
+        isOptionalForQualification: form.isOptionalForQualification === true,
+        sortOrder,
+      };
+      if (mode.value.kind === "create") {
+        await inspectionDictionaryCreateObject({ code, ...body });
+      } else if (mode.value.kind === "edit") {
+        await inspectionDictionaryUpdateObject(mode.value.item.code, body);
+      }
+    } else if (props.resource === "parameters") {
+      const unit = String(form.unit ?? "") || undefined;
+      const sourceType = (String(form.sourceType ?? "custom") || "custom") as InspectionParameterSourceType;
+      if (mode.value.kind === "create") {
+        await inspectionDictionaryCreateParameter({
+          code,
+          name,
+          // 契约 rawName/canonicalName 必填：表单只有名称一个字段，按同值派生
+          rawName: name,
+          canonicalName: name,
+          unit,
+          sourceType,
+          sortOrder,
+        });
+      } else if (mode.value.kind === "edit") {
+        await inspectionDictionaryUpdateParameter(mode.value.item.code, {
+          name,
+          rawName: name,
+          canonicalName: name,
+          unit,
+          sourceType,
+          sortOrder,
+        });
+      }
+    } else {
+      const version = String(form.version ?? "") || undefined;
+      const status = (String(form.status ?? "active") || "active") as InspectionStandardStatus;
+      const sourceDocumentId = String(form.sourceDocumentId ?? "") || undefined;
+      if (mode.value.kind === "create") {
+        await inspectionDictionaryCreateStandard({
+          code,
+          name,
+          version,
+          status,
+          sourceDocumentId,
+          sortOrder,
+        });
+      } else if (mode.value.kind === "edit") {
+        await inspectionDictionaryUpdateStandard(mode.value.item.code, {
+          name,
+          version,
+          status,
+          sourceDocumentId,
+          sortOrder,
+        });
+      }
     }
     closeDialog();
     await load();
@@ -337,7 +564,16 @@ async function confirmDelete(): Promise<void> {
   deleting.value = true;
   deleteError.value = null;
   try {
-    await axios.delete(`${route.value}/${deleteTarget.value.id}`);
+    // 契约 4 主表均以 code 寻址 DELETE /api/inspection/{resource}/{code}
+    if (props.resource === "specialties") {
+      await inspectionDictionaryDeleteSpecialty(deleteTarget.value.code);
+    } else if (props.resource === "objects") {
+      await inspectionDictionaryDeleteObject(deleteTarget.value.code);
+    } else if (props.resource === "parameters") {
+      await inspectionDictionaryDeleteParameter(deleteTarget.value.code);
+    } else {
+      await inspectionDictionaryDeleteStandard(deleteTarget.value.code);
+    }
     deleteTarget.value = null;
     await load();
   } catch (e: unknown) {
@@ -363,17 +599,17 @@ function cellOf(item: ListItem, idx: number): string {
       if (props.resource === "specialties") return item.officialNo ?? "-";
       if (props.resource === "parameters") return item.unit ?? "-";
       if (props.resource === "standards") return item.version ?? "-";
-      return item.parameterNames ?? "-";
+      return paramNamesOfObject(item.code);
     case 3:
       if (props.resource === "specialties") return item.isOfficial ? "官方" : "自定义";
-      if (props.resource === "objects") return item.parameterNames ?? "-";
+      if (props.resource === "objects") return stdCodesOfObject(item.code);
       if (props.resource === "standards") return STANDARD_STATUS_CN[item.status ?? ""] ?? item.status ?? "-";
-      return item.objectNames ?? "-";
+      return objectNamesOfParam(item.code);
     case 4:
       if (props.resource === "specialties") return item.enabled ? "启用" : "停用";
       if (props.resource === "objects") return item.enabled ? "启用" : "停用";
-      if (props.resource === "standards") return item.parameterNames ?? "-";
-      return item.standardCodes ?? "-";
+      if (props.resource === "standards") return paramNamesOfStandard(item.code);
+      return stdCodesOfParam(item.code);
     default: return "-";
   }
 }
@@ -467,7 +703,7 @@ function cellOf(item: ListItem, idx: number): string {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="item in items" :key="item.id" class="border-t hover:bg-muted">
+        <TableRow v-for="item in items" :key="item.code" class="border-t hover:bg-muted">
           <TableCell v-for="(_, i) in columnHeaders()" :key="i" class="px-4 py-2 align-top">
             <span v-if="i === 0" class="font-mono text-xs">{{ cellOf(item, i) }}</span>
             <span v-else>{{ cellOf(item, i) }}</span>
