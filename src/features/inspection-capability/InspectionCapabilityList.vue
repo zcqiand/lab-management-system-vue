@@ -410,13 +410,12 @@ async function loadOptions(): Promise<void> {
     );
     standardOptions.value = normalizeListResponse<Opt>(stdRes.data).items;
   }
-  if (props.resource !== "specialties") {
-    // 参数选项：objects 视图列展示 / parameters+standards 视图 junction 列反查都要用
-    const pRes = await inspectionDictionaryListParameters({ page: 1, pageSize: 500 }).catch(() =>
-      emptyListResponse(),
-    );
-    parameterOptions.value = normalizeListResponse<Opt>(pRes.data).items;
-  }
+  // 参数选项：objects 视图列展示 / parameters+standards 视图 junction 列反查都要用
+  //（specialties 视图在 loadOptions 开头已提前 return）
+  const pRes = await inspectionDictionaryListParameters({ page: 1, pageSize: 500 }).catch(() =>
+    emptyListResponse(),
+  );
+  parameterOptions.value = normalizeListResponse<Opt>(pRes.data).items;
 }
 
 onMounted(async () => {

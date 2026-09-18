@@ -20,6 +20,7 @@ import {
 } from "@/api/endpoints/contracts/contracts";
 import type {
   Contract,
+  ContractStatus,
   ContractsListContractsParams,
 } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
@@ -64,7 +65,7 @@ const total = ref(0);
 // status "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui
 // SelectItem 不允许 value=""，保留给 placeholder；"__all__" 在 load() 里
 // 翻译回空串才不下发给 API）
-const status = ref("__all__");
+const status = ref<ContractStatus | "__all__">("__all__");
 const keyword = ref("");
 const mode = ref<Mode>({ kind: "idle" });
 const loading = ref(false);
