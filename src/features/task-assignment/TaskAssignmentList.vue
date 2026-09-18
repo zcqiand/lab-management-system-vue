@@ -206,6 +206,7 @@ async function handleSave(): Promise<void> {
             variant="default"
             class="bg-info hover:bg-info/90"
             :disabled="saving || !assigneeName.trim() || !plannedTestDate"
+            data-fn="M03.F02.I02"
             @click="handleSave()"
           >
             保存

@@ -162,12 +162,12 @@ describe("M04.F06-F09 码表维护 4 页", () => {
     expect(dialog.text()).toContain("新建型号");
   });
 
-  fnTest(["M04.F06.I03"], "型号维护：行内删除按钮开确认弹窗", async () => {
+  fnTest(["M04.F06.I04"], "型号维护：行内删除按钮开确认弹窗", async () => {
     const { default: CategoryDictList } = await import(
       "@/features/dicts/CategoryDictList.vue"
     );
     const wrapper = mountWithProviders(CategoryDictList, {
-      props: { endpoint: "/models", title: "型号维护", deleteDataFn: "M04.F06.I03" },
+      props: { endpoint: "/models", title: "型号维护", deleteDataFn: "M04.F06.I04" },
       global: MOUNT_GLOBAL,
     });
     await flushPromises();
@@ -206,12 +206,12 @@ describe("M04.F06-F09 码表维护 4 页", () => {
     expect(dialog.text()).toContain("新建规格");
   });
 
-  fnTest(["M04.F07.I03"], "规格维护：行内删除按钮开确认弹窗", async () => {
+  fnTest(["M04.F07.I04"], "规格维护：行内删除按钮开确认弹窗", async () => {
     const { default: CategoryDictList } = await import(
       "@/features/dicts/CategoryDictList.vue"
     );
     const wrapper = mountWithProviders(CategoryDictList, {
-      props: { endpoint: "/specifications", title: "规格维护", deleteDataFn: "M04.F07.I03" },
+      props: { endpoint: "/specifications", title: "规格维护", deleteDataFn: "M04.F07.I04" },
       global: MOUNT_GLOBAL,
     });
     await flushPromises();
@@ -250,12 +250,12 @@ describe("M04.F06-F09 码表维护 4 页", () => {
     expect(dialog.text()).toContain("新建等级");
   });
 
-  fnTest(["M04.F08.I03"], "等级维护：行内删除按钮开确认弹窗", async () => {
+  fnTest(["M04.F08.I04"], "等级维护：行内删除按钮开确认弹窗", async () => {
     const { default: CategoryDictList } = await import(
       "@/features/dicts/CategoryDictList.vue"
     );
     const wrapper = mountWithProviders(CategoryDictList, {
-      props: { endpoint: "/grades", title: "等级维护", deleteDataFn: "M04.F08.I03" },
+      props: { endpoint: "/grades", title: "等级维护", deleteDataFn: "M04.F08.I04" },
       global: MOUNT_GLOBAL,
     });
     await flushPromises();
@@ -361,7 +361,7 @@ describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
         endpoint: "/models",
         title: "型号维护",
         editDataFn: "M04.F06.I02",
-        deleteDataFn: "M04.F06.I03",
+        deleteDataFn: "M04.F06.I04",
       },
       global: MOUNT_GLOBAL,
     });
@@ -381,7 +381,7 @@ describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
     expect(edit.classes()).not.toContain("h-8");
     expect(edit.classes()).not.toContain("px-3");
 
-    const del = lastWrapper.find('button[data-fn="M04.F06.I03"]');
+    const del = lastWrapper.find('button[data-fn="M04.F06.I04"]');
     expect(del.exists()).toBe(true);
     expect(del.classes()).toContain("text-destructive");
     expect(del.classes()).not.toContain("text-red-600");

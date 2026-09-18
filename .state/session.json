@@ -1,17 +1,26 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "REQ-2026-001：legacy-client 映射收敛契约路径——已上线",
+  "current_task": "批次 2 功能树变更全链路收口——门已绿，全部改动未提交",
   "done": [
-    "API_ROUTES 两键恒等映射改契约路径；引用旧路径字面量的测试同步修；commit ed4427c"
+    "docs/functions/function-tree.md 批次 1+2 落盘（编号错位收敛 + act-merge）",
+    "悬空锚点迁移 27 处（3 个列表页 delete-data-fn→I04、TechnicalRequirementList ×3→M06.F06.I05、测试 9 处、design/flow map 各 4 行）；CategoryDictList.vue 无锚点",
+    ".state/trace.json 再生成：363 tests 全绿 / 61 fn ids / 废弃 ID 0 命中 / 新 ID 全在场（首轮 4 个超时假红为并发轮换，串行复跑全绿）",
+    "gate.py exit 0 全绿（L0-L5，165 条目引用完整）"
   ],
   "next": [
-    "无遗留；候选 REQ 见 shared §7.1"
+    "提交：树 + 锚点 + tests + .state 一批",
+    "suite 级欠账（非本仓）：根 CLAUDE.md 超行、aspnetcore red-first、SSOT marker、saas msw member 缺仓"
   ],
-  "open_questions": [],
+  "open_questions": [
+    "gate.py --all exit 2：saas family-env.json members 仍列 msw 但本地无仓——删 member 还是建仓，需人裁",
+    "批次 1+2 改动何时提交、按什么粒度分组"
+  ],
   "dont": [
-    "stale trace.json 会让 L5 报假 ID 引用——gate 前必要时 TRACE_MAP=1 npx --no vitest run 重生成"
+    "trace 过期会让 L5 报假引用——gate 前必要时 TRACE_MAP=1 npx --no vitest run 重生成；但隔离复跑部分文件时带 TRACE_MAP=1 会把 trace 覆盖成部分版",
+    "vitest 并发全量跑有 10s testTimeout 轮换假红——串行或限并发",
+    "it() 标题禁写 Mxx.Fxx.Ixx 字面"
   ],
   "active_branch": "master",
-  "last_session_at": "2026-09-14"
+  "last_session_at": "2026-09-18"
 }

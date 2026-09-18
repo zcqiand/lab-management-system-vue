@@ -40,13 +40,13 @@
 | M03.F09.I03 | src/features/receipts/ReceiptDetail.vue (报告预览 button) | – (本地渲染，复用缓存 receipt) | sample_receipts | M03.F09.I03 | – | 已上线 |
 | M04.F06.I01 | src/pages/ModelsPage.vue → src/features/dicts/CategoryDictList.vue (table row) | GET /api/catalog/models?inspectionObjectCode=... ; GET /api/inspection-objects | inspection_models | M04.F06.I01 | – | 已上线 |
 | M04.F06.I02 | src/pages/ModelsPage.vue → CategoryDictList.vue (新建 + 编辑) | POST /api/catalog/models ; PUT /api/catalog/models/:id | inspection_models | M04.F06.I02 | – | 已上线 |
-| M04.F06.I03 | src/pages/ModelsPage.vue → CategoryDictList.vue (行内 删除) | DELETE /api/catalog/models/:id | inspection_models | M04.F06.I03 | – | 已上线 |
+| M04.F06.I04 | src/pages/ModelsPage.vue → CategoryDictList.vue (行内 删除) | DELETE /api/catalog/models/:id | inspection_models | M04.F06.I04 | – | 已上线 |
 | M04.F07.I01 | src/pages/SpecificationsPage.vue → CategoryDictList.vue (table row) | GET /api/catalog/specs?inspectionObjectCode=... | inspection_specs | M04.F07.I01 | – | 已上线 |
 | M04.F07.I02 | src/pages/SpecificationsPage.vue → CategoryDictList.vue (新建 + 编辑) | POST /api/catalog/specs ; PUT /api/catalog/specs/:id | inspection_specs | M04.F07.I02 | – | 已上线 |
-| M04.F07.I03 | src/pages/SpecificationsPage.vue → CategoryDictList.vue (行内 删除) | DELETE /api/catalog/specs/:id | inspection_specs | M04.F07.I03 | – | 已上线 |
+| M04.F07.I04 | src/pages/SpecificationsPage.vue → CategoryDictList.vue (行内 删除) | DELETE /api/catalog/specs/:id | inspection_specs | M04.F07.I04 | – | 已上线 |
 | M04.F08.I01 | src/pages/GradesPage.vue → CategoryDictList.vue (table row) | GET /api/catalog/grades?inspectionObjectCode=... | inspection_grades | M04.F08.I01 | – | 已上线 |
 | M04.F08.I02 | src/pages/GradesPage.vue → CategoryDictList.vue (新建 + 编辑) | POST /api/catalog/grades ; PUT /api/catalog/grades/:id | inspection_grades | M04.F08.I02 | – | 已上线 |
-| M04.F08.I03 | src/pages/GradesPage.vue → CategoryDictList.vue (行内 删除) | DELETE /api/catalog/grades/:id | inspection_grades | M04.F08.I03 | – | 已上线 |
+| M04.F08.I04 | src/pages/GradesPage.vue → CategoryDictList.vue (行内 删除) | DELETE /api/catalog/grades/:id | inspection_grades | M04.F08.I04 | – | 已上线 |
 | M04.F09.I01 | src/pages/BrandsPage.vue → CategoryDictList.vue (table row) | GET /api/catalog/brands?inspectionObjectCode=... | inspection_brands | M04.F09.I01 | – | 已上线 |
 | M04.F09.I02 | src/pages/BrandsPage.vue → CategoryDictList.vue (新建 + 编辑) | POST /api/catalog/brands ; PUT /api/catalog/brands/:id | inspection_brands | M04.F09.I02 | – | 已上线 |
 | M04.F09.I03 | src/pages/BrandsPage.vue → CategoryDictList.vue (行内 删除) | DELETE /api/catalog/brands/:id | inspection_brands | M04.F09.I03 | – | 已上线 |
@@ -63,7 +63,7 @@
 | M06.F05.I01 | src/pages/CalculationRulesPage.vue → src/features/inspection-capability/CalculationRuleList.vue | GET /api/inspection-calculation-rules ; POST/PUT/DELETE 同 | inspection_calculation_rule | M06.F05.I01 | – | 已上线 |
 | M06.F06.I01 | src/pages/TechnicalRequirementsPage.vue → src/features/inspection-capability/TechnicalRequirementList.vue | GET /api/inspection-technical-requirements | inspection_technical_requirement | M06.F06.I01 | – | 已上线 |
 | M06.F06.I02 | src/features/inspection-capability/TechnicalRequirementList.vue (新建 + 编辑) | POST /api/inspection-technical-requirements ; PUT /api/inspection-technical-requirements/:id | inspection_technical_requirement | M06.F06.I02 | – | 已上线 |
-| M06.F06.I03 | src/features/inspection-capability/TechnicalRequirementList.vue (行内 删除) | DELETE /api/inspection-technical-requirements/:id | inspection_technical_requirement | M06.F06.I03 | – | 已上线 |
+| M06.F06.I05 | src/features/inspection-capability/TechnicalRequirementList.vue (行内 删除) | DELETE /api/inspection-technical-requirements/:id | inspection_technical_requirement | M06.F06.I05 | – | 已上线 |
 | M06.F07.I01 | src/pages/ReportNamesPage.vue → src/features/report-names/ReportNameList.vue | GET /api/inspection-report-names ; POST/PUT/DELETE 同 | inspection_report_name | M06.F07.I01 | – | 已上线 |
 | M06.F07.I02 | src/features/report-names/ReportNameList.vue + ReportNameLinkDialog.vue (行内 关联 button) | POST /api/inspection-report-name-standards ; DELETE 同 ; POST /api/inspection-report-name-parameters ; DELETE 同 | inspection_report_name_standard + inspection_report_name_parameter | M06.F07.I02 | – | 已上线 |
 | M06.F08.I01 | src/pages/ParamInterfacesPage.vue → src/features/param-interfaces/ParamInterfaceList.vue | GET /api/inspection-param-interfaces ; POST/PUT/DELETE 同 | inspection_param_interface | M06.F08.I01 | – | 已上线 |

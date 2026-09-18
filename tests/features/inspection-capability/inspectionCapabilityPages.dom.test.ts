@@ -203,7 +203,7 @@ describe("M06.F06 技术要求维护", () => {
     expect(wrapper.find('[aria-label="规格筛选"]').exists()).toBe(true);
   });
 
-  fnTest(["M06.F06.I01", "M06.F06.I02", "M06.F06.I03"], "F06 列表行 + 新建/编辑/删除按钮", async () => {
+  fnTest(["M06.F06.I01", "M06.F06.I02", "M06.F06.I05"], "F06 列表行 + 新建/编辑/删除按钮", async () => {
     const wrapper = mountWithProviders(TechnicalRequirementList);
     await flushPromises();
     expect(wrapper.text()).toContain("新建技术要求");

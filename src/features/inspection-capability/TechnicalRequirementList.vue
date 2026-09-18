@@ -44,7 +44,7 @@ import SelectValue from "@/components/ui/SelectValue.vue";
 
 // @entry M06.F06.I01
 // @entry M06.F06.I02
-// @entry M06.F06.I03
+// @entry M06.F06.I05
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
 // 契约复合主键：(inspectionObjectCode, inspectionParameterCode, judgmentStandardCode)。
 type TechReq = TechnicalRequirement;
@@ -315,7 +315,7 @@ async function confirmDelete(): Promise<void> {
             <Button
               variant="link"
               class="text-destructive hover:underline"
-              data-fn="M06.F06.I03"
+              data-fn="M06.F06.I05"
               :aria-label="`删除 ${rowKey(row)}`"
               @click="startDelete(row)"
             >
@@ -447,7 +447,7 @@ async function confirmDelete(): Promise<void> {
         确定删除
         <span class="font-mono">
           {{ deleteTarget?.inspectionObjectCode }}/{{ deleteTarget?.inspectionParameterCode }}
-        </span> 的技术要求？被引用的技术要求不可删除（M06.F06.I03 引用保护）。
+        </span> 的技术要求？被引用的技术要求不可删除（M06.F06.I05 引用保护）。
       </p>
       <p v-if="deleteError" role="alert" class="mt-2 text-destructive">{{ deleteError }}</p>
     </ConfirmDialog>
