@@ -33,6 +33,7 @@ import {
 } from "lucide-vue-next";
 import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
 import BackendBadge from "@/components/app/BackendBadge.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
 import { useRequireAuth } from "@/state/require-auth";
 import { useBackendMenus, type MenuNode } from "@/composables/use-backend-menus";
@@ -178,7 +179,13 @@ function onAction(action: string): void {
         <BackendBadge />
       </header>
       <main class="flex-1 overflow-auto p-6">
-        <router-view />
+        <!-- B6 加载态：懒加载路由 chunk 解析期间也显示整页加载态（页面内数据门控见各页面） -->
+        <Suspense>
+          <router-view />
+          <template #fallback>
+            <PageLoading />
+          </template>
+        </Suspense>
       </main>
     </div>
   </div>

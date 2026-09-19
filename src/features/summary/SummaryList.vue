@@ -7,7 +7,7 @@
 //
 // 适配层：msw handlers-extra.ts summaryExtraHandlers 直接返回 REF 期望形状，
 // 无需 installShapeAdapters 额外兜底。
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import {
   summaryGetDashboardStats,
   summaryGetReportSummary,
@@ -28,6 +28,7 @@ import TableBody from "@/components/ui/TableBody.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 import TableHead from "@/components/ui/TableHead.vue";
 import TableCell from "@/components/ui/TableCell.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
 
@@ -44,9 +45,12 @@ const STATUS_LABEL: Record<string, string> = {
 
 const data = ref<SummaryData | null>(null);
 const stats = ref<DashboardStats | null>(null);
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（汇总表 + 仪表盘统计两源到齐才出界面）
+const loading = ref(true);
 const error = ref<string | null>(null);
 const categoryCode = ref("ALL");
+// B6 加载态：两源任一未到即整页加载；出过数据后 refetch 不再整页回退（旧表保持可见）
+const showPageLoading = computed(() => loading.value && !data.value && !error.value);
 
 async function load(): Promise<void> {
   loading.value = true;
@@ -77,7 +81,9 @@ watch(categoryCode, () => { void load(); });
   <!-- @entry M05.F01.I01 -->
   <!-- @entry M05.F01.I02 -->
   <!-- @entry M05.F01.I06 仪表盘统计基础端点 （ADR-0033 阶段二自后端仓 M05.F02.I01 改挂 F01） -->
-  <div data-fn="M05.F01.I01" class="space-y-4">
+  <!-- B6 加载态：两源到齐前整页 PageLoading，不渲染空壳 -->
+  <PageLoading v-if="showPageLoading" />
+  <div v-else data-fn="M05.F01.I01" class="space-y-4">
     <div class="bg-white rounded shadow p-4">
       <div class="mb-3">
         <h1 class="text-2xl font-semibold">报告汇总</h1>

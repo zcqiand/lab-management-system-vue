@@ -13,6 +13,7 @@ import { receiptsGetReceipt } from "@/api/endpoints/receipts/receipts";
 import type { FlowStatus, SampleReceipt } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import ReportPreviewModal from "@/features/data-entry/ReportPreviewModal.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
 type FlowStage = FlowStatus;
@@ -31,7 +32,8 @@ const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
 const route = useRoute();
 const router = useRouter();
 const receipt = ref<SampleReceipt | null>(null);
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（首帧不渲染详情壳；refetch 时详情保持旧数据）
+const loading = ref(true);
 const error = ref<string | null>(null);
 const previewOpen = ref(false);
 
@@ -67,7 +69,8 @@ function alertError(msg: string): void {
 
 <template>
   <div class="space-y-4">
-    <div v-if="loading" class="p-8 text-center text-muted-foreground">加载中…</div>
+    <!-- B6 加载态：详情未到齐整页 PageLoading（替换原纯文本加载行） -->
+    <PageLoading v-if="loading" />
     <div v-else-if="error" class="p-8 text-destructive">{{ error }}</div>
     <template v-else-if="receipt">
       <!-- @entry M03.F09.I01 接样单详情页 -->

@@ -7,7 +7,7 @@
 //   - 列表按 flowStatus={stage} 过滤接样单 + 多选 + 批量 submit 按钮
 //   - 行内「退回」按钮 + 退回 Dialog（reason 可选）
 
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import {
   receiptsActFlowApprove,
   receiptsActFlowArchived,
@@ -36,6 +36,7 @@ import TableCell from "@/components/ui/TableCell.vue";
 import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
 type FlowStage = SampleReceipt["flowStatus"];
@@ -80,7 +81,10 @@ const props = defineProps<{
 const rows = ref<SampleReceipt[]>([]);
 const total = ref(0);
 const keyword = ref("");
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（首帧不渲染空表壳；refetch 时列表保持旧数据，不回空页）
+const loading = ref(true);
+// B6 加载态：首载未到齐前整页 PageLoading（列表为空且仍在加载才门控）
+const showPageLoading = computed(() => loading.value && rows.value.length === 0);
 const selected = ref<Set<string>>(new Set());
 const submitting = ref(false);
 const returnTarget = ref<SampleReceipt | null>(null);
@@ -183,7 +187,9 @@ function alertError(msg: string): void {
 </script>
 
 <template>
-  <div>
+  <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
+  <PageLoading v-if="showPageLoading" />
+  <div v-else>
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">{{ title }}</h1>

@@ -38,6 +38,7 @@ import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
 import ReportNameLinkDialog from "@/features/report-names/ReportNameLinkDialog.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
@@ -68,8 +69,11 @@ const items = ref<InspectionReportName[]>([]);
 const total = ref(0);
 const keyword = ref("");
 const mode = ref<Mode>({ kind: "idle" });
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（首帧不渲染空表壳；refetch 时列表保持旧数据，不回空页）
+const loading = ref(true);
 const deleteTarget = ref<InspectionReportName | null>(null);
+// B6 加载态：首载未到齐前整页 PageLoading（列表为空且仍在加载才门控）
+const showPageLoading = computed(() => loading.value && items.value.length === 0);
 // M06.F07.I02 报告名称↔标准/参数关联弹窗
 const linking = ref<InspectionReportName | null>(null);
 const form = reactive<FormState>({ ...EMPTY_FORM });
@@ -187,7 +191,9 @@ async function handleDeleteConfirm(): Promise<void> {
 </script>
 
 <template>
-  <div>
+  <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
+  <PageLoading v-if="showPageLoading" />
+  <div v-else>
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">报告名称维护</h1>

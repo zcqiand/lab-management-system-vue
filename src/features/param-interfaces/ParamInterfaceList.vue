@@ -30,6 +30,7 @@ import TableHead from "@/components/ui/TableHead.vue";
 import TableHeader from "@/components/ui/TableHeader.vue";
 import TableRow from "@/components/ui/TableRow.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
@@ -53,8 +54,11 @@ const items = ref<ParamInterfaceRow[]>([]);
 const total = ref(0);
 const keyword = ref("");
 const mode = ref<Mode>({ kind: "idle" });
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（首帧不渲染空表壳；refetch 时列表保持旧数据，不回空页）
+const loading = ref(true);
 const deleteTarget = ref<ParamInterfaceRow | null>(null);
+// B6 加载态：首载未到齐前整页 PageLoading（列表为空且仍在加载才门控）
+const showPageLoading = computed(() => loading.value && items.value.length === 0);
 const form = reactive<FormState>({ ...EMPTY_FORM });
 
 const editing = computed<ParamInterfaceRow | null>(() => {
@@ -129,7 +133,9 @@ async function submitForm(): Promise<void> {
 </script>
 
 <template>
-  <div>
+  <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
+  <PageLoading v-if="showPageLoading" />
+  <div v-else>
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">参数界面维护</h1>

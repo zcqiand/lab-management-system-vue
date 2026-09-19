@@ -41,6 +41,7 @@ import SelectContent from "@/components/ui/SelectContent.vue";
 import SelectItem from "@/components/ui/SelectItem.vue";
 import SelectTrigger from "@/components/ui/SelectTrigger.vue";
 import SelectValue from "@/components/ui/SelectValue.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 
 // @entry M06.F06.I01
 // @entry M06.F06.I02
@@ -76,7 +77,8 @@ const EMPTY_FORM: Record<string, string> = {
 };
 
 const allItems = ref<TechReq[]>([]);
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（首帧不渲染空表壳；refetch 时列表保持旧数据，不回空页）
+const loading = ref(true);
 const error = ref<string | null>(null);
 const objects = ref<Opt[]>([]);
 const parameters = ref<Opt[]>([]);
@@ -99,6 +101,8 @@ const items = computed<TechReq[]>(() =>
 
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; item: TechReq };
 const mode = ref<Mode>({ kind: "idle" });
+// B6 加载态：首载未到齐前整页 PageLoading（列表为空且仍在加载才门控）
+const showPageLoading = computed(() => loading.value && items.value.length === 0);
 const form = reactive<Record<string, string>>({ ...EMPTY_FORM });
 const saveError = ref<string | null>(null);
 const deleteTarget = ref<TechReq | null>(null);
@@ -246,7 +250,9 @@ async function confirmDelete(): Promise<void> {
 
 <template>
   <!-- @entry M06.F06.I01 技术要求列表 -->
-  <div data-fn="M06.F06.I01" class="space-y-4">
+  <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
+  <PageLoading v-if="showPageLoading" />
+  <div v-else data-fn="M06.F06.I01" class="space-y-4">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">技术要求维护</h1>

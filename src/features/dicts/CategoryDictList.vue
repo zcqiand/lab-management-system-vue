@@ -58,6 +58,7 @@ import SelectContent from "@/components/ui/SelectContent.vue";
 import SelectItem from "@/components/ui/SelectItem.vue";
 import SelectValue from "@/components/ui/SelectValue.vue";
 import ConfirmDialog from "@/components/app/ConfirmDialog.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
@@ -138,7 +139,14 @@ const props = defineProps<Props>();
 const objects = ref<InspectionObject[]>([]);
 const selectedCode = ref<string | null>(null);
 const list = ref<DictItem[]>([]);
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（首帧不渲染空壳；refetch 时列表保持旧数据，不回空页）
+const loading = ref(true);
+// B6 加载态：检测项目树未就绪也视为整页加载中（树与列表都到齐才出界面）
+const objectsReady = ref(false);
+// B6 加载态：首载未到齐前整页 PageLoading
+const showPageLoading = computed(
+  () => (loading.value || !objectsReady.value) && list.value.length === 0,
+);
 const errorMsg = ref<string | null>(null);
 
 const formOpen = ref(false);
@@ -160,6 +168,8 @@ const api = computed(() => CATALOG_API[props.endpoint]);
 async function fetchList(): Promise<void> {
   if (!selectedCode.value) {
     list.value = [];
+    // B6 加载态：loading 初值改 true 后，无选中对象分支也必须落定，避免整页加载态卡死
+    loading.value = false;
     return;
   }
   loading.value = true;
@@ -192,6 +202,10 @@ onMounted(async () => {
     if (!selectedCode.value) selectedCode.value = items[0]?.code ?? null;
   } catch {
     /* 主表形状由 msw shape adapter 提供，失败静默 */
+  } finally {
+    // B6 加载态：树就绪即落定；树失败且无选中对象时也要解除整页门控
+    objectsReady.value = true;
+    if (!selectedCode.value) loading.value = false;
   }
 });
 
@@ -272,7 +286,9 @@ function dialogTitle(): string {
 </script>
 
 <template>
-  <div class="flex min-h-0 flex-1 flex-col" :data-fn="dataFn">
+  <!-- B6 加载态：树 + 列表都到齐才出界面，不渲染空壳 -->
+  <PageLoading v-if="showPageLoading" />
+  <div v-else class="flex min-h-0 flex-1 flex-col" :data-fn="dataFn">
     <div class="flex shrink-0 items-center justify-between">
       <div>
         <h2 class="text-2xl font-bold">{{ title }}</h2>

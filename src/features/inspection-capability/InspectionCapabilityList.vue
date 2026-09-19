@@ -58,6 +58,7 @@ import SelectContent from "@/components/ui/SelectContent.vue";
 import SelectItem from "@/components/ui/SelectItem.vue";
 import SelectTrigger from "@/components/ui/SelectTrigger.vue";
 import SelectValue from "@/components/ui/SelectValue.vue";
+import PageLoading from "@/components/app/PageLoading.vue";
 
 // 失败兜底：axios catch 需要一个 AxiosResponse 形态的对象占位；
 // unwrapListResponse 只读 .data，所以这个 stub 仅 .data 字段被消费。
@@ -149,7 +150,8 @@ interface Opt { code: string; name: string; inspectionSpecialtyCode?: string }
 
 const rawItems = ref<ListItem[]>([]);
 const total = ref(0);
-const loading = ref(false);
+// B6 加载态：首屏即视为加载中（首帧不渲染空表壳；refetch 时列表保持旧数据，不回空页）
+const loading = ref(true);
 const error = ref<string | null>(null);
 const keyword = ref("");
 const specialtyFilter = ref("");
@@ -274,6 +276,8 @@ function paramNamesOfStandard(stdCode: string): string {
 // 弹窗状态
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; item: ListItem };
 const mode = ref<Mode>({ kind: "idle" });
+// B6 加载态：首载未到齐前整页 PageLoading（列表为空且仍在加载才门控）
+const showPageLoading = computed(() => loading.value && items.value.length === 0);
 const saveError = ref<string | null>(null);
 const deleteTarget = ref<ListItem | null>(null);
 const deleteError = ref<string | null>(null);
@@ -618,7 +622,9 @@ function cellOf(item: ListItem, idx: number): string {
   <!-- @entry M06.F01.I01 / M06.F02.I01 / M06.F03.I01 / M06.F04.I01（按 resource prop 切换） -->
   <!-- @entry M06.F02.I02 项目↔专项/参数关联（objects 视图 form 下拉） -->
   <!-- @entry M06.F04.I02 标准 CRUD（standards 视图 编辑/删除 按钮） -->
-  <div :data-fn="fnId" class="space-y-4">
+  <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
+  <PageLoading v-if="showPageLoading" />
+  <div v-else :data-fn="fnId" class="space-y-4">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">{{ title }}</h1>
