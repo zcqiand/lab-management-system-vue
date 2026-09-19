@@ -140,4 +140,15 @@ describe("页面级加载态（PageLoading 门控）", () => {
     expect(wrapper.text()).toContain("报告汇总");
     expect(wrapper.text()).toContain("RC-001");
   });
+
+  it("ReceiptDetail：路由无 id 时不得永久卡在整页加载态（B6 修复 R1）", async () => {
+    // RED（改前）：loading 初值 true 且 fetchReceipt 在 !id 时早退不落定 → 永久 PageLoading
+    const { default: ReceiptDetail } = await import("@/features/receipts/ReceiptDetail.vue");
+    // mountWithProviders 的 memory router 无 /receipts/:id 匹配 → route.params.id 为空
+    const wrapper = mountWithProviders(ReceiptDetail);
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 20));
+    await flushPromises();
+    expect(wrapper.find('[data-testid="page-loading"]').exists()).toBe(false);
+  });
 });

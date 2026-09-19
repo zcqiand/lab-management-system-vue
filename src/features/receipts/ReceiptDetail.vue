@@ -40,7 +40,11 @@ const previewOpen = ref(false);
 const id = computed(() => String(route.params.id ?? ""));
 
 async function fetchReceipt(): Promise<void> {
-  if (!id.value) return;
+  if (!id.value) {
+    // B6 修复 R1：loading 初值 true，id 缺失早退也必须落定，否则整页永久 PageLoading
+    loading.value = false;
+    return;
+  }
   loading.value = true;
   error.value = null;
   try {
