@@ -8,40 +8,21 @@ import { fnTest } from "./fn";
 const SRC = path.resolve(__dirname, "..");
 
 describe("Infrastructure anchor registration", () => {
-  fnTest(
-    ["M03.F01.I07"],
-    "[M03.F01.I07] SampleExtFieldsModal module source file exists",
-    () => {
-      expect(
-        fs.existsSync(
-          path.join(SRC, "src/features/data-entry/SampleExtFieldsModal.vue"),
-        ),
-      ).toBe(true);
-    },
-  );
+  fnTest(["M03.F01.I07"], "[M03.F01.I07] SampleExtFieldsModal module source file exists", () => {
+    expect(fs.existsSync(path.join(SRC, "src/features/data-entry/SampleExtFieldsModal.vue"))).toBe(
+      true,
+    );
+  });
 
-  it(
-    "BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)",
-    () => {
-      expect(
-        fs.existsSync(path.join(SRC, "src/components/app/BackendBadge.vue")),
-      ).toBe(true);
-    },
-  );
+  it("BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)", () => {
+    expect(fs.existsSync(path.join(SRC, "src/components/app/BackendBadge.vue"))).toBe(true);
+  });
 
-  it(
-    "axios interceptor module source file exists",
-    () => {
-      expect(fs.existsSync(path.join(SRC, "src/api/http-client.ts"))).toBe(
-        true,
-      );
-    },
-  );
+  it("axios interceptor module source file exists", () => {
+    expect(fs.existsSync(path.join(SRC, "src/api/http-client.ts"))).toBe(true);
+  });
 
-  it(
-    "orval-generated auth endpoint directory exists",
-    () => {
-      expect(fs.existsSync(path.join(SRC, "src/api/endpoints"))).toBe(true);
-    },
-  );
+  it("orval-generated auth endpoint directory exists", () => {
+    expect(fs.existsSync(path.join(SRC, "src/api/endpoints"))).toBe(true);
+  });
 });

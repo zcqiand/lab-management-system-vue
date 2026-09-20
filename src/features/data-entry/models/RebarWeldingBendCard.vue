@@ -97,8 +97,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
   <div class="border rounded p-3 space-y-3">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium">
-        {{ p.canonicalName || p.name
-        }}<span v-if="p.unit">（{{ p.unit }}）</span>
+        {{ p.canonicalName || p.name }}<span v-if="p.unit">（{{ p.unit }}）</span>
         <span class="ml-2 text-xs text-muted-foreground">3 试件 / JGJ/T 27-2014</span>
       </span>
       <span class="text-xs">
@@ -107,7 +106,9 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
           v-else
           :model-value="record?.verdict || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => handleOverallVerdict(v === NONE ? '' : String(v))"
+          @update:model-value="
+            (v: string | number) => handleOverallVerdict(v === NONE ? '' : String(v))
+          "
         >
           <SelectTrigger aria-label="整体单项评定" :class="TRIGGER_CLS">
             <SelectValue placeholder="未评定" />
@@ -153,7 +154,9 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
                 <SelectValue placeholder="未选" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem v-for="opt in BEND_RESULTS" :key="opt" :value="opt">{{ opt }}</SelectItem>
+                <SelectItem v-for="opt in BEND_RESULTS" :key="opt" :value="opt">{{
+                  opt
+                }}</SelectItem>
               </SelectContent>
             </Select>
           </TableCell>

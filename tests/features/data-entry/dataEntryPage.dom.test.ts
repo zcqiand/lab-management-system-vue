@@ -24,7 +24,12 @@ const RECEIPTS_IN_DATA_ENTRY = [
   },
 ];
 
-function wrapList(arr: unknown[]): { items: unknown[]; page: number; pageSize: number; total: number } {
+function wrapList(arr: unknown[]): {
+  items: unknown[];
+  page: number;
+  pageSize: number;
+  total: number;
+} {
   return { items: arr, page: 1, pageSize: arr.length, total: arr.length };
 }
 
@@ -99,20 +104,24 @@ describe("M03.F03 数据录入", () => {
     expect(h2).toBeTruthy();
   });
 
-  fnTest(["M03.F03.I02"], "数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）", async () => {
-    const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
-    const wrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
-    await flushPromises();
-    await new Promise((r) => setTimeout(r, 50));
-    await flushPromises();
-    const entryBtn = wrapper.findAll("button").find((b) => b.text() === "录入结果");
-    await entryBtn!.trigger("click");
-    await flushPromises();
-    await new Promise((r) => setTimeout(r, 50));
-    await flushPromises();
-    const saveBtn = wrapper.findAll("button").find((b) => b.text() === "保存");
-    expect(saveBtn).toBeTruthy();
-  });
+  fnTest(
+    ["M03.F03.I02"],
+    "数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）",
+    async () => {
+      const { default: DataEntryPage } = await import("@/features/data-entry/DataEntryPage.vue");
+      const wrapper = mountWithProviders(DataEntryPage, { global: MOUNT_GLOBAL });
+      await flushPromises();
+      await new Promise((r) => setTimeout(r, 50));
+      await flushPromises();
+      const entryBtn = wrapper.findAll("button").find((b) => b.text() === "录入结果");
+      await entryBtn!.trigger("click");
+      await flushPromises();
+      await new Promise((r) => setTimeout(r, 50));
+      await flushPromises();
+      const saveBtn = wrapper.findAll("button").find((b) => b.text() === "保存");
+      expect(saveBtn).toBeTruthy();
+    },
+  );
 });
 // Phase 1.2b Button 迁移回归锚（不挂功能 ID，工程设施测试）。
 // 锁：<Button> 底层仍是 <button>、data-fn 经 $attrs 落到真实 DOM、

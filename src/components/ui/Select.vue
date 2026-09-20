@@ -39,7 +39,7 @@ defineEmits<{
 <template>
   <SelectRoot
     v-bind="$attrs"
-    :model-value="(props.modelValue as string | number | undefined)"
+    :model-value="props.modelValue as string | number | undefined"
     :default-value="props.defaultValue"
     :disabled="props.disabled ?? undefined"
     :name="props.name"

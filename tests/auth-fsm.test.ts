@@ -61,7 +61,12 @@ const USER = { id: "u1", username: "admin" };
 const TENANT_A = { tenantId: "t-a", code: "ACME", name: "甲公司", roleIds: [] };
 const TENANT_B = { tenantId: "t-b", code: "BETA", name: "乙公司", roleIds: [] };
 const LOGIN_1T = { token: "tok-1", refreshToken: "rt-1", user: USER, tenants: [TENANT_A] };
-const LOGIN_2T = { token: "tok-2", refreshToken: "rt-2", user: USER, tenants: [TENANT_A, TENANT_B] };
+const LOGIN_2T = {
+  token: "tok-2",
+  refreshToken: "rt-2",
+  user: USER,
+  tenants: [TENANT_A, TENANT_B],
+};
 
 /** 状态回到 idle 后以无 token hydrate → anonymous（各 case 统一起点） */
 async function toAnonymous(): Promise<void> {
@@ -170,15 +175,19 @@ describe("AuthContext FSM", () => {
     if (isErrorResponse(resp)) expect(resp.code).toBe("WRONG_STATE");
   });
 
-  fnTest(["M00.F02"], "awaiting_tenant --switchTenant--> authenticated + activeTenantId 记忆", async () => {
-    await toAnonymous();
-    enqueue(ok(LOGIN_2T), ok(LOGIN_1T), ok({ permissions: [] }));
-    await auth.login({ username: "admin", password: "x" }); // → awaiting_tenant
-    const resp = await auth.switchTenant({ tenantId: "t-a" });
-    expect(isErrorResponse(resp)).toBe(false);
-    expect((await state()).kind).toBe("authenticated");
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.activeTenantId)).toBe("t-a");
-  });
+  fnTest(
+    ["M00.F02"],
+    "awaiting_tenant --switchTenant--> authenticated + activeTenantId 记忆",
+    async () => {
+      await toAnonymous();
+      enqueue(ok(LOGIN_2T), ok(LOGIN_1T), ok({ permissions: [] }));
+      await auth.login({ username: "admin", password: "x" }); // → awaiting_tenant
+      const resp = await auth.switchTenant({ tenantId: "t-a" });
+      expect(isErrorResponse(resp)).toBe(false);
+      expect((await state()).kind).toBe("authenticated");
+      expect(localStorage.getItem(TOKEN_STORAGE_KEYS.activeTenantId)).toBe("t-a");
+    },
+  );
 
   fnTest(["M01.F05.I04"], "logout → anonymous + 全部持久化 key 清空", async () => {
     await toAnonymous();
@@ -191,20 +200,24 @@ describe("AuthContext FSM", () => {
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.activeTenantId)).toBeNull();
   });
 
-  fnTest(["M01.F05.I02"], "token 失效（me 401 + refresh 401）→ 退 anonymous + 清 token", async () => {
-    setActivePinia(createPinia());
-    __testReset();
-    localStorage.clear();
-    localStorage.setItem(TOKEN_STORAGE_KEYS.accessToken, "stale");
-    localStorage.setItem(TOKEN_STORAGE_KEYS.refreshToken, "stale-rt");
-    enqueue(
-      { status: 401, data: { code: "UNAUTHORIZED", message: "expired" } }, // me
-      { status: 401, data: { code: "UNAUTHORIZED", message: "expired" } }, // refresh
-    );
-    await hydrateAuth();
-    expect((await state()).kind).toBe("anonymous");
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
-  });
+  fnTest(
+    ["M01.F05.I02"],
+    "token 失效（me 401 + refresh 401）→ 退 anonymous + 清 token",
+    async () => {
+      setActivePinia(createPinia());
+      __testReset();
+      localStorage.clear();
+      localStorage.setItem(TOKEN_STORAGE_KEYS.accessToken, "stale");
+      localStorage.setItem(TOKEN_STORAGE_KEYS.refreshToken, "stale-rt");
+      enqueue(
+        { status: 401, data: { code: "UNAUTHORIZED", message: "expired" } }, // me
+        { status: 401, data: { code: "UNAUTHORIZED", message: "expired" } }, // refresh
+      );
+      await hydrateAuth();
+      expect((await state()).kind).toBe("anonymous");
+      expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
+    },
+  );
 
   fnTest(["M01.F05.I02"], "onChange 契约：状态转移触发订阅 + unsub 停止", async () => {
     await toAnonymous();
@@ -226,14 +239,18 @@ describe("AuthContext FSM", () => {
 // -- permissions / hasPermission -----------------------------------------------------
 
 describe("AuthContext permissions", () => {
-  fnTest(["M01.F04.I02"], "authenticated 态拉取 /auth/permissions 并供 hasPermission 判断", async () => {
-    await toAnonymous();
-    enqueue(ok(LOGIN_1T), ok({ permissions: ["report:approve", "receipt:read"] }));
-    await auth.login({ username: "admin", password: "x" });
-    expect(calls.some((c) => c.url.includes("/api/auth/permissions"))).toBe(true);
-    expect(auth.hasPermission("report:approve")).toBe(true);
-    expect(auth.hasPermission("report:reject")).toBe(false);
-  });
+  fnTest(
+    ["M01.F04.I02"],
+    "authenticated 态拉取 /auth/permissions 并供 hasPermission 判断",
+    async () => {
+      await toAnonymous();
+      enqueue(ok(LOGIN_1T), ok({ permissions: ["report:approve", "receipt:read"] }));
+      await auth.login({ username: "admin", password: "x" });
+      expect(calls.some((c) => c.url.includes("/api/auth/permissions"))).toBe(true);
+      expect(auth.hasPermission("report:approve")).toBe(true);
+      expect(auth.hasPermission("report:reject")).toBe(false);
+    },
+  );
 
   fnTest(["M01.F04.I02"], "非 authenticated 态 hasPermission 恒 false", async () => {
     await toAnonymous();

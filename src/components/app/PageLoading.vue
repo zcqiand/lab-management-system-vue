@@ -8,7 +8,11 @@
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center gap-3 py-24" data-testid="page-loading" role="status">
+  <div
+    class="flex flex-col items-center justify-center gap-3 py-24"
+    data-testid="page-loading"
+    role="status"
+  >
     <span
       class="inline-block size-6 rounded-full border-2 border-muted-foreground/30 border-t-muted-foreground animate-spin"
       aria-hidden="true"

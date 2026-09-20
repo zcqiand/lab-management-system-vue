@@ -45,10 +45,7 @@ import {
   catalogUpdateSpec,
 } from "@/api/endpoints/inspection-catalog/inspection-catalog";
 import { inspectionDictionaryListObjects } from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
-import type {
-  InspectionModel,
-  InspectionObject,
-} from "@/api/endpoints/model";
+import type { InspectionModel, InspectionObject } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
@@ -255,8 +252,7 @@ async function handleSave(): Promise<void> {
     await fetchList();
   } catch (e) {
     const msg =
-      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-      "保存失败";
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "保存失败";
     errorMsg.value = msg;
   } finally {
     saving.value = false;
@@ -272,8 +268,7 @@ async function handleDelete(): Promise<void> {
     await fetchList();
   } catch (e) {
     const msg =
-      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-      "删除失败";
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "删除失败";
     errorMsg.value = msg;
   } finally {
     deleting.value = false;
@@ -314,9 +309,7 @@ function dialogTitle(): string {
 
     <div class="grid flex-1 min-h-0 grid-cols-[240px_1fr] gap-4">
       <!-- 左侧：检测项目树 -->
-      <aside
-        class="flex min-h-0 flex-col overflow-hidden rounded bg-white shadow"
-      >
+      <aside class="flex min-h-0 flex-col overflow-hidden rounded bg-white shadow">
         <div
           class="shrink-0 border-b bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground"
         >
@@ -348,9 +341,7 @@ function dialogTitle(): string {
       </aside>
 
       <!-- 右侧：可排序列表（拖拽功能 Sprint 后续迭代，sortOrder 字段保留只读） -->
-      <section
-        class="flex min-h-0 flex-col overflow-hidden rounded bg-white shadow"
-      >
+      <section class="flex min-h-0 flex-col overflow-hidden rounded bg-white shadow">
         <div
           class="flex shrink-0 items-center justify-between border-b bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground"
         >
@@ -375,11 +366,7 @@ function dialogTitle(): string {
           {{ selectedCode ? "暂无数据" : "请先选择左侧检测项目" }}
         </div>
 
-        <ul
-          v-else
-          :data-testid="`${endpoint}-list`"
-          class="flex-1 overflow-y-auto"
-        >
+        <ul v-else :data-testid="`${endpoint}-list`" class="flex-1 overflow-y-auto">
           <li
             v-for="item in list"
             :key="item.code"
@@ -430,9 +417,7 @@ function dialogTitle(): string {
     >
       <div class="space-y-3 text-left text-sm">
         <div>
-          <Label class="mb-1 block text-xs text-muted-foreground">
-            检测项目
-          </Label>
+          <Label class="mb-1 block text-xs text-muted-foreground"> 检测项目 </Label>
           <Select v-model="formObject" :disabled="!!editing">
             <SelectTrigger class="w-full rounded border px-2 py-1.5 disabled:bg-muted">
               <SelectValue placeholder="请选择检测项目" />
@@ -445,30 +430,16 @@ function dialogTitle(): string {
           </Select>
         </div>
         <div>
-          <Label class="mb-1 block text-xs text-muted-foreground">
-            编码 *
-          </Label>
-          <Input
-            v-model="formCode"
-            :disabled="!!editing"
-            class="disabled:bg-muted"
-          />
+          <Label class="mb-1 block text-xs text-muted-foreground"> 编码 * </Label>
+          <Input v-model="formCode" :disabled="!!editing" class="disabled:bg-muted" />
         </div>
         <div>
-          <Label class="mb-1 block text-xs text-muted-foreground">
-            名称 *
-          </Label>
-          <Input
-            v-model="formName"
-          />
+          <Label class="mb-1 block text-xs text-muted-foreground"> 名称 * </Label>
+          <Input v-model="formName" />
         </div>
         <div>
-          <Label class="mb-1 block text-xs text-muted-foreground">
-            备注
-          </Label>
-          <Input
-            v-model="formRemark"
-          />
+          <Label class="mb-1 block text-xs text-muted-foreground"> 备注 </Label>
+          <Input v-model="formRemark" />
         </div>
       </div>
     </ConfirmDialog>

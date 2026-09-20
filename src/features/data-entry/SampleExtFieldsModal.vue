@@ -6,37 +6,41 @@
 import Button from "@/components/ui/Button.vue";
 
 interface ExtFieldDef {
-  key: string
-  label: string
-  type?: string
-  required?: boolean
+  key: string;
+  label: string;
+  type?: string;
+  required?: boolean;
 }
 
 interface SampleLike {
-  id: string
-  ext?: Record<string, string>
+  id: string;
+  ext?: Record<string, string>;
 }
 
 const props = defineProps<{
-  open: boolean
-  samples: SampleLike[]
-  extFields: ExtFieldDef[]
-  onClose: () => void
-  onConfirm: (nextExt: Record<string, string>) => void
-}>()
+  open: boolean;
+  samples: SampleLike[];
+  extFields: ExtFieldDef[];
+  onClose: () => void;
+  onConfirm: (nextExt: Record<string, string>) => void;
+}>();
 
 function emitClose() {
-  props.onClose()
+  props.onClose();
 }
 
 function emitConfirm() {
   // stub：原样返回空 map；完整实现见 react 仓
-  props.onConfirm({})
+  props.onConfirm({});
 }
 </script>
 
 <template>
-  <div v-if="open" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center" data-fn="M03.F01.I07">
+  <div
+    v-if="open"
+    class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center"
+    data-fn="M03.F01.I07"
+  >
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] flex flex-col">
       <header class="flex items-center justify-between px-5 py-3 border-b">
         <h2 class="text-base font-semibold">样品扩展字段补录</h2>
@@ -49,13 +53,19 @@ function emitConfirm() {
         </button>
       </header>
       <div class="px-5 py-4 space-y-2">
-        <p class="text-sm text-muted-foreground">报告预览前按当前类别 extFields 补录样品扩展字段（vue 仓 Batch 2B-8 stub）</p>
+        <p class="text-sm text-muted-foreground">
+          报告预览前按当前类别 extFields 补录样品扩展字段（vue 仓 Batch 2B-8 stub）
+        </p>
         <ul class="text-xs text-foreground space-y-1">
-          <li v-for="f in extFields" :key="f.key" data-fn="M03.F01.I07">{{ f.label }}（{{ f.key }}{{ f.required ? ' *' : '' }}）</li>
+          <li v-for="f in extFields" :key="f.key" data-fn="M03.F01.I07">
+            {{ f.label }}（{{ f.key }}{{ f.required ? " *" : "" }}）
+          </li>
         </ul>
       </div>
       <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-muted">
-        <Button variant="outline" class="px-4 py-1.5 text-sm rounded" @click="emitClose">取消</Button>
+        <Button variant="outline" class="px-4 py-1.5 text-sm rounded" @click="emitClose"
+          >取消</Button
+        >
         <Button
           variant="default"
           class="bg-info hover:bg-info/90 px-4 py-1.5 text-sm rounded"

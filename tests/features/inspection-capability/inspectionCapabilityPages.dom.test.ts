@@ -15,20 +15,48 @@ import CalculationMethodList from "@/features/inspection-capability/CalculationM
 import TechnicalRequirementList from "@/features/inspection-capability/TechnicalRequirementList.vue";
 
 const SPECIALTIES = [
-  { id: "SP01", code: "SP01", name: "建筑材料及构配件", officialNo: "一", isOfficial: true, enabled: true, sortOrder: 1 },
-  { id: "SP02", code: "SP02", name: "主体结构及装饰装修", officialNo: "二", isOfficial: true, enabled: true, sortOrder: 2 },
+  {
+    id: "SP01",
+    code: "SP01",
+    name: "建筑材料及构配件",
+    officialNo: "一",
+    isOfficial: true,
+    enabled: true,
+    sortOrder: 1,
+  },
+  {
+    id: "SP02",
+    code: "SP02",
+    name: "主体结构及装饰装修",
+    officialNo: "二",
+    isOfficial: true,
+    enabled: true,
+    sortOrder: 2,
+  },
 ];
 
 const OBJECTS = [
-  { id: "OBJ-1", code: "OBJ-1", name: "水泥", inspectionSpecialtyCode: "SP01", sortOrder: 1, enabled: true },
+  {
+    id: "OBJ-1",
+    code: "OBJ-1",
+    name: "水泥",
+    inspectionSpecialtyCode: "SP01",
+    sortOrder: 1,
+    enabled: true,
+  },
 ];
 
-const PARAMETERS = [
-  { id: "P-1", code: "P-1", name: "抗压强度", unit: "MPa", sortOrder: 1 },
-];
+const PARAMETERS = [{ id: "P-1", code: "P-1", name: "抗压强度", unit: "MPa", sortOrder: 1 }];
 
 const STANDARDS = [
-  { id: "GB-175", code: "GB 175-2023", name: "通用硅酸盐水泥", version: "2023", status: "active", sortOrder: 1 },
+  {
+    id: "GB-175",
+    code: "GB 175-2023",
+    name: "通用硅酸盐水泥",
+    version: "2023",
+    status: "active",
+    sortOrder: 1,
+  },
 ];
 
 const CALC_RULES = [
@@ -203,18 +231,22 @@ describe("M06.F06 技术要求维护", () => {
     expect(wrapper.find('[aria-label="规格筛选"]').exists()).toBe(true);
   });
 
-  fnTest(["M06.F06.I01", "M06.F06.I02", "M06.F06.I05"], "F06 列表行 + 新建/编辑/删除按钮", async () => {
-    const wrapper = mountWithProviders(TechnicalRequirementList);
-    await flushPromises();
-    expect(wrapper.text()).toContain("新建技术要求");
-    // Phase 2a-2 迁移：<tbody><tr> → <TableBody> 内 <TableRow> 渲染为 div[role=row]
-    const bodyRows = wrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
-    expect(bodyRows.length).toBeGreaterThan(0);
-    const editBtns = wrapper.findAll('button[aria-label^="编辑 "]');
-    const delBtns = wrapper.findAll('button[aria-label^="删除 "]');
-    expect(editBtns.length).toBeGreaterThan(0);
-    expect(delBtns.length).toBeGreaterThan(0);
-  });
+  fnTest(
+    ["M06.F06.I01", "M06.F06.I02", "M06.F06.I05"],
+    "F06 列表行 + 新建/编辑/删除按钮",
+    async () => {
+      const wrapper = mountWithProviders(TechnicalRequirementList);
+      await flushPromises();
+      expect(wrapper.text()).toContain("新建技术要求");
+      // Phase 2a-2 迁移：<tbody><tr> → <TableBody> 内 <TableRow> 渲染为 div[role=row]
+      const bodyRows = wrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
+      expect(bodyRows.length).toBeGreaterThan(0);
+      const editBtns = wrapper.findAll('button[aria-label^="编辑 "]');
+      const delBtns = wrapper.findAll('button[aria-label^="删除 "]');
+      expect(editBtns.length).toBeGreaterThan(0);
+      expect(delBtns.length).toBeGreaterThan(0);
+    },
+  );
 });
 
 // Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。
@@ -253,7 +285,9 @@ describe("Phase 1.2a — InspectionCapabilityList <Button> 原语回归", () => 
     await flushPromises();
 
     // SPECIALTIES fixture 两条都是 isOfficial=true，删除按钮应 :disabled
-    const officialDelete = lastWrapper.find('button[data-fn="M06.F01.I01"][aria-label^="删除 "]:disabled');
+    const officialDelete = lastWrapper.find(
+      'button[data-fn="M06.F01.I01"][aria-label^="删除 "]:disabled',
+    );
     expect(officialDelete.exists()).toBe(true);
     expect(officialDelete.classes()).toContain("disabled:opacity-40");
   });
@@ -269,7 +303,7 @@ describe("Phase 1.2a — InspectionCapabilityList <Button> 原语回归", () => 
 
     const editBtn = lastWrapper.find('button[aria-label^="编辑 OBJ-1"]');
     expect(editBtn.exists()).toBe(true);
-    expect(editBtn.classes()).not.toContain("h-8");  // CVA sm size removed
+    expect(editBtn.classes()).not.toContain("h-8"); // CVA sm size removed
     expect(editBtn.classes()).not.toContain("px-3"); // CVA sm padding removed
   });
 });
@@ -308,9 +342,9 @@ describe("Phase 1.2a — CalculationMethodList <Button> 原语回归", () => {
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    const create = lastWrapper.findAll('button[data-fn="M06.F05.I01"]').find(
-      (b) => b.text() === "新建计算方法",
-    );
+    const create = lastWrapper
+      .findAll('button[data-fn="M06.F05.I01"]')
+      .find((b) => b.text() === "新建计算方法");
     expect(create).toBeTruthy();
     expect(create!.classes()).toContain("bg-primary");
   });
@@ -646,7 +680,8 @@ describe("Phase 2a-2 — CalculationMethodList <Table> 原语回归", () => {
     await flushPromises();
 
     // 行内第 3 个 cell（0-indexed） 是判定标准 cell（class=\"font-mono text-xs\"）
-    const stdCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+    const stdCell = lastWrapper
+      .findAll('[role="rowgroup"]')[1]!
       .findAll('[role="row"]')[0]!
       .findAll('[role="cell"]')[2];
     expect(stdCell.exists()).toBe(true);
@@ -688,7 +723,8 @@ describe("Phase 2a-2 — TechnicalRequirementList <Table> 原语回归", () => {
     await flushPromises();
 
     // 行内第 3 个 cell（0-indexed） 是判定标准 cell
-    const stdCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+    const stdCell = lastWrapper
+      .findAll('[role="rowgroup"]')[1]!
       .findAll('[role="row"]')[0]!
       .findAll('[role="cell"]')[2];
     expect(stdCell.exists()).toBe(true);
@@ -705,9 +741,7 @@ describe("Phase 2e-3 — CalculationMethodList 表单弹窗走 Dialog 底座", (
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
-    const createBtn = lastWrapper
-      .findAll("button")
-      .find((b) => b.text() === "新建计算方法")!;
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建计算方法")!;
     await createBtn.trigger("click");
     await flushPromises();
     return lastWrapper;
@@ -762,9 +796,7 @@ describe("Phase 2e-3 — TechnicalRequirementList 表单弹窗走 Dialog 底座"
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
-    const createBtn = lastWrapper
-      .findAll("button")
-      .find((b) => b.text() === "新建技术要求")!;
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建技术要求")!;
     await createBtn.trigger("click");
     await flushPromises();
     return lastWrapper;
@@ -810,7 +842,6 @@ describe("Phase 2e-3 — TechnicalRequirementList 表单弹窗走 Dialog 底座"
     expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });
-
 
 // Phase 2e-3 batch 2 —— 新建/编辑弹窗从手写 <Teleport>+遮罩 div 换成 <Dialog> 家族。
 // 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。

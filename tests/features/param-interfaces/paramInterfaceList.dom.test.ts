@@ -66,9 +66,8 @@ const MOUNT_GLOBAL = {
 
 describe("M06.F08 参数界面维护", () => {
   fnTest(["M06.F08.I01"], "参数界面：渲染标题 + 列表行（fixture 真数据穿透）", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     const wrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -79,9 +78,8 @@ describe("M06.F08 参数界面维护", () => {
   });
 
   fnTest(["M06.F08.I01"], "参数界面：新建按钮开弹窗", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     const wrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -95,9 +93,8 @@ describe("M06.F08 参数界面维护", () => {
   });
 
   fnTest(["M06.F08.I01"], "参数界面：行内删除按钮开确认弹窗", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     const wrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -123,7 +120,8 @@ afterEach(() => {
 
 describe("Phase 1.2a — ParamInterfaceList <Button> 原语回归", () => {
   it("新建参数界面：<Button variant=default> 渲染 <button>，CVA base 活着，data-fn 落到真实 DOM", async () => {
-    const { default: ParamInterfaceList } = await import("@/features/param-interfaces/ParamInterfaceList.vue");
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -136,7 +134,8 @@ describe("Phase 1.2a — ParamInterfaceList <Button> 原语回归", () => {
   });
 
   it("行内删除按钮：<Button variant=link>，text-destructive 调用方 class 经 tailwind-merge 合并进来", async () => {
-    const { default: ParamInterfaceList } = await import("@/features/param-interfaces/ParamInterfaceList.vue");
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -155,9 +154,8 @@ describe("Phase 1.2a — ParamInterfaceList <Button> 原语回归", () => {
 // 弹窗 3 个 form <Input>：编辑模式 :disabled 落到真实 <input>，type=number 落到 DOM。
 describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归", () => {
   it("搜索框 <Input class=max-w-sm>：渲染 <input>，v-model 双向写回", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -172,9 +170,8 @@ describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归",
   });
 
   it("弹窗 3 个 form <Input>：编辑模式 :disabled 落到真实 <input>，type=number 落 DOM", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -206,9 +203,8 @@ describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归",
 // 锁：表单 3 个 <Label> 落成真实 <label>，Label 基类活着。
 describe("Phase 1.4 — ParamInterfaceList 表单 <Label> 原语回归", () => {
   it("新建弹窗 3 个 <Label> 落成真实 <label>，文本 编码/组件路径/排序", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -232,9 +228,8 @@ describe("Phase 1.4 — ParamInterfaceList 表单 <Label> 原语回归", () => {
 // 3 fixture 行 data-fn 落到 div[role=row]。
 describe("Phase 2a-2 — ParamInterfaceList 列表 <Table> 原语回归", () => {
   it("<Table> 渲染 div[role=table]；4 <TableHead> 文本顺序 编码/组件路径/排序/操作", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -244,18 +239,12 @@ describe("Phase 2a-2 — ParamInterfaceList 列表 <Table> 原语回归", () => 
     expect(table.exists()).toBe(true);
     const heads = lastWrapper.findAll('[role="columnheader"]');
     expect(heads.length).toBe(4);
-    expect(heads.map((h) => h.text())).toEqual([
-      "编码",
-      "组件路径",
-      "排序",
-      "操作",
-    ]);
+    expect(heads.map((h) => h.text())).toEqual(["编码", "组件路径", "排序", "操作"]);
   });
 
   it("3 fixture 行：行级 data-fn 落到 div[role=row]，且在 rowgroup[1]（TableBody）", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -269,15 +258,15 @@ describe("Phase 2a-2 — ParamInterfaceList 列表 <Table> 原语回归", () => 
   });
 
   it("TableCell 调用方 class 经 tailwind-merge 合并：编码 cell 带 font-mono + text-xs", async () => {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    const codeCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+    const codeCell = lastWrapper
+      .findAll('[role="rowgroup"]')[1]!
       .findAll('[role="row"]')[0]!
       .findAll('[role="cell"]')[0];
     expect(codeCell.exists()).toBe(true);
@@ -290,16 +279,13 @@ describe("Phase 2a-2 — ParamInterfaceList 列表 <Table> 原语回归", () => 
 // 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
 describe("Phase 2e-3 — ParamInterfaceList 表单弹窗走 Dialog 底座", () => {
   async function openForm(): Promise<VueWrapper> {
-    const { default: ParamInterfaceList } = await import(
-      "@/features/param-interfaces/ParamInterfaceList.vue"
-    );
+    const { default: ParamInterfaceList } =
+      await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
-    const createBtn = lastWrapper
-      .findAll("button")
-      .find((b) => b.text() === "新建参数界面")!;
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建参数界面")!;
     await createBtn.trigger("click");
     await flushPromises();
     return lastWrapper;

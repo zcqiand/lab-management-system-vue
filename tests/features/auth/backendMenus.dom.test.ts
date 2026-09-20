@@ -206,7 +206,10 @@ describe("M01.F04.I01 useBackendMenus", () => {
     });
     const wrapper = await mountShell();
 
-    const hrefs = wrapper.findAll("a").filter((a) => a.attributes("href")).map((a) => a.attributes("href"));
+    const hrefs = wrapper
+      .findAll("a")
+      .filter((a) => a.attributes("href"))
+      .map((a) => a.attributes("href"));
     // /catalog/models → /models（demo 树前缀别名）
     expect(hrefs).toContain("/models");
     // /receipts?stage=task_assignment → /task-assignment（demo 树 query-stage 别名）

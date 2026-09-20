@@ -40,7 +40,13 @@ const RECEIPTS = [
     categoryCode: "concrete",
     flowStatus: "task_assignment",
     flowHistory: [
-      { action: "submit", from: "receiving", to: "task_assignment", operator: "seed", at: "2026-07-02T00:00:00Z" },
+      {
+        action: "submit",
+        from: "receiving",
+        to: "task_assignment",
+        operator: "seed",
+        at: "2026-07-02T00:00:00Z",
+      },
     ],
     lastSubmittedBy: "seed",
     receivedBy: "current-user",
@@ -51,7 +57,12 @@ const RECEIPTS = [
   },
 ];
 
-function wrapList(arr: unknown[]): { items: unknown[]; page: number; pageSize: number; total: number } {
+function wrapList(arr: unknown[]): {
+  items: unknown[];
+  page: number;
+  pageSize: number;
+  total: number;
+} {
   return { items: arr, page: 1, pageSize: arr.length, total: arr.length };
 }
 
@@ -138,42 +149,46 @@ describe("M03.F01 接样管理", () => {
     expect(dialog.text()).toContain("删除接样");
   });
 
-  fnTest(["M03.F01.I04"], "接样管理：提交按钮调用 /api/receipts/receiving/act 推送状态机（receiving → task_assignment）", async () => {
-    const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
-    const wrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
-    await flushPromises();
-    await new Promise((r) => setTimeout(r, 50));
-    await flushPromises();
-    // ADR-0019：operator 取自 authenticated 态 user.username（不许 demo 字面量兜底）
-    const { useAuthStore } = await import("@/state/auth");
-    useAuthStore().authState = {
-      kind: "authenticated",
-      value: {
+  fnTest(
+    ["M03.F01.I04"],
+    "接样管理：提交按钮调用 /api/receipts/receiving/act 推送状态机（receiving → task_assignment）",
+    async () => {
+      const { default: ReceiptsList } = await import("@/features/receipts/ReceiptsList.vue");
+      const wrapper = mountWithProviders(ReceiptsList, { global: MOUNT_GLOBAL });
+      await flushPromises();
+      await new Promise((r) => setTimeout(r, 50));
+      await flushPromises();
+      // ADR-0019：operator 取自 authenticated 态 user.username（不许 demo 字面量兜底）
+      const { useAuthStore } = await import("@/state/auth");
+      useAuthStore().authState = {
         kind: "authenticated",
-        user: { id: "USER-001", username: "zhangsan" },
-        tenant: { tenantId: "TENANT-001", code: "LAB", name: "实验室", roleIds: [] },
-        permissions: [],
-        tokenExpiresAt: Date.now() + 30 * 60 * 1000,
-      },
-    };
-    vi.mocked(axios.post).mockImplementation(async () => {
-      return { data: [{ id: "RECEIPT-001", ok: true, flowStatus: "task_assignment" }] } as never;
-    });
-    const submitBtn = wrapper.findAll("button").find((b) => b.text() === "提交");
-    expect(submitBtn).toBeTruthy();
-    await submitBtn!.trigger("click");
-    await flushPromises();
-    // orval 具名函数按 (url, body, options) 三参调 axios.post（options=undefined）
-    expect(vi.mocked(axios.post)).toHaveBeenCalledWith(
-      "/api/receipts/receiving/act",
-      expect.objectContaining({
-        action: "submit",
-        ids: ["RECEIPT-001"],
-        operator: "zhangsan",
-      }),
-      undefined,
-    );
-  });
+        value: {
+          kind: "authenticated",
+          user: { id: "USER-001", username: "zhangsan" },
+          tenant: { tenantId: "TENANT-001", code: "LAB", name: "实验室", roleIds: [] },
+          permissions: [],
+          tokenExpiresAt: Date.now() + 30 * 60 * 1000,
+        },
+      };
+      vi.mocked(axios.post).mockImplementation(async () => {
+        return { data: [{ id: "RECEIPT-001", ok: true, flowStatus: "task_assignment" }] } as never;
+      });
+      const submitBtn = wrapper.findAll("button").find((b) => b.text() === "提交");
+      expect(submitBtn).toBeTruthy();
+      await submitBtn!.trigger("click");
+      await flushPromises();
+      // orval 具名函数按 (url, body, options) 三参调 axios.post（options=undefined）
+      expect(vi.mocked(axios.post)).toHaveBeenCalledWith(
+        "/api/receipts/receiving/act",
+        expect.objectContaining({
+          action: "submit",
+          ids: ["RECEIPT-001"],
+          operator: "zhangsan",
+        }),
+        undefined,
+      );
+    },
+  );
 });
 
 // Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。
@@ -245,7 +260,9 @@ describe("Phase 1.3a — ReceiptsList 搜索/表单 <Input> 原语回归", () =>
 
     // 5 个 form <Input> + 1 个搜索 <Input>（都在 dialog stub 区域之外或之内，看 mount）
     // 真实约束：弹窗内必须有 type=date input + 至少 4 个 type=text/none 的 input
-    const textInputs = lastWrapper.findAll('input[type="text"], input[type="date"], input:not([type])');
+    const textInputs = lastWrapper.findAll(
+      'input[type="text"], input[type="date"], input:not([type])',
+    );
     expect(textInputs.length).toBeGreaterThanOrEqual(5);
 
     // 委托日期 type=date 落到真实 <input>
@@ -382,9 +399,9 @@ describe("Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归", () => {
     await flushPromises();
 
     expect(lastWrapper.findAll("select").length).toBe(0);
-    expect(
-      lastWrapper.find('button[role="combobox"][aria-label="流程状态筛选"]').exists(),
-    ).toBe(true);
+    expect(lastWrapper.find('button[role="combobox"][aria-label="流程状态筛选"]').exists()).toBe(
+      true,
+    );
   });
 
   it("flowFilter=__all__ 不下发 flowStatus；选「接样中」下发 receiving", async () => {
@@ -408,7 +425,10 @@ describe("Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归", () => {
     expect(receiving).toBeTruthy();
     await pickSelectItem(receiving!.element);
 
-    await wrapper.findAll("button").find((b) => b.text() === "搜索")!.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((b) => b.text() === "搜索")!
+      .trigger("click");
     await flushPromises();
 
     const calls = vi.mocked(axios.get).mock.calls;
@@ -504,16 +524,16 @@ describe("Phase 2e-3 — ReceiptsList 新建/编辑弹窗走 Dialog 底座", () 
     // 弹窗内那个是「保存」按钮，无 data-fn（@entry 在批量键，I02 是行级）；
     // 锚测改锁：M03.F01.I02 在页头「新建接样」按钮上 —— 必须仍落在真实 button。
     // 弹窗结构不能吞掉页头锚点。
-    const headerBtn = w.findAll('button[data-fn="M03.F01.I02"]').find(
-      (b) => b.text() === "新建接样",
-    );
+    const headerBtn = w
+      .findAll('button[data-fn="M03.F01.I02"]')
+      .find((b) => b.text() === "新建接样");
     expect(headerBtn).toBeTruthy();
     expect(headerBtn!.element.tagName).toBe("BUTTON");
     expect(headerBtn!.classes()).toContain("inline-flex");
 
     // 弹窗内 form <Input> 5 个仍在弹窗子树里（Phase 2d-2 配对的 id 没被 Dialog 抽走）
     const dialog = w.find('[role="dialog"]');
-    expect(dialog.findAll('input').length).toBeGreaterThanOrEqual(5);
+    expect(dialog.findAll("input").length).toBeGreaterThanOrEqual(5);
     expect(dialog.find("#receipt-create-code").exists()).toBe(true);
     expect(dialog.find("#receipt-create-date").exists()).toBe(true);
   });

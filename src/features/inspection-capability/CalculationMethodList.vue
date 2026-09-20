@@ -265,24 +265,21 @@ async function confirmDelete(): Promise<void> {
           M06.F05 计算方法（复合主键：检测项目 + 检测参数）——算法类型 + 试件数量 + 修约规则
         </p>
       </div>
-      <Button data-fn="M06.F05.I01" @click="openCreate">
-        新建计算方法
-      </Button>
+      <Button data-fn="M06.F05.I01" @click="openCreate"> 新建计算方法 </Button>
     </div>
 
     <div class="flex gap-2">
-      <Input
-        v-model="keyword"
-        class="max-w-sm"
-        placeholder="搜索项目/参数"
-      />
+      <Input v-model="keyword" class="max-w-sm" placeholder="搜索项目/参数" />
     </div>
 
     <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">
       {{ error }}
     </div>
 
-    <div v-if="!loading && items.length === 0" class="text-sm text-muted-foreground text-center py-8">
+    <div
+      v-if="!loading && items.length === 0"
+      class="text-sm text-muted-foreground text-center py-8"
+    >
       暂无计算方法
     </div>
 
@@ -302,24 +299,34 @@ async function confirmDelete(): Promise<void> {
         <TableRow v-for="row in items" :key="rowKey(row)" class="border-t hover:bg-muted">
           <TableCell class="px-4 py-2 align-top">
             <div class="font-mono text-xs">{{ row.inspectionObjectCode }}</div>
-            <div v-if="objectNameOf(row.inspectionObjectCode)" class="text-xs text-muted-foreground">
+            <div
+              v-if="objectNameOf(row.inspectionObjectCode)"
+              class="text-xs text-muted-foreground"
+            >
               {{ objectNameOf(row.inspectionObjectCode) }}
             </div>
           </TableCell>
           <TableCell class="px-4 py-2 align-top">
             <div class="font-mono text-xs">{{ row.inspectionParameterCode }}</div>
-            <div v-if="parameterNameOf(row.inspectionParameterCode)" class="text-xs text-muted-foreground">
+            <div
+              v-if="parameterNameOf(row.inspectionParameterCode)"
+              class="text-xs text-muted-foreground"
+            >
               {{ parameterNameOf(row.inspectionParameterCode) }}
             </div>
           </TableCell>
-          <TableCell class="px-4 py-2 font-mono text-xs">{{ row.testingStandardCode ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2 font-mono text-xs">{{
+            row.testingStandardCode ?? "-"
+          }}</TableCell>
           <TableCell class="px-4 py-2">
             <span class="inline-flex items-center rounded border px-2 py-0.5 text-xs">{{
               ALGO_LABEL[row.algorithmType] ?? row.algorithmType
             }}</span>
           </TableCell>
           <TableCell class="px-4 py-2">{{ row.specimenCount }}</TableCell>
-          <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{ row.remark ?? "-" }}</TableCell>
+          <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{
+            row.remark ?? "-"
+          }}</TableCell>
           <TableCell class="px-4 py-2 text-xs whitespace-nowrap">
             <Button
               variant="link"
@@ -425,33 +432,21 @@ async function confirmDelete(): Promise<void> {
             </div>
             <div>
               <Label>试件数量</Label>
-              <Input
-                v-model="form.specimenCount"
-                type="number"
-              />
+              <Input v-model="form.specimenCount" type="number" />
             </div>
             <div>
               <Label>修约规则</Label>
-              <Input
-                v-model="form.roundingRule"
-                placeholder="如 修约到 0.1"
-              />
+              <Input v-model="form.roundingRule" placeholder="如 修约到 0.1" />
             </div>
           </div>
           <div>
             <Label>备注</Label>
-            <Input
-              v-model="form.remark"
-            />
+            <Input v-model="form.remark" />
           </div>
         </div>
         <DialogFooter class="px-6 py-3 gap-2 border-t">
-          <Button variant="outline" @click="closeDialog">
-            取消
-          </Button>
-          <Button data-fn="M06.F05.I01" @click="submitForm">
-            保存
-          </Button>
+          <Button variant="outline" @click="closeDialog"> 取消 </Button>
+          <Button data-fn="M06.F05.I01" @click="submitForm"> 保存 </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

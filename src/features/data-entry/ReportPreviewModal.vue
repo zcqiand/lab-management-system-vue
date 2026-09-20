@@ -10,12 +10,7 @@ import { computed, ref, watch } from "vue";
 import { samplesListSamples } from "@/api/endpoints/samples/samples";
 import { inspectionDictionaryListParameters } from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
 import { testRecordsListTestRecords } from "@/api/endpoints/test-records/test-records";
-import type {
-  InspectionParameter,
-  Sample,
-  SampleReceipt,
-  TestRecord,
-} from "@/api/endpoints/model";
+import type { InspectionParameter, Sample, SampleReceipt, TestRecord } from "@/api/endpoints/model";
 import { normalizeListResponse } from "@/lib/responses";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
@@ -144,8 +139,7 @@ const categoryName = computed(() => {
           <TableBody>
             <TableRow v-for="rec in records" :key="rec.parameterCode">
               <TableCell class="border px-2 py-1">{{
-                parameters.find((p) => p.code === rec.parameterCode)?.name ??
-                rec.parameterCode
+                parameters.find((p) => p.code === rec.parameterCode)?.name ?? rec.parameterCode
               }}</TableCell>
               <TableCell class="border px-2 py-1">{{ rec.requirement ?? "—" }}</TableCell>
               <TableCell class="border px-2 py-1">{{ rec.result ?? "—" }}</TableCell>
@@ -154,18 +148,13 @@ const categoryName = computed(() => {
           </TableBody>
         </Table>
       </div>
-      <DialogFooter class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-muted sm:justify-end">
-        <Button
-          variant="outline"
-          class="px-4 py-1.5 text-sm rounded"
-          @click="onClose"
-        >
+      <DialogFooter
+        class="flex items-center justify-end gap-2 px-5 py-3 border-t bg-muted sm:justify-end"
+      >
+        <Button variant="outline" class="px-4 py-1.5 text-sm rounded" @click="onClose">
           关闭
         </Button>
-        <Button
-          variant="default"
-          class="bg-info hover:bg-info/90 px-4 py-1.5 text-sm rounded"
-        >
+        <Button variant="default" class="bg-info hover:bg-info/90 px-4 py-1.5 text-sm rounded">
           打印
         </Button>
       </DialogFooter>

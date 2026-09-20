@@ -31,10 +31,12 @@ const props = withDefaults(
       v-bind="$attrs"
       variant="default"
       :disabled="props.disabled ?? undefined"
-      :class="[
-        props.danger ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : '',
-        props.class ?? '',
-      ].join(' ')"
+      :class="
+        [
+          props.danger ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : '',
+          props.class ?? '',
+        ].join(' ')
+      "
     >
       <slot />
     </Button>

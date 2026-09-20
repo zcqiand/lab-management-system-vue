@@ -139,14 +139,10 @@ async function submitForm(): Promise<void> {
     <div class="mb-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">参数界面维护</h1>
-        <p class="text-sm text-muted-foreground">
-          M06.F08 参数界面（录入卡片模型）
-        </p>
+        <p class="text-sm text-muted-foreground">M06.F08 参数界面（录入卡片模型）</p>
       </div>
       <!-- @entry M06.F08.I01 新建参数界面按钮 -->
-      <Button data-fn="M06.F08.I01" @click="openCreate">
-        新建参数界面
-      </Button>
+      <Button data-fn="M06.F08.I01" @click="openCreate"> 新建参数界面 </Button>
     </div>
 
     <div class="mb-4 flex gap-2">
@@ -156,9 +152,7 @@ async function submitForm(): Promise<void> {
         placeholder="按编码 / 组件路径搜索"
         @keydown.enter="load"
       />
-      <Button variant="outline" @click="load">
-        搜索
-      </Button>
+      <Button variant="outline" @click="load"> 搜索 </Button>
     </div>
 
     <Dialog
@@ -172,11 +166,7 @@ async function submitForm(): Promise<void> {
       <DialogContent class="max-w-md gap-0 p-0">
         <DialogHeader class="px-6 py-4 border-b">
           <DialogTitle>
-            {{
-              mode.kind === "create"
-                ? "新建参数界面"
-                : `编辑参数界面 ${editing?.code ?? ""}`
-            }}
+            {{ mode.kind === "create" ? "新建参数界面" : `编辑参数界面 ${editing?.code ?? ""}` }}
           </DialogTitle>
           <DialogDescription>创建一条参数界面记录（录入卡片模型）。</DialogDescription>
         </DialogHeader>
@@ -196,10 +186,7 @@ async function submitForm(): Promise<void> {
             </div>
             <div>
               <Label>排序</Label>
-              <Input
-                v-model.number="form.sortOrder"
-                type="number"
-              />
+              <Input v-model.number="form.sortOrder" type="number" />
             </div>
           </div>
         </div>
@@ -215,11 +202,7 @@ async function submitForm(): Promise<void> {
     <ConfirmDialog
       :open="deleteTarget !== null"
       title="删除参数界面"
-      :message="
-        deleteTarget
-          ? `确认删除参数界面 ${deleteTarget.code}？此操作不可撤销。`
-          : ''
-      "
+      :message="deleteTarget ? `确认删除参数界面 ${deleteTarget.code}？此操作不可撤销。` : ''"
       @confirm="
         async () => {
           if (!deleteTarget) return;
@@ -238,9 +221,7 @@ async function submitForm(): Promise<void> {
 
     <div class="mt-4 bg-white rounded-xl border shadow-sm">
       <div class="flex flex-row items-center justify-between px-6 py-4 border-b">
-        <div class="font-semibold text-base">
-          参数界面列表（{{ total || "…" }}）
-        </div>
+        <div class="font-semibold text-base">参数界面列表（{{ total || "…" }}）</div>
         <div v-if="loading" class="text-xs text-muted-foreground">加载中…</div>
       </div>
       <Table class="w-full text-sm">
@@ -268,9 +249,7 @@ async function submitForm(): Promise<void> {
             <TableCell class="px-4 py-2 font-mono text-xs">{{ r.componentPath }}</TableCell>
             <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{ r.sortOrder }}</TableCell>
             <TableCell class="px-4 py-2 text-right">
-              <Button size="sm" variant="outline" @click="openEdit(r)">
-                编辑
-              </Button>
+              <Button size="sm" variant="outline" @click="openEdit(r)"> 编辑 </Button>
               <Button
                 variant="link"
                 class="ml-2 text-destructive hover:underline"

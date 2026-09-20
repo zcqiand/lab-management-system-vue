@@ -9,7 +9,7 @@ describe("scaffold smoke", () => {
     const wrapper = mount(App, {
       global: {
         stubs: {
-          "router-view": { template: "<div data-testid=\"router-view\" />" },
+          "router-view": { template: '<div data-testid="router-view" />' },
         },
       },
     });

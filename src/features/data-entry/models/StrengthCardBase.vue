@@ -69,7 +69,7 @@ const reqOptions = computed(() =>
   (techReqs as ParamTechReq[]).filter((r) => r.verificationStatus === "verified"),
 );
 const reqId = ref<string>(
-  record?.requirementCode ?? ((reqOptions.value[0] as ParamTechReq | undefined)?.id ?? ""),
+  record?.requirementCode ?? (reqOptions.value[0] as ParamTechReq | undefined)?.id ?? "",
 );
 const selectedReq = computed<ParamTechReq | undefined>(() =>
   (reqOptions.value as ParamTechReq[]).find((r) => r.id === reqId.value),
@@ -97,16 +97,15 @@ function requirementLabel(r: ParamTechReq): string {
   if (r.targetValue)
     return `${r.comparison === "=" || r.comparison === "eq" ? "= " : ""}${r.targetValue}${unit}`;
   if (r.expression) return r.expression;
-  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue]
-    .filter(Boolean)
-    .join(" ");
+  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue].filter(Boolean).join(" ");
   return parts ? `${parts}${unit}` : r.remark || "—";
 }
 
 function emit(nextLoads: number[], nextReqId: string, manualVerdict?: string) {
   if (readOnly) return;
   const res = compute(nextLoads);
-  const req = (reqOptions.value as ParamTechReq[]).find((r) => r.id === nextReqId) ??
+  const req =
+    (reqOptions.value as ParamTechReq[]).find((r) => r.id === nextReqId) ??
     (reqOptions.value[0] as ParamTechReq | undefined);
   const patch: Partial<TestRecord> = {
     result: JSON.stringify({
@@ -162,10 +161,9 @@ const verdictClass = computed(() =>
   <div class="border rounded p-3 space-y-2">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium">
-        {{ p.canonicalName || p.name
-        }}<span v-if="p.unit">（{{ p.unit }}）</span>
+        {{ p.canonicalName || p.name }}<span v-if="p.unit">（{{ p.unit }}）</span>
       </span>
-      <span :class="['text-xs', verdictClass]">{{ verdict || '未评定' }}</span>
+      <span :class="['text-xs', verdictClass]">{{ verdict || "未评定" }}</span>
     </div>
     <Table class="w-full text-xs">
       <TableHeader class="text-muted-foreground">
@@ -192,14 +190,16 @@ const verdictClass = computed(() =>
           <TableCell
             :class="`py-1 ${lv > 0 && !computed2.kept[i] ? 'text-muted-foreground line-through' : 'text-foreground'}`"
           >
-            {{ lv > 0 ? computed2.strengths[i] : '-' }}
+            {{ lv > 0 ? computed2.strengths[i] : "-" }}
           </TableCell>
         </TableRow>
       </TableBody>
     </Table>
     <div class="text-xs text-muted-foreground">
-      强度平均值：<span class="font-medium text-foreground">{{ computed2.mean ?? '—' }}</span>
-      <span v-if="computed2.invalid" class="ml-2 text-destructive">（离群值超 ±10%，按 GB/T 17671 结果作废）</span>
+      强度平均值：<span class="font-medium text-foreground">{{ computed2.mean ?? "—" }}</span>
+      <span v-if="computed2.invalid" class="ml-2 text-destructive"
+        >（离群值超 ±10%，按 GB/T 17671 结果作废）</span
+      >
     </div>
     <div v-if="reqOptions.length > 0" class="text-xs">
       <Label class="text-xs text-muted-foreground mr-1">技术要求</Label>

@@ -20,9 +20,7 @@ function dispatchPointer(el: Element, type: "pointerdown" | "pointerup"): void {
     (el as HTMLElement).hasPointerCapture = () => false;
   }
   const Ctor =
-    typeof globalThis.PointerEvent === "function"
-      ? globalThis.PointerEvent
-      : globalThis.MouseEvent;
+    typeof globalThis.PointerEvent === "function" ? globalThis.PointerEvent : globalThis.MouseEvent;
   const evt = new Ctor(type, {
     bubbles: true,
     cancelable: true,

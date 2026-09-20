@@ -101,7 +101,9 @@ function handleEscape(e: KeyboardEvent): void {
           variant="default"
           :disabled="loading"
           data-fn="confirm-dialog-confirm"
-          :class="danger ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''"
+          :class="
+            danger ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''
+          "
           @click="onConfirm"
         >
           {{ loading ? loadingText : confirmText }}

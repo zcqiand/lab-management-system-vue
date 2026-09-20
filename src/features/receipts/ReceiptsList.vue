@@ -20,10 +20,7 @@ import {
   receiptsListReceipts,
   receiptsUpdateReceipt,
 } from "@/api/endpoints/receipts/receipts";
-import type {
-  ReceiptsListReceiptsParams,
-  SampleReceipt,
-} from "@/api/endpoints/model";
+import type { ReceiptsListReceiptsParams, SampleReceipt } from "@/api/endpoints/model";
 import { currentOperator } from "@/lib/flow-operator";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
@@ -275,7 +272,9 @@ function alertError(msg: string): void {
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="7" class="px-4 py-8 text-center text-muted-foreground">（无数据）</TableCell>
+            <TableCell colspan="7" class="px-4 py-8 text-center text-muted-foreground"
+              >（无数据）</TableCell
+            >
           </TableRow>
           <TableRow
             v-for="r in items"
@@ -318,13 +317,7 @@ function alertError(msg: string): void {
               >
                 提交
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                @click="openEdit(r)"
-              >
-                编辑
-              </Button>
+              <Button size="sm" variant="outline" @click="openEdit(r)"> 编辑 </Button>
               <Button
                 v-if="r.flowStatus === 'receiving'"
                 variant="link"
@@ -379,11 +372,7 @@ function alertError(msg: string): void {
           <div>
             <Label for="receipt-create-category" class="text-xs">检测类别 *</Label>
             <Select v-model="form.testCategory">
-              <SelectTrigger
-                id="receipt-create-category"
-                aria-label="检测类别"
-                class="w-full mt-1"
-              >
+              <SelectTrigger id="receipt-create-category" aria-label="检测类别" class="w-full mt-1">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -495,7 +484,11 @@ function alertError(msg: string): void {
     <ConfirmDialog
       :open="deleteTarget !== null"
       title="删除接样"
-      :message="deleteTarget ? `确认删除接样单 ${deleteTarget.commissionCode}？其下样品与检测记录将一并删除。` : ''"
+      :message="
+        deleteTarget
+          ? `确认删除接样单 ${deleteTarget.commissionCode}？其下样品与检测记录将一并删除。`
+          : ''
+      "
       @confirm="handleDeleteConfirm()"
       @cancel="deleteTarget = null"
     />

@@ -49,7 +49,12 @@ const RECEIPTS_BY_PHASE: Record<string, unknown[]> = {
   ],
 };
 
-function wrapList(arr: unknown[]): { items: unknown[]; page: number; pageSize: number; total: number } {
+function wrapList(arr: unknown[]): {
+  items: unknown[];
+  page: number;
+  pageSize: number;
+  total: number;
+} {
   return { items: arr, page: 1, pageSize: arr.length, total: arr.length };
 }
 

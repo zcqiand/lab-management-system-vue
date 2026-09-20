@@ -63,11 +63,7 @@ function emit(next: ParsedState) {
   }));
   const filled = rows.filter((r) => r.verdict !== "");
   const overall =
-    filled.length === 0
-      ? undefined
-      : filled.every((r) => r.verdict === "合格")
-        ? "合格"
-        : "不合格";
+    filled.length === 0 ? undefined : filled.every((r) => r.verdict === "合格") ? "合格" : "不合格";
   onChange({
     result: JSON.stringify({ maxDryDensity: next.maxDryDensity, rows }),
     ...(overall ? { verdict: overall } : {}),
@@ -182,7 +178,9 @@ function verdictCls(verdict: string): string {
               :class="numCls"
               :disabled="readOnly"
               :model-value="r.designDegree || ''"
-              @change="(e: Event) => updateRow(i, 'designDegree', (e.target as HTMLInputElement).value)"
+              @change="
+                (e: Event) => updateRow(i, 'designDegree', (e.target as HTMLInputElement).value)
+              "
             />
           </TableCell>
           <TableCell :class="cellCls">
@@ -193,7 +191,9 @@ function verdictCls(verdict: string): string {
               :class="numCls"
               :disabled="readOnly"
               :model-value="r.wetDensity || ''"
-              @change="(e: Event) => updateRow(i, 'wetDensity', (e.target as HTMLInputElement).value)"
+              @change="
+                (e: Event) => updateRow(i, 'wetDensity', (e.target as HTMLInputElement).value)
+              "
             />
           </TableCell>
           <TableCell :class="cellCls">
@@ -208,14 +208,14 @@ function verdictCls(verdict: string): string {
             />
           </TableCell>
           <TableCell :class="cellCls" :data-testid="`dry-density-${i}`">
-            {{ r.dryDensity || '—' }}
+            {{ r.dryDensity || "—" }}
           </TableCell>
-          <TableCell v-if="showMaxCol" :class="cellCls">{{ r.maxDryDensity || '—' }}</TableCell>
+          <TableCell v-if="showMaxCol" :class="cellCls">{{ r.maxDryDensity || "—" }}</TableCell>
           <TableCell :class="cellCls" :data-testid="`degree-${i}`">
-            {{ r.degree || '—' }}
+            {{ r.degree || "—" }}
           </TableCell>
           <TableCell :class="verdictCls(r.verdict)" :data-testid="`verdict-${i}`">
-            {{ r.verdict || '—' }}
+            {{ r.verdict || "—" }}
           </TableCell>
         </TableRow>
       </TableBody>

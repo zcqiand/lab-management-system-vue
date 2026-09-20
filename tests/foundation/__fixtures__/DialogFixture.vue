@@ -31,9 +31,7 @@ const note = ref("");
         >
           Cancel
         </Button>
-        <Button variant="link" data-fn="dialog-link">
-          Link
-        </Button>
+        <Button variant="link" data-fn="dialog-link"> Link </Button>
       </DialogContent>
     </DialogPortal>
   </DialogRoot>

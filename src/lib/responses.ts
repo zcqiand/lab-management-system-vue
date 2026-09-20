@@ -46,8 +46,6 @@ export function normalizeListResponse<T>(raw: unknown): { items: T[]; total: num
 }
 
 /** AxiosResponse 友好入口：传入 axios 返回的整个 response，直接拿归一后数据。 */
-export function unwrapListResponse<T>(
-  res: AxiosResponse<unknown>,
-): { items: T[]; total: number } {
+export function unwrapListResponse<T>(res: AxiosResponse<unknown>): { items: T[]; total: number } {
   return normalizeListResponse<T>(res.data);
 }

@@ -7,13 +7,32 @@ import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
 const STANDARDS = [
-  { id: "GB 175-2023", code: "GB 175-2023", name: "通用硅酸盐水泥", version: "2023", status: "active", tenantId: "TENANT-001" },
-  { id: "GB/T 50081-2019", code: "GB/T 50081-2019", name: "混凝土物理力学性能试验方法标准", version: "2019", status: "active", tenantId: "TENANT-001" },
+  {
+    id: "GB 175-2023",
+    code: "GB 175-2023",
+    name: "通用硅酸盐水泥",
+    version: "2023",
+    status: "active",
+    tenantId: "TENANT-001",
+  },
+  {
+    id: "GB/T 50081-2019",
+    code: "GB/T 50081-2019",
+    name: "混凝土物理力学性能试验方法标准",
+    version: "2019",
+    status: "active",
+    tenantId: "TENANT-001",
+  },
 ];
 
 // IP-0001 已关联 GB 175-2023（镜像 msw fixtures 语义）
 const LINKS = [
-  { inspectionStandardCode: "GB 175-2023", inspectionParameterCode: "IP-0001", createdAt: "", updatedAt: "" },
+  {
+    inspectionStandardCode: "GB 175-2023",
+    inspectionParameterCode: "IP-0001",
+    createdAt: "",
+    updatedAt: "",
+  },
 ];
 
 vi.mock("axios", () => ({
@@ -51,7 +70,7 @@ afterEach(() => {
 
 const MOUNT_GLOBAL = {
   stubs: {
-    teleport: { template: '<div data-teleport-stub><slot /></div>' },
+    teleport: { template: "<div data-teleport-stub><slot /></div>" },
   },
 };
 
@@ -64,29 +83,31 @@ function makeProps(paramCode: string) {
 }
 
 describe("M06.F03.I02 参数↔标准关联", () => {
-  fnTest(["M06.F03.I02"], "关联弹窗：列出标准 + 已关联态（IP-0001 已关联 GB 175-2023）", async () => {
-    const { default: Dialog } = await import(
-      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
-    );
-    const wrapper = mountWithProviders(Dialog, {
-      props: makeProps("IP-0001"),
-      global: MOUNT_GLOBAL,
-    });
-    await flushPromises();
-    await new Promise((r) => setTimeout(r, 50));
-    await flushPromises();
-    const text = wrapper.text();
-    expect(text).toContain("关联标准 — 抗压强度");
-    expect(text).toContain("GB 175-2023");
-    // 已关联按钮为「解除关联」
-    const unlinkBtn = wrapper.findAll("button").find((b) => b.text() === "解除关联");
-    expect(unlinkBtn).toBeTruthy();
-  });
+  fnTest(
+    ["M06.F03.I02"],
+    "关联弹窗：列出标准 + 已关联态（IP-0001 已关联 GB 175-2023）",
+    async () => {
+      const { default: Dialog } =
+        await import("@/features/inspection-capability/ParameterStandardLinkDialog.vue");
+      const wrapper = mountWithProviders(Dialog, {
+        props: makeProps("IP-0001"),
+        global: MOUNT_GLOBAL,
+      });
+      await flushPromises();
+      await new Promise((r) => setTimeout(r, 50));
+      await flushPromises();
+      const text = wrapper.text();
+      expect(text).toContain("关联标准 — 抗压强度");
+      expect(text).toContain("GB 175-2023");
+      // 已关联按钮为「解除关联」
+      const unlinkBtn = wrapper.findAll("button").find((b) => b.text() === "解除关联");
+      expect(unlinkBtn).toBeTruthy();
+    },
+  );
 
   fnTest(["M06.F03.I02"], "toggle：未关联标准 → POST 后按钮翻「解除关联」", async () => {
-    const { default: Dialog } = await import(
-      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
-    );
+    const { default: Dialog } =
+      await import("@/features/inspection-capability/ParameterStandardLinkDialog.vue");
     const wrapper = mountWithProviders(Dialog, {
       props: makeProps("IP-0999"),
       global: MOUNT_GLOBAL,
@@ -111,9 +132,8 @@ describe("M06.F03.I02 参数↔标准关联", () => {
 // 状态徽章 span 仍在 cell 内。
 describe("Phase 2a-3 — ParameterStandardLinkDialog 关联表 <Table> 原语回归", () => {
   it("<Table> 渲染为 div[role=table]；5 个 <TableHead> 文本顺序 标准编码/名称/版本/状态/操作", async () => {
-    const { default: Dialog } = await import(
-      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
-    );
+    const { default: Dialog } =
+      await import("@/features/inspection-capability/ParameterStandardLinkDialog.vue");
     const wrapper = mountWithProviders(Dialog, {
       props: makeProps("IP-0001"),
       global: MOUNT_GLOBAL,
@@ -127,19 +147,12 @@ describe("Phase 2a-3 — ParameterStandardLinkDialog 关联表 <Table> 原语回
 
     const heads = wrapper.findAll('[role="columnheader"]');
     expect(heads.length).toBe(5);
-    expect(heads.map((h) => h.text())).toEqual([
-      "标准编码",
-      "名称",
-      "版本",
-      "状态",
-      "操作",
-    ]);
+    expect(heads.map((h) => h.text())).toEqual(["标准编码", "名称", "版本", "状态", "操作"]);
   });
 
   it("2 行 fixture：行不在 rowgroup[1]（无 data-fn，data-fn 挂在行内 button）", async () => {
-    const { default: Dialog } = await import(
-      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
-    );
+    const { default: Dialog } =
+      await import("@/features/inspection-capability/ParameterStandardLinkDialog.vue");
     const wrapper = mountWithProviders(Dialog, {
       props: makeProps("IP-0001"),
       global: MOUNT_GLOBAL,
@@ -161,9 +174,8 @@ describe("Phase 2a-3 — ParameterStandardLinkDialog 关联表 <Table> 原语回
   });
 
   it("行内 button data-fn 落到真实 button，且嵌套在 cell 内（不被 <TableCell> 吞）", async () => {
-    const { default: Dialog } = await import(
-      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
-    );
+    const { default: Dialog } =
+      await import("@/features/inspection-capability/ParameterStandardLinkDialog.vue");
     const wrapper = mountWithProviders(Dialog, {
       props: makeProps("IP-0001"),
       global: MOUNT_GLOBAL,
@@ -183,9 +195,8 @@ describe("Phase 2a-3 — ParameterStandardLinkDialog 关联表 <Table> 原语回
   });
 
   it("TableCell 调用方 class 经 tailwind-merge 合并（font-mono + text-xs 落标准编码 cell）", async () => {
-    const { default: Dialog } = await import(
-      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
-    );
+    const { default: Dialog } =
+      await import("@/features/inspection-capability/ParameterStandardLinkDialog.vue");
     const wrapper = mountWithProviders(Dialog, {
       props: makeProps("IP-0001"),
       global: MOUNT_GLOBAL,
@@ -210,9 +221,8 @@ describe("Phase 2a-3 — ParameterStandardLinkDialog 关联表 <Table> 原语回
 // data-fn 仍落真实 <button>，且被 [role=cell] 包裹（不被 Dialog 抽走）。
 describe("Phase 2e-3 — ParameterStandardLinkDialog 关联弹窗走 Dialog 底座", () => {
   async function mountDialog(props?: Record<string, unknown>): Promise<VueWrapper> {
-    const { default: Dialog } = await import(
-      "@/features/inspection-capability/ParameterStandardLinkDialog.vue"
-    );
+    const { default: Dialog } =
+      await import("@/features/inspection-capability/ParameterStandardLinkDialog.vue");
     const wrapper = mountWithProviders(Dialog, {
       props: { open: true, parameterCode: "IP-0001", parameterName: "抗压强度", ...props },
       global: MOUNT_GLOBAL,

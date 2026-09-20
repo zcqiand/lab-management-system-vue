@@ -130,7 +130,9 @@ function alertError(msg: string): void {
   globalThis.alert(msg);
 }
 
-function parseExtFields(text: string): { ok: true; value: ExtFieldDef[] } | { ok: false; error: string } {
+function parseExtFields(
+  text: string,
+): { ok: true; value: ExtFieldDef[] } | { ok: false; error: string } {
   try {
     const v: unknown = JSON.parse(text);
     if (!Array.isArray(v)) return { ok: false, error: "extFields 必须是 JSON 数组" };
@@ -202,9 +204,7 @@ async function handleDeleteConfirm(): Promise<void> {
         </p>
       </div>
       <!-- @entry M06.F07.I01 新建报告名称按钮 -->
-      <Button data-fn="M06.F07.I01" @click="openCreate">
-        新建报告名称
-      </Button>
+      <Button data-fn="M06.F07.I01" @click="openCreate"> 新建报告名称 </Button>
     </div>
 
     <div class="mb-4 flex gap-2">
@@ -214,9 +214,7 @@ async function handleDeleteConfirm(): Promise<void> {
         placeholder="按编码 / 名称搜索"
         @keydown.enter="load"
       />
-      <Button variant="outline" @click="load">
-        搜索
-      </Button>
+      <Button variant="outline" @click="load"> 搜索 </Button>
     </div>
 
     <Dialog
@@ -230,11 +228,7 @@ async function handleDeleteConfirm(): Promise<void> {
       <DialogContent class="max-w-xl gap-0 p-0">
         <DialogHeader class="px-6 py-4 border-b">
           <DialogTitle>
-            {{
-              mode.kind === "create"
-                ? "新建报告名称"
-                : `编辑报告名称 ${editing?.code ?? ""}`
-            }}
+            {{ mode.kind === "create" ? "新建报告名称" : `编辑报告名称 ${editing?.code ?? ""}` }}
           </DialogTitle>
           <DialogDescription>
             创建一条报告名称记录。extFields 为 JSON 数组格式，例如
@@ -269,10 +263,7 @@ async function handleDeleteConfirm(): Promise<void> {
             </div>
             <div class="md:col-span-2">
               <Label>扩展属性 extFields（JSON 数组）</Label>
-              <Textarea
-                v-model="form.extFieldsText"
-                class="h-32 font-mono"
-              />
+              <Textarea v-model="form.extFieldsText" class="h-32 font-mono" />
             </div>
           </div>
         </div>
@@ -288,20 +279,14 @@ async function handleDeleteConfirm(): Promise<void> {
     <ConfirmDialog
       :open="deleteTarget !== null"
       title="删除报告名称"
-      :message="
-        deleteTarget
-          ? `确认删除报告名称 ${deleteTarget.code}？此操作不可撤销。`
-          : ''
-      "
+      :message="deleteTarget ? `确认删除报告名称 ${deleteTarget.code}？此操作不可撤销。` : ''"
       @confirm="handleDeleteConfirm"
       @cancel="deleteTarget = null"
     />
 
     <div class="mt-4 bg-white rounded-xl border shadow-sm">
       <div class="flex flex-row items-center justify-between px-6 py-4 border-b">
-        <div class="font-semibold text-base">
-          报告名称列表（{{ total || "…" }}）
-        </div>
+        <div class="font-semibold text-base">报告名称列表（{{ total || "…" }}）</div>
         <div v-if="loading" class="text-xs text-muted-foreground">加载中…</div>
       </div>
       <Table class="w-full text-sm">
@@ -333,22 +318,10 @@ async function handleDeleteConfirm(): Promise<void> {
             <TableCell class="px-4 py-2 font-mono text-xs">{{ r.templatePath ?? "—" }}</TableCell>
             <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{ r.sortOrder }}</TableCell>
             <TableCell class="px-4 py-2 text-right">
-              <Button
-                size="sm"
-                variant="outline"
-                data-fn="M06.F07.I02"
-                @click="linking = r"
-              >
+              <Button size="sm" variant="outline" data-fn="M06.F07.I02" @click="linking = r">
                 关联
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                class="ml-2"
-                @click="openEdit(r)"
-              >
-                编辑
-              </Button>
+              <Button size="sm" variant="outline" class="ml-2" @click="openEdit(r)"> 编辑 </Button>
               <Button
                 variant="link"
                 class="ml-2 text-destructive hover:underline"
@@ -368,7 +341,11 @@ async function handleDeleteConfirm(): Promise<void> {
       :open="linking !== null"
       :report-name-code="linking.code"
       :report-name-label="linking.name"
-      @update:open="(v: boolean) => { if (!v) linking = null; }"
+      @update:open="
+        (v: boolean) => {
+          if (!v) linking = null;
+        }
+      "
       @changed="load"
     />
   </div>

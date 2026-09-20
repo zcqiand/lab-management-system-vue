@@ -107,22 +107,26 @@ describe("M01.F05.I04 登出", () => {
     expect(router.currentRoute.value.path).toBe("/");
   });
 
-  fnTest(["M01.F05.I04"], "点击登出 → POST /api/auth/logout + 落 anonymous + 跳 /login", async () => {
-    await toAuthenticated();
-    // logout 请求的 mock 响应
-    queue.push({ status: 200, data: {} });
-    const { wrapper, router } = await mountShell();
-    const btn = findLogoutButton(wrapper);
-    expect(btn).toBeTruthy();
-    btn.click();
-    await flushPromises();
-    // logout 端点被调（token 存在时 doLogout 会 POST /api/auth/logout）
-    expect(calls.some((c) => c.url.includes("/api/auth/logout"))).toBe(true);
-    // FSM 落 anonymous + token 清空
-    expect(__testState().kind).toBe("anonymous");
-    expect(localStorage.getItem("lab.accessToken")).toBeNull();
-    // 路由跳 /login
-    await flushPromises();
-    expect(router.currentRoute.value.path).toBe("/login");
-  });
+  fnTest(
+    ["M01.F05.I04"],
+    "点击登出 → POST /api/auth/logout + 落 anonymous + 跳 /login",
+    async () => {
+      await toAuthenticated();
+      // logout 请求的 mock 响应
+      queue.push({ status: 200, data: {} });
+      const { wrapper, router } = await mountShell();
+      const btn = findLogoutButton(wrapper);
+      expect(btn).toBeTruthy();
+      btn.click();
+      await flushPromises();
+      // logout 端点被调（token 存在时 doLogout 会 POST /api/auth/logout）
+      expect(calls.some((c) => c.url.includes("/api/auth/logout"))).toBe(true);
+      // FSM 落 anonymous + token 清空
+      expect(__testState().kind).toBe("anonymous");
+      expect(localStorage.getItem("lab.accessToken")).toBeNull();
+      // 路由跳 /login
+      await flushPromises();
+      expect(router.currentRoute.value.path).toBe("/login");
+    },
+  );
 });

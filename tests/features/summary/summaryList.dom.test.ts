@@ -19,8 +19,22 @@ const SUMMARY_DATA = {
     { key: "reportCode", label: "报告编号" },
   ],
   rows: [
-    { commissionCode: "C-001", categoryCode: "RC", projectName: "工程 A", flowStatus: "review", result: "qualified", reportCode: "R-2026-001" },
-    { commissionCode: "C-002", categoryCode: "ST", projectName: "工程 B", flowStatus: "data_entry", result: "", reportCode: "" },
+    {
+      commissionCode: "C-001",
+      categoryCode: "RC",
+      projectName: "工程 A",
+      flowStatus: "review",
+      result: "qualified",
+      reportCode: "R-2026-001",
+    },
+    {
+      commissionCode: "C-002",
+      categoryCode: "ST",
+      projectName: "工程 B",
+      flowStatus: "data_entry",
+      result: "",
+      reportCode: "",
+    },
   ],
 };
 

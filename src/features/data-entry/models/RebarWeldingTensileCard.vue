@@ -46,9 +46,7 @@ function reqLabel(r: ParamTechReq): string {
   if (r.targetValue)
     return `${r.comparison === "=" || r.comparison === "eq" ? "= " : ""}${r.targetValue}${unit}`;
   if (r.expression) return r.expression;
-  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue]
-    .filter(Boolean)
-    .join(" ");
+  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue].filter(Boolean).join(" ");
   return parts ? `${parts}${unit}` : r.remark || "—";
 }
 
@@ -110,11 +108,9 @@ function updateDistance(t: 0 | 1 | 2, v: string) {
 }
 function updateFracture(t: 0 | 1 | 2, v: string) {
   if (readOnly) return;
-  const fractureCharacteristics: [string, string, string] = [...spec.value.fractureCharacteristics] as [
-    string,
-    string,
-    string,
-  ];
+  const fractureCharacteristics: [string, string, string] = [
+    ...spec.value.fractureCharacteristics,
+  ] as [string, string, string];
   fractureCharacteristics[t] = v;
   update({ fractureCharacteristics });
 }
@@ -142,8 +138,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
   <div class="border rounded p-3 space-y-3">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium">
-        {{ p.canonicalName || p.name
-        }}<span v-if="p.unit">（{{ p.unit }}）</span>
+        {{ p.canonicalName || p.name }}<span v-if="p.unit">（{{ p.unit }}）</span>
         <span class="ml-2 text-xs text-muted-foreground">3 试件 / JGJ/T 27-2014</span>
       </span>
       <span class="text-xs">
@@ -152,7 +147,9 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
           v-else
           :model-value="record?.verdict || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => handleOverallVerdict(v === NONE ? '' : String(v))"
+          @update:model-value="
+            (v: string | number) => handleOverallVerdict(v === NONE ? '' : String(v))
+          "
         >
           <SelectTrigger aria-label="整体单项评定" :class="TRIGGER_CLS">
             <SelectValue placeholder="未评定" />
@@ -216,7 +213,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
             />
           </TableCell>
           <TableCell class="py-1 text-foreground">
-            {{ spec.strengths[t] > 0 ? Number(spec.strengths[t]).toFixed(1) : '-' }}
+            {{ spec.strengths[t] > 0 ? Number(spec.strengths[t]).toFixed(1) : "-" }}
           </TableCell>
           <TableCell class="py-1">
             <Input
@@ -234,14 +231,18 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
             <Select
               :model-value="spec.fractureCharacteristics[t] || NONE"
               :disabled="readOnly"
-              @update:model-value="(v: string | number) => updateFracture(t, v === NONE ? '' : String(v))"
+              @update:model-value="
+                (v: string | number) => updateFracture(t, v === NONE ? '' : String(v))
+              "
             >
               <SelectTrigger :aria-label="`试件 ${t + 1} 断裂特征`" :class="TRIGGER_CLS">
                 <SelectValue placeholder="未选" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem :value="NONE">未选</SelectItem>
-                <SelectItem v-for="opt in FRACTURE_OPTIONS" :key="opt" :value="opt">{{ opt }}</SelectItem>
+                <SelectItem v-for="opt in FRACTURE_OPTIONS" :key="opt" :value="opt">{{
+                  opt
+                }}</SelectItem>
               </SelectContent>
             </Select>
           </TableCell>
@@ -250,7 +251,7 @@ const trialIndices: [0, 1, 2] = [0, 1, 2];
     </Table>
 
     <div class="text-xs text-muted-foreground">
-      均值：<span class="font-medium text-foreground">{{ mean ?? '—' }}</span>
+      均值：<span class="font-medium text-foreground">{{ mean ?? "—" }}</span>
     </div>
   </div>
 </template>

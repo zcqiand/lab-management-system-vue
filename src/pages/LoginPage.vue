@@ -18,11 +18,7 @@ import { FlaskConical } from "lucide-vue-next";
 import { useAuthStore, setSession } from "@/state/auth";
 import { getApiBaseUrl, getApiMode } from "@/api/backend-config";
 import { authSsoAuthorize, authSsoCallback } from "@/api/endpoints/auth/auth";
-import type {
-  LoginResponse,
-  OAuthGrantType,
-  OAuthResponseType,
-} from "@/api/endpoints/model";
+import type { LoginResponse, OAuthGrantType, OAuthResponseType } from "@/api/endpoints/model";
 
 // OAuth 2.0 client_id：契约必填参数，但真 client_id 由 lab 后端 env 权威持有
 // （springboot LAB_SAAS_CLIENT_ID；nextjs SAAS_OAUTH_CLIENT_ID），
@@ -107,7 +103,6 @@ async function startSsoFlow(): Promise<void> {
   if (st.kind !== "anonymous" && st.kind !== "idle") return;
   ssoFlowStarted = true;
   try {
-
     // 阶段 1：OAuth 2.0 授权码模式（RFC 6749 §4.1）
     // saas 回跳带 ?code=&state= → 验 state（防 CSRF）→ POST sso/callback 换 lab JWT
     const code = typeof route.query.code === "string" ? route.query.code : null;

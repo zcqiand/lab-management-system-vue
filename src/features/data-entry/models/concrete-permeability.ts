@@ -50,7 +50,9 @@ export function computeConcretePermeability(specimens: Specimen[]): {
 export function parsePermeationResult(raw: string | undefined): Specimen[] {
   if (!raw) return Array.from({ length: PERMEATION_SPECIMEN_COUNT }, () => ({ ...EMPTY_SPECIMEN }));
   try {
-    const obj = JSON.parse(raw) as { specimens?: Array<{ pressure?: number; permeated?: Permeation }> };
+    const obj = JSON.parse(raw) as {
+      specimens?: Array<{ pressure?: number; permeated?: Permeation }>;
+    };
     const list = obj.specimens;
     if (!Array.isArray(list))
       return Array.from({ length: PERMEATION_SPECIMEN_COUNT }, () => ({ ...EMPTY_SPECIMEN }));

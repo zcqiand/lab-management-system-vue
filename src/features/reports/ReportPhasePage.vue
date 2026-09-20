@@ -15,10 +15,7 @@ import {
   receiptsActFlowReview,
   receiptsListReceipts,
 } from "@/api/endpoints/receipts/receipts";
-import type {
-  ReceiptsListReceiptsParams,
-  SampleReceipt,
-} from "@/api/endpoints/model";
+import type { ReceiptsListReceiptsParams, SampleReceipt } from "@/api/endpoints/model";
 import { currentOperator } from "@/lib/flow-operator";
 import Button from "@/components/ui/Button.vue";
 import Checkbox from "@/components/ui/Checkbox.vue";
@@ -143,9 +140,11 @@ async function batchSubmit(): Promise<void> {
     const failed = results.filter((r) => !r.ok);
     if (failed.length === 0) {
       // toast 替代品：直接 alert；Batch 2A 模板表达式作用域限制
-      if (typeof globalThis.alert === "function") globalThis.alert(`${props.submitLabel}完成（${selected.value.size} 单）`);
+      if (typeof globalThis.alert === "function")
+        globalThis.alert(`${props.submitLabel}完成（${selected.value.size} 单）`);
     } else {
-      if (typeof globalThis.alert === "function") globalThis.alert(`${failed.length} 单处理失败：${failed[0]?.message ?? ""}`);
+      if (typeof globalThis.alert === "function")
+        globalThis.alert(`${failed.length} 单处理失败：${failed[0]?.message ?? ""}`);
     }
     await load();
   } catch (e) {
@@ -241,9 +240,16 @@ function alertError(msg: string): void {
         </TableHeader>
         <TableBody>
           <TableRow v-if="rows.length === 0 && !loading">
-            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground">（无数据）</TableCell>
+            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground"
+              >（无数据）</TableCell
+            >
           </TableRow>
-          <TableRow v-for="r in rows" :key="r.id" :data-fn="i01DataFn" class="border-t hover:bg-muted">
+          <TableRow
+            v-for="r in rows"
+            :key="r.id"
+            :data-fn="i01DataFn"
+            class="border-t hover:bg-muted"
+          >
             <TableCell class="px-4 py-2">
               <Checkbox
                 :model-value="selected.has(r.id)"
@@ -258,7 +264,7 @@ function alertError(msg: string): void {
             </TableCell>
             <TableCell class="px-4 py-2">{{ r.projectName ?? "—" }}</TableCell>
             <TableCell class="px-4 py-2">
-              {{ r.result === 'pass' ? '合格' : r.result === 'fail' ? '不合格' : '—' }}
+              {{ r.result === "pass" ? "合格" : r.result === "fail" ? "不合格" : "—" }}
             </TableCell>
             <TableCell class="px-4 py-2 text-xs">
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
@@ -292,12 +298,9 @@ function alertError(msg: string): void {
             退回后该接样单回到上一环节（{{ FLOW_STAGE_LABELS[PREV_STAGE[stage]] }}）。
           </DialogDescription>
         </DialogHeader>
-        <Label class="text-xs block mb-2">退回原因（可选）
-          <Input
-            v-model="returnReason"
-            placeholder="如：数据待补正"
-            class="mt-1"
-          />
+        <Label class="text-xs block mb-2"
+          >退回原因（可选）
+          <Input v-model="returnReason" placeholder="如：数据待补正" class="mt-1" />
         </Label>
         <DialogFooter class="mt-4 justify-end gap-2">
           <Button variant="outline" @click="returnTarget = null">取消</Button>

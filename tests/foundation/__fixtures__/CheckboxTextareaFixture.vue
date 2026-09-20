@@ -42,10 +42,6 @@ const taText = ref("init");
     />
     <span data-testid="ta-state">{{ taText }}</span>
 
-    <Textarea
-      data-testid="ta-disabled"
-      :model-value="'locked'"
-      disabled
-    />
+    <Textarea data-testid="ta-disabled" :model-value="'locked'" disabled />
   </div>
 </template>

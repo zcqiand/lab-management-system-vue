@@ -11,10 +11,7 @@ import {
   inspectionDictionaryListStandards,
   inspectionDictionaryUnlinkStandardParameter,
 } from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
-import type {
-  InspectionStandard,
-  StandardParameterLink,
-} from "@/api/endpoints/model";
+import type { InspectionStandard, StandardParameterLink } from "@/api/endpoints/model";
 import { unwrapListResponse } from "@/lib/responses";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -154,7 +151,11 @@ function close(): void {
               <TableCell class="px-3 py-2">
                 <span
                   class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
-                  :class="s.status === 'active' ? 'bg-primary text-primary-foreground' : 'border text-muted-foreground'"
+                  :class="
+                    s.status === 'active'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border text-muted-foreground'
+                  "
                 >
                   {{ statusCn(s.status) }}
                 </span>
@@ -165,7 +166,11 @@ function close(): void {
                   :aria-label="`${linked.has(s.code) ? '解除关联' : '关联'} ${s.code}`"
                   :disabled="busyCode === s.code"
                   class="px-2 py-1 rounded text-xs"
-                  :class="linked.has(s.code) ? 'border text-foreground' : 'bg-primary text-primary-foreground'"
+                  :class="
+                    linked.has(s.code)
+                      ? 'border text-foreground'
+                      : 'bg-primary text-primary-foreground'
+                  "
                   @click="toggle(s.code)"
                 >
                   {{ linked.has(s.code) ? "解除关联" : "关联" }}

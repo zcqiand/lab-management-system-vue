@@ -20,12 +20,7 @@ import {
   testRecordsListTestRecords,
   testRecordsUpdateTestRecord,
 } from "@/api/endpoints/test-records/test-records";
-import type {
-  InspectionParameter,
-  Sample,
-  SampleReceipt,
-  TestRecord,
-} from "@/api/endpoints/model";
+import type { InspectionParameter, Sample, SampleReceipt, TestRecord } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -115,9 +110,9 @@ async function openEntry(r: SampleReceipt): Promise<void> {
     // 先按接样单拉样品，再逐样品取检测记录（GAP 见迁移报告）。
     const tLists = await Promise.all(
       samples.value.map((s) =>
-        testRecordsListTestRecords({ sampleId: s.id, page: 1, pageSize: 200 }).catch(
-          () => ({ data: { items: [] as TestRecord[] } }),
-        ),
+        testRecordsListTestRecords({ sampleId: s.id, page: 1, pageSize: 200 }).catch(() => ({
+          data: { items: [] as TestRecord[] },
+        })),
       ),
     );
     for (const t of tLists.flatMap((res) => res.data?.items ?? [])) {
@@ -160,9 +155,7 @@ async function handleSave(): Promise<void> {
   }
 }
 
-const activeParam = computed(() =>
-  parameters.value.find((p) => p.code === activeParamCode.value),
-);
+const activeParam = computed(() => parameters.value.find((p) => p.code === activeParamCode.value));
 
 const activeRec = computed<TestRecord | undefined>(() =>
   selectedSampleId.value && activeParamCode.value
@@ -227,7 +220,9 @@ function onParamChange(patch: Partial<TestRecord>): void {
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground">（无待录入接样单）</TableCell>
+            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground"
+              >（无待录入接样单）</TableCell
+            >
           </TableRow>
           <TableRow v-for="r in items" :key="r.id" class="border-t hover:bg-muted">
             <TableCell class="px-4 py-2 font-mono text-xs">
@@ -242,12 +237,7 @@ function onParamChange(patch: Partial<TestRecord>): void {
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
             </TableCell>
             <TableCell class="px-4 py-2 text-right">
-              <Button
-                variant="outline"
-                size="sm"
-                data-fn="M03.F03.I03"
-                @click="openEntry(r)"
-              >
+              <Button variant="outline" size="sm" data-fn="M03.F03.I03" @click="openEntry(r)">
                 录入结果
               </Button>
             </TableCell>
@@ -267,17 +257,13 @@ function onParamChange(patch: Partial<TestRecord>): void {
       <DialogContent class="sm:max-w-3xl gap-0">
         <DialogHeader class="mb-3">
           <DialogTitle>录入结果 — {{ entryTarget?.commissionCode ?? "" }}</DialogTitle>
-          <DialogDescription>
-            选择样品 + 检测参数后填写检测结果与单项评定。
-          </DialogDescription>
+          <DialogDescription> 选择样品 + 检测参数后填写检测结果与单项评定。 </DialogDescription>
         </DialogHeader>
 
         <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-          <Label class="text-xs block">样品
-            <Select
-              v-model="selectedSampleId"
-              class="mt-1"
-            >
+          <Label class="text-xs block"
+            >样品
+            <Select v-model="selectedSampleId" class="mt-1">
               <SelectTrigger>
                 <SelectValue placeholder="（无样品）" />
               </SelectTrigger>
@@ -288,11 +274,9 @@ function onParamChange(patch: Partial<TestRecord>): void {
               </SelectContent>
             </Select>
           </Label>
-          <Label class="text-xs block">检测参数
-            <Select
-              v-model="activeParamCode"
-              class="mt-1"
-            >
+          <Label class="text-xs block"
+            >检测参数
+            <Select v-model="activeParamCode" class="mt-1">
               <SelectTrigger>
                 <SelectValue placeholder="（无参数）" />
               </SelectTrigger>

@@ -84,9 +84,11 @@ export function useMenuErrorHandler(): {
     // 返回 false 阻止继续向上传播（避免 console.error 噪音 + 组件树全崩）
     return false;
   });
-  return { capture: (err: unknown) => {
-    lastError.value = err instanceof Error ? err : new Error(String(err));
-  }};
+  return {
+    capture: (err: unknown) => {
+      lastError.value = err instanceof Error ? err : new Error(String(err));
+    },
+  };
 }
 
 /** 契约 MenuNode（shared tsp：id/label/path?/icon?/children?）→ 本地渲染 MenuNode。 */
@@ -96,9 +98,10 @@ function adaptContractMenu(node: ContractMenuNode, index: number): MenuNode {
   // 后端 MenuNode.path JSON 反序列化为 null/空串时 (saas 快照无 path 的菜单,
   // 如分组节点),normalizeMenuPath 直接调 path.indexOf('?') 抛错。
   // null/undefined/"" 都跳过归一化 → undefined → router-link 渲染时跳过。
-  const rawPath = node.path !== undefined && node.path !== null && node.path !== ""
-    ? normalizeMenuPath(node.path)
-    : undefined;
+  const rawPath =
+    node.path !== undefined && node.path !== null && node.path !== ""
+      ? normalizeMenuPath(node.path)
+      : undefined;
   return {
     id: node.id,
     appId: APP_CODE,

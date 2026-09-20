@@ -57,9 +57,7 @@ function reqLabel(r: ParamTechReq): string {
   if (r.targetValue)
     return `${r.comparison === "=" || r.comparison === "eq" ? "= " : ""}${r.targetValue}${unit}`;
   if (r.expression) return r.expression;
-  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue]
-    .filter(Boolean)
-    .join(" ");
+  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue].filter(Boolean).join(" ");
   return parts ? `${parts}${unit}` : r.remark || "—";
 }
 
@@ -78,9 +76,7 @@ const {
 
 const cfg = computed(() => (config ?? {}) as NumericConfig);
 const formula = computed<RebarMechFormula>(() => cfg.value.formulaKey ?? "passthrough");
-const count = computed(
-  () => cfg.value.specimenCount ?? calcRule?.specimenCount ?? 2,
-);
+const count = computed(() => cfg.value.specimenCount ?? calcRule?.specimenCount ?? 2);
 const needsDiameter = computed(() => !!cfg.value.needsDiameter);
 const inputLabel = computed(() => cfg.value.inputLabel ?? "数值");
 const connectionMode = computed(() => !!cfg.value.connectionMode);
@@ -172,9 +168,7 @@ function updateLoad(i: number, v: string) {
   const next = { ...state.value, loads };
   const ns = isStrength.value
     ? computeStrengths(loads, next.diameter ?? 0)
-    : loads
-        .slice(0, count.value)
-        .map((x) => (Number.isFinite(x) && x > 0 ? round.value(x) : 0));
+    : loads.slice(0, count.value).map((x) => (Number.isFinite(x) && x > 0 ? round.value(x) : 0));
   state.value = next;
   emit(next, ns);
 }
@@ -214,10 +208,9 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
   <div class="border rounded p-3 space-y-3">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium">
-        {{ p.canonicalName || p.name
-        }}<span v-if="p.unit">（{{ p.unit }}）</span>
+        {{ p.canonicalName || p.name }}<span v-if="p.unit">（{{ p.unit }}）</span>
         <span class="ml-2 text-xs text-muted-foreground">
-          {{ count }} 组<span v-if="isRatio">{{ autoMode ? ' / 自动计算' : ' / 手动录入' }}</span>
+          {{ count }} 组<span v-if="isRatio">{{ autoMode ? " / 自动计算" : " / 手动录入" }}</span>
         </span>
       </span>
       <span class="text-xs">
@@ -226,7 +219,9 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
           v-else
           :model-value="record?.verdict || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => handleManualVerdict(v === NONE ? '' : String(v))"
+          @update:model-value="
+            (v: string | number) => handleManualVerdict(v === NONE ? '' : String(v))
+          "
         >
           <SelectTrigger aria-label="整体单项评定" :class="TRIGGER_CLS">
             <SelectValue placeholder="未评定" />
@@ -299,23 +294,27 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
             />
           </TableCell>
           <TableCell v-if="isStrength" class="py-1 text-foreground">
-            {{ (strengths[i] ?? 0) > 0 ? Number(strengths[i]).toFixed(1) : '-' }}
+            {{ (strengths[i] ?? 0) > 0 ? Number(strengths[i]).toFixed(1) : "-" }}
           </TableCell>
           <TableCell v-if="isRatio && autoMode" class="py-1 text-foreground">
-            {{ (strengths[i] ?? 0) > 0 ? Number(strengths[i]).toFixed(2) : '-' }}
+            {{ (strengths[i] ?? 0) > 0 ? Number(strengths[i]).toFixed(2) : "-" }}
           </TableCell>
           <TableCell v-if="connectionMode" class="py-1">
             <Select
               :model-value="state.fractureLocations?.[i] || NONE"
               :disabled="readOnly"
-              @update:model-value="(v: string | number) => updateFractureLocation(i, v === NONE ? '' : String(v))"
+              @update:model-value="
+                (v: string | number) => updateFractureLocation(i, v === NONE ? '' : String(v))
+              "
             >
               <SelectTrigger :aria-label="`第 ${i + 1} 试件断裂位置`" :class="TRIGGER_CLS">
                 <SelectValue placeholder="—" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem :value="NONE">—</SelectItem>
-                <SelectItem v-for="opt in fractureLocationOptions" :key="opt" :value="opt">{{ opt }}</SelectItem>
+                <SelectItem v-for="opt in fractureLocationOptions" :key="opt" :value="opt">{{
+                  opt
+                }}</SelectItem>
               </SelectContent>
             </Select>
           </TableCell>
@@ -324,9 +323,13 @@ const indices = computed(() => Array.from({ length: count.value }, (_, i) => i))
     </Table>
 
     <div class="text-xs text-muted-foreground">
-      均值：<span class="font-medium text-foreground">{{ mean ?? '—' }}</span>
-      <span v-if="isStrength && (state.diameter ?? 0) <= 0" class="ml-2 text-warning">（需填公称直径以计算强度）</span>
-      <span v-if="isRatio && !autoMode" class="ml-2 text-warning">（同样品抗拉/屈服未录入，暂手动填写比值）</span>
+      均值：<span class="font-medium text-foreground">{{ mean ?? "—" }}</span>
+      <span v-if="isStrength && (state.diameter ?? 0) <= 0" class="ml-2 text-warning"
+        >（需填公称直径以计算强度）</span
+      >
+      <span v-if="isRatio && !autoMode" class="ml-2 text-warning"
+        >（同样品抗拉/屈服未录入，暂手动填写比值）</span
+      >
     </div>
   </div>
 </template>

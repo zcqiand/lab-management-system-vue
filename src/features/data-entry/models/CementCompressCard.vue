@@ -68,7 +68,7 @@ function updateLoad(i: number, v: string) {
         {{ p.canonicalName || p.name }}（{{ p.unit ?? "MPa" }}）
       </span>
       <span class="text-xs text-muted-foreground">
-        代表值：{{ result.mean ?? '—' }} MPa
+        代表值：{{ result.mean ?? "—" }} MPa
         <span v-if="result.invalid" class="text-destructive">（作废）</span>
       </span>
     </div>

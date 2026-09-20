@@ -74,7 +74,12 @@ describe("computeCementFlexural / computeCementCompress", () => {
 
 describe("autoVerdict 均值 vs 技术要求", () => {
   const req = (
-    over: Partial<{ comparison: string; minValue: number | null; maxValue: number | null; valueType: string }>,
+    over: Partial<{
+      comparison: string;
+      minValue: number | null;
+      maxValue: number | null;
+      valueType: string;
+    }>,
   ): unknown => ({
     inspectionParameterCode: "IP-0556",
     comparison: "≥",
@@ -160,9 +165,7 @@ describe("CementCompressCard 渲染", () => {
 
   fnTest(["M03.F03.I01"], "CementCompressCard 渲染 6 个破坏荷载输入框", () => {
     const { wrapper } = mountCard(CementCompressCard);
-    expect(
-      wrapper.findAll('input[type="number"][placeholder="kN"]').length,
-    ).toBe(6);
+    expect(wrapper.findAll('input[type="number"][placeholder="kN"]').length).toBe(6);
   });
 
   fnTest(["M03.F03.I02"], "CementCompressCard 有技术要求：录入均值达标 → 自动判合格", () => {
@@ -201,9 +204,7 @@ describe("CementFlexuralCard 渲染", () => {
       parameter: param("IP-0555", "3 天抗折强度"),
     });
     // StrengthCardBase 的输入用 aria-label 而非 placeholder
-    expect(
-      wrapper.findAll('input[type="number"][aria-label$="破坏荷载"]').length,
-    ).toBe(3);
+    expect(wrapper.findAll('input[type="number"][aria-label$="破坏荷载"]').length).toBe(3);
     expect(wrapper.text()).toContain("抗折强度 (MPa)");
   });
 });

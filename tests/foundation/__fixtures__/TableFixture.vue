@@ -24,11 +24,7 @@ import TableCell from "@/components/ui/TableCell.vue";
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow
-        data-testid="row-1"
-        data-fn="M99.F99.I99"
-        class="bg-warning/10"
-      >
+      <TableRow data-testid="row-1" data-fn="M99.F99.I99" class="bg-warning/10">
         <TableCell data-testid="cell-1-name">行 1</TableCell>
         <TableCell data-testid="cell-1-value">100</TableCell>
       </TableRow>

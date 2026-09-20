@@ -104,17 +104,39 @@ function alertError(msg: string): void {
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
-          <div><span class="text-muted-foreground">委托书编号：</span>{{ receipt.commissionCode }}</div>
-          <div><span class="text-muted-foreground">委托日期：</span>{{ receipt.commissionDate }}</div>
-          <div><span class="text-muted-foreground">工程名称：</span>{{ receipt.projectName ?? "—" }}</div>
-          <div><span class="text-muted-foreground">委托单位：</span>{{ receipt.clientUnit ?? "—" }}</div>
-          <div><span class="text-muted-foreground">建设单位：</span>{{ receipt.buildingUnit ?? "—" }}</div>
-          <div><span class="text-muted-foreground">监理单位：</span>{{ receipt.supervisorUnit ?? "—" }}</div>
-          <div><span class="text-muted-foreground">施工单位：</span>{{ receipt.constructionUnit ?? "—" }}</div>
-          <div><span class="text-muted-foreground">见证单位：</span>{{ receipt.witnessUnit ?? "—" }}</div>
+          <div>
+            <span class="text-muted-foreground">委托书编号：</span>{{ receipt.commissionCode }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">委托日期：</span>{{ receipt.commissionDate }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">工程名称：</span>{{ receipt.projectName ?? "—" }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">委托单位：</span>{{ receipt.clientUnit ?? "—" }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">建设单位：</span>{{ receipt.buildingUnit ?? "—" }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">监理单位：</span>{{ receipt.supervisorUnit ?? "—" }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">施工单位：</span
+            >{{ receipt.constructionUnit ?? "—" }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">见证单位：</span>{{ receipt.witnessUnit ?? "—" }}
+          </div>
           <div><span class="text-muted-foreground">见证人：</span>{{ receipt.witness ?? "—" }}</div>
-          <div><span class="text-muted-foreground">送检人：</span>{{ receipt.inspector ?? "—" }}</div>
-          <div><span class="text-muted-foreground">取样地点：</span>{{ receipt.samplingLocation ?? "—" }}</div>
+          <div>
+            <span class="text-muted-foreground">送检人：</span>{{ receipt.inspector ?? "—" }}
+          </div>
+          <div>
+            <span class="text-muted-foreground">取样地点：</span
+            >{{ receipt.samplingLocation ?? "—" }}
+          </div>
           <div><span class="text-muted-foreground">接样人：</span>{{ receipt.receivedBy }}</div>
           <div><span class="text-muted-foreground">报告类别：</span>{{ receipt.categoryCode }}</div>
           <div><span class="text-muted-foreground">检测类别：</span>{{ receipt.testCategory }}</div>
@@ -165,11 +187,7 @@ function alertError(msg: string): void {
         </ol>
       </div>
 
-      <ReportPreviewModal
-        :open="previewOpen"
-        :receipt="receipt"
-        @close="previewOpen = false"
-      />
+      <ReportPreviewModal :open="previewOpen" :receipt="receipt" @close="previewOpen = false" />
     </template>
   </div>
 </template>

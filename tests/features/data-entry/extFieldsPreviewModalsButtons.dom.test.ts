@@ -27,15 +27,13 @@ afterEach(() => {
 
 const MOUNT_GLOBAL = {
   stubs: {
-    teleport: { template: '<div data-teleport-stub><slot /></div>' },
+    teleport: { template: "<div data-teleport-stub><slot /></div>" },
   },
 };
 
 describe("Phase 1.2c — SampleExtFieldsModal <Button> 原语回归", () => {
   it("弹窗打开：取消 = <Button variant=outline>，确认 = <Button variant=default bg-info>", async () => {
-    const { default: Modal } = await import(
-      "@/features/data-entry/SampleExtFieldsModal.vue"
-    );
+    const { default: Modal } = await import("@/features/data-entry/SampleExtFieldsModal.vue");
     lastWrapper = mountWithProviders(Modal, {
       props: {
         open: true,
@@ -67,9 +65,7 @@ describe("Phase 1.2c — SampleExtFieldsModal <Button> 原语回归", () => {
 
 describe("Phase 1.2c — ReportPreviewModal <Button> 原语回归", () => {
   it("弹窗打开：关闭 = <Button variant=outline>，打印 = <Button variant=default bg-info>", async () => {
-    const { default: Modal } = await import(
-      "@/features/data-entry/ReportPreviewModal.vue"
-    );
+    const { default: Modal } = await import("@/features/data-entry/ReportPreviewModal.vue");
     lastWrapper = mountWithProviders(Modal, {
       props: {
         open: true,
@@ -110,9 +106,7 @@ describe("Phase 1.2c — ReportPreviewModal <Button> 原语回归", () => {
 // TableCell class 经 tailwind-merge 合并 border + px-2 py-1 保留。
 describe("Phase 2a-3 — ReportPreviewModal 内嵌 2 张 <Table> 原语回归", () => {
   it("2 张表都渲染为 div[role=table]（基础信息表 + 检测参数结果表）", async () => {
-    const { default: Modal } = await import(
-      "@/features/data-entry/ReportPreviewModal.vue"
-    );
+    const { default: Modal } = await import("@/features/data-entry/ReportPreviewModal.vue");
     lastWrapper = mountWithProviders(Modal, {
       props: {
         open: true,
@@ -134,9 +128,7 @@ describe("Phase 2a-3 — ReportPreviewModal 内嵌 2 张 <Table> 原语回归", 
   });
 
   it("第 2 张表（检测参数结果）：4 个 <TableHead> 文本顺序 项目/技术要求/检测结果/单项评定", async () => {
-    const { default: Modal } = await import(
-      "@/features/data-entry/ReportPreviewModal.vue"
-    );
+    const { default: Modal } = await import("@/features/data-entry/ReportPreviewModal.vue");
     lastWrapper = mountWithProviders(Modal, {
       props: {
         open: true,
@@ -158,18 +150,11 @@ describe("Phase 2a-3 — ReportPreviewModal 内嵌 2 张 <Table> 原语回归", 
     // 第 2 张表有 columnheader（基础信息表只 2 行 × 4 cell 无 header）
     const heads = tables[1]!.findAll('[role="columnheader"]');
     expect(heads.length).toBe(4);
-    expect(heads.map((h) => h.text())).toEqual([
-      "项目",
-      "技术要求",
-      "检测结果",
-      "单项评定",
-    ]);
+    expect(heads.map((h) => h.text())).toEqual(["项目", "技术要求", "检测结果", "单项评定"]);
   });
 
   it("第 1 张表（基础信息）：rowgroup 内 2 行 div[role=row]，每行 4 cell", async () => {
-    const { default: Modal } = await import(
-      "@/features/data-entry/ReportPreviewModal.vue"
-    );
+    const { default: Modal } = await import("@/features/data-entry/ReportPreviewModal.vue");
     lastWrapper = mountWithProviders(Modal, {
       props: {
         open: true,
@@ -198,9 +183,7 @@ describe("Phase 2a-3 — ReportPreviewModal 内嵌 2 张 <Table> 原语回归", 
   });
 
   it("TableCell 调用方 class 经 tailwind-merge 合并（border + px-2 py-1 落第 2 张表 cell）", async () => {
-    const { default: Modal } = await import(
-      "@/features/data-entry/ReportPreviewModal.vue"
-    );
+    const { default: Modal } = await import("@/features/data-entry/ReportPreviewModal.vue");
     lastWrapper = mountWithProviders(Modal, {
       props: {
         open: true,

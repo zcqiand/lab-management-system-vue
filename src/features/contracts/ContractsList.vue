@@ -18,11 +18,7 @@ import {
   contractsListContracts,
   contractsUpdateContract,
 } from "@/api/endpoints/contracts/contracts";
-import type {
-  Contract,
-  ContractStatus,
-  ContractsListContractsParams,
-} from "@/api/endpoints/model";
+import type { Contract, ContractStatus, ContractsListContractsParams } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";

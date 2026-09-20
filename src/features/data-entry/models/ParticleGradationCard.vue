@@ -17,15 +17,7 @@ type Props = Pick<
   "parameter" | "record" | "sampleId" | "config" | "readOnly" | "onChange"
 >;
 
-const SIEVE_COLS_SAND = [
-  "4.75mm",
-  "2.36mm",
-  "1.18mm",
-  "0.60mm",
-  "0.30mm",
-  "0.15mm",
-  "筛底",
-];
+const SIEVE_COLS_SAND = ["4.75mm", "2.36mm", "1.18mm", "0.60mm", "0.30mm", "0.15mm", "筛底"];
 const SIEVE_COLS_GRAVEL = [
   "90mm",
   "75mm",
@@ -115,7 +107,9 @@ function averageByCol(rows: Row[]): number[] {
 const props = defineProps<Props>();
 const { parameter: param, record, sampleId, config, onChange, readOnly = false } = props;
 
-const cfg = computed(() => (config ?? {}) as { sieveCount?: number; sampleRows?: number; gravel?: boolean });
+const cfg = computed(
+  () => (config ?? {}) as { sieveCount?: number; sampleRows?: number; gravel?: boolean },
+);
 const sieveCols = computed(() => (cfg.value.gravel ? SIEVE_COLS_GRAVEL : SIEVE_COLS_SAND));
 const sieveCount = computed(() => sieveCols.value.length);
 const sampleRows = computed(() => cfg.value.sampleRows ?? 2);
@@ -212,10 +206,7 @@ const avg = computed(() => averageByCol(rows.value));
       <TableBody>
         <template v-for="(row, ri) in rows" :key="ri">
           <TableRow>
-            <TableCell
-              class="border border-input px-2 py-1 text-center font-medium"
-              :rowspan="3"
-            >
+            <TableCell class="border border-input px-2 py-1 text-center font-medium" :rowspan="3">
               {{ ri + 1 }}
             </TableCell>
             <TableCell class="border border-input px-2 py-1">筛余量(g):</TableCell>
@@ -224,7 +215,11 @@ const avg = computed(() => averageByCol(rows.value));
               :key="ci"
               class="border border-input px-1 py-1 text-center text-muted-foreground"
             >
-              {{ pct === 0 ? '' : Math.round((pct * (row.totalBefore > 0 ? row.totalBefore : 1)) / 100) }}
+              {{
+                pct === 0
+                  ? ""
+                  : Math.round((pct * (row.totalBefore > 0 ? row.totalBefore : 1)) / 100)
+              }}
             </TableCell>
             <TableCell class="border border-input px-1 py-1 text-center">
               <Input
@@ -234,7 +229,9 @@ const avg = computed(() => averageByCol(rows.value));
                 :model-value="row.totalBefore === 0 ? '' : row.totalBefore"
                 :readonly="readOnly"
                 class="w-20 text-xs text-center read-only:bg-muted read-only:text-muted-foreground"
-                @change="(e: Event) => updateTotal(ri, 'totalBefore', (e.target as HTMLInputElement).value)"
+                @change="
+                  (e: Event) => updateTotal(ri, 'totalBefore', (e.target as HTMLInputElement).value)
+                "
                 @blur="emit"
               />
             </TableCell>
@@ -266,7 +263,9 @@ const avg = computed(() => averageByCol(rows.value));
                 :model-value="row.totalAfter === 0 ? '' : row.totalAfter"
                 :readonly="readOnly"
                 class="w-20 text-xs text-center read-only:bg-muted read-only:text-muted-foreground"
-                @change="(e: Event) => updateTotal(ri, 'totalAfter', (e.target as HTMLInputElement).value)"
+                @change="
+                  (e: Event) => updateTotal(ri, 'totalAfter', (e.target as HTMLInputElement).value)
+                "
                 @blur="emit"
               />
               <span v-if="rowComputed[ri]!.delta !== 0" class="ml-1 text-[10px] text-warning">
@@ -281,11 +280,13 @@ const avg = computed(() => averageByCol(rows.value));
               :key="ci"
               class="border border-input px-1 py-1 text-center text-foreground"
             >
-              {{ c === 0 ? '' : c }}
+              {{ c === 0 ? "" : c }}
             </TableCell>
             <TableCell class="border border-input px-1 py-1 text-center">
               细&nbsp;度&nbsp;模&nbsp;数:&nbsp;
-              <span class="font-mono">{{ rowComputed[ri]!.fm === 0 ? '—' : rowComputed[ri]!.fm }}</span>
+              <span class="font-mono">{{
+                rowComputed[ri]!.fm === 0 ? "—" : rowComputed[ri]!.fm
+              }}</span>
             </TableCell>
           </TableRow>
         </template>
@@ -297,7 +298,7 @@ const avg = computed(() => averageByCol(rows.value));
             :key="ci"
             class="border border-input px-2 py-1 text-center"
           >
-            {{ v === 0 ? '—' : v }}
+            {{ v === 0 ? "—" : v }}
           </TableCell>
           <TableCell class="border border-input px-2 py-1"></TableCell>
         </TableRow>

@@ -27,10 +27,18 @@ function computeConcreteCompress(loads: number[], areaMm: number) {
   return { strengths, representative: Math.round(mean * 100) / 100 };
 }
 
-function parseRecordResult(raw: string | undefined): { loads: number[]; strengths: number[]; representative?: number } {
+function parseRecordResult(raw: string | undefined): {
+  loads: number[];
+  strengths: number[];
+  representative?: number;
+} {
   if (!raw) return { loads: [], strengths: [] };
   try {
-    const obj = JSON.parse(raw) as { loads?: number[]; strengths?: number[]; representative?: number };
+    const obj = JSON.parse(raw) as {
+      loads?: number[];
+      strengths?: number[];
+      representative?: number;
+    };
     return {
       loads: Array.isArray(obj.loads) ? obj.loads : [],
       strengths: Array.isArray(obj.strengths) ? obj.strengths : [],
@@ -72,8 +80,7 @@ function updateLoad(i: number, v: string) {
 <template>
   <div class="border rounded p-3 space-y-2">
     <div class="text-sm font-medium">
-      {{ p.canonicalName || p.name
-      }}<span v-if="p.unit">（{{ p.unit }}）</span>
+      {{ p.canonicalName || p.name }}<span v-if="p.unit">（{{ p.unit }}）</span>
     </div>
     <Table class="w-full text-xs">
       <TableHeader class="text-muted-foreground">
@@ -97,10 +104,14 @@ function updateLoad(i: number, v: string) {
               @change="(e: Event) => updateLoad(i, (e.target as HTMLInputElement).value)"
             />
           </TableCell>
-          <TableCell class="py-1 text-foreground">{{ lv ? Number((((lv * 1000) / area) * 100) / 100).toFixed(2) : '-' }}</TableCell>
+          <TableCell class="py-1 text-foreground">{{
+            lv ? Number((((lv * 1000) / area) * 100) / 100).toFixed(2) : "-"
+          }}</TableCell>
         </TableRow>
       </TableBody>
     </Table>
-    <div class="text-xs text-muted-foreground">抗压强度代表值：{{ result.representative ?? '—' }}</div>
+    <div class="text-xs text-muted-foreground">
+      抗压强度代表值：{{ result.representative ?? "—" }}
+    </div>
   </div>
 </template>

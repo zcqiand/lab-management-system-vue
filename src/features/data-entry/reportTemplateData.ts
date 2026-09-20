@@ -139,8 +139,7 @@ function padRows(rows: SpecimenRow[]): SpecimenRow[] {
 const LINE_DISPLAY_WIDTH = 98; // 整行（与表格同宽）
 const LABEL_DISPLAY_WIDTH = 10; // 「委托单位：」5 汉字
 const FIRST_VALUE_WIDTH = 38; // 两字段行第一个值的列宽（决定第二标签对齐位置）
-const SECOND_VALUE_WIDTH =
-  LINE_DISPLAY_WIDTH - LABEL_DISPLAY_WIDTH * 2 - FIRST_VALUE_WIDTH; // = 40
+const SECOND_VALUE_WIDTH = LINE_DISPLAY_WIDTH - LABEL_DISPLAY_WIDTH * 2 - FIRST_VALUE_WIDTH; // = 40
 const SINGLE_VALUE_WIDTH = LINE_DISPLAY_WIDTH - LABEL_DISPLAY_WIDTH; // 单字段行（工程名称）= 88
 
 /** CJK/全角=2、ASCII=1 的显示宽度。 */
@@ -187,8 +186,7 @@ function parseConcreteCompressJson(raw: string | undefined): ConcreteCompressJso
     return {
       loads: obj.loads.map((v) => (typeof v === "number" ? v : Number(v) || 0)),
       strengths: obj.strengths,
-      representative:
-        typeof obj.representative === "number" ? obj.representative : undefined,
+      representative: typeof obj.representative === "number" ? obj.representative : undefined,
     };
   } catch {
     return null;
@@ -250,10 +248,7 @@ export function assembleConcreteReport(input: AssembleInput): ConcreteReportData
     sylr: padLine(receipt.commissionDate ?? "", SECOND_VALUE_WIDTH),
     jzdw: padLine(receipt.witnessUnit ?? "", FIRST_VALUE_WIDTH),
     jzr: padLine(receipt.witness ?? "", SECOND_VALUE_WIDTH),
-    ypms: padLine(
-      firstSample?.remark || firstSample?.sampleName || "",
-      FIRST_VALUE_WIDTH,
-    ),
+    ypms: padLine(firstSample?.remark || firstSample?.sampleName || "", FIRST_VALUE_WIDTH),
     sccj: padLine(firstSample?.manufacturer ?? "", SECOND_VALUE_WIDTH),
     jcyj: padLine((receipt.testingBasis ?? []).join("、"), FIRST_VALUE_WIDTH),
     jcbl: padLine(receipt.testCategory ?? "", SECOND_VALUE_WIDTH),
@@ -357,9 +352,7 @@ function parseStrengthsFromResult(raw: string | undefined): number[] | undefined
  * - 试件轴（RN-105-1/RN-108-2）：返回完整 ConcreteReportData（含 rows，固定 15 行）。
  * - 参数轴（其余）：按 RN→参数 关联组装 items，无 TestRecord 时用 mockResult 回退。
  */
-export function assembleReport(
-  input: AssembleInput,
-): ParameterAxisData | SpecimenAxisData {
+export function assembleReport(input: AssembleInput): ParameterAxisData | SpecimenAxisData {
   const common = buildCommon(input);
   const { receipt, records } = input;
 
@@ -368,9 +361,9 @@ export function assembleReport(
   }
 
   // 参数轴：按 RN→参数 关联组装 items
-  const paramCodes = RN_PARAMS.filter(
-    (l) => l.reportNameCode === receipt.categoryCode,
-  ).map((l) => l.inspectionParameterCode);
+  const paramCodes = RN_PARAMS.filter((l) => l.reportNameCode === receipt.categoryCode).map(
+    (l) => l.inspectionParameterCode,
+  );
 
   const items: ParameterItem[] = paramCodes.map((pc, i) => {
     const rec = records.find((r) => r.parameterCode === pc);
@@ -522,9 +515,7 @@ function resolveSource(
   }
   if (src.startsWith("sample.")) {
     const f = src.slice(7);
-    return String(
-      (samples[0] as unknown as Record<string, string> | undefined)?.[f] ?? "",
-    );
+    return String((samples[0] as unknown as Record<string, string> | undefined)?.[f] ?? "");
   }
   // sample:<n>:<field> —— 第 n 个样品的字段（n 从 0 起）。
   // `sample.<field>` 只能取首个样品；抗渗一类「一份报告 = 多个样品块」的模板
@@ -540,8 +531,7 @@ function resolveSource(
   // 改成 `ext:<key>` 后，预览前的 SampleExtFieldsModal 弹窗让用户补录，存到 samples[0].ext。
   if (src.startsWith("ext:")) {
     const key = src.slice(4);
-    const ext = (samples[0] as unknown as { ext?: Record<string, string> } | undefined)
-      ?.ext;
+    const ext = (samples[0] as unknown as { ext?: Record<string, string> } | undefined)?.ext;
     return String(ext?.[key] ?? "");
   }
   // row:N:field —— 试件轴 grid 模板按行号取 structured.rows[N][field]（按 105 抗压 grid 模式）
@@ -758,13 +748,6 @@ export function resolveSourceByTag(
   paramCodes.forEach((pc, i) => {
     if (items[i]) itemByCode.set(pc, items[i]);
   });
-  const resolved = resolveSource(
-    source,
-    common,
-    itemByCode,
-    ctx.samples,
-    rowsArr,
-    ctx.records,
-  );
+  const resolved = resolveSource(source, common, itemByCode, ctx.samples, rowsArr, ctx.records);
   return resolved.trim() === "" ? "" : resolved;
 }

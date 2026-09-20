@@ -17,23 +17,14 @@ import SoilCompactionDegreeCard from "@/features/data-entry/models/SoilCompactio
 import StrengthCardBase from "@/features/data-entry/models/StrengthCardBase.vue";
 import CementCompressCard from "@/features/data-entry/models/CementCompressCard.vue";
 import DefaultParamCard from "@/features/data-entry/models/DefaultParamCard.vue";
-import {
-  tensileStrength,
-  REBAR_DIAMETER_MM,
-} from "@/features/data-entry/models/rebar-welding";
+import { tensileStrength, REBAR_DIAMETER_MM } from "@/features/data-entry/models/rebar-welding";
 import {
   computeStrengths,
   ratioTensileOverYield,
 } from "@/features/data-entry/models/rebar-mechanics";
-import {
-  computeCompactionPeak,
-} from "@/features/data-entry/models/soil-compaction";
-import {
-  computeCompactionDegree,
-} from "@/features/data-entry/models/soil-compaction-degree";
-import {
-  computeConcretePermeability,
-} from "@/features/data-entry/models/concrete-permeability";
+import { computeCompactionPeak } from "@/features/data-entry/models/soil-compaction";
+import { computeCompactionDegree } from "@/features/data-entry/models/soil-compaction-degree";
+import { computeConcretePermeability } from "@/features/data-entry/models/concrete-permeability";
 import type { ParamModelProps } from "@/features/data-entry/models/types";
 import type { InspectionParameter } from "@/api/endpoints/model";
 
@@ -135,9 +126,7 @@ describe("ConcreteCompressCard", () => {
 
   fnTest(["M03.F03.I01"], "ConcreteCompressCard 渲染 3 个破坏荷载输入框", () => {
     const wrapper = mount(ConcreteCompressCard, { props: makeProps() });
-    expect(
-      wrapper.findAll('input[type="number"][placeholder="破坏荷载 (kN)"]').length,
-    ).toBe(3);
+    expect(wrapper.findAll('input[type="number"][placeholder="破坏荷载 (kN)"]').length).toBe(3);
   });
 
   fnTest(["M03.F03.I02"], "ConcreteCompressCard 录入荷载 → 上报代表值 JSON", () => {
@@ -160,9 +149,7 @@ describe("ConcretePermeabilityCard", () => {
     const wrapper = mount(ConcretePermeabilityCard, {
       props: makeProps({ parameter: param("IP-0190", "抗渗性能") }),
     });
-    expect(
-      wrapper.findAll('input[aria-label^="试件"][aria-label$="渗水压力"]').length,
-    ).toBe(6);
+    expect(wrapper.findAll('input[aria-label^="试件"][aria-label$="渗水压力"]').length).toBe(6);
   });
 });
 
@@ -172,9 +159,7 @@ describe("RebarWeldingTensileCard", () => {
   fnTest(["M03.F03.I01"], "RebarWeldingTensileCard 渲染 3 行 + 共享规格 Φ22", () => {
     const wrapper = mount(RebarWeldingTensileCard, { props: makeProps() });
     expect(wrapper.text()).toContain("Φ22");
-    expect(
-      wrapper.findAll('input[aria-label^="试件"][aria-label$="最大荷重"]').length,
-    ).toBe(3);
+    expect(wrapper.findAll('input[aria-label^="试件"][aria-label$="最大荷重"]').length).toBe(3);
   });
 });
 
@@ -183,9 +168,7 @@ describe("RebarWeldingBendCard", () => {
 
   fnTest(["M03.F03.I01"], "RebarWeldingBendCard 渲染 3 行弯曲角度 + 整体评定", () => {
     const wrapper = mount(RebarWeldingBendCard, { props: makeProps() });
-    expect(
-      wrapper.findAll('input[aria-label^="试件"][aria-label$="弯曲角度"]').length,
-    ).toBe(3);
+    expect(wrapper.findAll('input[aria-label^="试件"][aria-label$="弯曲角度"]').length).toBe(3);
     expect(wrapper.text()).toContain("JGJ/T 27-2014");
     expect(wrapper.find(".text-success")?.text()).toBe("合格");
   });
@@ -201,9 +184,7 @@ describe("RebarMechNumericCard", () => {
         config: { formulaKey: "tensile_strength", specimenCount: 2, needsDiameter: true },
       }),
     });
-    expect(
-      wrapper.findAll('input[aria-label^="第"][aria-label$="组 数值"]').length,
-    ).toBe(2);
+    expect(wrapper.findAll('input[aria-label^="第"][aria-label$="组 数值"]').length).toBe(2);
     expect(wrapper.find('input[aria-label="公称直径"]').exists()).toBe(true);
   });
 });
@@ -236,9 +217,7 @@ describe("SoilCompactionCard", () => {
 
   fnTest(["M03.F03.I01"], "SoilCompactionCard 渲染 5 组 + GB/T 50123-2019 标识", () => {
     const wrapper = mount(SoilCompactionCard, { props: makeProps() });
-    expect(
-      wrapper.findAll('input[aria-label^="第"][aria-label$="组含水率"]').length,
-    ).toBe(5);
+    expect(wrapper.findAll('input[aria-label^="第"][aria-label$="组含水率"]').length).toBe(5);
     expect(wrapper.text()).toContain("GB/T 50123-2019");
   });
 });
@@ -250,9 +229,7 @@ describe("SoilCompactionDegreeCard", () => {
     const wrapper = mount(SoilCompactionDegreeCard, {
       props: makeProps({ parameter: param("IP-0456", "压实度") }),
     });
-    expect(
-      wrapper.findAll('input[aria-label^="第"][aria-label$="行试样编号"]').length,
-    ).toBe(6);
+    expect(wrapper.findAll('input[aria-label^="第"][aria-label$="行试样编号"]').length).toBe(6);
     expect(wrapper.find('input[aria-label="最大干密度"]').exists()).toBe(true);
   });
 });
@@ -385,17 +362,11 @@ describe("Phase 1.3c — 模型卡 <Input> 原语回归", () => {
     expect(max.attributes("type")).toBe("number");
     expect(max.attributes("step")).toBe("0.001");
     // 6 行试样编号
-    expect(
-      wrapper.findAll('input[aria-label^="第"][aria-label$="行试样编号"]').length,
-    ).toBe(6);
+    expect(wrapper.findAll('input[aria-label^="第"][aria-label$="行试样编号"]').length).toBe(6);
     // 含水率 step=0.1
-    expect(
-      wrapper.find('input[aria-label="第 1 行含水率"]')?.attributes("step"),
-    ).toBe("0.1");
+    expect(wrapper.find('input[aria-label="第 1 行含水率"]')?.attributes("step")).toBe("0.1");
     // 湿密度 step=0.001
-    expect(
-      wrapper.find('input[aria-label="第 1 行湿密度"]')?.attributes("step"),
-    ).toBe("0.001");
+    expect(wrapper.find('input[aria-label="第 1 行湿密度"]')?.attributes("step")).toBe("0.001");
   });
 
   it("StrengthCardBase：破坏荷载 <Input> 经 $attrs 落 readonly + read-only 灰化样式", () => {
@@ -403,7 +374,12 @@ describe("Phase 1.3c — 模型卡 <Input> 原语回归", () => {
       props: {
         ...makeProps(),
         specimenCount: 3,
-        compute: (l: number[]) => ({ strengths: l.map(() => 0), mean: 0, kept: [true, true, true], invalid: false }),
+        compute: (l: number[]) => ({
+          strengths: l.map(() => 0),
+          mean: 0,
+          kept: [true, true, true],
+          invalid: false,
+        }),
         strengthLabel: "抗压 (MPa)",
       },
     });
@@ -456,7 +432,12 @@ describe("Phase 1.4 — 模型卡 <Label> 原语回归", () => {
       props: {
         ...makeProps(),
         specimenCount: 3,
-        compute: (l: number[]) => ({ strengths: l.map(() => 0), mean: 0, kept: [true, true, true], invalid: false }),
+        compute: (l: number[]) => ({
+          strengths: l.map(() => 0),
+          mean: 0,
+          kept: [true, true, true],
+          invalid: false,
+        }),
         strengthLabel: "抗压 (MPa)",
       },
     });
@@ -488,12 +469,7 @@ describe("Phase 1.4 — 模型卡 <Label> 原语回归", () => {
     });
     const labels = lastCardWrapper.findAll("label");
     expect(labels.length).toBe(4);
-    expect(labels.map((l) => l.text())).toEqual([
-      "检测依据",
-      "技术要求",
-      "检测结果",
-      "单项评定",
-    ]);
+    expect(labels.map((l) => l.text())).toEqual(["检测依据", "技术要求", "检测结果", "单项评定"]);
     // 迁移时补 text-xs：基类 text-sm 会放大卡片字号，这条锁住视觉不回归
     expect(labels[0].classes()).toContain("text-xs");
     expect(labels[0].classes()).not.toContain("text-sm");
@@ -527,9 +503,9 @@ describe("Phase 2a-4 — 数据录入卡 <Table> 原语回归", () => {
     expect(bodyRows.length).toBe(3);
     expect(bodyRows[0]!.findAll('[role="cell"]').length).toBe(3);
     // <Input> 渲染出的真实 <input> 是 cell 的后代（没被 slot 吞掉）
-    expect(
-      bodyRows[0]!.find('[role="cell"] input[placeholder="破坏荷载 (kN)"]').exists(),
-    ).toBe(true);
+    expect(bodyRows[0]!.find('[role="cell"] input[placeholder="破坏荷载 (kN)"]').exists()).toBe(
+      true,
+    );
   });
 
   it("ConcretePermeabilityCard：6 体行，<Select> 触发器嵌在 cell 内", () => {
@@ -575,9 +551,7 @@ describe("Phase 2a-4 — 数据录入卡 <Table> 原语回归", () => {
     expect(firstCell.classes()).toContain("py-1");
     expect(firstCell.classes()).toContain("align-middle");
     expect(firstCell.classes()).toContain("p-2");
-    expect(firstCell.classes().indexOf("py-1")).toBeGreaterThan(
-      firstCell.classes().indexOf("p-2"),
-    );
+    expect(firstCell.classes().indexOf("py-1")).toBeGreaterThan(firstCell.classes().indexOf("p-2"));
   });
 
   it("RebarMechNumericCard：条件列 v-if 在 TableHead/TableCell 上仍生效", () => {
@@ -687,9 +661,9 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
     lastCardWrapper = mount(RebarMechNumericCard, { props: makeProps() });
 
     expect(lastCardWrapper.findAll("select").length).toBe(0);
-    expect(
-      lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]').exists(),
-    ).toBe(true);
+    expect(lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]').exists()).toBe(
+      true,
+    );
     // techReqs 为空 → verdict 落空 → v-else 分支的整体评定 combobox 出现
     expect(
       lastCardWrapper.find('button[role="combobox"][aria-label="整体单项评定"]').exists(),
@@ -707,9 +681,7 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
     const bodyRows = lastCardWrapper.findAll('[role="rowgroup"]')[1]!.findAll('[role="row"]');
     expect(bodyRows.length).toBe(3);
     expect(
-      bodyRows[1]!
-        .find('[role="cell"] [role="combobox"][aria-label="第 2 试件断裂位置"]')
-        .exists(),
+      bodyRows[1]!.find('[role="cell"] [role="combobox"][aria-label="第 2 试件断裂位置"]').exists(),
     ).toBe(true);
   });
 
@@ -725,12 +697,12 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
     lastCardWrapper = mount(RebarWeldingTensileCard, { props: makeProps() });
 
     expect(lastCardWrapper.findAll("select").length).toBe(0);
-    expect(
-      lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]').exists(),
-    ).toBe(true);
-    expect(
-      lastCardWrapper.findAll('button[role="combobox"][aria-label$="断裂特征"]').length,
-    ).toBe(3);
+    expect(lastCardWrapper.find('button[role="combobox"][aria-label="技术要求"]').exists()).toBe(
+      true,
+    );
+    expect(lastCardWrapper.findAll('button[role="combobox"][aria-label$="断裂特征"]').length).toBe(
+      3,
+    );
     // 列头顺序不变（Phase 2a-4 契约不回归）
     expect(lastCardWrapper.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
       "#",
@@ -745,9 +717,9 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
     lastCardWrapper = mount(RebarWeldingBendCard, { props: makeProps() });
 
     expect(lastCardWrapper.findAll("select").length).toBe(0);
-    expect(
-      lastCardWrapper.findAll('button[role="combobox"][aria-label$="弯曲结果"]').length,
-    ).toBe(3);
+    expect(lastCardWrapper.findAll('button[role="combobox"][aria-label$="弯曲结果"]').length).toBe(
+      3,
+    );
   });
 
   it("RebarWeldingBendCard：整体评定恒为自动判文本，v-else 的 combobox 分支不可达", () => {
@@ -786,9 +758,9 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
     });
 
     expect(lastCardWrapper.findAll("select").length).toBe(0);
-    expect(
-      lastCardWrapper.find('button[role="combobox"][aria-label="单项评定"]').exists(),
-    ).toBe(true);
+    expect(lastCardWrapper.find('button[role="combobox"][aria-label="单项评定"]').exists()).toBe(
+      true,
+    );
   });
 
   it("StrengthCardBase 有技术要求：技术要求 → combobox 且显示当前选中项文本", async () => {
@@ -835,9 +807,9 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
 
     expect(lastCardWrapper.findAll("select").length).toBe(0);
     for (const name of ["检测依据", "技术要求", "单项评定"]) {
-      expect(
-        lastCardWrapper.find(`button[role="combobox"][aria-label="${name}"]`).exists(),
-      ).toBe(true);
+      expect(lastCardWrapper.find(`button[role="combobox"][aria-label="${name}"]`).exists()).toBe(
+        true,
+      );
     }
     // 卡片可在一页里按参数重复挂载，id 会撞；所以走 aria-label 不走 for/id 配对。
     // Phase 2d-1 曾给 3 个 <Label> 加过 for="standardCode" 之类的悬空 for
@@ -852,14 +824,17 @@ describe("Phase 2d-2 — 数据录入卡 <Select> 原语回归", () => {
   // handler**。所以直接从 <Select> 组件边界 emit update:modelValue，
   // 等价于「用户选中了某项」，但不受 reka 内部实现变化影响。
   function emitSelect(wrapper: VueWrapper, ariaLabel: string, value: string): Promise<void> {
-    const trigger = wrapper.findAll('[role="combobox"]').find(
-      (t) => t.attributes("aria-label") === ariaLabel,
-    );
+    const trigger = wrapper
+      .findAll('[role="combobox"]')
+      .find((t) => t.attributes("aria-label") === ariaLabel);
     expect(trigger, `找不到 aria-label=${ariaLabel} 的 combobox`).toBeTruthy();
     // SelectTrigger 是 <Select> 的子孙 —— 往上找到那个 Select 组件实例
     const select = wrapper
       .findAllComponents(Select)
-      .find((s) => s.element.contains(trigger!.element) || s.find(`[aria-label="${ariaLabel}"]`).exists());
+      .find(
+        (s) =>
+          s.element.contains(trigger!.element) || s.find(`[aria-label="${ariaLabel}"]`).exists(),
+      );
     expect(select, `找不到包住 ${ariaLabel} 的 <Select>`).toBeTruthy();
     select!.vm.$emit("update:modelValue", value);
     return nextTick();

@@ -62,7 +62,7 @@ function makeProbe(permissions?: string[]) {
 async function mountGuard(permissions?: string[]): Promise<Router> {
   // 复用 beforeEach 已激活的 pinia（login 推进的 FSM 态在这个实例上），
   // 这里再 createPinia 会换实例导致守卫读到 idle。
-  const pinia = getActivePinia()!
+  const pinia = getActivePinia()!;
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -126,17 +126,21 @@ describe("M01.F04.I03 路由守卫", () => {
     expect(router.currentRoute.value.path).toBe("/secret");
   });
 
-  fnTest(["M01.F04.I03"], "awaiting_tenant 访问受守卫路由 → 拦在 /login（选租户页已移除，M00.F02 保持规划）", async () => {
-    // login 多租户（无记忆租户）→ awaiting_tenant（此路径不发 permissions 请求）
-    queue.push({
-      status: 200,
-      data: { token: "t2", refreshToken: "r2", user: USER, tenants: [TENANT_A, TENANT_B] },
-    });
-    await __testActions.login({ username: "admin", password: "x" });
-    const s = await state();
-    expect(s.kind).toBe("awaiting_tenant");
-    const router = await mountGuard();
-    await flushPromises();
-    expect(router.currentRoute.value.path).toBe("/login");
-  });
+  fnTest(
+    ["M01.F04.I03"],
+    "awaiting_tenant 访问受守卫路由 → 拦在 /login（选租户页已移除，M00.F02 保持规划）",
+    async () => {
+      // login 多租户（无记忆租户）→ awaiting_tenant（此路径不发 permissions 请求）
+      queue.push({
+        status: 200,
+        data: { token: "t2", refreshToken: "r2", user: USER, tenants: [TENANT_A, TENANT_B] },
+      });
+      await __testActions.login({ username: "admin", password: "x" });
+      const s = await state();
+      expect(s.kind).toBe("awaiting_tenant");
+      const router = await mountGuard();
+      await flushPromises();
+      expect(router.currentRoute.value.path).toBe("/login");
+    },
+  );
 });

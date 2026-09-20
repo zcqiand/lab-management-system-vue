@@ -75,7 +75,10 @@ async function mountAt(path: string) {
       plugins: [
         pinia,
         router,
-        [VueQueryPlugin, { queryClient: new QueryClient({ defaultOptions: { queries: { retry: false } } }) }],
+        [
+          VueQueryPlugin,
+          { queryClient: new QueryClient({ defaultOptions: { queries: { retry: false } } }) },
+        ],
       ],
     },
   });
@@ -122,28 +125,32 @@ describe("M01.F05.I03 SSO OAuth 2.0 授权码流", () => {
     }
   });
 
-  fnTest(["M01.F05.I03"], "阶段 1：?code=&state= → POST sso/callback 换 token → setSession 进业务页", async () => {
-    // OAuth 2.0 state 防 CSRF：LoginPage 用 sessionStorage 里预存的 state 与 URL 回跳的
-    // state 比对。测试模拟「authorize 时存了 state=xyz，回跳 ?code=abc&state=xyz」的真实流程。
-    sessionStorage.setItem("lab.sso.state", "xyz");
-    queue.push({ status: 200, data: LOGIN_OK });
-    const { router } = await mountAt("/login?code=abc&state=xyz");
-    await flushPromises();
-    expect(
-      calls.some(
-        (c) =>
-          c.method === "POST" &&
-          c.url.includes("/api/auth/sso/callback") &&
-          c.body &&
-          (c.body as { code: string }).code === "abc" &&
-          (c.body as { grant_type: string }).grant_type === "authorization_code" &&
-          typeof (c.body as { redirect_uri: string }).redirect_uri === "string",
-      ),
-    ).toBe(true);
-    await flushPromises();
-    expect(router.currentRoute.value.path).toBe("/");
-    expect(localStorage.getItem("lab.accessToken")).toBe("sso-jwt-1");
-    // state 一次性：验过后应清掉
-    expect(sessionStorage.getItem("lab.sso.state")).toBeNull();
-  });
+  fnTest(
+    ["M01.F05.I03"],
+    "阶段 1：?code=&state= → POST sso/callback 换 token → setSession 进业务页",
+    async () => {
+      // OAuth 2.0 state 防 CSRF：LoginPage 用 sessionStorage 里预存的 state 与 URL 回跳的
+      // state 比对。测试模拟「authorize 时存了 state=xyz，回跳 ?code=abc&state=xyz」的真实流程。
+      sessionStorage.setItem("lab.sso.state", "xyz");
+      queue.push({ status: 200, data: LOGIN_OK });
+      const { router } = await mountAt("/login?code=abc&state=xyz");
+      await flushPromises();
+      expect(
+        calls.some(
+          (c) =>
+            c.method === "POST" &&
+            c.url.includes("/api/auth/sso/callback") &&
+            c.body &&
+            (c.body as { code: string }).code === "abc" &&
+            (c.body as { grant_type: string }).grant_type === "authorization_code" &&
+            typeof (c.body as { redirect_uri: string }).redirect_uri === "string",
+        ),
+      ).toBe(true);
+      await flushPromises();
+      expect(router.currentRoute.value.path).toBe("/");
+      expect(localStorage.getItem("lab.accessToken")).toBe("sso-jwt-1");
+      // state 一次性：验过后应清掉
+      expect(sessionStorage.getItem("lab.sso.state")).toBeNull();
+    },
+  );
 });

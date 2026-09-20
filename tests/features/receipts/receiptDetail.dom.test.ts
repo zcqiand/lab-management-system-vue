@@ -29,7 +29,13 @@ const RECEIPT = {
   contractId: "CONTRACT-001",
   flowStatus: "task_assignment",
   flowHistory: [
-    { action: "submit", from: "receiving", to: "task_assignment", operator: "seed", at: "2026-07-02T00:00:00Z" },
+    {
+      action: "submit",
+      from: "receiving",
+      to: "task_assignment",
+      operator: "seed",
+      at: "2026-07-02T00:00:00Z",
+    },
   ],
   testParameters: ["抗压强度", "抗折强度"],
   createdAt: "2026-07-01T00:00:00Z",

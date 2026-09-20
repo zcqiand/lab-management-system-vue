@@ -55,11 +55,18 @@ function rowKey(row: TechReq): string {
   return `${row.inspectionObjectCode}/${row.inspectionParameterCode}/${row.judgmentStandardCode}`;
 }
 
-interface Opt { code: string; name: string }
+interface Opt {
+  code: string;
+  name: string;
+}
 
 const COMPARISONS = ["≥", "≤", "=", "range", "eq"];
 const COMPARISON_LABEL: Record<string, string> = {
-  "≥": "≥", "≤": "≤", "=": "=", range: "区间", eq: "等于",
+  "≥": "≥",
+  "≤": "≤",
+  "=": "=",
+  range: "区间",
+  eq: "等于",
 };
 
 const EMPTY_FORM: Record<string, string> = {
@@ -218,7 +225,8 @@ async function submitForm(): Promise<void> {
     closeDialog();
     await load();
   } catch (e: unknown) {
-    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "保存失败";
+    const msg =
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "保存失败";
     saveError.value = msg;
   }
 }
@@ -240,7 +248,8 @@ async function confirmDelete(): Promise<void> {
     deleteTarget.value = null;
     await load();
   } catch (e: unknown) {
-    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "删除失败";
+    const msg =
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "删除失败";
     deleteError.value = msg;
   } finally {
     deleting.value = false;
@@ -260,9 +269,7 @@ async function confirmDelete(): Promise<void> {
           M06.F06 技术要求 — 四维度匹配：牌号 / 型号 / 等级 / 规格
         </p>
       </div>
-      <Button data-fn="M06.F06.I02" @click="openCreate">
-        新建技术要求
-      </Button>
+      <Button data-fn="M06.F06.I02" @click="openCreate"> 新建技术要求 </Button>
     </div>
 
     <div class="flex flex-wrap gap-2">
@@ -272,9 +279,14 @@ async function confirmDelete(): Promise<void> {
       <Input v-model="specFilter" aria-label="规格筛选" class="max-w-32" placeholder="规格" />
     </div>
 
-    <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">{{ error }}</div>
+    <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">
+      {{ error }}
+    </div>
 
-    <div v-if="!loading && items.length === 0" class="text-sm text-muted-foreground text-center py-8">
+    <div
+      v-if="!loading && items.length === 0"
+      class="text-sm text-muted-foreground text-center py-8"
+    >
       暂无技术要求
     </div>
 
@@ -297,14 +309,18 @@ async function confirmDelete(): Promise<void> {
       <TableBody>
         <TableRow v-for="row in items" :key="rowKey(row)" class="border-t hover:bg-muted">
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionObjectCode }}</TableCell>
-          <TableCell class="px-4 py-2 font-mono text-xs">{{ row.inspectionParameterCode }}</TableCell>
+          <TableCell class="px-4 py-2 font-mono text-xs">{{
+            row.inspectionParameterCode
+          }}</TableCell>
           <TableCell class="px-4 py-2 font-mono text-xs">{{ row.judgmentStandardCode }}</TableCell>
           <TableCell class="px-4 py-2">{{ row.brand ?? "-" }}</TableCell>
           <TableCell class="px-4 py-2">{{ row.model ?? "-" }}</TableCell>
           <TableCell class="px-4 py-2">{{ row.grade ?? "-" }}</TableCell>
           <TableCell class="px-4 py-2">{{ row.spec ?? "-" }}</TableCell>
           <TableCell class="px-4 py-2">
-            <span class="inline-flex items-center rounded border px-2 py-0.5 text-xs">{{ COMPARISON_LABEL[row.comparison] ?? row.comparison }}</span>
+            <span class="inline-flex items-center rounded border px-2 py-0.5 text-xs">{{
+              COMPARISON_LABEL[row.comparison] ?? row.comparison
+            }}</span>
           </TableCell>
           <TableCell class="px-4 py-2">{{ row.maxValue ?? "-" }}</TableCell>
           <TableCell class="px-4 py-2">{{ row.minValue ?? "-" }}</TableCell>
@@ -350,7 +366,9 @@ async function confirmDelete(): Promise<void> {
           <DialogDescription>复合主键：检测项目 + 检测参数 + 判定标准</DialogDescription>
         </DialogHeader>
         <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-          <div v-if="saveError" role="alert" class="text-destructive bg-destructive/10 p-2 rounded">{{ saveError }}</div>
+          <div v-if="saveError" role="alert" class="text-destructive bg-destructive/10 p-2 rounded">
+            {{ saveError }}
+          </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <Label for="inspectionObjectCode">检测项目</Label>
@@ -383,7 +401,11 @@ async function confirmDelete(): Promise<void> {
           </div>
           <div>
             <Label>判定标准</Label>
-            <Input v-model="form.judgmentStandardCode" class="font-mono" placeholder="如 GB 175-2023" />
+            <Input
+              v-model="form.judgmentStandardCode"
+              class="font-mono"
+              placeholder="如 GB 175-2023"
+            />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -432,12 +454,8 @@ async function confirmDelete(): Promise<void> {
           </div>
         </div>
         <DialogFooter class="px-6 py-3 gap-2 border-t">
-          <Button variant="outline" @click="closeDialog">
-            取消
-          </Button>
-          <Button data-fn="M06.F06.I02" @click="submitForm">
-            保存
-          </Button>
+          <Button variant="outline" @click="closeDialog"> 取消 </Button>
+          <Button data-fn="M06.F06.I02" @click="submitForm"> 保存 </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -453,7 +471,8 @@ async function confirmDelete(): Promise<void> {
         确定删除
         <span class="font-mono">
           {{ deleteTarget?.inspectionObjectCode }}/{{ deleteTarget?.inspectionParameterCode }}
-        </span> 的技术要求？被引用的技术要求不可删除（M06.F06.I05 引用保护）。
+        </span>
+        的技术要求？被引用的技术要求不可删除（M06.F06.I05 引用保护）。
       </p>
       <p v-if="deleteError" role="alert" class="mt-2 text-destructive">{{ deleteError }}</p>
     </ConfirmDialog>

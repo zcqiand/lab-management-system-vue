@@ -88,9 +88,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
     ["M04.F06.I01"],
     "型号维护：渲染标题 + 检测项目树（vue 翻译 CategoryDictList 镜像 react）",
     async () => {
-      const { default: CategoryDictList } = await import(
-        "@/features/dicts/CategoryDictList.vue"
-      );
+      const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
       const wrapper = mountWithProviders(CategoryDictList, {
         props: { endpoint: "/models", title: "型号维护", dataFn: "M04.F06.I01" },
         global: MOUNT_GLOBAL,
@@ -105,9 +103,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   );
 
   fnTest(["M04.F07.I01"], "规格维护：渲染标题不炸", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/specifications", title: "规格维护", dataFn: "M04.F07.I01" },
       global: MOUNT_GLOBAL,
@@ -117,9 +113,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F08.I01"], "等级维护：渲染标题不炸", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/grades", title: "等级维护", dataFn: "M04.F08.I01" },
       global: MOUNT_GLOBAL,
@@ -129,9 +123,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F09.I01"], "牌号维护：渲染标题不炸", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/brands", title: "牌号维护", dataFn: "M04.F09.I01" },
       global: MOUNT_GLOBAL,
@@ -141,9 +133,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F06.I02"], "型号维护：新建按钮开弹窗（标题『新建型号』）", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/models", title: "型号维护", createDataFn: "M04.F06.I02" },
       global: MOUNT_GLOBAL,
@@ -163,9 +153,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F06.I04"], "型号维护：行内删除按钮开确认弹窗", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/models", title: "型号维护", deleteDataFn: "M04.F06.I04" },
       global: MOUNT_GLOBAL,
@@ -187,9 +175,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F07.I02"], "规格维护：新建按钮开弹窗", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/specifications", title: "规格维护", createDataFn: "M04.F07.I02" },
       global: MOUNT_GLOBAL,
@@ -207,9 +193,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F07.I04"], "规格维护：行内删除按钮开确认弹窗", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/specifications", title: "规格维护", deleteDataFn: "M04.F07.I04" },
       global: MOUNT_GLOBAL,
@@ -231,9 +215,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F08.I02"], "等级维护：新建按钮开弹窗", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/grades", title: "等级维护", createDataFn: "M04.F08.I02" },
       global: MOUNT_GLOBAL,
@@ -251,9 +233,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F08.I04"], "等级维护：行内删除按钮开确认弹窗", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/grades", title: "等级维护", deleteDataFn: "M04.F08.I04" },
       global: MOUNT_GLOBAL,
@@ -275,9 +255,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F09.I02"], "牌号维护：新建按钮开弹窗", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/brands", title: "牌号维护", createDataFn: "M04.F09.I02" },
       global: MOUNT_GLOBAL,
@@ -295,9 +273,7 @@ describe("M04.F06-F09 码表维护 4 页", () => {
   });
 
   fnTest(["M04.F09.I03"], "牌号维护：行内删除按钮开确认弹窗", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     const wrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/brands", title: "牌号维护", deleteDataFn: "M04.F09.I03" },
       global: MOUNT_GLOBAL,
@@ -333,9 +309,7 @@ afterEach(() => {
 
 describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
   it("新建按钮：<Button variant=default> 渲染 <button>，CVA base inline-flex 活着，data-fn 落到真实 DOM", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     lastWrapper = mountWithProviders(CategoryDictList, {
       props: { endpoint: "/models", title: "型号维护", createDataFn: "M04.F06.I02" },
       global: MOUNT_GLOBAL,
@@ -353,9 +327,7 @@ describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
   });
 
   it("行内编辑/删除：<Button variant=link> 无 h-8/px-3，删除用 text-destructive token", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     lastWrapper = mountWithProviders(CategoryDictList, {
       props: {
         endpoint: "/models",
@@ -394,9 +366,7 @@ describe("Phase 1.2b — CategoryDictList <Button> 原语回归", () => {
 // （TypeSpec 迁移：契约 CreateCatalogEntryRequest.code 必填，新建表单补编码输入）
 describe("Phase 1.3b — CategoryDictList 弹窗 <Input> 原语回归", () => {
   it("弹窗 3 个 form <Input>：编码 + 名称 + 备注 v-model 双向写回", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     lastWrapper = mountWithProviders(CategoryDictList, {
       props: {
         endpoint: "/models",
@@ -443,9 +413,7 @@ describe("Phase 1.3b — CategoryDictList 弹窗 <Input> 原语回归", () => {
 // （TypeSpec 迁移：新建表单补「编码 *」label，3 → 4）
 describe("Phase 1.4 — CategoryDictList 弹窗 <Label> 原语回归", () => {
   it("弹窗 4 个 <Label class=text-xs>：text-xs 压过基类 text-sm，font-medium 保留", async () => {
-    const { default: CategoryDictList } = await import(
-      "@/features/dicts/CategoryDictList.vue"
-    );
+    const { default: CategoryDictList } = await import("@/features/dicts/CategoryDictList.vue");
     lastWrapper = mountWithProviders(CategoryDictList, {
       props: {
         endpoint: "/models",
@@ -462,7 +430,7 @@ describe("Phase 1.4 — CategoryDictList 弹窗 <Label> 原语回归", () => {
     await createBtn!.trigger("click");
     await flushPromises();
 
-    const labels = lastWrapper.findAll('[data-teleport-stub] label');
+    const labels = lastWrapper.findAll("[data-teleport-stub] label");
     expect(labels.length).toBe(4);
     expect(labels.map((l) => l.text())).toEqual(["检测项目", "编码 *", "名称 *", "备注"]);
     expect(labels[0].element.tagName).toBe("LABEL");

@@ -200,8 +200,7 @@ async function doSetSession(partial: {
   user?: LoginResponse["user"];
   tenants?: LoginResponse["tenants"];
 }): Promise<void> {
-  const refreshToken =
-    partial.refreshToken ?? readKey(TOKEN_STORAGE_KEYS.refreshToken);
+  const refreshToken = partial.refreshToken ?? readKey(TOKEN_STORAGE_KEYS.refreshToken);
   if (!refreshToken || !partial.user) {
     throw new Error("setSession requires accessToken + user + refreshToken");
   }
@@ -250,7 +249,10 @@ async function doRefresh(): Promise<LoginResponse | ErrorResponse> {
 async function doSwitchTenant(req: SwitchTenantRequest): Promise<LoginResponse | ErrorResponse> {
   const current = useAuthStore().authState;
   if (current.kind !== "awaiting_tenant" && current.kind !== "authenticated") {
-    return { code: "WRONG_STATE", message: "switchTenant 仅在 awaiting_tenant / authenticated 态可调" };
+    return {
+      code: "WRONG_STATE",
+      message: "switchTenant 仅在 awaiting_tenant / authenticated 态可调",
+    };
   }
   try {
     const resp = await authSwitchTenant(req);
@@ -290,7 +292,8 @@ export async function hydrateAuth(): Promise<void> {
       headers: { Authorization: `Bearer ${token}` },
     });
     const session = resp.data;
-    const tenantId = readKey(TOKEN_STORAGE_KEYS.activeTenantId) ?? session.currentTenantId ?? undefined;
+    const tenantId =
+      readKey(TOKEN_STORAGE_KEYS.activeTenantId) ?? session.currentTenantId ?? undefined;
     const tenant = session.tenants.find((t) => t.tenantId === tenantId);
     if (tenant) {
       writeKey(TOKEN_STORAGE_KEYS.activeTenantId, tenant.tenantId);

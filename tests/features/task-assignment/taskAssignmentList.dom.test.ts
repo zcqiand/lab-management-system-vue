@@ -20,7 +20,12 @@ const RECEIPTS_IN_TASK_ASSIGNMENT = [
   },
 ];
 
-function wrapList(arr: unknown[]): { items: unknown[]; page: number; pageSize: number; total: number } {
+function wrapList(arr: unknown[]): {
+  items: unknown[];
+  page: number;
+  pageSize: number;
+  total: number;
+} {
   return { items: arr, page: 1, pageSize: arr.length, total: arr.length };
 }
 
@@ -62,7 +67,8 @@ const MOUNT_GLOBAL = {
 
 describe("M03.F02 任务分配", () => {
   fnTest(["M03.F02.I01"], "任务分配：渲染标题 + 列表行（fixture 真数据穿透）", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     const wrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -72,7 +78,8 @@ describe("M03.F02 任务分配", () => {
   });
 
   fnTest(["M03.F02.I01"], "任务分配：安排按钮开弹窗（标题含『任务安排』）", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     const wrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -99,7 +106,8 @@ afterEach(() => {
 
 describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
   it("行内安排按钮：<Button variant=outline size=sm> 渲染 <button>，data-fn 落到真实 DOM", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -113,7 +121,8 @@ describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
   });
 
   it("弹窗保存按钮：<Button variant=default class=bg-info> 压过 CVA bg-primary，disabled 落到真实 DOM", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -141,7 +150,8 @@ describe("Phase 1.2b — TaskAssignmentList <Button> 原语回归", () => {
 // 弹窗 2 个 form <Input>：检测人员 字符串 + 计划日期 type=date。
 describe("Phase 1.3b — TaskAssignmentList 搜索/弹窗 <Input> 原语回归", () => {
   it("搜索框 <Input class=max-w-sm>：渲染 <input>，v-model 双向写回", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -156,7 +166,8 @@ describe("Phase 1.3b — TaskAssignmentList 搜索/弹窗 <Input> 原语回归",
   });
 
   it("弹窗 2 个 form <Input>：检测人员 字符串 + 计划日期 type=date 落 DOM", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -186,7 +197,8 @@ describe("Phase 1.3b — TaskAssignmentList 搜索/弹窗 <Input> 原语回归",
 // 父子结构成立，点击 label 聚焦子 input 的 HTML 语义不丢。
 describe("Phase 1.4 — TaskAssignmentList 弹窗 <Label> 原语回归", () => {
   it("2 个 <Label class=text-xs block> 各自包着一个真实 <input>（wrapping 模式保留）", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -195,7 +207,7 @@ describe("Phase 1.4 — TaskAssignmentList 弹窗 <Label> 原语回归", () => {
     await lastWrapper.find('button[data-fn="M03.F02.I01"]').trigger("click");
     await flushPromises();
 
-    const labels = lastWrapper.findAll('[data-teleport-stub] label');
+    const labels = lastWrapper.findAll("[data-teleport-stub] label");
     expect(labels.length).toBe(2);
     expect(labels[0].element.tagName).toBe("LABEL");
     expect(labels[0].text()).toContain("检测人员 *");
@@ -215,7 +227,8 @@ describe("Phase 1.4 — TaskAssignmentList 弹窗 <Label> 原语回归", () => {
 // 行内安排按钮 data-fn 落到真实 <button>。
 describe("Phase 2a-2 — TaskAssignmentList 列表 <Table> 原语回归", () => {
   it("<Table> 渲染 div[role=table]；6 <TableHead> 文本顺序 委托书编号/工程名称/检测人员/计划日期/流程状态/操作", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -236,7 +249,8 @@ describe("Phase 2a-2 — TaskAssignmentList 列表 <Table> 原语回归", () => 
   });
 
   it("1 fixture 行：行内安排按钮 data-fn 落到 div[role=row] 内 <button>，行在 rowgroup[1]", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -251,13 +265,15 @@ describe("Phase 2a-2 — TaskAssignmentList 列表 <Table> 原语回归", () => 
   });
 
   it("TableCell 调用方 class 经 tailwind-merge 合并：委托书编号 cell 带 font-mono + text-xs", async () => {
-    const { default: TaskAssignmentList } = await import("@/features/task-assignment/TaskAssignmentList.vue");
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    const codeCell = lastWrapper.findAll('[role="rowgroup"]')[1]!
+    const codeCell = lastWrapper
+      .findAll('[role="rowgroup"]')[1]!
       .findAll('[role="row"]')[0]!
       .findAll('[role="cell"]')[0];
     expect(codeCell.exists()).toBe(true);
@@ -270,9 +286,8 @@ describe("Phase 2a-2 — TaskAssignmentList 列表 <Table> 原语回归", () => 
 // 锁「换底座后新拿到的东西」+「@entry / data-fn 这类 L5 锚点没被结构改动吞掉」。
 describe("Phase 2e-3 — TaskAssignmentList 安排弹窗走 Dialog 底座", () => {
   async function openAssign(): Promise<VueWrapper> {
-    const { default: TaskAssignmentList } = await import(
-      "@/features/task-assignment/TaskAssignmentList.vue"
-    );
+    const { default: TaskAssignmentList } =
+      await import("@/features/task-assignment/TaskAssignmentList.vue");
     lastWrapper = mountWithProviders(TaskAssignmentList, { global: MOUNT_GLOBAL });
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));

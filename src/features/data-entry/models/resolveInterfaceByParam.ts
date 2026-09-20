@@ -30,33 +30,33 @@ export function resolveInterfaceByParam(
   links: ParamInterfaceLink[],
   categoryCode?: string,
 ): Record<string, { componentPath: string; config?: Record<string, unknown> }> {
-  const byCode = new Map(interfaces.map((i) => [i.code, i]))
-  const byParam = new Map<string, ParamInterfaceLink[]>()
+  const byCode = new Map(interfaces.map((i) => [i.code, i]));
+  const byParam = new Map<string, ParamInterfaceLink[]>();
   for (const l of links) {
-    if (!byCode.has(l.paramInterfaceCode)) continue
-    const arr = byParam.get(l.inspectionParameterCode) ?? []
-    arr.push(l)
-    byParam.set(l.inspectionParameterCode, arr)
+    if (!byCode.has(l.paramInterfaceCode)) continue;
+    const arr = byParam.get(l.inspectionParameterCode) ?? [];
+    arr.push(l);
+    byParam.set(l.inspectionParameterCode, arr);
   }
-  const out: Record<string, { componentPath: string; config?: Record<string, unknown> }> = {}
+  const out: Record<string, { componentPath: string; config?: Record<string, unknown> }> = {};
   for (const [paramCode, list] of byParam) {
-    const scoped = categoryCode ? list.filter((l) => l.reportNameCode === categoryCode) : []
-    const generic = list.filter((l) => !l.reportNameCode)
+    const scoped = categoryCode ? list.filter((l) => l.reportNameCode === categoryCode) : [];
+    const generic = list.filter((l) => !l.reportNameCode);
     // 命中报告作用域优先；否则退回通用（无作用域）关联；外报告作用域的关联不作兜底，避免串卡。
-    const pool = scoped.length ? scoped : generic
-    if (pool.length === 0) continue
+    const pool = scoped.length ? scoped : generic;
+    if (pool.length === 0) continue;
     const best = pool
       .map((l) => byCode.get(l.paramInterfaceCode))
       .filter((i): i is ParamInterfaceRow => !!i)
-      .sort((a, b) => a.sortOrder - b.sortOrder)[0]
+      .sort((a, b) => a.sortOrder - b.sortOrder)[0];
     if (best) {
       // 链接上的 config（如 gravel/sampleRows）优先，参数本身 config 作 fallback
       const linkConfig = pool.find(
         (l) => byCode.get(l.paramInterfaceCode)?.code === best.code,
-      )?.config
-      const config = linkConfig ?? best.config
-      out[paramCode] = { componentPath: best.componentPath, config }
+      )?.config;
+      const config = linkConfig ?? best.config;
+      out[paramCode] = { componentPath: best.componentPath, config };
     }
   }
-  return out
+  return out;
 }

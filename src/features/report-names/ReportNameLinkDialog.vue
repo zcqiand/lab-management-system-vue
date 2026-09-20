@@ -53,9 +53,7 @@ const paramLinks = ref<Set<string>>(new Set());
 const loading = ref(false);
 const busy = ref<string | null>(null);
 
-const stdCount = computed(
-  () => stdLinks.value.filter((l) => l.role === "TESTING").length,
-);
+const stdCount = computed(() => stdLinks.value.filter((l) => l.role === "TESTING").length);
 const paramCount = computed(() => paramLinks.value.size);
 
 function toList<T>(data: T[] | { items?: T[] }): T[] {
@@ -74,7 +72,9 @@ async function load(): Promise<void> {
     standards.value = Array.isArray(stdRes.data?.items) ? stdRes.data.items : [];
     parameters.value = Array.isArray(paramRes.data?.items) ? paramRes.data.items : [];
     // 契约 200 是 Page 形状；测试/后端可能回裸数组，toList 双形状兜住
-    stdLinks.value = toList<StdLink>(stdLinkRes.data as unknown as StdLink[] | { items?: StdLink[] });
+    stdLinks.value = toList<StdLink>(
+      stdLinkRes.data as unknown as StdLink[] | { items?: StdLink[] },
+    );
     paramLinks.value = new Set(
       toList<ParamLink>(paramLinkRes.data as unknown as ParamLink[] | { items?: ParamLink[] }).map(
         (l) => l.inspectionParameterCode,
@@ -96,9 +96,7 @@ watch(
 );
 
 function isStdOn(code: string): boolean {
-  return stdLinks.value.some(
-    (l) => l.inspectionStandardCode === code && l.role === "TESTING",
-  );
+  return stdLinks.value.some((l) => l.inspectionStandardCode === code && l.role === "TESTING");
 }
 
 async function toggleStd(stdCode: string): Promise<void> {
@@ -172,7 +170,8 @@ function close(): void {
       <DialogHeader class="px-6 py-4 border-b gap-1.5">
         <DialogTitle>关联维护 — {{ reportNameLabel }}</DialogTitle>
         <DialogDescription>
-          报告名称 {{ reportNameCode }}；标准 {{ stdCount }} 项 / 参数 {{ paramCount }} 项（toggle 即时保存）
+          报告名称 {{ reportNameCode }}；标准 {{ stdCount }} 项 / 参数 {{ paramCount }} 项（toggle
+          即时保存）
         </DialogDescription>
       </DialogHeader>
       <div class="px-6 py-4 space-y-4">
@@ -194,7 +193,9 @@ function close(): void {
                 :aria-label="`${isStdOn(s.code) ? '解除标准' : '关联标准'} ${s.code}`"
                 :disabled="busy === s.code"
                 class="px-2 py-1 rounded text-xs"
-                :class="isStdOn(s.code) ? 'border text-foreground' : 'bg-primary text-primary-foreground'"
+                :class="
+                  isStdOn(s.code) ? 'border text-foreground' : 'bg-primary text-primary-foreground'
+                "
                 @click="toggleStd(s.code)"
               >
                 {{ isStdOn(s.code) ? "解除" : "关联" }}
@@ -218,7 +219,11 @@ function close(): void {
                 :aria-label="`${paramLinks.has(p.code) ? '解除参数' : '关联参数'} ${p.code}`"
                 :disabled="busy === p.code"
                 class="px-2 py-1 rounded text-xs"
-                :class="paramLinks.has(p.code) ? 'border text-foreground' : 'bg-primary text-primary-foreground'"
+                :class="
+                  paramLinks.has(p.code)
+                    ? 'border text-foreground'
+                    : 'bg-primary text-primary-foreground'
+                "
                 @click="toggleParam(p.code)"
               >
                 {{ paramLinks.has(p.code) ? "解除" : "关联" }}

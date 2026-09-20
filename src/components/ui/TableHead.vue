@@ -15,12 +15,7 @@ const props = defineProps<{ class?: string }>();
 <template>
   <div
     v-bind="$attrs"
-    :class="
-      cn(
-        'h-10 px-2 text-left align-middle font-medium text-muted-foreground',
-        props.class,
-      )
-    "
+    :class="cn('h-10 px-2 text-left align-middle font-medium text-muted-foreground', props.class)"
     role="columnheader"
   >
     <slot />

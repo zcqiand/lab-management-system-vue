@@ -26,23 +26,17 @@ import SoilCompactionDegreeCard from "./SoilCompactionDegreeCard.vue";
 export const MODEL_REGISTRY: Record<string, ParamModelComponent> = {
   default: DefaultParamCard as unknown as ParamModelComponent,
   "concrete-compress": ConcreteCompressCard as unknown as ParamModelComponent,
-  "concrete-permeability":
-    ConcretePermeabilityCard as unknown as ParamModelComponent,
+  "concrete-permeability": ConcretePermeabilityCard as unknown as ParamModelComponent,
   "cement-flexural": CementFlexuralCard as unknown as ParamModelComponent,
   "cement-compress": CementCompressCard as unknown as ParamModelComponent,
-  "rebar-welding-tensile":
-    RebarWeldingTensileCard as unknown as ParamModelComponent,
+  "rebar-welding-tensile": RebarWeldingTensileCard as unknown as ParamModelComponent,
   "rebar-welding-bend": RebarWeldingBendCard as unknown as ParamModelComponent,
   "rebar-mech-numeric": RebarMechNumericCard as unknown as ParamModelComponent,
   "particle-gradation": ParticleGradationCard as unknown as ParamModelComponent,
   "soil-compaction": SoilCompactionCard as unknown as ParamModelComponent,
-  "soil-compaction-degree":
-    SoilCompactionDegreeCard as unknown as ParamModelComponent,
+  "soil-compaction-degree": SoilCompactionDegreeCard as unknown as ParamModelComponent,
 };
 
 export function resolveParamInterfaceModel(key?: string): ParamModelComponent {
-  return (
-    (key && MODEL_REGISTRY[key]) ||
-    (MODEL_REGISTRY["default"] as ParamModelComponent)
-  );
+  return (key && MODEL_REGISTRY[key]) || (MODEL_REGISTRY["default"] as ParamModelComponent);
 }

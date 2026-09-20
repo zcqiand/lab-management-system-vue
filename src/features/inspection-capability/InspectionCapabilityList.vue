@@ -146,7 +146,11 @@ const fnId = computed(() => FN_ID[props.resource]);
 const fnCreate = computed(() => FN_CREATE[props.resource]);
 const fnDelete = computed(() => FN_DELETE[props.resource]);
 
-interface Opt { code: string; name: string; inspectionSpecialtyCode?: string }
+interface Opt {
+  code: string;
+  name: string;
+  inspectionSpecialtyCode?: string;
+}
 
 const rawItems = ref<ListItem[]>([]);
 const total = ref(0);
@@ -299,7 +303,14 @@ function writeBool(key: string, value: boolean | "indeterminate"): void {
 
 function resetForm(): void {
   if (props.resource === "specialties") {
-    Object.assign(form, { code: "", name: "", officialNo: "", isOfficial: false, enabled: true, sortOrder: 999 });
+    Object.assign(form, {
+      code: "",
+      name: "",
+      officialNo: "",
+      isOfficial: false,
+      enabled: true,
+      sortOrder: 999,
+    });
   } else if (props.resource === "objects") {
     Object.assign(form, {
       code: "",
@@ -315,7 +326,14 @@ function resetForm(): void {
   } else if (props.resource === "parameters") {
     Object.assign(form, { code: "", name: "", unit: "", sourceType: "custom", sortOrder: 999 });
   } else {
-    Object.assign(form, { code: "", name: "", version: "", status: "active", sourceDocumentId: "", sortOrder: 999 });
+    Object.assign(form, {
+      code: "",
+      name: "",
+      version: "",
+      status: "active",
+      sourceDocumentId: "",
+      sortOrder: 999,
+    });
   }
 }
 
@@ -409,8 +427,8 @@ async function loadOptions(): Promise<void> {
     objectOptions.value = normalizeListResponse<Opt>(objRes.data).items;
   }
   if (props.resource === "parameters") {
-    const stdRes = await inspectionDictionaryListStandards({ page: 1, pageSize: 200 }).catch(
-      () => emptyListResponse(),
+    const stdRes = await inspectionDictionaryListStandards({ page: 1, pageSize: 200 }).catch(() =>
+      emptyListResponse(),
     );
     standardOptions.value = normalizeListResponse<Opt>(stdRes.data).items;
   }
@@ -427,7 +445,14 @@ onMounted(async () => {
 });
 
 watch(
-  () => [props.resource, keyword.value, specialtyFilter.value, objectFilter.value, standardFilter.value] as const,
+  () =>
+    [
+      props.resource,
+      keyword.value,
+      specialtyFilter.value,
+      objectFilter.value,
+      standardFilter.value,
+    ] as const,
   async () => {
     await load();
     await loadOptions();
@@ -435,7 +460,8 @@ watch(
 );
 
 function isOfficialRow(item: ListItem): boolean {
-  if (props.resource === "specialties" || props.resource === "objects") return item.isOfficial === true;
+  if (props.resource === "specialties" || props.resource === "objects")
+    return item.isOfficial === true;
   if (props.resource === "parameters") return item.sourceType === "official";
   return false;
 }
@@ -505,7 +531,8 @@ async function submitForm(): Promise<void> {
       }
     } else if (props.resource === "parameters") {
       const unit = String(form.unit ?? "") || undefined;
-      const sourceType = (String(form.sourceType ?? "custom") || "custom") as InspectionParameterSourceType;
+      const sourceType = (String(form.sourceType ?? "custom") ||
+        "custom") as InspectionParameterSourceType;
       if (mode.value.kind === "create") {
         await inspectionDictionaryCreateParameter({
           code,
@@ -553,7 +580,8 @@ async function submitForm(): Promise<void> {
     closeDialog();
     await load();
   } catch (e: unknown) {
-    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "保存失败";
+    const msg =
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "保存失败";
     saveError.value = msg;
   }
 }
@@ -580,7 +608,8 @@ async function confirmDelete(): Promise<void> {
     deleteTarget.value = null;
     await load();
   } catch (e: unknown) {
-    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "删除失败";
+    const msg =
+      (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "删除失败";
     deleteError.value = msg;
   } finally {
     deleting.value = false;
@@ -596,8 +625,10 @@ function columnHeaders(): string[] {
 
 function cellOf(item: ListItem, idx: number): string {
   switch (idx) {
-    case 0: return item.code;
-    case 1: return item.name;
+    case 0:
+      return item.code;
+    case 1:
+      return item.name;
     case 2:
       if (props.resource === "specialties") return item.officialNo ?? "-";
       if (props.resource === "parameters") return item.unit ?? "-";
@@ -606,14 +637,16 @@ function cellOf(item: ListItem, idx: number): string {
     case 3:
       if (props.resource === "specialties") return item.isOfficial ? "官方" : "自定义";
       if (props.resource === "objects") return stdCodesOfObject(item.code);
-      if (props.resource === "standards") return STANDARD_STATUS_CN[item.status ?? ""] ?? item.status ?? "-";
+      if (props.resource === "standards")
+        return STANDARD_STATUS_CN[item.status ?? ""] ?? item.status ?? "-";
       return objectNamesOfParam(item.code);
     case 4:
       if (props.resource === "specialties") return item.enabled ? "启用" : "停用";
       if (props.resource === "objects") return item.enabled ? "启用" : "停用";
       if (props.resource === "standards") return paramNamesOfStandard(item.code);
       return stdCodesOfParam(item.code);
-    default: return "-";
+    default:
+      return "-";
   }
 }
 </script>
@@ -628,7 +661,9 @@ function cellOf(item: ListItem, idx: number): string {
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">{{ title }}</h1>
-        <p class="text-sm text-muted-foreground">M06 检测能力多资源列表（数据来自 lab-msw fixtures）</p>
+        <p class="text-sm text-muted-foreground">
+          M06 检测能力多资源列表（数据来自 lab-msw fixtures）
+        </p>
       </div>
       <Button :data-fn="fnCreate" @click="openCreate">
         {{ createLabel }}
@@ -636,19 +671,9 @@ function cellOf(item: ListItem, idx: number): string {
     </div>
 
     <div class="flex flex-wrap gap-2">
-      <Input
-        v-model="keyword"
-        class="max-w-sm"
-        placeholder="搜索编码/名称"
-      />
-      <Select
-        v-if="props.resource !== 'specialties'"
-        v-model="specialtyFilter"
-      >
-        <SelectTrigger
-          class="w-48"
-          aria-label="检测专项筛选"
-        >
+      <Input v-model="keyword" class="max-w-sm" placeholder="搜索编码/名称" />
+      <Select v-if="props.resource !== 'specialties'" v-model="specialtyFilter">
+        <SelectTrigger class="w-48" aria-label="检测专项筛选">
           <SelectValue placeholder="全部专项" />
         </SelectTrigger>
         <SelectContent>
@@ -662,10 +687,7 @@ function cellOf(item: ListItem, idx: number): string {
         v-if="props.resource === 'standards' || props.resource === 'parameters'"
         v-model="objectFilter"
       >
-        <SelectTrigger
-          class="w-48"
-          aria-label="检测项目筛选"
-        >
+        <SelectTrigger class="w-48" aria-label="检测项目筛选">
           <SelectValue placeholder="全部项目" />
         </SelectTrigger>
         <SelectContent>
@@ -675,14 +697,8 @@ function cellOf(item: ListItem, idx: number): string {
           </SelectItem>
         </SelectContent>
       </Select>
-      <Select
-        v-if="props.resource === 'parameters'"
-        v-model="standardFilter"
-      >
-        <SelectTrigger
-          class="w-48"
-          aria-label="检测标准筛选"
-        >
+      <Select v-if="props.resource === 'parameters'" v-model="standardFilter">
+        <SelectTrigger class="w-48" aria-label="检测标准筛选">
           <SelectValue placeholder="全部标准" />
         </SelectTrigger>
         <SelectContent>
@@ -694,16 +710,23 @@ function cellOf(item: ListItem, idx: number): string {
       </Select>
     </div>
 
-    <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">{{ error }}</div>
+    <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">
+      {{ error }}
+    </div>
 
-    <div v-if="!loading && items.length === 0" class="text-sm text-muted-foreground text-center py-8">
+    <div
+      v-if="!loading && items.length === 0"
+      class="text-sm text-muted-foreground text-center py-8"
+    >
       暂无{{ title }}，点击右上角新建一行
     </div>
 
     <Table v-else class="w-full text-sm bg-white rounded shadow overflow-hidden">
       <TableHeader class="bg-muted text-muted-foreground">
         <TableRow>
-          <TableHead v-for="(h, i) in columnHeaders()" :key="i" class="px-4 py-2 text-left">{{ h }}</TableHead>
+          <TableHead v-for="(h, i) in columnHeaders()" :key="i" class="px-4 py-2 text-left">{{
+            h
+          }}</TableHead>
           <TableHead class="px-4 py-2 text-left w-32">操作</TableHead>
         </TableRow>
       </TableHeader>
@@ -772,7 +795,9 @@ function cellOf(item: ListItem, idx: number): string {
           </DialogDescription>
         </DialogHeader>
         <div class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-3 text-sm">
-          <div v-if="saveError" role="alert" class="text-destructive bg-destructive/10 p-2 rounded">{{ saveError }}</div>
+          <div v-if="saveError" role="alert" class="text-destructive bg-destructive/10 p-2 rounded">
+            {{ saveError }}
+          </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <Label>编码</Label>
@@ -789,10 +814,18 @@ function cellOf(item: ListItem, idx: number): string {
               <Input v-model="form.officialNo" />
             </div>
             <div class="pt-6 flex items-center gap-2">
-              <Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /> <Label>官方</Label>
+              <Checkbox
+                :model-value="readBool('isOfficial')"
+                @update:model-value="(v) => writeBool('isOfficial', v)"
+              />
+              <Label>官方</Label>
             </div>
             <div class="pt-6 flex items-center gap-2">
-              <Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /> <Label>启用</Label>
+              <Checkbox
+                :model-value="readBool('enabled')"
+                @update:model-value="(v) => writeBool('enabled', v)"
+              />
+              <Label>启用</Label>
             </div>
           </div>
           <div v-else-if="props.resource === 'objects'" class="space-y-3">
@@ -821,9 +854,24 @@ function cellOf(item: ListItem, idx: number): string {
               </div>
             </div>
             <div class="grid grid-cols-3 gap-3">
-              <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOfficial')" @update:model-value="(v) => writeBool('isOfficial', v)" /><Label>官方</Label></div>
-              <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('enabled')" @update:model-value="(v) => writeBool('enabled', v)" /><Label>启用</Label></div>
-              <div class="pt-6 flex items-center gap-2"><Checkbox :model-value="readBool('isOptionalForQualification')" @update:model-value="(v) => writeBool('isOptionalForQualification', v)" /><Label>资质可选</Label></div>
+              <div class="pt-6 flex items-center gap-2">
+                <Checkbox
+                  :model-value="readBool('isOfficial')"
+                  @update:model-value="(v) => writeBool('isOfficial', v)"
+                /><Label>官方</Label>
+              </div>
+              <div class="pt-6 flex items-center gap-2">
+                <Checkbox
+                  :model-value="readBool('enabled')"
+                  @update:model-value="(v) => writeBool('enabled', v)"
+                /><Label>启用</Label>
+              </div>
+              <div class="pt-6 flex items-center gap-2">
+                <Checkbox
+                  :model-value="readBool('isOptionalForQualification')"
+                  @update:model-value="(v) => writeBool('isOptionalForQualification', v)"
+                /><Label>资质可选</Label>
+              </div>
             </div>
             <div class="text-xs text-muted-foreground">
               已选检测参数候选：{{ parameterOptions.length }} 个（M06.F02.I02 关联）
@@ -876,12 +924,8 @@ function cellOf(item: ListItem, idx: number): string {
           </div>
         </div>
         <DialogFooter class="px-6 py-3 justify-end gap-2 border-t">
-          <Button variant="outline" @click="closeDialog">
-            取消
-          </Button>
-          <Button :data-fn="fnCreate" @click="submitForm">
-            保存
-          </Button>
+          <Button variant="outline" @click="closeDialog"> 取消 </Button>
+          <Button :data-fn="fnCreate" @click="submitForm"> 保存 </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -894,7 +938,8 @@ function cellOf(item: ListItem, idx: number): string {
       @cancel="deleteTarget = null"
     >
       <p>
-        确定删除 <span class="font-mono">{{ deleteTarget?.code ?? "" }}</span>？官方数据与被引用数据不可删除。
+        确定删除 <span class="font-mono">{{ deleteTarget?.code ?? "" }}</span
+        >？官方数据与被引用数据不可删除。
       </p>
       <p v-if="deleteError" role="alert" class="mt-2 text-destructive">{{ deleteError }}</p>
     </ConfirmDialog>
@@ -905,7 +950,11 @@ function cellOf(item: ListItem, idx: number): string {
       :open="linkingParam !== null"
       :parameter-code="linkingParam.code"
       :parameter-name="linkingParam.name"
-      @update:open="(v: boolean) => { if (!v) linkingParam = null; }"
+      @update:open="
+        (v: boolean) => {
+          if (!v) linkingParam = null;
+        }
+      "
       @changed="load"
     />
   </div>

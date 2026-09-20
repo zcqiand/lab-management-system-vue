@@ -7,7 +7,13 @@ import { fnTest } from "../../fn";
 import { mountWithProviders } from "../../helper";
 
 const STANDARDS = [
-  { id: "GB 175-2023", code: "GB 175-2023", name: "通用硅酸盐水泥", status: "active", tenantId: "TENANT-001" },
+  {
+    id: "GB 175-2023",
+    code: "GB 175-2023",
+    name: "通用硅酸盐水泥",
+    status: "active",
+    tenantId: "TENANT-001",
+  },
 ];
 const PARAMETERS = [
   { id: "IP-0001", code: "IP-0001", name: "抗压强度", unit: "MPa", tenantId: "TENANT-001" },
@@ -58,7 +64,7 @@ afterEach(() => {
 
 const MOUNT_GLOBAL = {
   stubs: {
-    teleport: { template: '<div data-teleport-stub><slot /></div>' },
+    teleport: { template: "<div data-teleport-stub><slot /></div>" },
   },
 };
 

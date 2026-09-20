@@ -13,10 +13,7 @@ const { allowed, checking } = useRequireAuth();
 <template>
   <div v-if="!checking && allowed" class="space-y-4">
     <PageHeader title="仪表盘" description="检测业务总览" />
-    <EmptyState
-      title="仪表盘建设中"
-      description="Sprint 2 将填充合同/接样/样品/报告统计与待办任务"
-    >
+    <EmptyState title="仪表盘建设中" description="Sprint 2 将填充合同/接样/样品/报告统计与待办任务">
       <template #icon><LayoutDashboard /></template>
     </EmptyState>
   </div>

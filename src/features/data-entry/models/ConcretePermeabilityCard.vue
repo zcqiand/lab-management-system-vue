@@ -73,8 +73,7 @@ function updatePermeated(i: number, v: Permeation) {
 <template>
   <div class="border rounded p-3 space-y-2">
     <div class="text-sm font-medium">
-      {{ p.canonicalName || p.name
-      }}<span v-if="p.unit">（{{ p.unit }}）</span>
+      {{ p.canonicalName || p.name }}<span v-if="p.unit">（{{ p.unit }}）</span>
     </div>
     <Table class="w-full text-xs">
       <TableHeader class="text-muted-foreground">

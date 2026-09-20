@@ -7,10 +7,7 @@
 //   M03.F02.I01 任务分配队列（页面 @entry）
 //   M03.F02.I01 安排按钮（data-fn，调 PUT /receipts/:id 更新 assignee + plannedDate）
 import { computed, onMounted, ref } from "vue";
-import {
-  receiptsAssignTask,
-  receiptsListReceipts,
-} from "@/api/endpoints/receipts/receipts";
+import { receiptsAssignTask, receiptsListReceipts } from "@/api/endpoints/receipts/receipts";
 import type { SampleReceipt } from "@/api/endpoints/model";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
@@ -163,12 +160,7 @@ async function handleSave(): Promise<void> {
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
             </TableCell>
             <TableCell class="px-4 py-2 text-right">
-              <Button
-                variant="outline"
-                size="sm"
-                data-fn="M03.F02.I01"
-                @click="openAssign(r)"
-              >
+              <Button variant="outline" size="sm" data-fn="M03.F02.I01" @click="openAssign(r)">
                 安排
               </Button>
             </TableCell>
@@ -191,19 +183,13 @@ async function handleSave(): Promise<void> {
           <DialogDescription>指定检测人员与计划检测日期。</DialogDescription>
         </DialogHeader>
         <div class="space-y-3">
-          <Label class="text-xs block">检测人员 *
-            <Input
-              v-model="assigneeName"
-              placeholder="如：张三"
-              class="mt-1"
-            />
+          <Label class="text-xs block"
+            >检测人员 *
+            <Input v-model="assigneeName" placeholder="如：张三" class="mt-1" />
           </Label>
-          <Label class="text-xs block">计划检测日期 *
-            <Input
-              v-model="plannedTestDate"
-              type="date"
-              class="mt-1"
-            />
+          <Label class="text-xs block"
+            >计划检测日期 *
+            <Input v-model="plannedTestDate" type="date" class="mt-1" />
           </Label>
         </div>
         <DialogFooter class="mt-4 justify-end gap-2">

@@ -16,7 +16,15 @@ const VERDICT_OPTIONS = ["合格", "不合格", "符合", "不符合"] as const;
 const NONE = "__none__";
 
 const props = defineProps<ParamModelProps>();
-const { parameter: p, record: rec, standards, stdParams, techReqs, onChange, readOnly = false } = props;
+const {
+  parameter: p,
+  record: rec,
+  standards,
+  stdParams,
+  techReqs,
+  onChange,
+  readOnly = false,
+} = props;
 
 const basisOptions = computed(() =>
   stdParams
@@ -24,9 +32,7 @@ const basisOptions = computed(() =>
     .map((sp) => standards.find((s) => s.code === sp.inspectionStandardCode))
     .filter((s): s is { code: string; name?: string } => Boolean(s)),
 );
-const reqOptions = computed(() =>
-  techReqs.filter((r) => r.inspectionParameterCode === p.code),
-);
+const reqOptions = computed(() => techReqs.filter((r) => r.inspectionParameterCode === p.code));
 
 function requirementLabel(r: (typeof reqOptions.value)[number]): string {
   if (!r) return "—";
@@ -42,9 +48,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
   if (r.targetValue)
     return `${r.comparison === "=" || r.comparison === "eq" ? "= " : ""}${r.targetValue}${unit}`;
   if (r.expression) return r.expression;
-  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue]
-    .filter(Boolean)
-    .join(" ");
+  const parts = [r.comparison, r.minValue ?? r.maxValue ?? r.targetValue].filter(Boolean).join(" ");
   return parts ? `${parts}${unit}` : r.remark || "—";
 }
 </script>
@@ -62,7 +66,9 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         <Select
           :model-value="rec?.standardCode || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => onChange({ standardCode: v === NONE ? '' : String(v) })"
+          @update:model-value="
+            (v: string | number) => onChange({ standardCode: v === NONE ? '' : String(v) })
+          "
         >
           <SelectTrigger aria-label="检测依据" class="w-full h-8 px-2 text-sm">
             <SelectValue placeholder="—" />
@@ -80,11 +86,13 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         <Select
           :model-value="rec?.requirementCode || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => {
-            const sv = v === NONE ? '' : String(v);
-            const found = reqOptions.find((r) => r.id === sv);
-            onChange({ requirementCode: sv, requirement: found ? requirementLabel(found) : '' });
-          }"
+          @update:model-value="
+            (v: string | number) => {
+              const sv = v === NONE ? '' : String(v);
+              const found = reqOptions.find((r) => r.id === sv);
+              onChange({ requirementCode: sv, requirement: found ? requirementLabel(found) : '' });
+            }
+          "
         >
           <SelectTrigger aria-label="技术要求" class="w-full h-8 px-2 text-sm">
             <SelectValue placeholder="—" />
@@ -112,7 +120,9 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
         <Select
           :model-value="rec?.verdict || NONE"
           :disabled="readOnly"
-          @update:model-value="(v: string | number) => onChange({ verdict: v === NONE ? '' : String(v) })"
+          @update:model-value="
+            (v: string | number) => onChange({ verdict: v === NONE ? '' : String(v) })
+          "
         >
           <SelectTrigger aria-label="单项评定" class="w-full h-8 px-2 text-sm">
             <SelectValue placeholder="未评定" />

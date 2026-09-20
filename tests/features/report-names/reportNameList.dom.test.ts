@@ -245,14 +245,7 @@ describe("Phase 2a-3 — ReportNameList 列表 <Table> 原语回归", () => {
 
     const heads = lastWrapper.findAll('[role="columnheader"]');
     expect(heads.length).toBe(6);
-    expect(heads.map((h) => h.text())).toEqual([
-      "编码",
-      "简称",
-      "全称",
-      "模板",
-      "排序",
-      "操作",
-    ]);
+    expect(heads.map((h) => h.text())).toEqual(["编码", "简称", "全称", "模板", "排序", "操作"]);
   });
 
   it("2 个 fixture 行：data-fn 落到 rowgroup[1] 内 div[role=row]", async () => {
@@ -314,9 +307,7 @@ describe("Phase 2e-3 — ReportNameList 表单弹窗走 Dialog 底座", () => {
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
-    const createBtn = lastWrapper
-      .findAll("button")
-      .find((b) => b.text() === "新建报告名称")!;
+    const createBtn = lastWrapper.findAll("button").find((b) => b.text() === "新建报告名称")!;
     await createBtn.trigger("click");
     await flushPromises();
     return lastWrapper;

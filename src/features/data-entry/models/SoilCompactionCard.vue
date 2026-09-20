@@ -51,9 +51,7 @@ function update(i: number, field: keyof CompactionPoint, v: string) {
   if (readOnly) return;
   const num = Number(v);
   const v2 = Number.isFinite(num) ? num : 0;
-  const next = points.value.map((p, idx) =>
-    idx === i ? { ...p, [field]: v2 } : p,
-  );
+  const next = points.value.map((p, idx) => (idx === i ? { ...p, [field]: v2 } : p));
   points.value = next;
   emit(next);
 }
@@ -112,11 +110,11 @@ const inputCls =
     <div class="flex gap-6 text-sm">
       <span>
         最大干密度（g/cm³）：
-        <b data-testid="max-dry-density">{{ peak.maxDryDensity ?? '—' }}</b>
+        <b data-testid="max-dry-density">{{ peak.maxDryDensity ?? "—" }}</b>
       </span>
       <span>
         最优含水率（%）：
-        <b data-testid="optimal-moisture">{{ peak.optimalMoisture ?? '—' }}</b>
+        <b data-testid="optimal-moisture">{{ peak.optimalMoisture ?? "—" }}</b>
       </span>
     </div>
   </div>

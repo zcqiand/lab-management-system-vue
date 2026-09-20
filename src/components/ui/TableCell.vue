@@ -13,11 +13,7 @@ const props = defineProps<{ class?: string }>();
 </script>
 
 <template>
-  <div
-    v-bind="$attrs"
-    :class="cn('p-2 align-middle', props.class)"
-    role="cell"
-  >
+  <div v-bind="$attrs" :class="cn('p-2 align-middle', props.class)" role="cell">
     <slot />
   </div>
 </template>

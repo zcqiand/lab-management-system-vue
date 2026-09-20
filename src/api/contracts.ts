@@ -53,9 +53,7 @@ export type UnsubscribeFn = () => void;
 export interface AuthContextActions {
   login(
     req: import("./endpoints/model").LoginRequest,
-  ): Promise<
-    import("./endpoints/model").LoginResponse | import("./endpoints/model").ErrorResponse
-  >;
+  ): Promise<import("./endpoints/model").LoginResponse | import("./endpoints/model").ErrorResponse>;
   logout(): Promise<void>;
   /** 静默刷新：基于 refreshToken；401 时退到 anonymous */
   refresh(): Promise<
@@ -64,9 +62,7 @@ export interface AuthContextActions {
   /** 登录后选租户（仅在 awaiting_tenant 态可调） */
   switchTenant(
     req: import("./endpoints/model").SwitchTenantRequest,
-  ): Promise<
-    import("./endpoints/model").LoginResponse | import("./endpoints/model").ErrorResponse
-  >;
+  ): Promise<import("./endpoints/model").LoginResponse | import("./endpoints/model").ErrorResponse>;
   /** RBAC 单点判断（来自 /auth/permissions 缓存） */
   hasPermission(perm: string): boolean;
   onChange(handler: (state: AuthState) => void): UnsubscribeFn;

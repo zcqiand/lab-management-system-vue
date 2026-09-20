@@ -8,14 +8,8 @@
 // 适配层：msw handlers-extra.ts summaryExtraHandlers 直接返回 REF 期望形状，
 // 无需 installShapeAdapters 额外兜底。
 import { computed, onMounted, ref, watch } from "vue";
-import {
-  summaryGetDashboardStats,
-  summaryGetReportSummary,
-} from "@/api/endpoints/summary/summary";
-import type {
-  DashboardStats,
-  SummaryData,
-} from "@/api/endpoints/model";
+import { summaryGetDashboardStats, summaryGetReportSummary } from "@/api/endpoints/summary/summary";
+import type { DashboardStats, SummaryData } from "@/api/endpoints/model";
 import Label from "@/components/ui/Label.vue";
 import Select from "@/components/ui/Select.vue";
 import SelectTrigger from "@/components/ui/SelectTrigger.vue";
@@ -56,9 +50,10 @@ async function load(): Promise<void> {
   loading.value = true;
   error.value = null;
   try {
-    const params = categoryCode.value && categoryCode.value !== "ALL"
-      ? { categoryCode: categoryCode.value }
-      : undefined;
+    const params =
+      categoryCode.value && categoryCode.value !== "ALL"
+        ? { categoryCode: categoryCode.value }
+        : undefined;
     const [summaryRes, statsRes] = await Promise.all([
       summaryGetReportSummary(params),
       summaryGetDashboardStats().catch(() => ({ data: null as DashboardStats | null })),
@@ -73,8 +68,12 @@ async function load(): Promise<void> {
   }
 }
 
-onMounted(() => { void load(); });
-watch(categoryCode, () => { void load(); });
+onMounted(() => {
+  void load();
+});
+watch(categoryCode, () => {
+  void load();
+});
 </script>
 
 <template>
@@ -110,27 +109,45 @@ watch(categoryCode, () => { void load(); });
         </div>
       </div>
 
-      <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">{{ error }}</div>
+      <div v-if="error" role="alert" class="text-sm text-destructive bg-destructive/10 p-2 rounded">
+        {{ error }}
+      </div>
 
-      <div v-if="!loading && data && data.rows.length === 0" class="text-sm text-muted-foreground text-center py-8">
+      <div
+        v-if="!loading && data && data.rows.length === 0"
+        class="text-sm text-muted-foreground text-center py-8"
+      >
         暂无报告
       </div>
 
       <Table v-else-if="data && data.rows.length > 0" class="w-full text-sm">
         <TableHeader class="bg-muted text-muted-foreground">
           <TableRow>
-            <TableHead v-for="c in data.columns" :key="c.key" class="px-4 py-2 text-left">{{ c.label }}</TableHead>
+            <TableHead v-for="c in data.columns" :key="c.key" class="px-4 py-2 text-left">{{
+              c.label
+            }}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow v-for="(row, idx) in data.rows" :key="idx" class="border-t hover:bg-muted">
             <TableCell v-for="c in data.columns" :key="c.key" class="px-4 py-2 align-top">
-              <span v-if="c.key === 'flowStatus'" class="inline-flex items-center rounded border px-2 py-0.5 text-xs">
-                {{ (STATUS_LABEL[String(row[c.key] ?? '')] ?? (String(row[c.key] ?? '') || '-')) }}
+              <span
+                v-if="c.key === 'flowStatus'"
+                class="inline-flex items-center rounded border px-2 py-0.5 text-xs"
+              >
+                {{ STATUS_LABEL[String(row[c.key] ?? "")] ?? (String(row[c.key] ?? "") || "-") }}
               </span>
-              <span v-else-if="c.key === 'result' && row[c.key] === 'qualified'" class="inline-flex items-center rounded bg-success/10 text-success px-2 py-0.5 text-xs">合格</span>
-              <span v-else-if="c.key === 'result' && row[c.key] === 'unqualified'" class="inline-flex items-center rounded bg-destructive/10 text-destructive px-2 py-0.5 text-xs">不合格</span>
-              <span v-else>{{ String(row[c.key] ?? '-') }}</span>
+              <span
+                v-else-if="c.key === 'result' && row[c.key] === 'qualified'"
+                class="inline-flex items-center rounded bg-success/10 text-success px-2 py-0.5 text-xs"
+                >合格</span
+              >
+              <span
+                v-else-if="c.key === 'result' && row[c.key] === 'unqualified'"
+                class="inline-flex items-center rounded bg-destructive/10 text-destructive px-2 py-0.5 text-xs"
+                >不合格</span
+              >
+              <span v-else>{{ String(row[c.key] ?? "-") }}</span>
             </TableCell>
           </TableRow>
         </TableBody>
@@ -145,19 +162,19 @@ watch(categoryCode, () => { void load(); });
     <div data-fn="M05.F01.I02" class="grid grid-cols-2 md:grid-cols-5 gap-3">
       <div class="bg-white rounded shadow p-3">
         <div class="text-xs text-muted-foreground">合同数</div>
-        <div class="text-3xl font-semibold">{{ stats?.contractCount ?? '-' }}</div>
+        <div class="text-3xl font-semibold">{{ stats?.contractCount ?? "-" }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
         <div class="text-xs text-muted-foreground">接样数</div>
-        <div class="text-3xl font-semibold">{{ stats?.receiptCount ?? '-' }}</div>
+        <div class="text-3xl font-semibold">{{ stats?.receiptCount ?? "-" }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
         <div class="text-xs text-muted-foreground">样品数</div>
-        <div class="text-3xl font-semibold">{{ stats?.sampleCount ?? '-' }}</div>
+        <div class="text-3xl font-semibold">{{ stats?.sampleCount ?? "-" }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
         <div class="text-xs text-muted-foreground">待办任务</div>
-        <div class="text-3xl font-semibold text-warning">{{ stats?.pendingTaskCount ?? '-' }}</div>
+        <div class="text-3xl font-semibold text-warning">{{ stats?.pendingTaskCount ?? "-" }}</div>
       </div>
       <div class="bg-white rounded shadow p-3">
         <div class="text-xs text-muted-foreground">按状态分布</div>
