@@ -139,7 +139,7 @@ function statusBadgeClass(s: Contract["status"]): string {
 
 // 暴露给 template 的告警通道（vue 模板表达式作用域不识别 window/globalThis）
 function alertError(msg: string): void {
-  // eslint-disable-next-line no-alert
+   
   globalThis.alert(msg);
 }
 
