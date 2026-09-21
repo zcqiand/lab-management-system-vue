@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "批次 2 功能树变更全链路收口——门已绿，全部改动未提交",
+  "current_task": "5.73② 终审 B1 修复：prettier 归位（0050361）；批尾 unit gate r2 EXIT=0",
   "done": [
     "docs/functions/function-tree.md 批次 1+2 落盘（编号错位收敛 + act-merge）",
     "悬空锚点迁移 27 处（3 个列表页 delete-data-fn→I04、TechnicalRequirementList ×3→M06.F06.I05、测试 9 处、design/flow map 各 4 行）；CategoryDictList.vue 无锚点",
@@ -22,5 +22,6 @@
     "it() 标题禁写 Mxx.Fxx.Ixx 字面"
   ],
   "active_branch": "master",
-  "last_session_at": "2026-09-18"
+  "last_session_at": "2026-09-21",
+  "last_session_summary": "终审 M1 勘误：directive 实移除 4 条（账面 35 系警告计数口径漂移）"
 }
