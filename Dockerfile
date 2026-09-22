@@ -1,6 +1,6 @@
 # ===== lab-management-system-vue — Vite SPA production image =====
 # Multi-stage: build with node:24-alpine, serve with nginx:alpine.
-# 容器内监听 :80;VPS nginx 反代到 host 8010 (lab-vue.xiangru.uk)。
+# 容器内监听 :80;VPS nginx 反代到 host :5203 (lab 家族 X03 段，ADR-0018; lab-vue.xiangru.uk)。
 #
 # 与 nextjs 姊妹仓差异:那边 SSR + Node runtime,这里静态 SPA + nginx:alpine。
 # 参考 output/ecommerce-oms/frontend/Dockerfile (单 stage 简化版);
