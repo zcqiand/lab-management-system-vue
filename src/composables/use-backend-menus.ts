@@ -35,7 +35,9 @@ export interface MenuNode {
   children: MenuNode[];
 }
 
-const APP_CODE = "lab-management";
+export const APP_CODE = "lab-management";
+/** 镜像 react 仓 menus.ts APP_NAME（2026-09-23 侧栏重设计后 AppShell 品牌头消费） */
+export const APP_NAME = "建筑工程实验室管理系统";
 
 export function useBackendMenus(): {
   data: () => MenuNode[] | null;

@@ -1,42 +1,22 @@
 <script setup lang="ts">
 // @entry M01.F05.I04
-// AppShell — 业务页统一骨架（sidebar + 顶栏 BackendSwitcher + 内容区）。
-// Sprint 1 只装配仪表盘；Sprint 2 Batch 1 加 M04 基础数据 4 码表。
-// M01.F05.I04 登出：侧栏底部「退出登录」按钮（镜像 react app-shell.tsx header
-// 登出按钮），logout() 清 token 后 replace /login（守卫只在 DashboardPage，
-// 这里显式跳转保证任意页面登出都回登录页）。
+// AppShell — 业务页统一骨架。2026-09-23 深色侧栏重设计，镜像 react app-shell.tsx：
+// 深色分组侧栏 SidebarNav（menus 树直传，flattenToNavItems 删除）、白底 h-14
+// 头部（应用名 + 用户 + auth 态徽标 + 退出登录）、根容器 bg-slate-50。
+// BackendBadge 按 react 同构放侧栏 footerExtras。
 //
-// 菜单数据源（2026-08-25 起，ADR-0009）：useBackendMenus() 拉 lab 后端
-// /api/auth/menus（orval authGetMenus；2026-08-27 起 miss 503 上抛错误，
-// AppShell 渲染错误态；不再静默回退静态 FALLBACK_NAV——demo 兜底删除后，
-// 前端兜底同样让真问题隐形，与家族语义一致）。
-import { computed, onErrorCaptured, ref, watch, type Component } from "vue";
+// 菜单数据源（ADR-0009）：useBackendMenus() 拉 lab 后端 /api/auth/menus；
+// miss（503 MENUS_UNAVAILABLE）上抛错误态，不静默回退静态树。
+import { computed, onErrorCaptured, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import {
-  Activity,
-  Archive,
-  Beaker,
-  ClipboardCheck,
-  ClipboardList,
-  Database,
-  FileText,
-  FlaskConical,
-  LayoutDashboard,
-  ListChecks,
-  LogOut,
-  PackageSearch,
-  ScrollText,
-  Settings,
-  Shield,
-  TestTube2,
-  Wrench,
-} from "lucide-vue-next";
-import SidebarNav, { type NavItem } from "@/components/app/SidebarNav.vue";
+import { LogOut } from "lucide-vue-next";
+import SidebarNav from "@/components/app/SidebarNav.vue";
 import BackendBadge from "@/components/app/BackendBadge.vue";
 import PageLoading from "@/components/app/PageLoading.vue";
+import Button from "@/components/ui/Button.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
 import { useRequireAuth } from "@/state/require-auth";
-import { useBackendMenus, type MenuNode } from "@/composables/use-backend-menus";
+import { APP_CODE, APP_NAME, useBackendMenus } from "@/composables/use-backend-menus";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -45,47 +25,12 @@ const router = useRouter();
 // 镜像 react 仓 app-shell.tsx §58 useRequireAuth()。
 const { allowed, checking } = useRequireAuth();
 
-// 图标字符串 → lucide 组件映射。saas 菜单 icon 字段是 PascalCase 字符串名，
-// SidebarNav.vue 接受 iconMap prop 后用 <component :is> 动态渲染。
-const ICON_MAP: Record<string, Component> = {
-  Activity,
-  Beaker,
-  ClipboardCheck,
-  ClipboardList,
-  Database,
-  FileText,
-  FlaskConical,
-  LayoutDashboard,
-  ListChecks,
-  PackageSearch,
-  ScrollText,
-  Settings,
-  Shield,
-  TestTube2,
-  Wrench,
-};
-
-// 拉后端菜单；树 → 平铺 NavItem[]（保留 group 节点作废：vue 仓 sidebar 是
-// 平铺布局，不渲染分组头；nextjs/react 的分组树 UI 不镜像）。
-const { data: backendMenus, error: menuError } = useBackendMenus();
-function flattenToNavItems(tree: MenuNode[]): NavItem[] {
-  const out: NavItem[] = [];
-  for (const g of tree) {
-    for (const leaf of g.children) {
-      if (!leaf.path) continue;
-      out.push({
-        label: leaf.name,
-        path: leaf.path === "" ? "/" : leaf.path,
-        icon: leaf.icon,
-      });
-    }
-  }
-  return out;
-}
-const navItems = computed<NavItem[]>(() => {
-  const tree = backendMenus();
-  return tree ? flattenToNavItems(tree) : [];
-});
+// 拉后端菜单（2026-09-23 重设计：menus 树直传 SidebarNav，不再平铺）。
+// 注意 hook 返回的是 getter 函数不是 ref —— 模板里直接当布尔用会恒 truthy，
+// 必须在 computed 里显式调用（旧平铺版在 navItems computed 里调，同款坑）。
+const { data: menusData, error: menuError, loading: menusIsLoading } = useBackendMenus();
+const backendMenus = computed(() => menusData());
+const menusLoading = computed(() => menusIsLoading());
 
 // 菜单加载错误（demo 兜底删除后不再静默回退）。
 const menuLoadError = ref<Error | null>(null);
@@ -106,18 +51,12 @@ const displayName = computed(() => {
   }
   return "";
 });
-const tenantName = computed(() => {
-  const s = auth.authState;
-  return s.kind === "authenticated" ? s.value.tenant.name : "";
-});
 
-function onAction(action: string): void {
-  if (action === "logout") {
-    // M01.F05.I04：logout 清 token/permissions → 落 anonymous → 回登录页
-    void authLogout().finally(() => {
-      router.replace("/login");
-    });
-  }
+// M01.F05.I04 登出：清 token → anonymous → replace /login
+function onLogout(): void {
+  void authLogout().finally(() => {
+    router.replace("/login");
+  });
 }
 </script>
 
@@ -127,58 +66,58 @@ function onAction(action: string): void {
        直接由守卫跳 /login（带 from 回跳），与 react 仓 app-shell.tsx 同构。 -->
   <div v-if="checking" />
   <div v-else-if="!allowed" />
-  <div v-else class="flex h-screen">
+  <div v-else class="min-h-screen flex bg-slate-50">
     <aside
-      v-if="menuLoadError"
-      class="border-r bg-sidebar flex w-60 flex-col"
-      data-testid="appshell-menu-error-aside"
+      v-if="menusLoading"
+      class="w-64 shrink-0 border-r bg-white flex items-center justify-center"
+      data-testid="appshell-menu-loading"
     >
-      <div class="flex items-center gap-2 border-b px-4 py-4">
-        <FlaskConical class="text-primary size-5" />
-        <span class="font-semibold">建筑工程实验室管理系统</span>
-      </div>
-      <div class="flex flex-1 flex-col items-center justify-center p-6 text-center">
-        <h2 class="text-destructive mb-2 font-semibold">菜单加载失败</h2>
-        <p
-          class="text-muted-foreground mb-4 break-all text-xs"
-          data-testid="appshell-menu-error-msg"
-        >
-          {{ menuLoadError.message }}
-        </p>
-        <p class="text-muted-foreground text-xs">
-          后端 /api/auth/menus miss（503 MENUS_UNAVAILABLE）；demo 兜底已删除，请重登或联系管理员。
-        </p>
-      </div>
-      <div class="mt-auto border-t p-3">
-        <SidebarNav
-          :items="[{ label: '退出登录', action: 'logout', icon: 'logout', dataFn: 'M01.F05.I04' }]"
-          :icon-map="ICON_MAP"
-          @action="onAction"
-        />
-      </div>
+      <span class="text-xs text-slate-500">菜单加载中…</span>
     </aside>
-    <aside v-else class="border-r bg-sidebar flex w-60 flex-col">
-      <div class="flex items-center gap-2 border-b px-4 py-4">
-        <FlaskConical class="text-primary size-5" />
-        <span class="font-semibold">建筑工程实验室管理系统</span>
-      </div>
-      <SidebarNav :items="navItems" :icon-map="ICON_MAP" />
-      <div class="mt-auto border-t p-3">
-        <SidebarNav
-          :items="[{ label: '退出登录', action: 'logout', icon: 'logout', dataFn: 'M01.F05.I04' }]"
-          :icon-map="ICON_MAP"
-          @action="onAction"
-        />
-      </div>
+    <aside
+      v-else-if="menuLoadError"
+      class="w-64 shrink-0 border-r bg-white flex flex-col items-center justify-center p-6 text-center"
+      data-testid="appshell-menu-error"
+    >
+      <h2 class="text-rose-700 mb-2 text-base font-semibold">菜单加载失败</h2>
+      <p class="text-slate-600 mb-4 break-all text-xs" data-testid="appshell-menu-error-msg">
+        {{ menuLoadError.message }}
+      </p>
+      <p class="text-xs text-slate-500">
+        后端 /api/auth/menus miss（503 MENUS_UNAVAILABLE）；demo 兜底已删除，请重登或联系管理员。
+      </p>
     </aside>
-    <div class="flex flex-1 flex-col">
-      <header class="border-b flex h-14 items-center justify-between px-4">
-        <div class="text-muted-foreground text-sm">
-          {{ tenantName ? `${tenantName} · ${displayName}` : displayName }}
+    <SidebarNav
+      v-else
+      :menus="backendMenus ?? []"
+      :app-code="APP_CODE"
+      :app-name="APP_NAME"
+      :version="`lab-management-system-vue · appCode=lab-management`"
+    >
+      <template #footerExtras><BackendBadge /></template>
+    </SidebarNav>
+    <main class="flex min-w-0 flex-1 flex-col">
+      <header class="border-b flex h-14 items-center gap-4 bg-white px-6">
+        <h1 data-testid="appshell-app-name" class="text-base font-semibold">{{ APP_NAME }}</h1>
+        <div class="ml-auto flex items-center gap-3 text-xs text-slate-500">
+          <span v-if="displayName" class="font-mono">
+            用户=<span class="text-slate-900 font-medium">{{ displayName }}</span>
+          </span>
+          <span data-testid="appshell-auth-state">{{ auth.authState.kind }}</span>
+          <Button
+            v-if="auth.authState.kind === 'authenticated'"
+            variant="outline"
+            size="sm"
+            data-fn="M01.F05.I04"
+            data-testid="logout-button"
+            @click="onLogout"
+          >
+            <LogOut class="mr-1 size-4" />
+            退出登录
+          </Button>
         </div>
-        <BackendBadge />
       </header>
-      <main class="flex-1 overflow-auto p-6">
+      <section class="flex-1 overflow-auto p-6">
         <!-- B6 加载态：懒加载路由 chunk 解析期间也显示整页加载态（页面内数据门控见各页面） -->
         <Suspense>
           <router-view />
@@ -186,7 +125,7 @@ function onAction(action: string): void {
             <PageLoading />
           </template>
         </Suspense>
-      </main>
-    </div>
+      </section>
+    </main>
   </div>
 </template>

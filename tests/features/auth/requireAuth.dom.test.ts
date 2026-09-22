@@ -9,7 +9,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { fnTest } from "../../fn";
 import { createRouter, createMemoryHistory, type Router } from "vue-router";
 import { createPinia, setActivePinia, getActivePinia } from "pinia";
-import { defineComponent, h } from "vue";
+import { defineComponent, h, unref } from "vue";
 import { useRequireAuth } from "@/state/require-auth";
 import { __testActions, __testReset, __testState } from "@/state/auth";
 import type { AuthState } from "@/api/contracts";
@@ -49,12 +49,12 @@ const USER = { id: "u1", username: "admin" };
 const TENANT_A = { tenantId: "t-a", code: "ACME", name: "甲公司", roleIds: [] };
 const TENANT_B = { tenantId: "t-b", code: "BETA", name: "乙公司", roleIds: [] };
 
-/** 守卫探针组件：useRequireAuth 结果渲染出来 */
+/** 守卫探针组件：useRequireAuth 结果渲染出来（unref 兼容 reactive 化返回值） */
 function makeProbe(permissions?: string[]) {
   return defineComponent({
     setup() {
       const { allowed, checking } = useRequireAuth({ permissions });
-      return () => h("div", { "data-testid": "guard" }, `${allowed}|${checking}`);
+      return () => h("div", { "data-testid": "guard" }, `${unref(allowed)}|${unref(checking)}`);
     },
   });
 }
@@ -141,6 +141,42 @@ describe("M01.F04.I03 路由守卫", () => {
       const router = await mountGuard();
       await flushPromises();
       expect(router.currentRoute.value.path).toBe("/login");
+    },
+  );
+
+  // 2026-09-23 冷启动白屏根因：useRequireAuth 曾在 setup 时一次性算死
+  // allowed/checking（普通布尔非响应式）——hydrateAuth 的 /me 晚于 AppShell
+  // setup 返回时（冷 profile / 慢网），authState idle→authenticated 推进了
+  // store，但模板里的 checking 永远停在 true → 登录后白屏。
+  // 锁行为：mount 时 idle → 之后转 authenticated，探针必须翻转。
+  fnTest(
+    ["M01.F04.I03"],
+    "idle mount 后转 authenticated → 探针翻转（冷启动不卡 checking）",
+    async () => {
+      const pinia = getActivePinia()!;
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [
+          { path: "/secret", component: makeProbe() },
+          { path: "/login", component: { template: "<div>login</div>" } },
+          { path: "/403", component: { template: "<div>403</div>" } },
+        ],
+      });
+      router.push("/secret");
+      await router.isReady();
+      const wrapper = mount(makeProbe(), { global: { plugins: [pinia, router] } });
+      await flushPromises();
+      expect(wrapper.text()).toBe("false|true"); // idle 挂起
+
+      // 模拟 hydrate 晚到：login 推进 FSM → authenticated
+      queue.push(
+        { status: 200, data: { token: "t3", refreshToken: "r3", user: USER, tenants: [TENANT_A] } },
+        { status: 200, data: { permissions: ["report:approve"] } },
+      );
+      await __testActions.login({ username: "admin", password: "x" });
+      await flushPromises();
+      expect(wrapper.text()).toBe("true|false"); // 响应式翻转
+      expect(router.currentRoute.value.path).toBe("/secret");
     },
   );
 });

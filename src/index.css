@@ -48,6 +48,18 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+
+    /* sidebar token 组（镜像 react 仓 index.css oklch 中性色 → 本仓裸 HSL 分量格式；
+     * AppShell aside 的 bg-sidebar 之前无 token → Tailwind v4 不生成该工具类 →
+     * 侧栏裸白，2026-09-23 补齐） */
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 0 0% 14.9%;
+    --sidebar-primary: 0 0% 20%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 96.1%;
+    --sidebar-accent-foreground: 0 0% 20%;
+    --sidebar-border: 0 0% 89.8%;
+    --sidebar-ring: 0 0% 64.1%;
   }
 
   body {
@@ -88,4 +100,12 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
 }

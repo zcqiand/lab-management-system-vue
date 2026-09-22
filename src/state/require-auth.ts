@@ -6,7 +6,7 @@
 //   - awaiting_tenant → 重定向 /login（选租户页已移除，M00.F02 保持规划）
 //   - authenticated + requiredPermissions 缺权 → 拦在 /403
 
-import { watch } from "vue";
+import { computed, watch, type ComputedRef } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/state/auth";
 
@@ -16,8 +16,8 @@ export interface RequireAuthOptions {
 }
 
 export function useRequireAuth(options: RequireAuthOptions = {}): {
-  allowed: boolean;
-  checking: boolean;
+  allowed: ComputedRef<boolean>;
+  checking: ComputedRef<boolean>;
 } {
   const auth = useAuthStore();
   const router = useRouter();
@@ -49,10 +49,15 @@ export function useRequireAuth(options: RequireAuthOptions = {}): {
     { immediate: true },
   );
 
-  const s = auth.authState;
-  if (s.kind === "authenticated") {
-    const allowed = required.every((p) => s.value.permissions.includes(p));
-    return { allowed, checking: false };
-  }
-  return { allowed: false, checking: s.kind === "idle" };
+  // 2026-09-23 冷启动白屏根因修复：此函数曾在 setup 时一次性算死 allowed/checking
+  // （普通布尔非响应式）——hydrateAuth 的 /me 晚于 AppShell setup 返回时（冷
+  // profile / 慢网），authState idle→authenticated 推进了 store，但模板里的
+  // checking 永远停在 true → 登录后白屏卡「检查登录态」。改成 computed 随
+  // store 响应式翻转；react 仓同位是 hook state 天然响应式，此处补齐镜像语义。
+  const allowed = computed(() => {
+    const s = auth.authState;
+    return s.kind === "authenticated" && required.every((p) => s.value.permissions.includes(p));
+  });
+  const checking = computed(() => auth.authState.kind === "idle");
+  return { allowed, checking };
 }

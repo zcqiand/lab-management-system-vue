@@ -122,18 +122,24 @@ beforeEach(() => {
 });
 
 describe("M01.F04.I01 useBackendMenus", () => {
-  fnTest(["M01.F04.I01"], "成功：/api/auth/menus 契约树 → AppShell 平铺渲染叶子菜单", async () => {
-    await toAuthenticated();
-    queue.push({ status: 200, data: CONTRACT_MENUS });
-    const wrapper = await mountShell();
+  fnTest(
+    ["M01.F04.I01"],
+    "成功：/api/auth/menus 契约树 → AppShell 分组侧栏渲染（镜像 react）",
+    async () => {
+      await toAuthenticated();
+      queue.push({ status: 200, data: CONTRACT_MENUS });
+      const wrapper = await mountShell();
 
-    // 平铺渲染：group「总览」不出现，叶子「独有菜单X/Y」出现
-    expect(wrapper.text()).toContain("独有菜单X");
-    expect(wrapper.text()).toContain("独有菜单Y");
-    // 端点正确（防回退到旧 saas 路径）
-    expect(calls).toContainEqual({ method: "GET", url: "/api/auth/menus" });
-    expect(calls.some((c) => c.url.includes("/api/saas/"))).toBe(false);
-  });
+      // 2026-09-23 镜像 react 深色侧栏重设计：分组头「总览」渲染（旧平铺决策
+      // 作废），叶子「独有菜单X/Y」照常渲染
+      expect(wrapper.text()).toContain("总览");
+      expect(wrapper.text()).toContain("独有菜单X");
+      expect(wrapper.text()).toContain("独有菜单Y");
+      // 端点正确（防回退到旧 saas 路径）
+      expect(calls).toContainEqual({ method: "GET", url: "/api/auth/menus" });
+      expect(calls.some((c) => c.url.includes("/api/saas/"))).toBe(false);
+    },
+  );
 
   fnTest(["M01.F04.I01"], "失败：抛错上抛，AppShell 渲染错误态（demo 兜底删除）", async () => {
     await toAuthenticated();
