@@ -17,6 +17,7 @@ import { useRoute, useRouter } from "vue-router";
 import { FlaskConical } from "lucide-vue-next";
 import { useAuthStore, setSession } from "@/state/auth";
 import { getApiBaseUrl, getApiMode } from "@/api/backend-config";
+import { env } from "@/lib/env";
 import { authSsoAuthorize, authSsoCallback } from "@/api/endpoints/auth/auth";
 import type { LoginResponse, OAuthGrantType, OAuthResponseType } from "@/api/endpoints/model";
 
@@ -210,7 +211,9 @@ watch(
       <p class="text-muted-foreground/70 text-xs">
         流程：lab /login → saas /authorize → saas 登录 → 带 code 回 lab /login → lab 后端换 token
       </p>
-      <p class="text-muted-foreground/70 text-xs">demo 后端：{{ apiMode }} · saas 端口：3000</p>
+      <p class="text-muted-foreground/70 text-xs">
+        demo 后端：{{ apiMode }} · saas 身份平台：{{ env.saasBaseUrl }}
+      </p>
     </div>
   </div>
 </template>
