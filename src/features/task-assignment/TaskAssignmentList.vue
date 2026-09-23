@@ -9,6 +9,7 @@
 import { computed, onMounted, ref } from "vue";
 import { receiptsAssignTask, receiptsListReceipts } from "@/api/endpoints/receipts/receipts";
 import type { SampleReceipt } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -41,7 +42,6 @@ const FLOW_STAGE_LABELS: Record<FlowStage, string> = {
 };
 
 const items = ref<SampleReceipt[]>([]);
-const total = ref(0);
 const keyword = ref("");
 // B6 加载态：首屏即视为加载中（首帧不渲染空表壳；refetch 时列表保持旧数据，不回空页）
 const loading = ref(true);
@@ -62,7 +62,6 @@ async function load(): Promise<void> {
       ...(keyword.value ? { keyword: keyword.value } : {}),
     });
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
-    total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
     loading.value = false;
   }
@@ -103,14 +102,7 @@ async function handleSave(): Promise<void> {
   <PageLoading v-if="showPageLoading" />
   <div v-else>
     <!-- @entry M03.F02.I01 任务分配队列页 -->
-    <div class="mb-4 flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold">任务分配</h1>
-        <p class="text-sm text-muted-foreground">
-          M03.F02 为接样单指定检测人员与计划日期（flowStatus=task_assignment）
-        </p>
-      </div>
-    </div>
+    <PageHeader title="任务分配" description="为接样单指定检测人员与计划日期" />
 
     <div class="mb-4 flex gap-2">
       <Input
@@ -122,11 +114,8 @@ async function handleSave(): Promise<void> {
       <Button variant="outline" @click="load()">搜索</Button>
     </div>
 
+    <!-- 2026-09-23 用户裁定：「待安排接样单（N）」标题条删除，表格直接落白卡 -->
     <div class="bg-white rounded shadow">
-      <div class="flex items-center justify-between px-4 py-2 border-b">
-        <h3 class="text-base font-semibold">待安排接样单（{{ total || "…" }}）</h3>
-        <span v-if="loading" class="text-xs text-muted-foreground">加载中…</span>
-      </div>
       <Table class="w-full text-sm">
         <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
@@ -135,7 +124,7 @@ async function handleSave(): Promise<void> {
             <TableHead class="px-4 py-2 text-left">检测人员</TableHead>
             <TableHead class="px-4 py-2 text-left">计划日期</TableHead>
             <TableHead class="px-4 py-2 text-left">流程状态</TableHead>
-            <TableHead class="px-4 py-2 text-right">操作</TableHead>
+            <TableHead class="px-4 py-2 text-right whitespace-nowrap">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -159,7 +148,7 @@ async function handleSave(): Promise<void> {
             <TableCell class="px-4 py-2 text-xs">
               {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
             </TableCell>
-            <TableCell class="px-4 py-2 text-right">
+            <TableCell class="px-4 py-2 text-right whitespace-nowrap">
               <Button variant="outline" size="sm" data-fn="M03.F02.I01" @click="openAssign(r)">
                 安排
               </Button>

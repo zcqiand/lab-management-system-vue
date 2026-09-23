@@ -105,6 +105,10 @@ describe("M01.F05.I04 登出", () => {
     expect(btn).toBeTruthy();
     expect(btn.textContent).toContain("退出登录");
     expect(router.currentRoute.value.path).toBe("/");
+    // 2026-09-23 用户裁定：header 右侧 = 登录用户 + 租户切换器（替代 auth-kind 徽标）
+    const headerSwitcher = wrapper.element.querySelector('[data-testid="tenant-switcher"]');
+    expect(headerSwitcher).toBeTruthy();
+    expect(headerSwitcher!.textContent).toContain("甲公司");
   });
 
   fnTest(

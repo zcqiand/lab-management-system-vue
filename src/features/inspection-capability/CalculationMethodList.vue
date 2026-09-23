@@ -20,6 +20,7 @@ import type {
   CreateCalculationMethodRequest,
   UpdateCalculationMethodRequest,
 } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -258,15 +259,14 @@ async function confirmDelete(): Promise<void> {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else data-fn="M06.F05.I01" class="space-y-4">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold">计算方法维护</h1>
-        <p class="text-sm text-muted-foreground">
-          M06.F05 计算方法（复合主键：检测项目 + 检测参数）——算法类型 + 试件数量 + 修约规则
-        </p>
-      </div>
-      <Button data-fn="M06.F05.I01" @click="openCreate"> 新建计算方法 </Button>
-    </div>
+    <PageHeader
+      title="计算方法维护"
+      description="算法类型、试件数量与修约规则（按检测项目 + 检测参数）"
+    >
+      <template #actions>
+        <Button data-fn="M06.F05.I01" @click="openCreate"> 新建计算方法 </Button>
+      </template>
+    </PageHeader>
 
     <div class="flex gap-2">
       <Input v-model="keyword" class="max-w-sm" placeholder="搜索项目/参数" />

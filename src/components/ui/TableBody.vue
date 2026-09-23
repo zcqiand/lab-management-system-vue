@@ -9,7 +9,10 @@ defineProps<{ class?: string }>();
 </script>
 
 <template>
-  <div :class="cn('[&_div[role=row]:last-child]:border-0', $attrs.class as string)" role="rowgroup">
+  <div
+    :class="cn('table-row-group [&_div[role=row]:last-child]:border-0', $attrs.class as string)"
+    role="rowgroup"
+  >
     <slot />
   </div>
 </template>

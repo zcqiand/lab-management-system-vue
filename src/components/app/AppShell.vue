@@ -2,8 +2,8 @@
 // @entry M01.F05.I04
 // AppShell — 业务页统一骨架。2026-09-23 深色侧栏重设计，镜像 react app-shell.tsx：
 // 深色分组侧栏 SidebarNav（menus 树直传，flattenToNavItems 删除）、白底 h-14
-// 头部（应用名 + 用户 + auth 态徽标 + 退出登录）、根容器 bg-slate-50。
-// BackendBadge 按 react 同构放侧栏 footerExtras。
+// 头部（应用名 + 登录用户 + 租户切换器 + 退出登录）、根容器 bg-slate-50。
+// BackendSwitcher（2026-09-23 恢复后端切换）放侧栏 footerExtras。
 //
 // 菜单数据源（ADR-0009）：useBackendMenus() 拉 lab 后端 /api/auth/menus；
 // miss（503 MENUS_UNAVAILABLE）上抛错误态，不静默回退静态树。
@@ -11,7 +11,8 @@ import { computed, onErrorCaptured, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { LogOut } from "lucide-vue-next";
 import SidebarNav from "@/components/app/SidebarNav.vue";
-import BackendBadge from "@/components/app/BackendBadge.vue";
+import BackendSwitcher from "@/components/app/BackendSwitcher.vue";
+import TenantSwitcher from "@/components/app/TenantSwitcher.vue";
 import PageLoading from "@/components/app/PageLoading.vue";
 import Button from "@/components/ui/Button.vue";
 import { useAuthStore, logout as authLogout } from "@/state/auth";
@@ -47,7 +48,10 @@ onErrorCaptured((err) => {
 const displayName = computed(() => {
   const s = auth.authState;
   if (s.kind === "authenticated" || s.kind === "awaiting_tenant") {
-    return s.value.user.displayName ?? s.value.user.username;
+    // || 而非 ??：saas 无显示名 → aspnetcore SSO 落地 displayName=""，
+    // ?? 对空串不回退 → v-if 隐藏 → header 用户名消失（2026-09-23 回归锁
+    // appShellDisplayName.dom.test.ts；镜像 lab-nextjs / lab-react 同修）
+    return s.value.user.displayName || s.value.user.username;
   }
   return "";
 });
@@ -58,6 +62,12 @@ function onLogout(): void {
     router.replace("/login");
   });
 }
+
+// 租户切换成功后整页刷新：vue-query 缓存按旧租户 bake，跨租户不通用
+//（镜像 nextjs 版 router.refresh 语义）。
+function reloadPage(): void {
+  window.location.reload();
+}
 </script>
 
 <template>
@@ -66,7 +76,7 @@ function onLogout(): void {
        直接由守卫跳 /login（带 from 回跳），与 react 仓 app-shell.tsx 同构。 -->
   <div v-if="checking" />
   <div v-else-if="!allowed" />
-  <div v-else class="min-h-screen flex bg-slate-50">
+  <div v-else class="min-h-screen flex bg-linear-to-br from-slate-50 via-white to-slate-100">
     <aside
       v-if="menusLoading"
       class="w-64 shrink-0 border-r bg-white flex items-center justify-center"
@@ -87,23 +97,21 @@ function onLogout(): void {
         后端 /api/auth/menus miss（503 MENUS_UNAVAILABLE）；demo 兜底已删除，请重登或联系管理员。
       </p>
     </aside>
-    <SidebarNav
-      v-else
-      :menus="backendMenus ?? []"
-      :app-code="APP_CODE"
-      :app-name="APP_NAME"
-      :version="`lab-management-system-vue · appCode=lab-management`"
-    >
-      <template #footerExtras><BackendBadge /></template>
+    <SidebarNav v-else :menus="backendMenus ?? []" :app-code="APP_CODE" :app-name="APP_NAME">
+      <template #footerExtras><BackendSwitcher /></template>
     </SidebarNav>
     <main class="flex min-w-0 flex-1 flex-col">
-      <header class="border-b flex h-14 items-center gap-4 bg-white px-6">
+      <header
+        class="border-b border-slate-200 flex h-14 items-center gap-4 bg-white/80 px-6 backdrop-blur"
+      >
         <h1 data-testid="appshell-app-name" class="text-base font-semibold">{{ APP_NAME }}</h1>
         <div class="ml-auto flex items-center gap-3 text-xs text-slate-500">
-          <span v-if="displayName" class="font-mono">
-            用户=<span class="text-slate-900 font-medium">{{ displayName }}</span>
+          <!-- 2026-09-23 用户裁定：header 右侧 = 登录用户 + 租户切换器
+               （镜像 lab-nextjs app-shell.tsx，替代旧 auth-kind 徽标） -->
+          <span v-if="displayName" data-testid="user-display-name" class="font-mono">
+            <span class="text-slate-900 font-medium">{{ displayName }}</span>
           </span>
-          <span data-testid="appshell-auth-state">{{ auth.authState.kind }}</span>
+          <TenantSwitcher v-if="auth.authState.kind === 'authenticated'" @switched="reloadPage" />
           <Button
             v-if="auth.authState.kind === 'authenticated'"
             variant="outline"
@@ -118,13 +126,17 @@ function onLogout(): void {
         </div>
       </header>
       <section class="flex-1 overflow-auto p-6">
-        <!-- B6 加载态：懒加载路由 chunk 解析期间也显示整页加载态（页面内数据门控见各页面） -->
-        <Suspense>
-          <router-view />
-          <template #fallback>
-            <PageLoading />
-          </template>
-        </Suspense>
+        <!-- 2026-09-23 内容区对齐 saas-vue：max-w-6xl 居中约束——全宽铺满是
+             「白凸凸松散感」的主因，参照 saas-identity-platform-vue app-shell.vue -->
+        <div class="mx-auto max-w-6xl">
+          <!-- B6 加载态：懒加载路由 chunk 解析期间也显示整页加载态（页面内数据门控见各页面） -->
+          <Suspense>
+            <router-view />
+            <template #fallback>
+              <PageLoading />
+            </template>
+          </Suspense>
+        </div>
       </section>
     </main>
   </div>

@@ -19,6 +19,7 @@ import {
   contractsUpdateContract,
 } from "@/api/endpoints/contracts/contracts";
 import type { Contract, ContractStatus, ContractsListContractsParams } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -58,7 +59,6 @@ const EMPTY_BODY: ContractBody = {
 };
 
 const items = ref<Contract[]>([]);
-const total = ref(0);
 // status "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui
 // SelectItem 不允许 value=""，保留给 placeholder；"__all__" 在 load() 里
 // 翻译回空串才不下发给 API）
@@ -92,7 +92,6 @@ async function load(): Promise<void> {
     };
     const res = await contractsListContracts(params);
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
-    total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
     loading.value = false;
   }
@@ -133,8 +132,8 @@ function closeDialog(): void {
 }
 function statusBadgeClass(s: Contract["status"]): string {
   return s === "active"
-    ? "inline-block rounded bg-success/10 px-2 py-0.5 text-xs text-success"
-    : "inline-block rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground";
+    ? "inline-block whitespace-nowrap rounded bg-success/10 px-2 py-0.5 text-xs text-success"
+    : "inline-block whitespace-nowrap rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground";
 }
 
 // 暴露给 template 的告警通道（vue 模板表达式作用域不识别 window/globalThis）
@@ -162,20 +161,19 @@ async function submitForm(): Promise<void> {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else>
-    <div class="mb-4 flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold">合同管理</h1>
-        <p class="text-sm text-muted-foreground">
-          M02.F01 合同 CRUD 与工程信息维护（数据来自 lab-msw fixtures）
-        </p>
-      </div>
-      <!-- @entry M02.F01.I02 新建合同按钮 -->
-      <Button data-fn="M02.F01.I02" @click="openCreate"> 新建合同 </Button>
-    </div>
+    <!-- 2026-09-23 用户裁定：眉行分组名（资料管理）删除，页头只留标题 + 描述 -->
+    <PageHeader title="合同管理" description="委托合同登记与工程信息维护">
+      <template #actions>
+        <!-- @entry M02.F01.I02 新建合同按钮 -->
+        <Button data-fn="M02.F01.I02" @click="openCreate"> 新建合同 </Button>
+      </template>
+    </PageHeader>
 
     <div class="mb-4 flex gap-2">
       <Select v-model="status">
-        <SelectTrigger class="border rounded h-9 px-2 text-sm bg-white">
+        <!-- 2026-09-23 用户裁定：状态筛选不需要撑满，钉 w-36（弹窗表单内的
+             状态 Select 仍 w-full 走栅格，不受影响） -->
+        <SelectTrigger class="w-36 border rounded h-9 px-2 text-sm bg-white">
           <SelectValue placeholder="全部状态" />
         </SelectTrigger>
         <SelectContent>
@@ -323,11 +321,8 @@ async function submitForm(): Promise<void> {
       @cancel="deleteTarget = null"
     />
 
+    <!-- 2026-09-23 用户裁定：「合同列表（N）」标题条删除，表格直接落在白卡上 -->
     <div class="mt-4 bg-white rounded-xl border shadow-sm">
-      <div class="flex flex-row items-center justify-between px-6 py-4 border-b">
-        <div class="font-semibold text-base">合同列表（{{ total || "…" }}）</div>
-        <div v-if="loading" class="text-xs text-muted-foreground">加载中…</div>
-      </div>
       <Table class="w-full text-sm">
         <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
@@ -337,7 +332,7 @@ async function submitForm(): Promise<void> {
             <TableHead class="px-4 py-2 text-left">见证人</TableHead>
             <TableHead class="px-4 py-2 text-left">状态</TableHead>
             <TableHead class="px-4 py-2 text-left">委托日期</TableHead>
-            <TableHead class="px-4 py-2 text-right">操作</TableHead>
+            <TableHead class="px-4 py-2 text-right whitespace-nowrap">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -361,10 +356,10 @@ async function submitForm(): Promise<void> {
                 {{ c.status === "active" ? "在用" : "已归档" }}
               </span>
             </TableCell>
-            <TableCell class="px-4 py-2 text-xs text-muted-foreground">
+            <TableCell class="px-4 py-2 text-xs whitespace-nowrap text-muted-foreground">
               {{ c.entrustedDate ?? "—" }}
             </TableCell>
-            <TableCell class="px-4 py-2 text-right">
+            <TableCell class="px-4 py-2 text-right whitespace-nowrap">
               <Button size="sm" variant="outline" @click="openEdit(c)"> 编辑 </Button>
               <Button
                 variant="link"

@@ -133,8 +133,30 @@ describe("M02.F01 合同管理", () => {
   });
 });
 
-// Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。
-// 锁 3 件事，Phase 后续换原语 / 改 class 时不许回归：
+// 2026-09-23 用户裁定回归锚（不挂功能 ID，纯视觉裁定）：
+//   1. 页头眉行分组名「资料管理」删除（PageHeader 只传 title/description）
+//   2. 「合同列表（N）」标题条删除，表格直接落白卡
+//   3. 状态筛选 SelectTrigger 钉 w-36（不撑满）
+describe("2026-09-23 用户裁定 — ContractsList 页头/列表头/筛选宽度", () => {
+  it("不渲染「资料管理」眉行与「合同列表（N）」标题条；状态筛选带 w-36", async () => {
+    const { default: ContractsList } = await import("@/features/contracts/ContractsList.vue");
+    lastWrapper = mountWithProviders(ContractsList, { global: MOUNT_GLOBAL });
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 50));
+    await flushPromises();
+
+    expect(lastWrapper!.text()).toContain("合同管理");
+    expect(lastWrapper!.text()).not.toContain("资料管理");
+    expect(lastWrapper!.text()).not.toContain("合同列表（");
+    const statusTrigger = lastWrapper!
+      .findAll('[role="combobox"]')
+      .find((el) => el.text().includes("全部状态"));
+    expect(statusTrigger).toBeTruthy();
+    expect(statusTrigger!.classes()).toContain("w-36");
+  });
+});
+
+// Phase 1.2a Button 迁移回归锚（不挂功能 ID，工程设施测试）。// 锁 3 件事，Phase 后续换原语 / 改 class 时不许回归：
 //   1. <Button> 渲染 <button> 底层 — 原有 findAll("button") / data-fn 仍命中
 //   2. $attrs 转发 — data-fn 落到真实 <button>，不是被吞掉
 //   3. CVA base（inline-flex）活着；调用方 class（如 text-destructive）经 tailwind-merge 合并进来

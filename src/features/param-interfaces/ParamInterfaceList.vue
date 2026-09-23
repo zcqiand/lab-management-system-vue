@@ -14,6 +14,7 @@ import {
   paramInterfacesUpdateParamInterface,
 } from "@/api/endpoints/param-interfaces/param-interfaces";
 import type { ParamInterface } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -51,7 +52,6 @@ const EMPTY_FORM: FormState = {
 };
 
 const items = ref<ParamInterfaceRow[]>([]);
-const total = ref(0);
 const keyword = ref("");
 const mode = ref<Mode>({ kind: "idle" });
 // B6 加载态：首屏即视为加载中（首帧不渲染空表壳；refetch 时列表保持旧数据，不回空页）
@@ -75,9 +75,8 @@ async function load(): Promise<void> {
       page: 1,
       pageSize: 50,
     });
-    const { items: listItems, total: listTotal } = unwrapListResponse<ParamInterfaceRow>(res);
+    const { items: listItems } = unwrapListResponse<ParamInterfaceRow>(res);
     items.value = listItems;
-    total.value = listTotal;
   } finally {
     loading.value = false;
   }
@@ -135,14 +134,12 @@ async function submitForm(): Promise<void> {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else>
-    <div class="mb-4 flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold">参数界面维护</h1>
-        <p class="text-sm text-muted-foreground">M06.F08 参数界面（录入卡片模型）</p>
-      </div>
-      <!-- @entry M06.F08.I01 新建参数界面按钮 -->
-      <Button data-fn="M06.F08.I01" @click="openCreate"> 新建参数界面 </Button>
-    </div>
+    <PageHeader title="参数界面维护" description="检测参数的录入卡片模型">
+      <template #actions>
+        <!-- @entry M06.F08.I01 新建参数界面按钮 -->
+        <Button data-fn="M06.F08.I01" @click="openCreate"> 新建参数界面 </Button>
+      </template>
+    </PageHeader>
 
     <div class="mb-4 flex gap-2">
       <Input
@@ -218,18 +215,15 @@ async function submitForm(): Promise<void> {
       @cancel="deleteTarget = null"
     />
 
+    <!-- 2026-09-23 用户裁定：「参数界面列表（N）」标题条删除，表格直接落白卡 -->
     <div class="mt-4 bg-white rounded-xl border shadow-sm">
-      <div class="flex flex-row items-center justify-between px-6 py-4 border-b">
-        <div class="font-semibold text-base">参数界面列表（{{ total || "…" }}）</div>
-        <div v-if="loading" class="text-xs text-muted-foreground">加载中…</div>
-      </div>
       <Table class="w-full text-sm">
         <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">编码</TableHead>
             <TableHead class="px-4 py-2 text-left">组件路径</TableHead>
             <TableHead class="px-4 py-2 text-left">排序</TableHead>
-            <TableHead class="px-4 py-2 text-right">操作</TableHead>
+            <TableHead class="px-4 py-2 text-right whitespace-nowrap">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -247,7 +241,7 @@ async function submitForm(): Promise<void> {
             <TableCell class="px-4 py-2 font-mono text-xs">{{ r.code }}</TableCell>
             <TableCell class="px-4 py-2 font-mono text-xs">{{ r.componentPath }}</TableCell>
             <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{ r.sortOrder }}</TableCell>
-            <TableCell class="px-4 py-2 text-right">
+            <TableCell class="px-4 py-2 text-right whitespace-nowrap">
               <Button size="sm" variant="outline" @click="openEdit(r)"> 编辑 </Button>
               <Button
                 variant="link"

@@ -20,6 +20,7 @@ import type {
   TechnicalRequirement,
   UpdateTechnicalRequirementRequest,
 } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -262,15 +263,11 @@ async function confirmDelete(): Promise<void> {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else data-fn="M06.F06.I01" class="space-y-4">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold">技术要求维护</h1>
-        <p class="text-sm text-muted-foreground">
-          M06.F06 技术要求 — 四维度匹配：牌号 / 型号 / 等级 / 规格
-        </p>
-      </div>
-      <Button data-fn="M06.F06.I02" @click="openCreate"> 新建技术要求 </Button>
-    </div>
+    <PageHeader title="技术要求维护" description="四维度匹配：牌号 / 型号 / 等级 / 规格">
+      <template #actions>
+        <Button data-fn="M06.F06.I02" @click="openCreate"> 新建技术要求 </Button>
+      </template>
+    </PageHeader>
 
     <div class="flex flex-wrap gap-2">
       <Input v-model="brandFilter" aria-label="牌号筛选" class="max-w-32" placeholder="牌号" />

@@ -10,7 +10,7 @@
 //   6. menus=null 加载态「（菜单加载中）」
 //   7. icon 查不到映射（saas 菜单 icon="file" 小写枚举 vs ICON_MAP PascalCase）
 //      → 等宽占位 span（镜像 react Icon() fallback，非报错）
-//   8. footer slots（footerExtras=BackendBadge）+ version 文案
+//   8. footer slots（footerExtras=BackendSwitcher）
 // data-fn 锚点沿用 M01.F04.I01（侧栏容器原锚点，行为未变只换视觉）。
 import { describe, it, expect, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
@@ -82,7 +82,6 @@ function mountNav(props: Record<string, unknown> = {}, initialRoute = "/") {
       menus: TREE,
       appCode: "lab-management",
       appName: "建筑工程实验室管理系统",
-      version: "lab-management-system-vue · appCode=lab-management",
       ...props,
     },
   });
@@ -101,10 +100,12 @@ describe("SidebarNav 深色分组侧栏（镜像 react sidebar-nav.tsx）", () =
     expect(aside.classes()).toContain("w-60");
   });
 
-  it("品牌头：渐变 Logo + appName + appCode 行", () => {
+  it("品牌头：渐变 Logo + appName + 版本号行（2026-09-23 用户裁定：appCode 换版本号）", () => {
     const w = mountNav();
     expect(w.find('[data-testid="sidebar-app-name"]').text()).toBe("建筑工程实验室管理系统");
-    expect(w.text()).toContain("appCode = lab-management");
+    // 版本号来自 package.json（app-meta.ts），渲染为 v<MAJOR>.<MINOR>.<PATCH>
+    expect(w.find('[data-testid="sidebar-app-version"]').text()).toBe("v0.1.0");
+    expect(w.text()).not.toContain("appCode =");
   });
 
   it("分组头渲染：标题 + 子项计数 + 收/展按钮", () => {
@@ -185,7 +186,7 @@ describe("SidebarNav 深色分组侧栏（镜像 react sidebar-nav.tsx）", () =
     expect(link.find("svg").exists()).toBe(false);
   });
 
-  it("footer slots + version 文案", () => {
+  it("footer slots（2026-09-23 用户裁定：版本文案删除，版本号只在品牌头一处）", () => {
     lastWrapper = mountWithProviders(SidebarNav, {
       attachTo: document.body,
       router: { initialRoute: "/" },
@@ -193,13 +194,14 @@ describe("SidebarNav 深色分组侧栏（镜像 react sidebar-nav.tsx）", () =
         menus: TREE,
         appCode: "lab-management",
         appName: "建筑工程实验室管理系统",
-        version: "lab-management-system-vue · appCode=lab-management",
       },
       slots: {
-        footerExtras: '<div data-testid="footer-extras">badge</div>',
+        footerExtras: '<div data-testid="footer-extras">switcher</div>',
       },
     });
     expect(lastWrapper.find('[data-testid="footer-extras"]').exists()).toBe(true);
-    expect(lastWrapper.text()).toContain("lab-management-system-vue · appCode=lab-management");
+    // 版本文案不再渲染（2026-09-23 用户裁定）
+    expect(lastWrapper.text()).not.toContain("lab-management-system-vue v0.1.0");
+    expect(lastWrapper.text()).not.toContain("lab-management-system-vue · appCode");
   });
 });

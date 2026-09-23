@@ -22,6 +22,7 @@ import {
 } from "@/api/endpoints/receipts/receipts";
 import type { ReceiptsListReceiptsParams, SampleReceipt } from "@/api/endpoints/model";
 import { currentOperator } from "@/lib/flow-operator";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import DialogContent from "@/components/ui/DialogContent.vue";
@@ -87,7 +88,6 @@ const EMPTY_BODY: ReceiptBody = {
 };
 
 const items = ref<SampleReceipt[]>([]);
-const total = ref(0);
 // flowFilter "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui
 // SelectItem 不允许 value=""，保留给 placeholder）；load() 只认 receiving /
 // submitted，所以 "__all__" 天然翻译成「不下发 flowStatus」。
@@ -117,7 +117,6 @@ async function load(): Promise<void> {
     if (keyword.value) params.keyword = keyword.value;
     const res = await receiptsListReceipts(params);
     items.value = Array.isArray(res.data?.items) ? res.data.items : [];
-    total.value = typeof res.data?.total === "number" ? res.data.total : 0;
   } finally {
     loading.value = false;
   }
@@ -216,22 +215,20 @@ function alertError(msg: string): void {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else>
-    <div class="mb-4 flex items-center justify-between">
-      <div>
-        <!-- @entry M03.F01.I01 接样管理列表页 -->
-        <h1 class="text-2xl font-semibold">接样管理</h1>
-        <p class="text-sm text-muted-foreground">M03.F01 接样单 CRUD 与提交</p>
-      </div>
-      <!-- @entry M03.F01.I02 新建接样按钮 -->
-      <Button
-        variant="default"
-        class="bg-info hover:bg-info/90"
-        data-fn="M03.F01.I02"
-        @click="openCreate"
-      >
-        新建接样
-      </Button>
-    </div>
+    <!-- @entry M03.F01.I01 接样管理列表页 -->
+    <PageHeader title="接样管理" description="接样单登记、提交与流程推进">
+      <template #actions>
+        <!-- @entry M03.F01.I02 新建接样按钮 -->
+        <Button
+          variant="default"
+          class="bg-info hover:bg-info/90"
+          data-fn="M03.F01.I02"
+          @click="openCreate"
+        >
+          新建接样
+        </Button>
+      </template>
+    </PageHeader>
 
     <div class="mb-4 flex gap-2">
       <Select v-model="flowFilter">
@@ -253,11 +250,8 @@ function alertError(msg: string): void {
       <Button variant="outline" size="sm" @click="load()">搜索</Button>
     </div>
 
+    <!-- 2026-09-23 用户裁定：「接样列表（N）」标题条删除，表格直接落白卡 -->
     <div class="bg-white rounded shadow">
-      <div class="flex items-center justify-between px-4 py-2 border-b">
-        <h3 class="text-base font-semibold">接样列表（{{ total || "…" }}）</h3>
-        <span v-if="loading" class="text-xs text-muted-foreground">加载中…</span>
-      </div>
       <Table class="w-full text-sm">
         <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
@@ -303,10 +297,10 @@ function alertError(msg: string): void {
                 {{ FLOW_STAGE_LABELS[r.flowStatus] ?? r.flowStatus }}
               </span>
             </TableCell>
-            <TableCell class="px-4 py-2 text-xs text-muted-foreground">
+            <TableCell class="px-4 py-2 text-xs whitespace-nowrap text-muted-foreground">
               {{ (r.createdAt ?? "").slice(0, 10) }}
             </TableCell>
-            <TableCell class="px-4 py-2 text-right space-x-1">
+            <TableCell class="space-x-1 px-4 py-2 text-right whitespace-nowrap">
               <Button
                 v-if="r.flowStatus === 'receiving'"
                 size="sm"

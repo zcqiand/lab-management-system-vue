@@ -15,7 +15,13 @@ const props = defineProps<{ class?: string }>();
 <template>
   <div
     v-bind="$attrs"
-    :class="cn('h-10 px-2 text-left align-middle font-medium text-muted-foreground', props.class)"
+    :class="
+      cn(
+        // whitespace-nowrap mirror react table.tsx th——列头不换行，列宽才压得住
+        'table-cell h-10 whitespace-nowrap bg-muted/40 px-2 text-left align-middle text-xs font-medium text-muted-foreground',
+        props.class,
+      )
+    "
     role="columnheader"
   >
     <slot />

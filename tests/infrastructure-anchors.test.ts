@@ -14,8 +14,8 @@ describe("Infrastructure anchor registration", () => {
     );
   });
 
-  it("BackendBadge module source file exists (replaces BackendSwitcher — ADR-0014)", () => {
-    expect(fs.existsSync(path.join(SRC, "src/components/app/BackendBadge.vue"))).toBe(true);
+  it("BackendSwitcher module source file exists (2026-09-23 用户裁定恢复后端切换)", () => {
+    expect(fs.existsSync(path.join(SRC, "src/components/app/BackendSwitcher.vue"))).toBe(true);
   });
 
   it("axios interceptor module source file exists", () => {

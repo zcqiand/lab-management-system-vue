@@ -131,6 +131,18 @@ function invalidatePermissions(): void {
   writeKey(TOKEN_STORAGE_KEYS.permissionsCache, null);
 }
 
+// -- 会话租户清单（2026-09-23 TenantSwitcher 消费）---------------------------
+// AuthState 契约的 authenticated value 只带当前 tenant（M00 契约形状不动）；
+// 完整候选清单在 settleLogin / hydrateAuth 拿到的瞬间同步进这个模块级变量，
+// 供 TenantSwitcher 渲染候选（镜像 nextjs auth-context 的 tenants 字段职责）。
+
+let sessionTenants: MyTenant[] = [];
+
+/** 当前会话的候选租户清单（authenticated / awaiting_tenant 态有意义） */
+export function sessionTenantsList(): MyTenant[] {
+  return sessionTenants;
+}
+
 // @entry M01.F04.I02
 async function fetchPermissions(token: string): Promise<string[]> {
   if (permissionsCache && Date.now() - permissionsCache.fetchedAt < PERMISSIONS_TTL_MS) {
@@ -161,6 +173,7 @@ async function settleLogin(resp: LoginResponse): Promise<void> {
   persistTokens(resp);
   const tenantId = readKey(TOKEN_STORAGE_KEYS.activeTenantId);
   const tenants: MyTenant[] = resp.tenants ?? [];
+  sessionTenants = tenants;
   const remembered = tenants.find((t) => t.tenantId === tenantId);
   const single = tenants.length === 1 ? tenants[0] : undefined;
   const target = remembered ?? single ?? tenants[0];
@@ -226,7 +239,17 @@ async function doLogout(): Promise<void> {
   }
   clearPersisted();
   invalidatePermissions();
+  sessionTenants = [];
   setState(ANON);
+}
+
+/** 后端切换（BackendSwitcher）等场景的本地会话清理：不发 logout 请求，
+ *  只清 token/permissions/租户清单。跨后端 token 不通用，切换必清
+ *  （陈旧 token 在新后端 401）。真正登出走 logout()。 */
+export function clearPersistedSession(): void {
+  clearPersisted();
+  invalidatePermissions();
+  sessionTenants = [];
 }
 
 /** AppShell 等组件消费的 logout 入口（契约行为） */
@@ -246,6 +269,7 @@ async function doRefresh(): Promise<LoginResponse | ErrorResponse> {
     // 契约：401 时退到 anonymous
     clearPersisted();
     invalidatePermissions();
+    sessionTenants = [];
     setState(ANON);
     return { code: "REFRESH_FAILED", message: "刷新失败，退回匿名态" };
   }
@@ -297,6 +321,7 @@ export async function hydrateAuth(): Promise<void> {
       headers: { Authorization: `Bearer ${token}` },
     });
     const session = resp.data;
+    sessionTenants = session.tenants;
     const tenantId =
       readKey(TOKEN_STORAGE_KEYS.activeTenantId) ?? session.currentTenantId ?? undefined;
     const tenant = session.tenants.find((t) => t.tenantId === tenantId);
@@ -346,4 +371,10 @@ export function __testReset(): void {
   useAuthStore().$reset();
   listeners.clear();
   permissionsCache = null;
+  sessionTenants = [];
+}
+
+/** 测试专用：直注会话租户清单（生产同步点在 settleLogin / hydrateAuth） */
+export function __testSetTenants(tenants: MyTenant[]): void {
+  sessionTenants = tenants;
 }

@@ -1,10 +1,9 @@
 <!-- SidebarNav — 深色分组侧栏（2026-09-23 重设计，镜像 react 仓
   sidebar-nav.tsx）。旧版「平铺浅色侧栏 + AppShell flattenToNavItems」在用户
   验收里判「白凸凸」——与 react 镜像源视觉断裂，本版按 react 设计全量镜像：
-  bg-slate-900 深色骨架、品牌头（渐变 Logo + appName + appCode）、分组树递归
-  （SidebarNavLeaf）、全局收起/展开 + localStorage 持久化、footer slots +
-  version 文案。菜单数据源仍由消费方传入（AppShell → useBackendMenus，
-  ADR-0009）。
+  bg-slate-900 深色骨架、品牌头（渐变 Logo + appName + 版本号）、分组树递归
+  （SidebarNavLeaf）、全局收起/展开 + localStorage 持久化、footer slots。
+  菜单数据源仍由消费方传入（AppShell → useBackendMenus，ADR-0009）。
 
   与 react 版的差异（镜像改造点）：
   - leaf 有 path 用 router-link <a>（vue 仓惯例），无 path 渲染禁用 button
@@ -15,6 +14,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { cn } from "@/lib/utils";
+import { APP_VERSION } from "@/lib/app-meta";
 import SidebarNavLeaf from "@/components/app/SidebarNavLeaf.vue";
 import type { MenuNode } from "@/composables/use-backend-menus";
 
@@ -25,10 +25,8 @@ const props = withDefaults(
     menus: MenuNode[] | null;
     appCode: string;
     appName?: string | null;
-    /** Sidebar 底部版本文案（收起态缩写为 "v"） */
-    version?: string;
   }>(),
-  { appName: null, version: "lab-management-system-vue" },
+  { appName: null },
 );
 
 const route = useRoute();
@@ -131,7 +129,7 @@ function toggleGroup(code: string): void {
     >
       <div :class="cn('flex items-center gap-2', effectiveCollapsed && 'justify-center')">
         <div
-          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-bold"
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-linear-to-br from-blue-500 to-purple-600 text-sm font-bold"
         >
           L
         </div>
@@ -139,7 +137,10 @@ function toggleGroup(code: string): void {
           <h1 class="truncate text-sm font-bold leading-tight" data-testid="sidebar-app-name">
             {{ appName ?? "Lab-Management" }}
           </h1>
-          <p class="truncate text-xs text-white/50">appCode = {{ appCode }}</p>
+          <!-- 2026-09-23 用户裁定：appCode 行换版本号（appCode 仍作为 prop 参与本地持久化 key） -->
+          <p class="truncate text-xs text-white/50" data-testid="sidebar-app-version">
+            v{{ APP_VERSION }}
+          </p>
         </div>
       </div>
       <button
@@ -186,22 +187,12 @@ function toggleGroup(code: string): void {
       </template>
     </nav>
 
-    <!-- footer：主操作 / 次要操作（BackendBadge）/ 版本 -->
+    <!-- footer：主操作 / 次要操作（2026-09-23 用户裁定：版本文案删除，
+         版本号只在品牌头 sidebar-app-version 一处展示） -->
     <div class="border-t border-white/10" />
     <div :class="cn('space-y-2', effectiveCollapsed ? 'flex flex-col items-center p-2' : 'p-3')">
       <slot name="footerAction" />
       <slot name="footerExtras" />
-      <div
-        v-if="version"
-        :class="
-          cn(
-            'truncate text-xs text-white/40',
-            effectiveCollapsed ? 'text-center text-[10px]' : 'px-2',
-          )
-        "
-      >
-        {{ effectiveCollapsed ? "v" : version }}
-      </div>
     </div>
   </aside>
 </template>

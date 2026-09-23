@@ -62,6 +62,15 @@
     --sidebar-ring: 0 0% 64.1%;
   }
 
+  /* Tailwind v4 破坏性变更：border 工具类默认色 = currentColor（≈正文近黑），
+   * 不再是 v3 的灰。裸 `border` 类（表格外壳/面板/行分隔）因此全部渲染成黑描边，
+   * 与浅色体系不协调（2026-09-23 用户验收指认）。镜像 saas-identity-platform-vue
+   * index.css 的兜底：全局 border-color 归到语义 --border（浅灰）。
+   * 注意本仓 :root 存裸 HSL 分量，必须 hsl(var(--border)) 组装（见文件头注释）。 */
+  * {
+    border-color: hsl(var(--border));
+  }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));

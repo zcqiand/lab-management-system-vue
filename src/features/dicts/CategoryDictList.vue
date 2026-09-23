@@ -46,6 +46,7 @@ import {
 } from "@/api/endpoints/inspection-catalog/inspection-catalog";
 import { inspectionDictionaryListObjects } from "@/api/endpoints/inspection-dictionary/inspection-dictionary";
 import type { InspectionModel, InspectionObject } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
@@ -284,20 +285,18 @@ function dialogTitle(): string {
   <!-- B6 加载态：树 + 列表都到齐才出界面，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else class="flex min-h-0 flex-1 flex-col" :data-fn="dataFn">
-    <div class="flex shrink-0 items-center justify-between">
-      <div>
-        <h2 class="text-2xl font-bold">{{ title }}</h2>
-        <p v-if="hint" class="mt-1 text-xs text-muted-foreground">{{ hint }}</p>
-      </div>
-      <Button
-        :data-fn="createDataFn"
-        :disabled="!selectedCode && objects.length === 0"
-        class="bg-info hover:bg-info/90 disabled:cursor-not-allowed"
-        @click="openCreate"
-      >
-        新建
-      </Button>
-    </div>
+    <PageHeader :title="title" :description="hint" class="shrink-0">
+      <template #actions>
+        <Button
+          :data-fn="createDataFn"
+          :disabled="!selectedCode && objects.length === 0"
+          class="bg-info hover:bg-info/90 disabled:cursor-not-allowed"
+          @click="openCreate"
+        >
+          新建
+        </Button>
+      </template>
+    </PageHeader>
 
     <div
       v-if="errorMsg"

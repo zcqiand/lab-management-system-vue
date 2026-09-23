@@ -10,6 +10,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { summaryGetDashboardStats, summaryGetReportSummary } from "@/api/endpoints/summary/summary";
 import type { DashboardStats, SummaryData } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Label from "@/components/ui/Label.vue";
 import Select from "@/components/ui/Select.vue";
 import SelectTrigger from "@/components/ui/SelectTrigger.vue";
@@ -83,13 +84,8 @@ watch(categoryCode, () => {
   <!-- B6 加载态：两源到齐前整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else data-fn="M05.F01.I01" class="space-y-4">
-    <div class="bg-white rounded shadow p-4">
-      <div class="mb-3">
-        <h1 class="text-2xl font-semibold">报告汇总</h1>
-        <p class="text-sm text-muted-foreground">
-          M05.F01 报告汇总表（按报告类别 categoryCode 过滤）——数据来自 lab-msw fixtures
-        </p>
-      </div>
+    <PageHeader title="报告汇总" description="按报告类别汇总报告产出与结论" />
+    <div>
       <div class="mb-3 flex items-end gap-3">
         <div>
           <Label for="categoryCode">报告类别</Label>
@@ -159,24 +155,25 @@ watch(categoryCode, () => {
     </div>
 
     <!-- @entry M05.F01.I02 仪表盘统计卡片 -->
+
     <div data-fn="M05.F01.I02" class="grid grid-cols-2 md:grid-cols-5 gap-3">
-      <div class="bg-white rounded shadow p-3">
+      <div class="rounded-xl border bg-card p-4">
         <div class="text-xs text-muted-foreground">合同数</div>
         <div class="text-3xl font-semibold">{{ stats?.contractCount ?? "-" }}</div>
       </div>
-      <div class="bg-white rounded shadow p-3">
+      <div class="rounded-xl border bg-card p-4">
         <div class="text-xs text-muted-foreground">接样数</div>
         <div class="text-3xl font-semibold">{{ stats?.receiptCount ?? "-" }}</div>
       </div>
-      <div class="bg-white rounded shadow p-3">
+      <div class="rounded-xl border bg-card p-4">
         <div class="text-xs text-muted-foreground">样品数</div>
         <div class="text-3xl font-semibold">{{ stats?.sampleCount ?? "-" }}</div>
       </div>
-      <div class="bg-white rounded shadow p-3">
+      <div class="rounded-xl border bg-card p-4">
         <div class="text-xs text-muted-foreground">待办任务</div>
         <div class="text-3xl font-semibold text-warning">{{ stats?.pendingTaskCount ?? "-" }}</div>
       </div>
-      <div class="bg-white rounded shadow p-3">
+      <div class="rounded-xl border bg-card p-4">
         <div class="text-xs text-muted-foreground">按状态分布</div>
         <div class="text-sm space-y-1 pt-1">
           <div>草稿：{{ stats?.reportCountByStatus.draft ?? 0 }}</div>

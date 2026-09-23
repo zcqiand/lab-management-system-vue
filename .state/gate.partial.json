@@ -1,83 +1,22 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
+  "tier": "full",
+  "excluded_tier": [],
   "passed": true,
   "partial": true,
   "ran": [
-    "L0",
-    "L0.no_fallback",
-    "L0.5",
-    "L1",
-    "L2",
-    "L3",
-    "L4",
-    "L5"
+    "L1"
   ],
-  "checked_at": "2026-09-05T21:10:50+0800",
+  "checked_at": "2026-09-20T21:15:14+0800",
   "gates": [
-    {
-      "level": "L0",
-      "name": "结构完整性",
-      "passed": true,
-      "returncode": 0,
-      "duration_s": 0.156,
-      "output": ""
-    },
-    {
-      "level": "L0.no_fallback",
-      "name": "业务身份字段兜底（ADR-0019）",
-      "passed": true,
-      "returncode": 0,
-      "duration_s": 0.188,
-      "output": "L0.no_fallback: 扫描 123 文件, 跳过 0; 0 命中。"
-    },
-    {
-      "level": "L0.5",
-      "name": "env 一致性",
-      "passed": true,
-      "returncode": 0,
-      "duration_s": 0.125,
-      "output": "[OK] lab-management-system 家族 env 一致(9 个 synced key + deploy parity)"
-    },
     {
       "level": "L1",
       "name": "格式",
       "passed": true,
       "returncode": 0,
-      "duration_s": 4.219,
-      "output": "// 后端配置：env-driven 单 URL（ADR-0014 — 完全镜像 saas-identity-platform-nextjs）。\n//\n// 旧 4-backend 运行时切换（msw / nextjs / aspnetcore / springboot）+ localStorage 持久化\n// + 模块单例 + Pinia store 已废弃。改用：\n//\n//   VITE_API_BASE_URL    后端 base URL（默认 \"http://localhost:5200\" msw-http）\n//   VITE_API_MODE        显示标签（默认 \"msw-http\"），仅 UI 显示\n//\n// ADR-0012 v0.3.0：Service Worker 模式完全删除。dev 路径只走 msw-http\n//（独立 HTTP server，由 @lab/management-system-msw/src/server.ts 起在 :5200）；\n// *_ENABLE_MSW env 与 isMswEnabled() 函数一并删除。\n//\n// 所有调用方从 `getBaseUrl()` / `getBackend()` 切到 `getApiBaseUrl()` / `getApiMode()`。\n\nimport { env } from \"@/lib/env\";\n\nexport function getApiBaseUrl(): string {\n  return env.apiBaseUrl || \"http://localhost:5200\";\n}\n\nexport function getApiMode(): string {\n  return env.apiMode || \"msw-http\";\n}\n// Sprint 1 前端绑定契约消费入口。\n// SSOT: ../lab-management-system-shared/tsp/contracts/frontend-bind.tsp\n//       → generated/openapi/openapi.yaml components.schemas\n//       → orval → src/api/endpoints/endpoints.schemas.ts（此处只 re-export + 派生）\n// 本文件不引入 runtime 库；行为签名见 shared/.state/decision-log.md §2。\n\nimport { AuthHeaderKind, BackendId } from \"./endpoints/endpoints.schemas\";\nimport type {\n  AuthState,\n  BackendRegistry,\n  BackendConfig,\n  AuthContext,\n  AuthStateAnonymous,\n  AuthStateAnonymousValue,\n  AuthStateAuthenticated,\n  AuthStateAuthenticatedValue,\n  AuthStateAwaitingTenant,\n  AuthStateAwaitingTenantValue,\n  AuthStateIdle,\n  AuthStateIdleValue,\n  BackendFeatures,\n  TokenStorageKeys,\n} from \"./endpoints/endpoints.schemas\";\n\nexport type {\n  AuthContext,\n  AuthState,\n  AuthStateAnonymous,\n  AuthStateAnonymousValue,\n  AuthStateAuthenticated,\n  AuthStateAuthenticatedValue,\n  AuthStateAwaitingTenant,\n  AuthStateAwaitingTenantValue,\n  AuthStateIdle,\n  AuthStateIdleValue,\n  BackendConfig,\n  BackendFeatures,\n  BackendRegistry,\n  TokenStorageKeys,\n};\nexport { AuthHeaderKind, BackendId };\n\n// 行为契约（decision-log §2.1/§2.2 的 TS 签名；TypeSpec 不允许 model 挂方法，此处落地）\n\n/** 切换激活后端；持久化由消费方负责 */\nexport type SwitchBackendFn = (id: BackendId) => void;\n\n/** 订阅后端切换事件；返回 unsub 函数 */\nexport type OnBackendSwitchHandler = (newId: BackendId) => void;\nexport type UnsubscribeFn = () => void;\n\n/** AuthContext 行为签名（Vue 侧由 src/state/auth.ts pinia store 实现） */\nexport interface AuthContextActions {\n  login(\n    req: import(\"./endpoints/endpoints.schemas\").LoginRequest,\n  ): Promise<\n    | import(\"./endpoints/endpoints.schemas\").LoginResponse\n    | import(\"./endpoints/endpoints.schemas\").ErrorResponse\n  >;\n  logout(): Promise<void>;\n  /** 静默刷新：基于 refreshToken；401 时退到 anonymous */\n  refresh(): Promise<\n    | import(\"./endpoints/endpoints.schemas\").LoginResponse\n    | import(\"./endpoints/endpoints.schemas\").ErrorResponse\n  >;\n  /** 登录后选租户（仅在 awaiting_tenant 态可调） */\n  switchTenant(\n    req: import(\"./endpoints/endpoints.schemas\").SwitchTenantRequest,\n  ): Promise<\n    | import(\"./endpoints/endpoints.schemas\").LoginResponse\n    | import(\"./endpoints/endpoints.schemas\").ErrorResponse\n  >;\n  /** RBAC 单点判断（来自 /auth/permissions 缓存） */\n  hasPermission(perm: string): boolean;\n  onChange(handler: (state: AuthState) => void): UnsubscribeFn;\n}\n\n// 持久化 key 常量 — TokenStorageKeys 契约的运行时形态。\n// orval 对字符串字面量类型生成 TokenStorageKeysAccessToken 等独立枚举，\n// 这里直接展平成常量对象，避免消费点写裸字符串。\nexport const TOKEN_STORAGE_KEYS = {\n  accessToken: \"lab.accessToken\",\n  refreshToken: \"lab.refreshToken\",\n  activeTenantId: \"lab.activeTenantId\",\n  activeBackend: \"lab.activeBackend\",\n  permissionsCache: \"lab.permissions\",\n} as const;\n\n// 4 槽位默认注册表 — BackendConfig 契约的 lab family 缺省值（信息性）。\n// ADR-0014：运行时不再切后端；baseUrl 走 env（VITE_API_BASE_URL 单 URL）。\n// 这里 4 个槽位的 baseUrl 都回退到 env.apiBaseUrl（无独立 default），\n// 保留 BACKEND_REGISTRY_DEFAULT 仅作为契约类型的展示 — LoginPage 已不再查它。\nimport { env } from \"@/lib/env\";\n\nexport const BACKEND_REGISTRY_DEFAULT: BackendRegistry = {\n  active: \"msw\",\n  available: [\n    {\n      id: \"msw\",\n      label: \"MSW Mock\",\n      baseUrl: env.apiBaseUrl,\n      authHeader: \"Authorization\",\n      features: { sso: true, realDb: false },"
-    },
-    {
-      "level": "L2",
-      "name": "静态检查",
-      "passed": true,
-      "returncode": 0,
-      "duration_s": 8.781,
-      "output": "D:\\qiand-life\\1-projects\\xr-code-suite\\output\\lab-management-system-vue\\src\\api\\endpoints\\endpoints.schemas.ts\n    27:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n    41:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n    49:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n    66:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n    74:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n    96:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   104:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   123:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   131:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   179:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   200:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   254:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   534:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   543:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   554:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   587:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   670:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   726:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   735:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   778:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   786:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   842:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   851:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   878:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   890:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   899:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n   911:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n  1084:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n  1095:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n  1106:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n  1117:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-redeclare')\n\nD:\\qiand-life\\1-projects\\xr-code-suite\\output\\lab-management-system-vue\\src\\features\\contracts\\ContractsList.vue\n  158:3  warning  Unused eslint-disable directive (no problems were reported from 'no-alert')\n\nD:\\qiand-life\\1-projec"
-    },
-    {
-      "level": "L3",
-      "name": "类型",
-      "passed": true,
-      "returncode": 0,
-      "duration_s": 10.25,
-      "output": "npm warn Unknown cli config \"--noEmit\". This will stop working in the next major version of npm."
-    },
-    {
-      "level": "L4",
-      "name": "测试",
-      "passed": true,
-      "returncode": 0,
-      "duration_s": 23.578,
-      "output": "\u001b[1m\u001b[7m\u001b[36m RUN \u001b[39m\u001b[27m\u001b[22m \u001b[36mv2.1.9 \u001b[39m\u001b[90mD:/qiand-life/1-projects/xr-code-suite/output/lab-management-system-vue\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/features/data-entry/extFieldsPreviewModalsButtons.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 5143\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Phase 1.2c — SampleExtFieldsModal <Button> 原语回归\u001b[2m > \u001b[22m弹窗打开：取消 = <Button variant=outline>，确认 = <Button variant=default bg-info> \u001b[33m946\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Phase 1.2c — ReportPreviewModal <Button> 原语回归\u001b[2m > \u001b[22m弹窗打开：关闭 = <Button variant=outline>，打印 = <Button variant=default bg-info> \u001b[33m3682\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/task-assignment/taskAssignmentList.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 5986\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M03.F02 任务分配\u001b[2m > \u001b[22m[M03.F02.I01] 任务分配：渲染标题 + 列表行（fixture 真数据穿透） \u001b[33m4677\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/param-interfaces/paramInterfaceList.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 6487\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M06.F08 参数界面维护\u001b[2m > \u001b[22m[M06.F08.I01] 参数界面：渲染标题 + 列表行（fixture 真数据穿透） \u001b[33m4903\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/report-names/reportNameList.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m15 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 6689\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M06.F07 报告名称维护\u001b[2m > \u001b[22m[M06.F07.I01] 报告名称：渲染标题 + 列表行（fixture 真数据穿透） \u001b[33m4953\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/reports/reportPhasePage.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m21 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 6934\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M03.F05 报告审核\u001b[2m > \u001b[22m[M03.F05.I01] 报告审核：渲染标题 + 列表行（review 阶段 fixture 穿透） \u001b[33m4691\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/dicts/categoryDictPages.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 7220\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M04.F06-F09 码表维护 4 页\u001b[2m > \u001b[22m[M04.F06.I01] 型号维护：渲染标题 + 检测项目树（vue 翻译 CategoryDictList 镜像 react） \u001b[33m4922\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/data-entry/dataEntryPage.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 7387\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M03.F03 数据录入\u001b[2m > \u001b[22m[M03.F03.I01] 数据录入：渲染标题 + 列表行（fixture 真数据穿透） \u001b[33m4789\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M03.F03 数据录入\u001b[2m > \u001b[22m[M03.F03.I03] 数据录入：行内「录入结果」按钮（人工改判 verdict 入口） \u001b[33m312\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Phase 2e-3 — DataEntryPage 录入弹窗走 Dialog 底座\u001b[2m > \u001b[22mESC 关闭弹窗（走 @update:open → entryTarget = null） \u001b[33m337\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/contracts/contractsList.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 7399\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M02.F01 合同管理\u001b[2m > \u001b[22m[M02.F01.I01] 合同列表：渲染标题 + 列表行（fixture 真数据穿透） \u001b[33m4954\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M02.F01 合同管理\u001b[2m > \u001b[22m[M02.F01.I02] 合同管理：新建按钮开弹窗（标题『新建合同』） \u001b[33m348\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/data-entry/cardsAll.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m51 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 2721\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/auth-fsm.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 87\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/receipts/receiptsList.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m21 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 8708\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M03.F01 接样管理\u001b[2m > \u001b[22m[M03.F01.I01] 接样管理：渲染标题 + 列表行（fixture 真数据穿透） \u001b[33m4692\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m M03.F01 接样管理\u001b[2m > \u001b[22m[M03.F01.I02] 接样管理：新建按钮开弹窗（标题『新建接样』） \u001b[33m394\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Phase 1.3a — ReceiptsList 搜索/表单 <Input> 原语回归\u001b[2m > \u001b[22m新建弹窗内：5 个 <Input> 渲染（含 1 个 type=date），v-model 双向 \u001b[33m303\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归\u001b[2m > \u001b[22mflowFilter=__all__ 不下发 flowStatus；选「接样中」下发 receiving \u001b[33m317\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/auth/backendMenus.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 208\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/features/inspection-capability/parameterStandardLink.dom.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 3343\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m "
-    },
-    {
-      "level": "L5",
-      "name": "引用完整性",
-      "passed": true,
-      "returncode": 0,
-      "duration_s": 17.25,
-      "output": "100 个功能条目，引用完整。软告警 0 条（见 .state/alignment.json）"
+      "duration_s": 3.734,
+      "output": "Checking formatting...\nAll matched files use Prettier code style!"
     }
   ]
 }

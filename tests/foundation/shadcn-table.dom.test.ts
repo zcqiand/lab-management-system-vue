@@ -24,16 +24,23 @@ afterEach(() => {
 });
 
 describe("Phase 2a-1 foundation — shadcn-vue Table 底座", () => {
-  it("<Table> 渲染为 div[role=table]，基础 class 存在", () => {
+  it("<Table> 渲染滚动壳 + div[role=table]，基础 class 存在内层", () => {
     lastWrapper = mountWithProviders(TableFixture);
 
+    // 2026-09-23 对齐 react table.tsx 容器结构：外层 = overflow-x-auto 滚动壳
+    // （$attrs/data-testid 落这层），内层 = div[role=table] 挂 display:table。
     const root = lastWrapper.find('[data-testid="table-root"]');
     expect(root.exists()).toBe(true);
-    expect(root.element.tagName).toBe("DIV");
-    expect(root.attributes("role")).toBe("table");
-    expect(root.classes()).toContain("w-full");
-    expect(root.classes()).toContain("caption-bottom");
-    expect(root.classes()).toContain("text-sm");
+    const tableEl = root.find('[role="table"]');
+    expect(tableEl.exists()).toBe(true);
+    expect(tableEl.element.tagName).toBe("DIV");
+    expect(tableEl.attributes("role")).toBe("table");
+    expect(tableEl.classes()).toContain("w-full");
+    expect(tableEl.classes()).toContain("caption-bottom");
+    expect(tableEl.classes()).toContain("text-sm");
+    // 外层滚动壳的面板质感
+    expect(root.classes()).toContain("overflow-x-auto");
+    expect(root.classes()).toContain("shadow-sm");
   });
 
   it("<TableHeader> 渲染为 div[role=rowgroup]", () => {

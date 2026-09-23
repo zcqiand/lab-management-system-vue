@@ -34,6 +34,7 @@ import type {
   ObjectStandardLink,
   StandardParameterLink,
 } from "@/api/endpoints/model";
+import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Checkbox from "@/components/ui/Checkbox.vue";
 import Dialog from "@/components/ui/Dialog.vue";
@@ -658,17 +659,13 @@ function cellOf(item: ListItem, idx: number): string {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else :data-fn="fnId" class="space-y-4">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold">{{ title }}</h1>
-        <p class="text-sm text-muted-foreground">
-          M06 检测能力多资源列表（数据来自 lab-msw fixtures）
-        </p>
-      </div>
-      <Button :data-fn="fnCreate" @click="openCreate">
-        {{ createLabel }}
-      </Button>
-    </div>
+    <PageHeader :title="title">
+      <template #actions>
+        <Button :data-fn="fnCreate" @click="openCreate">
+          {{ createLabel }}
+        </Button>
+      </template>
+    </PageHeader>
 
     <div class="flex flex-wrap gap-2">
       <Input v-model="keyword" class="max-w-sm" placeholder="搜索编码/名称" />

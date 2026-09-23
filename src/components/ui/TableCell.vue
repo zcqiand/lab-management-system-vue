@@ -13,7 +13,11 @@ const props = defineProps<{ class?: string }>();
 </script>
 
 <template>
-  <div v-bind="$attrs" :class="cn('p-2 align-middle', props.class)" role="cell">
+  <!-- table-cell mirror react table.tsx td；p-2 px-4 = react 的 px-4 py-2 节奏
+       （p-2 保留给 cardsAll.dom.test.ts 的 py-1 覆盖技巧用）。
+       不挂全局 whitespace-nowrap——长 token 列会把表撑出视口；日期/操作列
+       由调用方按需挂 nowrap -->
+  <div v-bind="$attrs" :class="cn('table-cell p-2 px-4 align-middle', props.class)" role="cell">
     <slot />
   </div>
 </template>
