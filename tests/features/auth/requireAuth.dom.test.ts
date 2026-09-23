@@ -128,12 +128,31 @@ describe("M01.F04.I03 路由守卫", () => {
 
   fnTest(
     ["M01.F04.I03"],
-    "awaiting_tenant 访问受守卫路由 → 拦在 /login（选租户页已移除，M00.F02 保持规划）",
+    "login 多租户无记忆 → 自动选第一个租户 authenticated 不拦（2026-09-23 修 SSO 回调冻结）",
     async () => {
-      // login 多租户（无记忆租户）→ awaiting_tenant（此路径不发 permissions 请求）
+      queue.push(
+        {
+          status: 200,
+          data: { token: "t2", refreshToken: "r2", user: USER, tenants: [TENANT_A, TENANT_B] },
+        },
+        { status: 200, data: { permissions: [] } },
+      );
+      await __testActions.login({ username: "admin", password: "x" });
+      const s = await state();
+      expect(s.kind).toBe("authenticated");
+      const router = await mountGuard();
+      expect(router.currentRoute.value.path).toBe("/secret");
+    },
+  );
+
+  fnTest(
+    ["M01.F04.I03"],
+    "login 空租户列表 → awaiting_tenant 访问受守卫路由拦在 /login（选租户页已移除，M00.F02 保持规划）",
+    async () => {
+      // 空租户列表是 awaiting_tenant 仅存入口（此路径不发 permissions 请求）
       queue.push({
         status: 200,
-        data: { token: "t2", refreshToken: "r2", user: USER, tenants: [TENANT_A, TENANT_B] },
+        data: { token: "t3", refreshToken: "r3", user: USER, tenants: [] },
       });
       await __testActions.login({ username: "admin", password: "x" });
       const s = await state();
