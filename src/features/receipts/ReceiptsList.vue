@@ -231,7 +231,7 @@ function alertError(msg: string): void {
     </PageHeader>
 
     <div class="mb-4 flex gap-2">
-      <Select v-model="flowFilter">
+      <Select v-model="flowFilter" data-fn="M03.F03.I15">
         <SelectTrigger aria-label="流程状态筛选" class="w-40">
           <SelectValue placeholder="全部状态" />
         </SelectTrigger>
