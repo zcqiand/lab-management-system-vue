@@ -1,4 +1,4 @@
-// M00.F01.I01 fnTest — 顶栏登录用户显示名（空串回退回归锁）。
+// M00.F01 fnTest — 顶栏登录用户显示名（空串回退回归锁）。
 //
 // 2026-09-23 现场：saas sys_user 无显示名列 → /me 不带 displayName →
 // lab-aspnetcore SSO 落地 user.displayName=""（Upsert 存空串，FindByEmail
@@ -81,20 +81,16 @@ beforeEach(() => {
 });
 
 describe("M00.F01 顶栏用户显示名", () => {
-  fnTest(
-    ["M00.F01.I01"],
-    "displayName 空串 → 回退 username 渲染（?? 不兜空串回归锁）",
-    async () => {
-      queue.push(
-        { status: 200, data: { token: "t1", refreshToken: "r1", user: USER, tenants: [TENANT_A] } },
-        { status: 200, data: { permissions: [] } },
-        { status: 200, data: [] }, // GET /api/auth/menus（AppShell mount 拉菜单）
-      );
-      await __testActions.login({ username: "alice@acme.io", password: "x" });
-      const { wrapper } = await mountShell();
-      const el = wrapper.element.querySelector('[data-testid="user-display-name"]');
-      expect(el).toBeTruthy();
-      expect(el!.textContent).toContain("alice@acme.io");
-    },
-  );
+  fnTest(["M00.F01"], "displayName 空串 → 回退 username 渲染（?? 不兜空串回归锁）", async () => {
+    queue.push(
+      { status: 200, data: { token: "t1", refreshToken: "r1", user: USER, tenants: [TENANT_A] } },
+      { status: 200, data: { permissions: [] } },
+      { status: 200, data: [] }, // GET /api/auth/menus（AppShell mount 拉菜单）
+    );
+    await __testActions.login({ username: "alice@acme.io", password: "x" });
+    const { wrapper } = await mountShell();
+    const el = wrapper.element.querySelector('[data-testid="user-display-name"]');
+    expect(el).toBeTruthy();
+    expect(el!.textContent).toContain("alice@acme.io");
+  });
 });
