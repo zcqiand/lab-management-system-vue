@@ -2,7 +2,7 @@
 
 建筑工程实验室管理系统的 Vue 前端 —— 镜像 react 仓实现（Vite + Pinia + shadcn-vue），前端 only。
 
-本仓为《（书稿信息待补）》案例（待补）的可运行配套工程，是书稿代码块的 **source of truth**。
+本仓为《Vue从入门到项目实践》（亚马逊电子书）案例一「实验室管理系统」（第 34-38 章）的可运行配套工程，是书稿代码块的 **source of truth**。
 
 ## 快速开始
 
@@ -13,9 +13,11 @@ npm run dev        # 本地开发（Vite）
 npm run build      # 生产构建
 ```
 
+以上为前端本仓；完整跑通业务链路还需按各章说明启动配套后端与数据库（见第 34 章）。
+
 ## 功能特性
 
-- react 仓先实现、vue 仓翻译；不实现后端 route（后端走 msw :5173 / nextjs / springboot / aspnetcore :5000）
+- react 仓先实现、vue 仓翻译；不实现后端 route（无 mock 层，dev 由 BackendSwitcher 直连三真后端：nextjs :5201 / aspnetcore :5204 / springboot :5205）
 - orval 读 shared 仓 OpenAPI 生成 `src/api/endpoints/`（vue-query client）
 - shadcn-vue + Tailwind v4；env 驱动单 URL（ADR-0014）
 
@@ -37,9 +39,20 @@ npm run build      # 生产构建
 
 ## 配套书籍及章节映射
 
+> 同一案例仓后续接入其他书籍时，在此节下新增书籍小节。
+
+### 《Vue从入门到项目实践》（亚马逊电子书）
+
+- 书稿基线：tag `v0.3.40-20260925`（冻结，正文代码清单以此为准）
+- 书稿定位：案例一「实验室管理系统」，覆盖第 34-38 章
+
 | 章 | 主题 | 对应源文件 |
 | :--- | :--- | :--- |
-| （待补） | | |
+| 34 | 案例一：项目立项与架构设计 | `src/main.ts`、`src/router.ts`、`src/components/app/AppShell.vue` |
+| 35 | 案例一：认证与权限模块 | `src/pages/LoginPage.vue`、`src/state/auth.ts`、`src/state/require-auth.ts` |
+| 36 | 案例一：数据管理与业务模块 | `src/features/contracts/ContractsList.vue`、`src/features/data-entry/DataEntryPage.vue`、`src/features/inspection-capability/InspectionCapabilityList.vue` |
+| 37 | 案例一：流程引擎与状态机 | `src/features/task-assignment/TaskAssignmentList.vue`、`src/features/reports/ReportPhasePage.vue`、`src/features/receipts/ReceiptDetail.vue` |
+| 38 | 案例一：测试与交付 | `tests/`、`vitest.config.ts`、`nginx.conf`、`Dockerfile`、`.github/workflows/ci.yml` |
 
 ## 快速链接
 
