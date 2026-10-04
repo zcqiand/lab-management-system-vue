@@ -1,0 +1,1618 @@
+{
+  "_schema": "code-suite-handoff v1",
+  "_note": "写书的事实底，非逐字引用源。book 引用该 tag 的终态文件(带 source=)；此清单供作者对账建造顺序。",
+  "project": "lab-management-system-vue",
+  "tag": "v0.3.40-20260925",
+  "stack": "vue-ts",
+  "gate_proof": {
+    "tag": "v0.3.40-20260925",
+    "checked_at": "2026-09-25T10:36:56+00:00",
+    "verified": true,
+    "all_green": true,
+    "method": "gate.py --all",
+    "gate_command": "D:\\qiand-life\\1-projects\\xr-code-suite\\scripts\\gate.py -p lab-management-system-vue"
+  },
+  "function_tree": [
+    {
+      "fn_id": "M00.F02.I01",
+      "name": "租户切换器（POST /auth/switch-tenant 换发新租户 token）",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F04.I01",
+      "name": "动态菜单下发（GET /auth/menus）",
+      "type": "查询",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F04.I02",
+      "name": "动态权限集（GET /auth/permissions）",
+      "type": "查询",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F04.I03",
+      "name": "路由守卫（未登录/无权限拦截）",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F04.I04",
+      "name": "动态菜单",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M01.F05.I01",
+      "name": "用户名+密码登录",
+      "type": "页面",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M01.F05.I02",
+      "name": "Token 注入与失效跳登录",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F05.I03",
+      "name": "SSO OAuth 2.0 授权码流（client_secret 后端持 + state CSRF 防护）",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F05.I04",
+      "name": "登出",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F05.I05",
+      "name": "登出",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M02.F01.I01",
+      "name": "合同列表（三态过滤）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M02.F01.I02",
+      "name": "新建/编辑合同",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M02.F01.I03",
+      "name": "删除合同",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F01.I01",
+      "name": "接样单列表（flowStatus 三态过滤）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F01.I02",
+      "name": "新建/编辑接样单",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F01.I03",
+      "name": "删除接样单",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F01.I04",
+      "name": "提交接样单（receiving → task_assignment）",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F01.I06",
+      "name": "接样单流程历史",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F01.I07",
+      "name": "接样单 ext 字段补录",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F01.I08",
+      "name": "接样-提交",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F01.I09",
+      "name": "接样-退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F01.I10",
+      "name": "接样-撤回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F02.I01",
+      "name": "任务分配队列",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F02.I02",
+      "name": "安排/取消检测人员与计划日期",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F02.I03",
+      "name": "任务取消（清空分配）",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F02.I04",
+      "name": "任务分配三态过滤器",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F02.I05",
+      "name": "任务分配-提交",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F02.I06",
+      "name": "任务分配-退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F02.I07",
+      "name": "任务分配-撤回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F03.I01",
+      "name": "样品 + 检测数据录入页",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F03.I02",
+      "name": "保存检测记录",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F03.I03",
+      "name": "人工改判 verdict",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F03.I04",
+      "name": "更新样品",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F03.I06",
+      "name": "检测记录列表",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F03.I07",
+      "name": "检测记录详情",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F03.I08",
+      "name": "创建检测记录",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F03.I09",
+      "name": "更新检测记录",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F03.I12",
+      "name": "数据录入-提交",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F03.I13",
+      "name": "数据录入-退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F03.I14",
+      "name": "数据录入-撤回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F03.I15",
+      "name": "数据录入三态过滤器",
+      "type": "按钮",
+      "status": "开发中"
+    },
+    {
+      "fn_id": "M03.F05.I01",
+      "name": "审核队列（review 阶段）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F05.I02",
+      "name": "审核通过/驳回（submit/return）",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F05.I03",
+      "name": "报告审核-通过/退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F05.I04",
+      "name": "报告审核三态过滤器",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F05.I05",
+      "name": "报告审核-批量提交（已废）",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F05.I06",
+      "name": "报告审核-批量退回（已废）",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F05.I07",
+      "name": "报告审核-提交",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F05.I08",
+      "name": "报告审核-退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F05.I09",
+      "name": "报告审核-撤回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F06.I01",
+      "name": "批准队列（approval 阶段）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F06.I02",
+      "name": "批准/驳回",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F06.I03",
+      "name": "报告批准-批准/退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F06.I04",
+      "name": "报告批准三态过滤器",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F06.I05",
+      "name": "报告批准-提交",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F06.I06",
+      "name": "报告批准-退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F06.I07",
+      "name": "报告批准-撤回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F07.I01",
+      "name": "发放队列（issuance 阶段）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F07.I02",
+      "name": "发放（生成报告编号）",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F07.I03",
+      "name": "报告发放-发放/退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F07.I04",
+      "name": "报告发放三态过滤器",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F07.I05",
+      "name": "报告发放-提交",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F07.I06",
+      "name": "报告发放-退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F07.I07",
+      "name": "报告发放-撤回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F08.I01",
+      "name": "归档队列（archived 阶段）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F08.I02",
+      "name": "归档完成",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F08.I03",
+      "name": "报告归档-归档/退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F08.I04",
+      "name": "报告归档三态过滤器",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M03.F08.I05",
+      "name": "报告归档-提交",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F08.I06",
+      "name": "报告归档-退回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F08.I07",
+      "name": "报告归档-撤回",
+      "type": "接口",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M03.F09.I01",
+      "name": "接样单详情页",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F09.I02",
+      "name": "流程历史时间线",
+      "type": "查询",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M03.F09.I03",
+      "name": "报告预览",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F06.I01",
+      "name": "型号列表（按专项过滤 + 拖拽排序）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F06.I02",
+      "name": "新建/编辑型号",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F06.I03",
+      "name": "删除型号（引用保护）",
+      "type": "按钮",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M04.F06.I04",
+      "name": "删除型号（引用保护）",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F07.I01",
+      "name": "规格列表",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F07.I02",
+      "name": "新建/编辑规格",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F07.I03",
+      "name": "删除规格",
+      "type": "按钮",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M04.F07.I04",
+      "name": "删除规格",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F08.I01",
+      "name": "等级列表",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F08.I02",
+      "name": "新建/编辑等级",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F08.I03",
+      "name": "删除等级",
+      "type": "按钮",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M04.F08.I04",
+      "name": "删除等级",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F09.I01",
+      "name": "牌号列表",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F09.I02",
+      "name": "新建/编辑牌号",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M04.F09.I03",
+      "name": "删除牌号",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M05.F01.I01",
+      "name": "报告汇总表（按报告类别汇总）",
+      "type": "查询",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M05.F01.I02",
+      "name": "仪表盘统计",
+      "type": "查询",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M05.F01.I03",
+      "name": "核心指标卡",
+      "type": "查询",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M05.F01.I04",
+      "name": "任务状态漏斗",
+      "type": "报表",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M05.F01.I05",
+      "name": "见证取样跟踪",
+      "type": "报表",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M05.F01.I06",
+      "name": "仪表盘统计基础端点",
+      "type": "查询",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F01.I01",
+      "name": "检测专项列表 + CRUD",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F01.I02",
+      "name": "创建专项",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F01.I03",
+      "name": "更新专项",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F02.I01",
+      "name": "检测项目列表（按专项过滤）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F02.I02",
+      "name": "项目↔专项/参数关联",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F02.I03",
+      "name": "更新项目",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F02.I04",
+      "name": "删除项目",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F02.I05",
+      "name": "专项↔项目 link",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F02.I06",
+      "name": "专项↔项目 unlink",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F02.I07",
+      "name": "项目↔参数 link",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F03.I01",
+      "name": "检测参数列表 + CRUD",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F03.I02",
+      "name": "参数↔标准关联",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F03.I03",
+      "name": "更新参数",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F04.I01",
+      "name": "检测标准列表（状态过滤）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F04.I02",
+      "name": "标准 CRUD",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F04.I03",
+      "name": "更新标准",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F04.I04",
+      "name": "删除标准",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F05.I01",
+      "name": "计算方法维护",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F05.I02",
+      "name": "计算方法详情",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F05.I03",
+      "name": "创建计算方法",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F06.I01",
+      "name": "技术要求列表（多维过滤）",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F06.I02",
+      "name": "新建/编辑技术要求",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F06.I03",
+      "name": "删除技术要求（引用保护）",
+      "type": "按钮",
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M06.F06.I05",
+      "name": "删除技术要求（引用保护）",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F07.I01",
+      "name": "报告名称列表 + extFields 模板",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F07.I02",
+      "name": "报告名称↔标准/参数关联",
+      "type": "按钮",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F07.I03",
+      "name": "创建报告名称",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F07.I04",
+      "name": "更新报告名称",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F07.I05",
+      "name": "删除报告名称",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F07.I06",
+      "name": "项目↔报告名称 link",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F07.I07",
+      "name": "报告名称↔标准 link",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F07.I08",
+      "name": "报告名称↔参数 link",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F08.I01",
+      "name": "参数界面维护 + link",
+      "type": "页面",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M06.F08.I02",
+      "name": "参数界面详情",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F08.I03",
+      "name": "创建参数界面",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F08.I04",
+      "name": "更新参数界面",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F08.I05",
+      "name": "删除参数界面",
+      "type": "接口",
+      "status": "规划"
+    },
+    {
+      "fn_id": "M06.F08.I06",
+      "name": "参数↔界面 link",
+      "type": "接口",
+      "status": "规划"
+    }
+  ],
+  "trace": [
+    {
+      "fn_id": "M00.F01",
+      "tests": [
+        "[M00.F01] hydrate 无 token → anonymous",
+        "[M00.F01] hydrate 有 token → /auth/me 恢复 authenticated 会话",
+        "[M00.F01] displayName 空串 → 回退 username 渲染（?? 不兜空串回归锁）"
+      ]
+    },
+    {
+      "fn_id": "M00.F02",
+      "tests": [
+        "[M00.F02] login 多租户无记忆 → 自动选第一个租户直进 authenticated",
+        "[M00.F02] switchTenant 在 anonymous 态调用 → WRONG_STATE",
+        "[M00.F02] awaiting_tenant --switchTenant--> authenticated + activeTenantId 记忆",
+        "[M01.F04.I03] login 空租户列表 → awaiting_tenant 访问受守卫路由拦在 /login（选租户页已移除，M00.F02 保持规划）"
+      ]
+    },
+    {
+      "fn_id": "M00.F02.I01",
+      "tests": [
+        "触发器 = Building2 + 当前租户名 + ChevronsUpDown，data-fn M00.F02.I01"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I01",
+      "tests": [
+        "深色骨架：bg-slate-900 text-white + data-fn M01.F04.I01 + 主导航 aria",
+        "[M01.F04.I01] 成功：/api/auth/menus 契约树 → AppShell 分组侧栏渲染（镜像 react）",
+        "[M01.F04.I01] 失败：抛错上抛，AppShell 渲染错误态（demo 兜底删除）",
+        "[M01.F04.I01] saas 快照 path（无斜杠）归一化为绝对路由",
+        "[M01.F04.I01] demo 兜底旧 path 别名映射到真实路由"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I02",
+      "tests": [
+        "[M01.F04.I02] authenticated 态拉取 /auth/permissions 并供 hasPermission 判断",
+        "[M01.F04.I02] 非 authenticated 态 hasPermission 恒 false"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I03",
+      "tests": [
+        "[M01.F04.I03] anonymous 访问受守卫路由 → 跳 /login",
+        "[M01.F04.I03] authenticated 缺权限 → 拦在 /403",
+        "[M01.F04.I03] authenticated 权限齐 → allowed=true 留在原地",
+        "[M01.F04.I03] login 多租户无记忆 → 自动选第一个租户 authenticated 不拦（2026-09-23 修 SSO 回调冻结）",
+        "[M01.F04.I03] login 空租户列表 → awaiting_tenant 访问受守卫路由拦在 /login（选租户页已移除，M00.F02 保持规划）",
+        "[M01.F04.I03] idle mount 后转 authenticated → 探针翻转（冷启动不卡 checking）"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I01",
+      "tests": [
+        "[M01.F05.I01] login 单租户 → 直进 authenticated + token 双 key 持久化",
+        "[M01.F05.I01] login 失败 → 停在 anonymous，ErrorResponse 返回"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I02",
+      "tests": [
+        "[M01.F05.I02] TOKEN_STORAGE_KEYS 5 个 key 全部 lab.* 前缀且名字锁死",
+        "[M01.F05.I02] token 失效（me 401 + refresh 401）→ 退 anonymous + 清 token",
+        "[M01.F05.I02] onChange 契约：状态转移触发订阅 + unsub 停止"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I03",
+      "tests": [
+        "[M01.F05.I03] 阶段 2：无回调参数 → authorize 拿 authorizeUrl → 跳 saas",
+        "[M01.F05.I03] 阶段 1：?code=&state= → POST sso/callback 换 token → setSession 进业务页"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I04",
+      "tests": [
+        "[M01.F05.I04] logout → anonymous + 全部持久化 key 清空",
+        "[M01.F05.I04] AppShell 侧栏底部渲染「退出登录」按钮 + data-fn 锚点",
+        "[M01.F05.I04] 点击登出 → POST /api/auth/logout + 落 anonymous + 跳 /login"
+      ]
+    },
+    {
+      "fn_id": "M02.F01.I01",
+      "tests": [
+        "[M02.F01.I01] 合同列表：渲染标题 + 列表行（fixture 真数据穿透）"
+      ]
+    },
+    {
+      "fn_id": "M02.F01.I02",
+      "tests": [
+        "[M02.F01.I02] 合同管理：新建按钮开弹窗（标题『新建合同』）"
+      ]
+    },
+    {
+      "fn_id": "M02.F01.I03",
+      "tests": [
+        "[M02.F01.I03] 合同管理：行内删除按钮开确认弹窗（标题『删除合同』）"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I01",
+      "tests": [
+        "[M03.F01.I01] 接样管理：渲染标题 + 列表行（fixture 真数据穿透）"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I02",
+      "tests": [
+        "[M03.F01.I02] 接样管理：新建按钮开弹窗（标题『新建接样』）"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I03",
+      "tests": [
+        "[M03.F01.I03] 接样管理：行内删除按钮开确认弹窗（标题『删除接样』）"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I04",
+      "tests": [
+        "[M03.F01.I04] 接样管理：提交按钮调用 /api/receipts/receiving/act 推送状态机（receiving → task_assignment）"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I07",
+      "tests": [
+        "[M03.F01.I07] [M03.F01.I07] SampleExtFieldsModal module source file exists"
+      ]
+    },
+    {
+      "fn_id": "M03.F02.I01",
+      "tests": [
+        "[M03.F02.I01] 任务分配：渲染标题 + 列表行（fixture 真数据穿透）",
+        "[M03.F02.I01] 任务分配：安排按钮开弹窗（标题含『任务安排』）"
+      ]
+    },
+    {
+      "fn_id": "M03.F03.I01",
+      "tests": [
+        "[M03.F03.I01] 数据录入：渲染标题 + 列表行（fixture 真数据穿透）",
+        "[M03.F03.I01] rebar-welding：抗拉 Rm=4000·F/(π·d²)（Φ22 硬编码）",
+        "[M03.F03.I01] rebar-mechanics：tensile_strength 算子",
+        "[M03.F03.I01] rebar-mechanics：强屈比",
+        "[M03.F03.I01] soil-compaction：二次拟合峰值",
+        "[M03.F03.I01] soil-compaction-degree：干密度 + 压实度 + 评定",
+        "[M03.F03.I01] concrete-permeability：6 件全未渗 → grade undefined",
+        "[M03.F03.I01] concrete-permeability：3 件已渗 → grade = 第3件压力",
+        "[M03.F03.I01] ConcreteCompressCard 渲染 3 个破坏荷载输入框",
+        "[M03.F03.I01] ConcretePermeabilityCard 渲染 6 个渗水压力输入",
+        "[M03.F03.I01] RebarWeldingTensileCard 渲染 3 行 + 共享规格 Φ22",
+        "[M03.F03.I01] RebarWeldingBendCard 渲染 3 行弯曲角度 + 整体评定",
+        "[M03.F03.I01] RebarMechNumericCard tensile_strength：2 组 + 公称直径输入",
+        "[M03.F03.I01] ParticleGradationCard 渲染砂 7 筛孔 + 平均行",
+        "[M03.F03.I01] SoilCompactionCard 渲染 5 组 + GB/T 50123-2019 标识",
+        "[M03.F03.I01] SoilCompactionDegreeCard 渲染 6 行 + 最大干密度输入",
+        "[M03.F03.I01] 水泥胶砂强度：抗折 Rf=1.5·F·L/b³（2kN → 4.7 MPa）",
+        "[M03.F03.I01] 水泥胶砂强度：抗压 Rc=F/A（16kN → 10.0；80kN → 50.0 MPa）",
+        "[M03.F03.I01] CementCompressCard 渲染 6 个破坏荷载输入框",
+        "[M03.F03.I01] CementCompressCard readOnly：输入吞掉 onChange",
+        "[M03.F03.I01] CementFlexuralCard 渲染 3 个破坏荷载 + 抗折强度列"
+      ]
+    },
+    {
+      "fn_id": "M03.F03.I02",
+      "tests": [
+        "[M03.F03.I02] 数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）",
+        "[M03.F03.I02] ConcreteCompressCard 录入荷载 → 上报代表值 JSON",
+        "[M03.F03.I02] ParticleGradationCard gravel=true 切换到 12 筛孔",
+        "[M03.F03.I02] CementCompressCard 有技术要求：录入均值达标 → 自动判合格"
+      ]
+    },
+    {
+      "fn_id": "M03.F03.I03",
+      "tests": [
+        "[M03.F03.I03] 数据录入：行内「录入结果」按钮（人工改判 verdict 入口）",
+        "[M03.F03.I03] CementCompressCard 无技术要求：标注「评定」前缀"
+      ]
+    },
+    {
+      "fn_id": "M03.F05.I01",
+      "tests": [
+        "[M03.F05.I01] 报告审核：渲染标题 + 列表行（review 阶段 fixture 穿透）"
+      ]
+    },
+    {
+      "fn_id": "M03.F05.I02",
+      "tests": [
+        "[M03.F05.I02] 报告审核：「审核通过」按钮 data-fn 可见"
+      ]
+    },
+    {
+      "fn_id": "M03.F06.I01",
+      "tests": [
+        "[M03.F06.I01] 报告批准：渲染标题 + 列表行（approval 阶段 fixture 穿透）"
+      ]
+    },
+    {
+      "fn_id": "M03.F06.I02",
+      "tests": [
+        "[M03.F06.I02] 报告批准：「批准」按钮 data-fn 可见"
+      ]
+    },
+    {
+      "fn_id": "M03.F07.I01",
+      "tests": [
+        "[M03.F07.I01] 报告发放：渲染标题 + 列表行（issuance 阶段 fixture 穿透）"
+      ]
+    },
+    {
+      "fn_id": "M03.F07.I02",
+      "tests": [
+        "[M03.F07.I02] 报告发放：「发放」按钮 data-fn 可见"
+      ]
+    },
+    {
+      "fn_id": "M03.F08.I01",
+      "tests": [
+        "[M03.F08.I01] 报告归档：渲染标题 + 列表行（archived 阶段 fixture 穿透）"
+      ]
+    },
+    {
+      "fn_id": "M03.F08.I02",
+      "tests": [
+        "[M03.F08.I02] 报告归档：「归档完成」按钮 data-fn 可见"
+      ]
+    },
+    {
+      "fn_id": "M03.F09.I01",
+      "tests": [
+        "[M03.F09.I01] 接样单详情：渲染标题 + 字段区"
+      ]
+    },
+    {
+      "fn_id": "M03.F09.I02",
+      "tests": [
+        "[M03.F09.I02] 接样单详情：流程历史时间线可见（按 at 倒序）"
+      ]
+    },
+    {
+      "fn_id": "M03.F09.I03",
+      "tests": [
+        "[M03.F09.I03] 接样单详情：报告预览按钮开弹窗"
+      ]
+    },
+    {
+      "fn_id": "M04.F06.I01",
+      "tests": [
+        "[M04.F06.I01] 型号维护：渲染标题 + 检测项目树（vue 翻译 CategoryDictList 镜像 react）"
+      ]
+    },
+    {
+      "fn_id": "M04.F06.I02",
+      "tests": [
+        "[M04.F06.I02] 型号维护：新建按钮开弹窗（标题『新建型号』）"
+      ]
+    },
+    {
+      "fn_id": "M04.F06.I04",
+      "tests": [
+        "[M04.F06.I04] 型号维护：行内删除按钮开确认弹窗"
+      ]
+    },
+    {
+      "fn_id": "M04.F07.I01",
+      "tests": [
+        "[M04.F07.I01] 规格维护：渲染标题不炸"
+      ]
+    },
+    {
+      "fn_id": "M04.F07.I02",
+      "tests": [
+        "[M04.F07.I02] 规格维护：新建按钮开弹窗"
+      ]
+    },
+    {
+      "fn_id": "M04.F07.I04",
+      "tests": [
+        "[M04.F07.I04] 规格维护：行内删除按钮开确认弹窗"
+      ]
+    },
+    {
+      "fn_id": "M04.F08.I01",
+      "tests": [
+        "[M04.F08.I01] 等级维护：渲染标题不炸"
+      ]
+    },
+    {
+      "fn_id": "M04.F08.I02",
+      "tests": [
+        "[M04.F08.I02] 等级维护：新建按钮开弹窗"
+      ]
+    },
+    {
+      "fn_id": "M04.F08.I04",
+      "tests": [
+        "[M04.F08.I04] 等级维护：行内删除按钮开确认弹窗"
+      ]
+    },
+    {
+      "fn_id": "M04.F09.I01",
+      "tests": [
+        "[M04.F09.I01] 牌号维护：渲染标题不炸"
+      ]
+    },
+    {
+      "fn_id": "M04.F09.I02",
+      "tests": [
+        "[M04.F09.I02] 牌号维护：新建按钮开弹窗"
+      ]
+    },
+    {
+      "fn_id": "M04.F09.I03",
+      "tests": [
+        "[M04.F09.I03] 牌号维护：行内删除按钮开确认弹窗"
+      ]
+    },
+    {
+      "fn_id": "M05.F01.I01",
+      "tests": [
+        "[M05.F01.I01] F01 渲染标题 + 汇总表表头",
+        "[M05.F01.I01] F01 列表行渲染（rows 数据穿透）",
+        "[M05.F01.I01][M05.F01.I02] F01+F02 报告类别下拉存在"
+      ]
+    },
+    {
+      "fn_id": "M05.F01.I02",
+      "tests": [
+        "[M05.F01.I02] F02 仪表盘统计卡片（合同/接样/样品/待办/按状态）",
+        "[M05.F01.I01][M05.F01.I02] F01+F02 报告类别下拉存在"
+      ]
+    },
+    {
+      "fn_id": "M05.F01.I06",
+      "tests": [
+        "[M05.F01.I06] I06 仪表盘统计基础端点：GET /summary/stats 基础字段穿透渲染"
+      ]
+    },
+    {
+      "fn_id": "M06.F01.I01",
+      "tests": [
+        "[M06.F01.I01] F01 渲染标题 + 列表行（fixtures 穿透）",
+        "[M06.F01.I01] F01 新建按钮 + SP01 编码可见"
+      ]
+    },
+    {
+      "fn_id": "M06.F02.I01",
+      "tests": [
+        "[M06.F02.I01] F02 渲染标题 + 检测专项筛选下拉",
+        "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F02.I02",
+      "tests": [
+        "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F03.I01",
+      "tests": [
+        "[M06.F03.I01] F03 渲染标题 + 3 级筛选下拉（专项/项目/标准）"
+      ]
+    },
+    {
+      "fn_id": "M06.F03.I02",
+      "tests": [
+        "[M06.F03.I02] 关联弹窗：列出标准 + 已关联态（IP-0001 已关联 GB 175-2023）",
+        "[M06.F03.I02] toggle：未关联标准 → POST 后按钮翻「解除关联」"
+      ]
+    },
+    {
+      "fn_id": "M06.F04.I01",
+      "tests": [
+        "[M06.F04.I01] F04 渲染标题 + 列表行（GB 175-2023）",
+        "[M06.F04.I01][M06.F04.I02] F04 新建按钮 + 编辑按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F04.I02",
+      "tests": [
+        "[M06.F04.I01][M06.F04.I02] F04 新建按钮 + 编辑按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F05.I01",
+      "tests": [
+        "[M06.F05.I01] F05 渲染标题 + 复合主键列表行",
+        "[M06.F05.I01] F05 新建 + 删除按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F06.I01",
+      "tests": [
+        "[M06.F06.I01] F06 渲染标题 + 4 维筛选（牌号/型号/等级/规格）",
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I05] F06 列表行 + 新建/编辑/删除按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F06.I02",
+      "tests": [
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I05] F06 列表行 + 新建/编辑/删除按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F06.I05",
+      "tests": [
+        "[M06.F06.I01][M06.F06.I02][M06.F06.I05] F06 列表行 + 新建/编辑/删除按钮"
+      ]
+    },
+    {
+      "fn_id": "M06.F07.I01",
+      "tests": [
+        "[M06.F07.I01] 报告名称：渲染标题 + 列表行（fixture 真数据穿透）",
+        "[M06.F07.I01] 报告名称：新建按钮开弹窗（带 extFields 文本域）",
+        "[M06.F07.I01] 报告名称：行内删除按钮开确认弹窗"
+      ]
+    },
+    {
+      "fn_id": "M06.F07.I02",
+      "tests": [
+        "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）",
+        "[M06.F07.I02] toggle 参数：POST 后按钮翻「解除」"
+      ]
+    },
+    {
+      "fn_id": "M06.F08.I01",
+      "tests": [
+        "[M06.F08.I01] 参数界面：渲染标题 + 列表行（fixture 真数据穿透）",
+        "[M06.F08.I01] 参数界面：新建按钮开弹窗",
+        "[M06.F08.I01] 参数界面：行内删除按钮开确认弹窗"
+      ]
+    }
+  ],
+  "source_index": [
+    {
+      "fn_id": "M00.F02.I01",
+      "source_paths": [
+        "src\\components\\app\\TenantSwitcher.vue"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I01",
+      "source_paths": [
+        "src\\components\\app\\SidebarNav.vue",
+        "src\\composables\\use-backend-menus.ts"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I02",
+      "source_paths": [
+        "src\\state\\auth.ts"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I03",
+      "source_paths": [
+        "src\\state\\require-auth.ts"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I03",
+      "source_paths": [
+        "src\\pages\\LoginPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I04",
+      "source_paths": [
+        "src\\components\\app\\AppShell.vue"
+      ]
+    },
+    {
+      "fn_id": "M02.F01.I01",
+      "source_paths": [
+        "src\\features\\contracts\\ContractsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M02.F01.I02",
+      "source_paths": [
+        "src\\features\\contracts\\ContractsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M02.F01.I03",
+      "source_paths": [
+        "src\\features\\contracts\\ContractsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I01",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I02",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I03",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I04",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F01.I07",
+      "source_paths": [
+        "src\\features\\data-entry\\ReportPreviewModal.vue",
+        "src\\features\\data-entry\\SampleExtFieldsModal.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F02.I01",
+      "source_paths": [
+        "src\\features\\task-assignment\\TaskAssignmentList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F02.I02",
+      "source_paths": [
+        "src\\features\\task-assignment\\TaskAssignmentList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F03.I01",
+      "source_paths": [
+        "src\\features\\data-entry\\DataEntryPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F03.I02",
+      "source_paths": [
+        "src\\features\\data-entry\\DataEntryPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F03.I03",
+      "source_paths": [
+        "src\\features\\data-entry\\DataEntryPage.vue",
+        "src\\features\\data-entry\\models\\ParticleGradationCard.vue",
+        "src\\features\\data-entry\\models\\SoilCompactionCard.vue",
+        "src\\features\\data-entry\\models\\SoilCompactionDegreeCard.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F03.I15",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptsList.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F05.I01",
+      "source_paths": [
+        "src\\pages\\ReportReviewPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F05.I02",
+      "source_paths": [
+        "src\\pages\\ReportReviewPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F06.I01",
+      "source_paths": [
+        "src\\pages\\ReportApprovePage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F06.I02",
+      "source_paths": [
+        "src\\pages\\ReportApprovePage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F07.I01",
+      "source_paths": [
+        "src\\pages\\ReportIssuePage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F07.I02",
+      "source_paths": [
+        "src\\pages\\ReportIssuePage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F08.I01",
+      "source_paths": [
+        "src\\pages\\ReportArchivePage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F08.I02",
+      "source_paths": [
+        "src\\pages\\ReportArchivePage.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F09.I01",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptDetail.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F09.I02",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptDetail.vue"
+      ]
+    },
+    {
+      "fn_id": "M03.F09.I03",
+      "source_paths": [
+        "src\\features\\receipts\\ReceiptDetail.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F06.I01",
+      "source_paths": [
+        "src\\pages\\ModelsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F06.I02",
+      "source_paths": [
+        "src\\pages\\ModelsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F06.I04",
+      "source_paths": [
+        "src\\pages\\ModelsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F07.I01",
+      "source_paths": [
+        "src\\pages\\SpecificationsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F07.I02",
+      "source_paths": [
+        "src\\pages\\SpecificationsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F07.I04",
+      "source_paths": [
+        "src\\pages\\SpecificationsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F08.I01",
+      "source_paths": [
+        "src\\pages\\GradesPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F08.I02",
+      "source_paths": [
+        "src\\pages\\GradesPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F08.I04",
+      "source_paths": [
+        "src\\pages\\GradesPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F09.I01",
+      "source_paths": [
+        "src\\pages\\BrandsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F09.I02",
+      "source_paths": [
+        "src\\pages\\BrandsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M04.F09.I03",
+      "source_paths": [
+        "src\\pages\\BrandsPage.vue"
+      ]
+    },
+    {
+      "fn_id": "M05.F01.I01",
+      "source_paths": [
+        "src\\features\\summary\\SummaryList.vue"
+      ]
+    },
+    {
+      "fn_id": "M05.F01.I02",
+      "source_paths": [
+        "src\\features\\summary\\SummaryList.vue"
+      ]
+    },
+    {
+      "fn_id": "M05.F01.I06",
+      "source_paths": [
+        "src\\features\\summary\\SummaryList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F01.I01",
+      "source_paths": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F02.I01",
+      "source_paths": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F02.I02",
+      "source_paths": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F03.I01",
+      "source_paths": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F03.I02",
+      "source_paths": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue",
+        "src\\features\\inspection-capability\\ParameterStandardLinkDialog.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F04.I01",
+      "source_paths": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F04.I02",
+      "source_paths": [
+        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F05.I01",
+      "source_paths": [
+        "src\\features\\inspection-capability\\CalculationMethodList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F06.I01",
+      "source_paths": [
+        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F06.I02",
+      "source_paths": [
+        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F06.I05",
+      "source_paths": [
+        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F07.I01",
+      "source_paths": [
+        "src\\features\\report-names\\ReportNameList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F07.I02",
+      "source_paths": [
+        "src\\features\\report-names\\ReportNameLinkDialog.vue",
+        "src\\features\\report-names\\ReportNameList.vue"
+      ]
+    },
+    {
+      "fn_id": "M06.F08.I01",
+      "source_paths": [
+        "src\\features\\param-interfaces\\ParamInterfaceList.vue"
+      ]
+    }
+  ]
+}
