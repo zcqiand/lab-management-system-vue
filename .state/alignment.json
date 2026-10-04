@@ -186,7 +186,7 @@
         "[M01.F05.I02] TOKEN_STORAGE_KEYS 5 个 key 全部 lab.* 前缀且名字锁死",
         "[M01.F05.I02] onChange 契约：状态转移触发订阅 + unsub 停止",
         "[M01.F05.I02] token 失效（me 401 + refresh 401）→ 退 anonymous + 清 token",
-        "output\\lab-management-system-contract-test\\tests\\auth-read.test.ts:3601 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\auth-read.test.ts:4261 (annot)",
         "output\\lab-management-system-contract-test\\tests\\auth-write.test.ts:1336 (annot)",
         "output\\lab-management-system-contract-test\\tests\\calculation-methods-write.test.ts:3147 (annot)",
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:8707 (annot)",
