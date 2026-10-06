@@ -54,7 +54,7 @@
         "触发器 = Building2 + 当前租户名 + ChevronsUpDown，data-fn M00.F02.I01"
       ],
       "entry": [
-        "src\\components\\app\\TenantSwitcher.vue"
+        "src/components/app/TenantSwitcher.vue"
       ]
     },
     "M01.F04.I01": {
@@ -85,8 +85,8 @@
         "深色骨架：bg-slate-900 text-white + data-fn M01.F04.I01 + 主导航 aria"
       ],
       "entry": [
-        "src\\components\\app\\SidebarNav.vue",
-        "src\\composables\\use-backend-menus.ts"
+        "src/components/app/SidebarNav.vue",
+        "src/composables/use-backend-menus.ts"
       ]
     },
     "M01.F04.I02": {
@@ -114,7 +114,7 @@
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:759 (annot)"
       ],
       "entry": [
-        "src\\state\\auth.ts"
+        "src/state/auth.ts"
       ]
     },
     "M01.F04.I03": {
@@ -135,7 +135,7 @@
         "[M01.F04.I03] login 空租户列表 → awaiting_tenant 访问受守卫路由拦在 /login（选租户页已移除，M00.F02 保持规划）"
       ],
       "entry": [
-        "src\\state\\require-auth.ts"
+        "src/state/require-auth.ts"
       ]
     },
     "M01.F04.I04": {
@@ -215,7 +215,7 @@
         "[M01.F05.I03] 阶段 2：无回调参数 → authorize 拿 authorizeUrl → 跳 saas"
       ],
       "entry": [
-        "src\\pages\\LoginPage.vue"
+        "src/pages/LoginPage.vue"
       ]
     },
     "M01.F05.I04": {
@@ -233,7 +233,7 @@
         "[M01.F05.I04] 点击登出 → POST /api/auth/logout + 落 anonymous + 跳 /login"
       ],
       "entry": [
-        "src\\components\\app\\AppShell.vue"
+        "src/components/app/AppShell.vue"
       ]
     },
     "M01.F05.I05": {
@@ -260,7 +260,7 @@
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:90 (annot)"
       ],
       "entry": [
-        "src\\features\\contracts\\ContractsList.vue"
+        "src/features/contracts/ContractsList.vue"
       ]
     },
     "M02.F01.I02": {
@@ -277,7 +277,7 @@
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:111 (annot)"
       ],
       "entry": [
-        "src\\features\\contracts\\ContractsList.vue"
+        "src/features/contracts/ContractsList.vue"
       ]
     },
     "M02.F01.I03": {
@@ -294,7 +294,7 @@
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:134 (annot)"
       ],
       "entry": [
-        "src\\features\\contracts\\ContractsList.vue"
+        "src/features/contracts/ContractsList.vue"
       ]
     },
     "M03.F01.I01": {
@@ -312,7 +312,7 @@
         "output\\lab-management-system-contract-test\\tests\\sample-receipts.test.ts:5189 (annot)"
       ],
       "entry": [
-        "src\\features\\receipts\\ReceiptsList.vue"
+        "src/features/receipts/ReceiptsList.vue"
       ]
     },
     "M03.F01.I02": {
@@ -328,7 +328,7 @@
         "[M03.F01.I02] 接样管理：新建按钮开弹窗（标题『新建接样』）"
       ],
       "entry": [
-        "src\\features\\receipts\\ReceiptsList.vue"
+        "src/features/receipts/ReceiptsList.vue"
       ]
     },
     "M03.F01.I03": {
@@ -344,7 +344,7 @@
         "[M03.F01.I03] 接样管理：行内删除按钮开确认弹窗（标题『删除接样』）"
       ],
       "entry": [
-        "src\\features\\receipts\\ReceiptsList.vue"
+        "src/features/receipts/ReceiptsList.vue"
       ]
     },
     "M03.F01.I04": {
@@ -360,7 +360,7 @@
         "[M03.F01.I04] 接样管理：提交按钮调用 /api/receipts/receiving/act 推送状态机（receiving → task_assignment）"
       ],
       "entry": [
-        "src\\features\\receipts\\ReceiptsList.vue"
+        "src/features/receipts/ReceiptsList.vue"
       ]
     },
     "M03.F01.I06": {
@@ -391,8 +391,8 @@
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:3849 (annot)"
       ],
       "entry": [
-        "src\\features\\data-entry\\ReportPreviewModal.vue",
-        "src\\features\\data-entry\\SampleExtFieldsModal.vue"
+        "src/features/data-entry/ReportPreviewModal.vue",
+        "src/features/data-entry/SampleExtFieldsModal.vue"
       ]
     },
     "M03.F01.I08": {
@@ -442,7 +442,7 @@
         "[M03.F02.I01] 任务分配：渲染标题 + 列表行（fixture 真数据穿透）"
       ],
       "entry": [
-        "src\\features\\task-assignment\\TaskAssignmentList.vue"
+        "src/features/task-assignment/TaskAssignmentList.vue"
       ]
     },
     "M03.F02.I02": {
@@ -456,7 +456,7 @@
       ],
       "tests": [],
       "entry": [
-        "src\\features\\task-assignment\\TaskAssignmentList.vue"
+        "src/features/task-assignment/TaskAssignmentList.vue"
       ]
     },
     "M03.F02.I03": {
@@ -542,7 +542,7 @@
         "[M03.F03.I01] 水泥胶砂强度：抗折 Rf=1.5·F·L/b³（2kN → 4.7 MPa）"
       ],
       "entry": [
-        "src\\features\\data-entry\\DataEntryPage.vue"
+        "src/features/data-entry/DataEntryPage.vue"
       ]
     },
     "M03.F03.I02": {
@@ -561,7 +561,7 @@
         "[M03.F03.I02] 数据录入：弹窗内「保存检测记录」按钮（M03.F03.I02 data-fn 锚点）"
       ],
       "entry": [
-        "src\\features\\data-entry\\DataEntryPage.vue"
+        "src/features/data-entry/DataEntryPage.vue"
       ]
     },
     "M03.F03.I03": {
@@ -578,10 +578,10 @@
         "[M03.F03.I03] 数据录入：行内「录入结果」按钮（人工改判 verdict 入口）"
       ],
       "entry": [
-        "src\\features\\data-entry\\DataEntryPage.vue",
-        "src\\features\\data-entry\\models\\ParticleGradationCard.vue",
-        "src\\features\\data-entry\\models\\SoilCompactionCard.vue",
-        "src\\features\\data-entry\\models\\SoilCompactionDegreeCard.vue"
+        "src/features/data-entry/DataEntryPage.vue",
+        "src/features/data-entry/models/ParticleGradationCard.vue",
+        "src/features/data-entry/models/SoilCompactionCard.vue",
+        "src/features/data-entry/models/SoilCompactionDegreeCard.vue"
       ]
     },
     "M03.F03.I04": {
@@ -677,7 +677,7 @@
       "designs": [],
       "tests": [],
       "entry": [
-        "src\\features\\receipts\\ReceiptsList.vue"
+        "src/features/receipts/ReceiptsList.vue"
       ]
     },
     "M03.F05.I01": {
@@ -693,7 +693,7 @@
         "[M03.F05.I01] 报告审核：渲染标题 + 列表行（review 阶段 fixture 穿透）"
       ],
       "entry": [
-        "src\\pages\\ReportReviewPage.vue"
+        "src/pages/ReportReviewPage.vue"
       ]
     },
     "M03.F05.I02": {
@@ -709,7 +709,7 @@
         "[M03.F05.I02] 报告审核：「审核通过」按钮 data-fn 可见"
       ],
       "entry": [
-        "src\\pages\\ReportReviewPage.vue"
+        "src/pages/ReportReviewPage.vue"
       ]
     },
     "M03.F05.I03": {
@@ -795,7 +795,7 @@
         "[M03.F06.I01] 报告批准：渲染标题 + 列表行（approval 阶段 fixture 穿透）"
       ],
       "entry": [
-        "src\\pages\\ReportApprovePage.vue"
+        "src/pages/ReportApprovePage.vue"
       ]
     },
     "M03.F06.I02": {
@@ -811,7 +811,7 @@
         "[M03.F06.I02] 报告批准：「批准」按钮 data-fn 可见"
       ],
       "entry": [
-        "src\\pages\\ReportApprovePage.vue"
+        "src/pages/ReportApprovePage.vue"
       ]
     },
     "M03.F06.I03": {
@@ -877,7 +877,7 @@
         "[M03.F07.I01] 报告发放：渲染标题 + 列表行（issuance 阶段 fixture 穿透）"
       ],
       "entry": [
-        "src\\pages\\ReportIssuePage.vue"
+        "src/pages/ReportIssuePage.vue"
       ]
     },
     "M03.F07.I02": {
@@ -893,7 +893,7 @@
         "[M03.F07.I02] 报告发放：「发放」按钮 data-fn 可见"
       ],
       "entry": [
-        "src\\pages\\ReportIssuePage.vue"
+        "src/pages/ReportIssuePage.vue"
       ]
     },
     "M03.F07.I03": {
@@ -959,7 +959,7 @@
         "[M03.F08.I01] 报告归档：渲染标题 + 列表行（archived 阶段 fixture 穿透）"
       ],
       "entry": [
-        "src\\pages\\ReportArchivePage.vue"
+        "src/pages/ReportArchivePage.vue"
       ]
     },
     "M03.F08.I02": {
@@ -975,7 +975,7 @@
         "[M03.F08.I02] 报告归档：「归档完成」按钮 data-fn 可见"
       ],
       "entry": [
-        "src\\pages\\ReportArchivePage.vue"
+        "src/pages/ReportArchivePage.vue"
       ]
     },
     "M03.F08.I03": {
@@ -1041,7 +1041,7 @@
         "[M03.F09.I01] 接样单详情：渲染标题 + 字段区"
       ],
       "entry": [
-        "src\\features\\receipts\\ReceiptDetail.vue"
+        "src/features/receipts/ReceiptDetail.vue"
       ]
     },
     "M03.F09.I02": {
@@ -1057,7 +1057,7 @@
         "[M03.F09.I02] 接样单详情：流程历史时间线可见（按 at 倒序）"
       ],
       "entry": [
-        "src\\features\\receipts\\ReceiptDetail.vue"
+        "src/features/receipts/ReceiptDetail.vue"
       ]
     },
     "M03.F09.I03": {
@@ -1073,7 +1073,7 @@
         "[M03.F09.I03] 接样单详情：报告预览按钮开弹窗"
       ],
       "entry": [
-        "src\\features\\receipts\\ReceiptDetail.vue"
+        "src/features/receipts/ReceiptDetail.vue"
       ]
     },
     "M04.F06.I01": {
@@ -1089,7 +1089,7 @@
         "[M04.F06.I01] 型号维护：渲染标题 + 检测项目树（vue 翻译 CategoryDictList 镜像 react）"
       ],
       "entry": [
-        "src\\pages\\ModelsPage.vue"
+        "src/pages/ModelsPage.vue"
       ]
     },
     "M04.F06.I02": {
@@ -1111,7 +1111,7 @@
         "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:3427 (annot)"
       ],
       "entry": [
-        "src\\pages\\ModelsPage.vue"
+        "src/pages/ModelsPage.vue"
       ]
     },
     "M04.F06.I03": {
@@ -1146,7 +1146,7 @@
         "output\\lab-management-system-contract-test\\tests\\report-names.test.ts:5800 (annot)"
       ],
       "entry": [
-        "src\\pages\\ModelsPage.vue"
+        "src/pages/ModelsPage.vue"
       ]
     },
     "M04.F07.I01": {
@@ -1162,7 +1162,7 @@
         "[M04.F07.I01] 规格维护：渲染标题不炸"
       ],
       "entry": [
-        "src\\pages\\SpecificationsPage.vue"
+        "src/pages/SpecificationsPage.vue"
       ]
     },
     "M04.F07.I02": {
@@ -1181,7 +1181,7 @@
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:4612 (annot)"
       ],
       "entry": [
-        "src\\pages\\SpecificationsPage.vue"
+        "src/pages/SpecificationsPage.vue"
       ]
     },
     "M04.F07.I03": {
@@ -1213,7 +1213,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:7985 (annot)"
       ],
       "entry": [
-        "src\\pages\\SpecificationsPage.vue"
+        "src/pages/SpecificationsPage.vue"
       ]
     },
     "M04.F08.I01": {
@@ -1229,7 +1229,7 @@
         "[M04.F08.I01] 等级维护：渲染标题不炸"
       ],
       "entry": [
-        "src\\pages\\GradesPage.vue"
+        "src/pages/GradesPage.vue"
       ]
     },
     "M04.F08.I02": {
@@ -1248,7 +1248,7 @@
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:6606 (annot)"
       ],
       "entry": [
-        "src\\pages\\GradesPage.vue"
+        "src/pages/GradesPage.vue"
       ]
     },
     "M04.F08.I03": {
@@ -1280,7 +1280,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:9328 (annot)"
       ],
       "entry": [
-        "src\\pages\\GradesPage.vue"
+        "src/pages/GradesPage.vue"
       ]
     },
     "M04.F09.I01": {
@@ -1296,7 +1296,7 @@
         "[M04.F09.I01] 牌号维护：渲染标题不炸"
       ],
       "entry": [
-        "src\\pages\\BrandsPage.vue"
+        "src/pages/BrandsPage.vue"
       ]
     },
     "M04.F09.I02": {
@@ -1312,7 +1312,7 @@
         "[M04.F09.I02] 牌号维护：新建按钮开弹窗"
       ],
       "entry": [
-        "src\\pages\\BrandsPage.vue"
+        "src/pages/BrandsPage.vue"
       ]
     },
     "M04.F09.I03": {
@@ -1328,7 +1328,7 @@
         "[M04.F09.I03] 牌号维护：行内删除按钮开确认弹窗"
       ],
       "entry": [
-        "src\\pages\\BrandsPage.vue"
+        "src/pages/BrandsPage.vue"
       ]
     },
     "M05.F01.I01": {
@@ -1346,7 +1346,7 @@
         "[M05.F01.I01][M05.F01.I02] F01+F02 报告类别下拉存在"
       ],
       "entry": [
-        "src\\features\\summary\\SummaryList.vue"
+        "src/features/summary/SummaryList.vue"
       ]
     },
     "M05.F01.I02": {
@@ -1363,7 +1363,7 @@
         "[M05.F01.I02] F02 仪表盘统计卡片（合同/接样/样品/待办/按状态）"
       ],
       "entry": [
-        "src\\features\\summary\\SummaryList.vue"
+        "src/features/summary/SummaryList.vue"
       ]
     },
     "M05.F01.I03": {
@@ -1416,7 +1416,7 @@
         "[M05.F01.I06] I06 仪表盘统计基础端点：GET /summary/stats 基础字段穿透渲染"
       ],
       "entry": [
-        "src\\features\\summary\\SummaryList.vue"
+        "src/features/summary/SummaryList.vue"
       ]
     },
     "M06.F01.I01": {
@@ -1433,7 +1433,7 @@
         "[M06.F01.I01] F01 渲染标题 + 列表行（fixtures 穿透）"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+        "src/features/inspection-capability/InspectionCapabilityList.vue"
       ]
     },
     "M06.F01.I02": {
@@ -1470,7 +1470,7 @@
         "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+        "src/features/inspection-capability/InspectionCapabilityList.vue"
       ]
     },
     "M06.F02.I02": {
@@ -1489,7 +1489,7 @@
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:8874 (annot)"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+        "src/features/inspection-capability/InspectionCapabilityList.vue"
       ]
     },
     "M06.F02.I03": {
@@ -1563,7 +1563,7 @@
         "[M06.F03.I01] F03 渲染标题 + 3 级筛选下拉（专项/项目/标准）"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+        "src/features/inspection-capability/InspectionCapabilityList.vue"
       ]
     },
     "M06.F03.I02": {
@@ -1581,8 +1581,8 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:4994 (annot)"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\InspectionCapabilityList.vue",
-        "src\\features\\inspection-capability\\ParameterStandardLinkDialog.vue"
+        "src/features/inspection-capability/InspectionCapabilityList.vue",
+        "src/features/inspection-capability/ParameterStandardLinkDialog.vue"
       ]
     },
     "M06.F03.I03": {
@@ -1609,7 +1609,7 @@
         "[M06.F04.I01][M06.F04.I02] F04 新建按钮 + 编辑按钮"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+        "src/features/inspection-capability/InspectionCapabilityList.vue"
       ]
     },
     "M06.F04.I02": {
@@ -1626,7 +1626,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:5532 (annot)"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\InspectionCapabilityList.vue"
+        "src/features/inspection-capability/InspectionCapabilityList.vue"
       ]
     },
     "M06.F04.I03": {
@@ -1663,7 +1663,7 @@
         "[M06.F05.I01] F05 渲染标题 + 复合主键列表行"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\CalculationMethodList.vue"
+        "src/features/inspection-capability/CalculationMethodList.vue"
       ]
     },
     "M06.F05.I02": {
@@ -1702,7 +1702,7 @@
         "[M06.F06.I01][M06.F06.I02][M06.F06.I05] F06 列表行 + 新建/编辑/删除按钮"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+        "src/features/inspection-capability/TechnicalRequirementList.vue"
       ]
     },
     "M06.F06.I02": {
@@ -1718,7 +1718,7 @@
         "[M06.F06.I01][M06.F06.I02][M06.F06.I05] F06 列表行 + 新建/编辑/删除按钮"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+        "src/features/inspection-capability/TechnicalRequirementList.vue"
       ]
     },
     "M06.F06.I03": {
@@ -1744,7 +1744,7 @@
         "[M06.F06.I01][M06.F06.I02][M06.F06.I05] F06 列表行 + 新建/编辑/删除按钮"
       ],
       "entry": [
-        "src\\features\\inspection-capability\\TechnicalRequirementList.vue"
+        "src/features/inspection-capability/TechnicalRequirementList.vue"
       ]
     },
     "M06.F07.I01": {
@@ -1762,7 +1762,7 @@
         "[M06.F07.I01] 报告名称：行内删除按钮开确认弹窗"
       ],
       "entry": [
-        "src\\features\\report-names\\ReportNameList.vue"
+        "src/features/report-names/ReportNameList.vue"
       ]
     },
     "M06.F07.I02": {
@@ -1779,8 +1779,8 @@
         "[M06.F07.I02] 关联弹窗：两段列表渲染（标准已关联 + 参数未关联）"
       ],
       "entry": [
-        "src\\features\\report-names\\ReportNameLinkDialog.vue",
-        "src\\features\\report-names\\ReportNameList.vue"
+        "src/features/report-names/ReportNameLinkDialog.vue",
+        "src/features/report-names/ReportNameList.vue"
       ]
     },
     "M06.F07.I03": {
@@ -1862,7 +1862,7 @@
         "[M06.F08.I01] 参数界面：行内删除按钮开确认弹窗"
       ],
       "entry": [
-        "src\\features\\param-interfaces\\ParamInterfaceList.vue"
+        "src/features/param-interfaces/ParamInterfaceList.vue"
       ]
     },
     "M06.F08.I02": {
