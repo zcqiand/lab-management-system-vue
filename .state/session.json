@@ -1,16 +1,14 @@
 {
   "schema": 1,
   "project": "lab-management-system-vue",
-  "current_task": "5.73② 终审 B1 修复：prettier 归位（0050361）；批尾 unit gate r2 EXIT=0",
+  "current_task": "REQ-2026-020 M05.F01 仪表盘 I03/I04 已上线待人工验收（d947958 已推）——vue 侧机器规划推进完结",
   "done": [
-    "docs/functions/function-tree.md 批次 1+2 落盘（编号错位收敛 + act-merge）",
-    "悬空锚点迁移 27 处（3 个列表页 delete-data-fn→I04、TechnicalRequirementList ×3→M06.F06.I05、测试 9 处、design/flow map 各 4 行）；CategoryDictList.vue 无锚点",
-    ".state/trace.json 再生成：363 tests 全绿 / 61 fn ids / 废弃 ID 0 命中 / 新 ID 全在场（首轮 4 个超时假红为并发轮换，串行复跑全绿）",
-    "gate.py exit 0 全绿（L0-L5，165 条目引用完整）"
+    "T1 548e0ce：REQ-2026-020 + 树 I03/I04 推进开发中（mirror --apply sha=9f9692ad46ebbee3）+ 设计映射 2 行 + 台账 + 测试先行（red：[M05.F01.I03]/[I04] 两新测红）",
+    "T2/T3 d947958：SummaryList.vue 补 I03 三卡 + I04 六段漏斗（funnelTotal computed）；pageLoading fixture 按契约补齐；全门绿 vitest 35 文件 + trace 118/inert 0/I03×1/I04×1 + gate EXIT=0"
   ],
   "next": [
-    "提交：树 + 锚点 + tests + .state 一批",
-    "suite 级欠账（非本仓）：根 CLAUDE.md 超行、aspnetcore red-first、SSOT marker、saas msw member 缺仓"
+    "REQ-2026-020 人工验收后 GA 翻转 I03/I04（凭 REQ 内人工验收通过记录）",
+    "机器侧规划推进下一仓：springboot M05.F01.I03+I04（镜像 fastapi/aspnetcore 服务端实现）"
   ],
   "open_questions": [
     "gate.py --all exit 2：saas family-env.json members 仍列 msw 但本地无仓——删 member 还是建仓，需人裁",
@@ -23,5 +21,12 @@
   ],
   "active_branch": "master",
   "last_session_at": "2026-09-21",
-  "last_session_summary": "终审 M1 勘误：directive 实移除 4 条（账面 35 系警告计数口径漂移）"
+  "last_session_summary": "终审 M1 勘误：directive 实移除 4 条（账面 35 系警告计数口径漂移）",
+  "last_gate": {
+    "result": "EXIT=0 全绿",
+    "tests": "35 文件",
+    "trace_tests": 118,
+    "inert": 0,
+    "note": "软告警不阻断"
+  }
 }
