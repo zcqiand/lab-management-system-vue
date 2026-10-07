@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "approved": true,
+  "mirror": true,
+  "summary": "REQ-2026-020：M05.F01.I03 核心指标卡 + M05.F01.I04 任务状态漏斗 推进开发中（SummaryList.vue 仪表盘区块补齐，镜像 react REQ-2026-017 同名区块；契约字段在 shared 生成物俱在）",
+  "changes": [
+    {
+      "id": "M05.F01.I03",
+      "action": "变更",
+      "name": "核心指标卡",
+      "reason": "REQ-2026-020 T-1：随已批 REQ 推进开发中——DashboardStats.todayTestCount/qualifiedRateByMaterial/reportOutputByStatus 契约面与生成物俱在，react REQ-2026-017 同名行已上线产出数据，vue 侧 SummaryList.vue 补 UI 区块"
+    },
+    {
+      "id": "M05.F01.I04",
+      "action": "变更",
+      "name": "任务状态漏斗",
+      "reason": "REQ-2026-020 T-1：随已批 REQ 推进开发中——funnelByStage 六段契约面与生成物俱在，react REQ-2026-017 同名行已上线产出数据，vue 侧 SummaryList.vue 补漏斗区块"
+    }
+  ],
+  "sync_files": [
+    "docs/design/design-function-map.md",
+    "docs/requirements/README.md"
+  ],
+  "base_sha": "9f9692ad46ebbee3"
+}

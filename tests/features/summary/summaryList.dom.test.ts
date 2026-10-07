@@ -48,6 +48,27 @@ const STATS_DATA = {
     issued: 17,
   },
   pendingTaskCount: 8,
+  // REQ-2026-020：I03/I04 扩展字段按契约补齐全形（react pageLoading 教训：
+  // 半形 fixture 在实现消费扩展字段时取属性崩）
+  todayTestCount: 6,
+  qualifiedRateByMaterial: {
+    concrete: { total: 20, pass: 19, rate: 0.95 },
+    rebar: { total: 10, pass: 9, rate: 0.9 },
+    sand: { total: 8, pass: 7, rate: 0.875 },
+  },
+  reportOutputByStatus: {
+    generated: 9,
+    pending: 3,
+    issued: 14,
+  },
+  funnelByStage: {
+    pending_collect: 2,
+    received: 3,
+    testing: 4,
+    reporting: 1,
+    reviewing: 2,
+    issued: 6,
+  },
 };
 
 vi.mock("axios", () => ({
@@ -149,6 +170,58 @@ describe("M05.F01 报告汇总", () => {
     expect(select.attributes("role")).toBe("combobox");
     // categoryCode 默认值 "ALL" → SelectItemText "全部" 配对回写到 SelectValue
     expect(select.text()).toContain("全部");
+  });
+
+  // REQ-2026-020：I03 核心指标卡 + I04 任务状态漏斗（镜像 react REQ-2026-017
+  // 同名测试形状；fixture 已按契约补齐全形，锚 data-fn 区块 + testid + 标签，
+  // 不锚易变计数值）。
+  fnTest(["M05.F01.I03"], "I03 核心指标卡三卡（今日试验/报告产出/合格率）穿透渲染", async () => {
+    const wrapper = mountWithProviders(SummaryList);
+    await flushPromises();
+    const section = wrapper.find('[data-fn="M05.F01.I03"]');
+    expect(section.exists()).toBe(true);
+    expect(section.text()).toContain("核心指标");
+    // 3 张卡片
+    expect(wrapper.find('[data-testid="metric-today-tests"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="metric-output"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="metric-qualified-rate"]').exists()).toBe(true);
+    // 报告产出量 detail：已生成/待审核/已签发 三桶
+    const output = wrapper.find('[data-testid="metric-output-detail"]');
+    expect(output.exists()).toBe(true);
+    expect(output.text()).toContain("已生成");
+    expect(output.text()).toContain("待审核");
+    expect(output.text()).toContain("已签发");
+    // 检测合格率 detail：三材料 + 百分比形状
+    const qualified = wrapper.find('[data-testid="metric-qualified-detail"]');
+    expect(qualified.exists()).toBe(true);
+    for (const m of ["混凝土", "钢筋", "砂石"]) {
+      expect(qualified.text()).toContain(m);
+    }
+    expect(qualified.text()).toMatch(/\d+\.\d%/);
+  });
+
+  fnTest(["M05.F01.I04"], "I04 六段任务状态漏斗穿透渲染", async () => {
+    const wrapper = mountWithProviders(SummaryList);
+    await flushPromises();
+    const section = wrapper.find('[data-fn="M05.F01.I04"]');
+    expect(section.exists()).toBe(true);
+    expect(section.text()).toContain("试验任务状态");
+    // stats 到齐后漏斗条渲染，6 段全部在场 + 各段计数 + 合计
+    const bars = wrapper.find('[data-testid="funnel-bars"]');
+    expect(bars.exists()).toBe(true);
+    for (const key of [
+      "pending_collect",
+      "received",
+      "testing",
+      "reporting",
+      "reviewing",
+      "issued",
+    ]) {
+      const stage = wrapper.find(`[data-testid="funnel-stage-${key}"]`);
+      expect(stage.exists()).toBe(true);
+      expect(stage.text()).toMatch(/\d+ 项/);
+    }
+    expect(bars.text()).toContain("合计");
   });
 });
 
