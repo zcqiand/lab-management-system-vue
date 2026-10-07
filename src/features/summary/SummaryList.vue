@@ -38,6 +38,39 @@ const STATUS_LABEL: Record<string, string> = {
   completed: "已完成",
 };
 
+// REQ-2026-020 I03/I04：与 react SummaryList 同款常量（key 顺序即漏斗段序）
+const FUNNEL_LABELS: Array<{
+  key: keyof DashboardStats["funnelByStage"];
+  label: string;
+}> = [
+  { key: "pending_collect", label: "待取样" },
+  { key: "received", label: "已收样" },
+  { key: "testing", label: "试验中" },
+  { key: "reporting", label: "报告编制" },
+  { key: "reviewing", label: "待审核" },
+  { key: "issued", label: "已签发" },
+];
+
+const MATERIAL_LABELS: Array<{
+  key: keyof DashboardStats["qualifiedRateByMaterial"];
+  label: string;
+}> = [
+  { key: "concrete", label: "混凝土" },
+  { key: "rebar", label: "钢筋" },
+  { key: "sand", label: "砂石" },
+];
+
+function pct(n: number): string {
+  return `${(n * 100).toFixed(1)}%`;
+}
+
+// I04 漏斗合计（funnel-empty 与条形渲染的开关）
+const funnelTotal = computed(() =>
+  stats.value
+    ? FUNNEL_LABELS.reduce((acc, s) => acc + (stats.value!.funnelByStage[s.key] ?? 0), 0)
+    : 0,
+);
+
 const data = ref<SummaryData | null>(null);
 const stats = ref<DashboardStats | null>(null);
 // B6 加载态：首屏即视为加载中（汇总表 + 仪表盘统计两源到齐才出界面）
@@ -182,5 +215,90 @@ watch(categoryCode, () => {
         </div>
       </div>
     </div>
+
+    <!-- @entry M05.F01.I03 核心指标卡（REQ-2026-020，镜像 react SummaryList 同名区块）-->
+    <section data-fn="M05.F01.I03" data-testid="dashboard-metrics" class="space-y-3">
+      <h2 class="text-base font-semibold">核心指标</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div data-testid="metric-today-tests" class="rounded-xl border bg-card p-4">
+          <div class="text-xs text-muted-foreground">今日试验总数</div>
+          <div class="text-2xl font-semibold tabular-nums pt-1">
+            {{ stats?.todayTestCount ?? "—" }}
+            <span class="text-sm font-normal text-muted-foreground ml-1">项</span>
+          </div>
+        </div>
+        <div data-testid="metric-output" class="rounded-xl border bg-card p-4">
+          <div class="text-xs text-muted-foreground">报告产出量</div>
+          <div v-if="stats" data-testid="metric-output-detail" class="text-sm space-y-1 pt-1">
+            <div>
+              已生成：<b>{{ stats.reportOutputByStatus.generated }}</b>
+            </div>
+            <div>
+              待审核：<b>{{ stats.reportOutputByStatus.pending }}</b>
+            </div>
+            <div>
+              已签发：<b>{{ stats.reportOutputByStatus.issued }}</b>
+            </div>
+          </div>
+          <div v-else class="text-2xl font-semibold pt-1">—</div>
+        </div>
+        <div data-testid="metric-qualified-rate" class="rounded-xl border bg-card p-4">
+          <div class="text-xs text-muted-foreground">检测合格率</div>
+          <ul v-if="stats" data-testid="metric-qualified-detail" class="text-sm space-y-1 pt-1">
+            <li v-for="m in MATERIAL_LABELS" :key="m.key">
+              {{ m.label }}：<b>{{ pct(stats.qualifiedRateByMaterial[m.key].rate) }}</b>
+              <span class="text-xs text-muted-foreground ml-1">
+                ({{ stats.qualifiedRateByMaterial[m.key].pass }}/{{
+                  stats.qualifiedRateByMaterial[m.key].total
+                }})
+              </span>
+            </li>
+          </ul>
+          <div v-else class="text-2xl font-semibold pt-1">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- @entry M05.F01.I04 任务状态漏斗（REQ-2026-020，镜像 react SummaryList 同名区块）-->
+    <section data-fn="M05.F01.I04" data-testid="dashboard-funnel" class="space-y-3">
+      <h2 class="text-base font-semibold">试验任务状态</h2>
+      <div
+        v-if="stats && funnelTotal > 0"
+        data-testid="funnel-bars"
+        class="rounded-xl border bg-card p-4 space-y-2"
+      >
+        <div
+          v-for="(s, i) in FUNNEL_LABELS"
+          :key="s.key"
+          :data-testid="`funnel-stage-${s.key}`"
+          class="flex items-center gap-3"
+        >
+          <div class="w-20 text-xs text-muted-foreground shrink-0">{{ s.label }}</div>
+          <div class="flex-1 h-7 bg-muted rounded relative overflow-hidden">
+            <div
+              class="h-full bg-blue-500 transition-all"
+              :style="{
+                width: `${(
+                  (stats.funnelByStage[s.key] * (100 - (i * 50) / (FUNNEL_LABELS.length - 1))) /
+                  funnelTotal
+                ).toFixed(2)}%`,
+              }"
+            />
+            <div class="absolute inset-0 flex items-center justify-end pr-2 text-xs tabular-nums">
+              {{ stats.funnelByStage[s.key] }} 项
+            </div>
+          </div>
+        </div>
+        <div class="text-xs text-muted-foreground pt-1">合计 {{ funnelTotal }} 项</div>
+      </div>
+      <div
+        v-else-if="stats"
+        data-testid="funnel-empty"
+        class="text-sm text-muted-foreground rounded-xl border bg-card p-4"
+      >
+        当前无任务
+      </div>
+      <div v-else class="text-sm text-muted-foreground">载入中…</div>
+    </section>
   </div>
 </template>

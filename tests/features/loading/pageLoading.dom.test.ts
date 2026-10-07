@@ -120,6 +120,22 @@ describe("页面级加载态（PageLoading 门控）", () => {
         sampleCount: 0,
         reportCountByStatus: { draft: 0, reviewing: 0, issued: 0 },
         pendingTaskCount: 0,
+        // REQ-2026-020 起 I03/I04 消费 stats 扩展字段，fixture 按契约补齐全形
+        todayTestCount: 0,
+        qualifiedRateByMaterial: {
+          concrete: { total: 0, pass: 0, rate: 0 },
+          rebar: { total: 0, pass: 0, rate: 0 },
+          sand: { total: 0, pass: 0, rate: 0 },
+        },
+        reportOutputByStatus: { generated: 0, pending: 0, issued: 0 },
+        funnelByStage: {
+          pending_collect: 0,
+          received: 0,
+          testing: 0,
+          reporting: 0,
+          reviewing: 0,
+          issued: 0,
+        },
       },
     });
     await flushPromises();

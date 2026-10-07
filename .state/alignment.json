@@ -1368,30 +1368,44 @@
     },
     "M05.F01.I03": {
       "name": "核心指标卡",
-      "status": "规划",
+      "status": "开发中",
       "type": "查询",
-      "requirements": [],
+      "requirements": [
+        "docs\\requirements\\REQ-2026-020-m05f01-dashboard.md"
+      ],
       "flows": [],
-      "designs": [],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
+        "[M05.F01.I03] I03 核心指标卡三卡（今日试验/报告产出/合格率）穿透渲染",
         "output\\lab-management-system-contract-test\\tests\\summary.test.ts:2708 (annot)",
         "output\\lab-management-system-contract-test\\tests\\summary.test.ts:3330 (annot)",
         "output\\lab-management-system-contract-test\\tests\\summary.test.ts:3725 (annot)"
       ],
-      "entry": []
+      "entry": [
+        "src/features/summary/SummaryList.vue"
+      ]
     },
     "M05.F01.I04": {
       "name": "任务状态漏斗",
-      "status": "规划",
+      "status": "开发中",
       "type": "报表",
-      "requirements": [],
+      "requirements": [
+        "docs\\requirements\\REQ-2026-020-m05f01-dashboard.md"
+      ],
       "flows": [],
-      "designs": [],
+      "designs": [
+        "docs\\design\\design-function-map.md"
+      ],
       "tests": [
+        "[M05.F01.I04] I04 六段任务状态漏斗穿透渲染",
         "output\\lab-management-system-contract-test\\tests\\summary.test.ts:2838 (annot)",
         "output\\lab-management-system-contract-test\\tests\\summary.test.ts:4435 (annot)"
       ],
-      "entry": []
+      "entry": [
+        "src/features/summary/SummaryList.vue"
+      ]
     },
     "M05.F01.I05": {
       "name": "见证取样跟踪",
