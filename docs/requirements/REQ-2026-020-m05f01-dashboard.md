@@ -5,7 +5,7 @@
 | 提出人 | Claude 机器侧规划推进 |
 | 提出日期 | 2026-10-07 |
 | 优先级 | P1 |
-| 状态 | 开发中 |
+| 状态 | 已上线（2026-10-07 人工验收通过） |
 | 关联 ADR | ADR-0042（mirror 免批三类） |
 
 ## 1. 需求描述
@@ -43,5 +43,11 @@ funnelByStage），nextjs/react 同名行已上线产出数据，vue SummaryList
 
 | 功能 ID | 功能名称 | 影响类型 | 说明 | 关联任务 |
 |---|---|---|---|---|
-| M05.F01.I03 | 核心指标卡 | 变更 | 规划→开发中：SummaryList 补核心指标三卡（todayTestCount/reportOutputByStatus/qualifiedRateByMaterial），镜像 nextjs/react 同名区块 | T-1/T-2 |
-| M05.F01.I04 | 任务状态漏斗 | 变更 | 规划→开发中：SummaryList 补六段漏斗（funnelByStage），镜像 nextjs/react 同名区块 | T-1/T-2 |
+| M05.F01.I03 | 核心指标卡 | 变更 | 规划→开发中→已上线（2026-10-07 人工验收通过）：SummaryList 核心指标三卡（todayTestCount/reportOutputByStatus/qualifiedRateByMaterial），镜像 nextjs/react 同名区块 | T-1/T-2 |
+| M05.F01.I04 | 任务状态漏斗 | 变更 | 规划→开发中→已上线（2026-10-07 人工验收通过）：SummaryList 六段漏斗（funnelByStage），镜像 nextjs/react 同名区块 | T-1/T-2 |
+
+## 5. 人工验收记录
+
+人工验收通过（验收人：用户，2026-10-07 明示「验收通过」）。机器面实证：trace 118
+测试 inert 0、I03×1 + I04×1 恰好挂锚；gate 全链 EXIT=0。GA 翻转凭本记录执行
+（mirror 免批通道，tree_change 正门）。
