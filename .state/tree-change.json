@@ -2,24 +2,15 @@
   "schema": 1,
   "approved": true,
   "mirror": true,
-  "summary": "REQ-2026-020：M05.F01.I03 核心指标卡 + M05.F01.I04 任务状态漏斗 推进开发中（SummaryList.vue 仪表盘区块补齐，镜像 react REQ-2026-017 同名区块；契约字段在 shared 生成物俱在）",
+  "summary": "REQ-2026-023：M01.F05.I06 原生登录 镜像登记（免批类①；shared 树已上线；vue auth.ts 已挂端点绑定、仓内无测试锚定，登记 开发中）",
   "changes": [
     {
-      "id": "M05.F01.I03",
-      "action": "变更",
-      "name": "核心指标卡",
-      "reason": "REQ-2026-020 T-1：随已批 REQ 推进开发中——DashboardStats.todayTestCount/qualifiedRateByMaterial/reportOutputByStatus 契约面与生成物俱在，react REQ-2026-017 同名行已上线产出数据，vue 侧 SummaryList.vue 补 UI 区块"
-    },
-    {
-      "id": "M05.F01.I04",
-      "action": "变更",
-      "name": "任务状态漏斗",
-      "reason": "REQ-2026-020 T-1：随已批 REQ 推进开发中——funnelByStage 六段契约面与生成物俱在，react REQ-2026-017 同名行已上线产出数据，vue 侧 SummaryList.vue 补漏斗区块"
+      "id": "M01.F05.I06",
+      "action": "新增",
+      "name": "原生登录",
+      "reason": "REQ-2026-023：镜像 shared 树 M01.F05.I06（免批类①）——POST /api/auth/native-login 非浏览器客户端密码通道，校验代理 saas IdP（clientId=lab-management），saas 4xx→401 不透传、5xx/不可达→502 SAAS_UNAVAILABLE，lab 自家 JWT 重签，LoginResponse 契约形状不变；vue src/api/endpoints/auth/auth.ts 已挂 native-login 端点绑定，仓内无测试锚定，登记 开发中"
     }
   ],
-  "sync_files": [
-    "docs/design/design-function-map.md",
-    "docs/requirements/README.md"
-  ],
-  "base_sha": "9f9692ad46ebbee3"
+  "sync_files": [],
+  "base_sha": "491a643974de6e7a"
 }

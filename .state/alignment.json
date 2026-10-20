@@ -4,9 +4,9 @@
   "functions": {
     "modules": 7,
     "features": 26,
-    "items": 133
+    "items": 134
   },
-  "warnings_total": 24,
+  "warnings_total": 26,
   "warnings": {
     "已上线但无设计映射": [
       "M00.F02.I01",
@@ -35,7 +35,9 @@
       "M03.F05.I07",
       "M03.F06.I05",
       "M03.F07.I05",
-      "M03.F08.I05"
+      "M03.F08.I05",
+      "M05.F01.I03",
+      "M05.F01.I04"
     ],
     "开发中但无需求文档引用": [
       "M03.F03.I15"
@@ -77,7 +79,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:3332 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:3710 (annot)",
         "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:1110 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:3274 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:3716 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:2944 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:2321 (annot)",
         "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:2468 (annot)",
@@ -108,7 +110,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:2667 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:3022 (annot)",
         "output\\lab-management-system-contract-test\\tests\\param-interfaces.test.ts:3272 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:2146 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:2588 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:2295 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts.test.ts:2203 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:759 (annot)"
@@ -158,7 +160,8 @@
       "tests": [
         "[M01.F05.I01] login 单租户 → 直进 authenticated + token 双 key 持久化",
         "[M01.F05.I01] login 失败 → 停在 anonymous，ErrorResponse 返回",
-        "output\\lab-management-system-contract-test\\tests\\auth.test.ts:942 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\auth.test.ts:1310 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\auth.test.ts:394 (path)",
         "output\\lab-management-system-contract-test\\tests\\calculation-methods.test.ts:1042 (annot)",
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:1784 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog.test.ts:2678 (annot)",
@@ -193,7 +196,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog.test.ts:3496 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:2942 (annot)",
         "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:2285 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:3932 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:4374 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:3538 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:2964 (annot)",
         "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:3165 (annot)",
@@ -244,6 +247,22 @@
       "flows": [],
       "designs": [],
       "tests": [],
+      "entry": []
+    },
+    "M01.F05.I06": {
+      "name": "原生登录",
+      "status": "开发中",
+      "type": "接口",
+      "requirements": [
+        "docs\\requirements\\REQ-2026-023-native-login-saas-proxy.md"
+      ],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "[M01.F05.I06] auth native-login endpoint generated",
+        "output\\lab-management-system-contract-test\\tests\\auth.test.ts:3903 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\auth.test.ts:4203 (annot)"
+      ],
       "entry": []
     },
     "M02.F01.I01": {
@@ -1178,7 +1197,7 @@
         "[M04.F07.I02] 规格维护：新建按钮开弹窗",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog.test.ts:4313 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:3438 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:4612 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:5065 (annot)"
       ],
       "entry": [
         "src/pages/SpecificationsPage.vue"
@@ -1194,7 +1213,7 @@
       "tests": [
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:6340 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:6868 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:5225 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:5685 (annot)"
       ],
       "entry": []
     },
@@ -1245,7 +1264,7 @@
         "[M04.F08.I02] 等级维护：新建按钮开弹窗",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:7763 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:8670 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:6606 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:7087 (annot)"
       ],
       "entry": [
         "src/pages/GradesPage.vue"
@@ -1261,7 +1280,7 @@
       "tests": [
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog.test.ts:5126 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:3942 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:7316 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:7804 (annot)"
       ],
       "entry": []
     },
@@ -1368,7 +1387,7 @@
     },
     "M05.F01.I03": {
       "name": "核心指标卡",
-      "status": "开发中",
+      "status": "已上线",
       "type": "查询",
       "requirements": [
         "docs\\requirements\\REQ-2026-020-m05f01-dashboard.md"
@@ -1389,7 +1408,7 @@
     },
     "M05.F01.I04": {
       "name": "任务状态漏斗",
-      "status": "开发中",
+      "status": "已上线",
       "type": "报表",
       "requirements": [
         "docs\\requirements\\REQ-2026-020-m05f01-dashboard.md"
@@ -1500,7 +1519,7 @@
         "[M06.F02.I01][M06.F02.I02] F02 新建按钮 + 行内 编辑/删除 按钮",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:9174 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:10238 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:8874 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:9383 (annot)"
       ],
       "entry": [
         "src/features/inspection-capability/InspectionCapabilityList.vue"
@@ -1516,7 +1535,7 @@
       "tests": [
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:9839 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:10918 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:9543 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:10059 (annot)"
       ],
       "entry": []
     },
