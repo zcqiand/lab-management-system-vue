@@ -22,6 +22,7 @@
       "cmd": [
         "npx",
         "--no",
+        "--",
         "eslint",
         "src",
         "tests",
@@ -35,6 +36,7 @@
       "cmd": [
         "npx",
         "--no",
+        "--",
         "vue-tsc",
         "--noEmit"
       ],
@@ -45,6 +47,7 @@
       "cmd": [
         "npx",
         "--no",
+        "--",
         "vitest",
         "run"
       ],
@@ -54,6 +57,7 @@
   "trace_cmd": [
     "npx",
     "--no",
+    "--",
     "vitest",
     "run"
   ],
