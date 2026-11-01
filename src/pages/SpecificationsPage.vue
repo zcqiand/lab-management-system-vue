@@ -10,7 +10,7 @@ import CategoryDictList from "@/features/dicts/CategoryDictList.vue";
     hint="InspectionSpec 实体码表，按检测项目过滤"
     data-fn="M04.F07.I01"
     create-data-fn="M04.F07.I02"
-    edit-data-fn="M04.F07.I02"
+    edit-data-fn="M04.F07.I03"
     delete-data-fn="M04.F07.I04"
   />
 </template>

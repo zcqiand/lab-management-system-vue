@@ -315,7 +315,7 @@ describe("Phase 1.2a — TechnicalRequirementList <Button> 原语回归", () => 
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    const create = lastWrapper.find('button[data-fn="M06.F06.I02"]');
+    const create = lastWrapper.find('button[data-fn="M06.F06.I03"]');
     expect(create.exists()).toBe(true);
     expect(create.classes()).toContain("inline-flex");
     expect(create.classes()).toContain("bg-primary");

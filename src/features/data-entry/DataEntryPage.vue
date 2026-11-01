@@ -72,6 +72,11 @@ const submitting = ref(false);
 const samples = ref<Sample[]>([]);
 const parameters = ref<InspectionParameter[]>([]);
 const records = reactive<Record<string, TestRecord>>({});
+// 脏键：弹窗内用户已输入但尚未保存的 `${sampleId}#${paramCode}`。
+// openEntry 的 refetch 与用户输入存在竞态（输入框先于 refetch 落定渲染）——
+// refetch 回填若无条件覆盖 records[key]，会把用户刚敲的字静默冲回旧值
+//（e2e AC-4 实证：PUT 已发、GET 旧值后到反杀客户端态）。脏键 refetch 不覆盖。
+const dirtyKeys = new Set<string>();
 const selectedSampleId = ref<string>("");
 const activeParamCode = ref<string>("");
 
@@ -94,6 +99,7 @@ onMounted(() => void load());
 
 async function openEntry(r: SampleReceipt): Promise<void> {
   entryTarget.value = r;
+  dirtyKeys.clear();
   try {
     const [sRes, pRes] = await Promise.all([
       samplesListSamples({ receiptId: r.id, page: 1, pageSize: 50 }).catch(() => ({
@@ -116,7 +122,8 @@ async function openEntry(r: SampleReceipt): Promise<void> {
     );
     for (const t of tLists.flatMap((res) => res.data?.items ?? [])) {
       const key = `${t.sampleId}#${t.parameterCode}`;
-      records[key] = t;
+      // refetch 期间用户已输入的脏键不覆盖（见 dirtyKeys 注释）
+      if (!dirtyKeys.has(key)) records[key] = t;
     }
     if (samples.value.length > 0) selectedSampleId.value = samples.value[0]!.id;
     if (parameters.value.length > 0) activeParamCode.value = parameters.value[0]!.code;
@@ -145,6 +152,7 @@ async function handleSave(): Promise<void> {
     } else {
       await testRecordsCreateTestRecord(body);
     }
+    dirtyKeys.clear();
     entryTarget.value = null;
     await load();
   } catch (e) {
@@ -167,6 +175,7 @@ const isCement = computed(() => entryTarget.value?.categoryCode === "cement");
 function onParamChange(patch: Partial<TestRecord>): void {
   if (!selectedSampleId.value || !activeParamCode.value) return;
   const key = `${selectedSampleId.value}#${activeParamCode.value}`;
+  dirtyKeys.add(key);
   records[key] = {
     ...(records[key] ?? ({} as TestRecord)),
     id: records[key]?.id ?? "",

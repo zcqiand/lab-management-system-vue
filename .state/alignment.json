@@ -4,9 +4,9 @@
   "functions": {
     "modules": 7,
     "features": 26,
-    "items": 134
+    "items": 136
   },
-  "warnings_total": 26,
+  "warnings_total": 30,
   "warnings": {
     "已上线但无设计映射": [
       "M00.F02.I01",
@@ -16,7 +16,9 @@
       "M03.F05.I07",
       "M03.F06.I05",
       "M03.F07.I05",
-      "M03.F08.I05"
+      "M03.F08.I05",
+      "M04.F09.I04",
+      "M06.F06.I04"
     ],
     "已上线但无测试引用": [
       "M03.F02.I02",
@@ -25,7 +27,9 @@
       "M03.F05.I07",
       "M03.F06.I05",
       "M03.F07.I05",
-      "M03.F08.I05"
+      "M03.F08.I05",
+      "M04.F09.I04",
+      "M06.F06.I04"
     ],
     "已上线但不在任何流程且非孤儿白名单": [
       "M00.F02.I01",
@@ -1146,7 +1150,9 @@
         "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:3581 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names.test.ts:4662 (annot)"
       ],
-      "entry": []
+      "entry": [
+        "src/pages/ModelsPage.vue"
+      ]
     },
     "M04.F06.I04": {
       "name": "删除型号（引用保护）",
@@ -1215,7 +1221,9 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:6868 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:5685 (annot)"
       ],
-      "entry": []
+      "entry": [
+        "src/pages/SpecificationsPage.vue"
+      ]
     },
     "M04.F07.I04": {
       "name": "删除规格",
@@ -1282,7 +1290,9 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:3942 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:7804 (annot)"
       ],
-      "entry": []
+      "entry": [
+        "src/pages/GradesPage.vue"
+      ]
     },
     "M04.F08.I04": {
       "name": "删除等级",
@@ -1338,7 +1348,9 @@
       "name": "删除牌号",
       "status": "已上线",
       "type": "按钮",
-      "requirements": [],
+      "requirements": [
+        "docs\\requirements\\REQ-2026-034-m06f06-i04-mirror.md"
+      ],
       "flows": [],
       "designs": [
         "docs\\design\\design-function-map.md"
@@ -1346,6 +1358,20 @@
       "tests": [
         "[M04.F09.I03] 牌号维护：行内删除按钮开确认弹窗"
       ],
+      "entry": [
+        "src/pages/BrandsPage.vue"
+      ]
+    },
+    "M04.F09.I04": {
+      "name": "删除牌号（引用保护）",
+      "status": "已上线",
+      "type": "按钮",
+      "requirements": [
+        "docs\\requirements\\REQ-2026-034-m06f06-i04-mirror.md"
+      ],
+      "flows": [],
+      "designs": [],
+      "tests": [],
       "entry": [
         "src/pages/BrandsPage.vue"
       ]
@@ -1762,7 +1788,24 @@
       "flows": [],
       "designs": [],
       "tests": [],
-      "entry": []
+      "entry": [
+        "src/features/inspection-capability/TechnicalRequirementList.vue"
+      ]
+    },
+    "M06.F06.I04": {
+      "name": "更新技术要求",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [
+        "docs\\requirements\\README.md",
+        "docs\\requirements\\REQ-2026-034-m06f06-i04-mirror.md"
+      ],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": [
+        "src/features/inspection-capability/TechnicalRequirementList.vue"
+      ]
     },
     "M06.F06.I05": {
       "name": "删除技术要求（引用保护）",

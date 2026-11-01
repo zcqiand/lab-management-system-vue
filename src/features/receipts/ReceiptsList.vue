@@ -20,7 +20,14 @@ import {
   receiptsListReceipts,
   receiptsUpdateReceipt,
 } from "@/api/endpoints/receipts/receipts";
-import type { ReceiptsListReceiptsParams, SampleReceipt } from "@/api/endpoints/model";
+import type {
+  Contract,
+  InspectionReportName,
+  ReceiptsListReceiptsParams,
+  SampleReceipt,
+} from "@/api/endpoints/model";
+import { contractsListContracts } from "@/api/endpoints/contracts/contracts";
+import { reportNamesListReportNames } from "@/api/endpoints/report-names/report-names";
 import { currentOperator } from "@/lib/flow-operator";
 import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
@@ -64,6 +71,7 @@ type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; id: string }
 type FlowFilter = "__all__" | "receiving" | "submitted";
 
 type ReceiptBody = {
+  contractId: string;
   commissionCode: string;
   commissionDate: string;
   projectName: string;
@@ -78,16 +86,21 @@ const TEST_CATEGORIES = ["委托检验", "监督检验", "仲裁检验"] as cons
 const SAMPLE_SOURCES = ["施工送检", "监督抽检", "委托送样"] as const;
 
 const EMPTY_BODY: ReceiptBody = {
+  contractId: "",
   commissionCode: "",
   commissionDate: "",
   projectName: "",
   clientUnit: "",
   testCategory: "委托检验",
   sampleSource: "施工送检",
-  categoryCode: "cement",
+  categoryCode: "",
 };
 
 const items = ref<SampleReceipt[]>([]);
+// 合同下拉选项（创建接样必选合同——契约 contractId FK 校验，占位字面量必 400）
+const contracts = ref<Contract[]>([]);
+// 报告名称下拉（categoryCode FK→inspection_report_names.code，自由文本必 400）
+const reportNames = ref<InspectionReportName[]>([]);
 // flowFilter "__all__" 是 reka-ui 替代 raw <select value=""> 的 sentinel（reka-ui
 // SelectItem 不允许 value=""，保留给 placeholder）；load() 只认 receiving /
 // submitted，所以 "__all__" 天然翻译成「不下发 flowStatus」。
@@ -124,6 +137,20 @@ async function load(): Promise<void> {
 
 onMounted(() => {
   void load();
+  contractsListContracts({ page: 1, pageSize: 200 })
+    .then((res) => {
+      contracts.value = Array.isArray(res.data?.items) ? res.data.items : [];
+    })
+    .catch(() => {
+      contracts.value = [];
+    });
+  reportNamesListReportNames({ page: 1, pageSize: 200 })
+    .then((res) => {
+      reportNames.value = Array.isArray(res.data?.items) ? res.data.items : [];
+    })
+    .catch(() => {
+      reportNames.value = [];
+    });
 });
 
 function openCreate(): void {
@@ -132,6 +159,7 @@ function openCreate(): void {
 }
 function openEdit(r: SampleReceipt): void {
   Object.assign(form, {
+    contractId: r.contractId,
     commissionCode: r.commissionCode,
     commissionDate: r.commissionDate,
     projectName: r.projectName ?? "",
@@ -156,12 +184,18 @@ async function handleSubmit(): Promise<void> {
 }
 
 async function handleCreate(): Promise<void> {
+  if (!form.contractId) {
+    alertError("请选择合同");
+    return;
+  }
+  if (!form.categoryCode) {
+    alertError("请选择报告名称");
+    return;
+  }
   mode.value = { kind: "idle" };
   try {
     await receiptsCreateReceipt({
       ...form,
-      // GAP：表单没有合同选择器，契约 contractId 必填——占位待合同下拉补齐（见迁移报告）
-      contractId: "placeholder-contract",
       receivedBy: currentOperator(),
     });
     await load();
@@ -343,6 +377,23 @@ function alertError(msg: string): void {
         </DialogHeader>
         <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
           <div>
+            <Label for="receipt-create-contract" class="text-xs">所属合同 *</Label>
+            <Select v-model="form.contractId">
+              <SelectTrigger
+                id="receipt-create-contract"
+                aria-label="所属合同 *"
+                class="w-full mt-1"
+              >
+                <SelectValue placeholder="请选择合同" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="c in contracts" :key="c.id" :value="c.id">
+                  {{ c.contractCode }}　{{ c.projectName }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
             <Label for="receipt-create-code" class="text-xs">委托书编号 *</Label>
             <Input id="receipt-create-code" v-model="form.commissionCode" class="w-full mt-1" />
           </div>
@@ -386,12 +437,21 @@ function alertError(msg: string): void {
             </Select>
           </div>
           <div>
-            <Label for="receipt-create-report-code" class="text-xs">报告类别编码 *</Label>
-            <Input
-              id="receipt-create-report-code"
-              v-model="form.categoryCode"
-              class="w-full mt-1"
-            />
+            <Label for="receipt-create-report-code" class="text-xs">报告名称 *</Label>
+            <Select v-model="form.categoryCode">
+              <SelectTrigger
+                id="receipt-create-report-code"
+                aria-label="报告名称 *"
+                class="w-full mt-1"
+              >
+                <SelectValue placeholder="请选择报告名称" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="r in reportNames" :key="r.code" :value="r.code">
+                  {{ r.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter class="mt-4 gap-2">
@@ -418,6 +478,19 @@ function alertError(msg: string): void {
           <DialogDescription>修改接样字段后保存。</DialogDescription>
         </DialogHeader>
         <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+          <div>
+            <Label for="receipt-edit-contract" class="text-xs">所属合同</Label>
+            <Select v-model="form.contractId" disabled>
+              <SelectTrigger id="receipt-edit-contract" aria-label="所属合同" class="w-full mt-1">
+                <SelectValue placeholder="请选择合同" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="c in contracts" :key="c.id" :value="c.id">
+                  {{ c.contractCode }}　{{ c.projectName }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div>
             <Label for="receipt-edit-code" class="text-xs">委托书编号 *</Label>
             <Input id="receipt-edit-code" v-model="form.commissionCode" class="w-full mt-1" />
@@ -462,8 +535,21 @@ function alertError(msg: string): void {
             </Select>
           </div>
           <div>
-            <Label for="receipt-edit-report-code" class="text-xs">报告类别编码 *</Label>
-            <Input id="receipt-edit-report-code" v-model="form.categoryCode" class="w-full mt-1" />
+            <Label for="receipt-edit-report-code" class="text-xs">报告名称 *</Label>
+            <Select v-model="form.categoryCode">
+              <SelectTrigger
+                id="receipt-edit-report-code"
+                aria-label="报告名称 *"
+                class="w-full mt-1"
+              >
+                <SelectValue placeholder="请选择报告名称" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="r in reportNames" :key="r.code" :value="r.code">
+                  {{ r.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter class="mt-4 gap-2">

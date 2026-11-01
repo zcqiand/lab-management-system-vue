@@ -45,7 +45,8 @@ import SelectValue from "@/components/ui/SelectValue.vue";
 import PageLoading from "@/components/app/PageLoading.vue";
 
 // @entry M06.F06.I01
-// @entry M06.F06.I02
+// @entry M06.F06.I03
+// @entry M06.F06.I04
 // @entry M06.F06.I05
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
 // 契约复合主键：(inspectionObjectCode, inspectionParameterCode, judgmentStandardCode)。
@@ -265,7 +266,7 @@ async function confirmDelete(): Promise<void> {
   <div v-else data-fn="M06.F06.I01" class="space-y-4">
     <PageHeader title="技术要求维护" description="四维度匹配：牌号 / 型号 / 等级 / 规格">
       <template #actions>
-        <Button data-fn="M06.F06.I02" @click="openCreate"> 新建技术要求 </Button>
+        <Button data-fn="M06.F06.I03" @click="openCreate"> 新建技术要求 </Button>
       </template>
     </PageHeader>
 
@@ -325,7 +326,7 @@ async function confirmDelete(): Promise<void> {
             <Button
               variant="link"
               class="text-primary hover:underline mr-3"
-              data-fn="M06.F06.I02"
+              data-fn="M06.F06.I04"
               :aria-label="`编辑 ${rowKey(row)}`"
               @click="openEdit(row)"
             >

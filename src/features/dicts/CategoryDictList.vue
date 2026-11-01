@@ -230,8 +230,9 @@ function openEdit(item: DictItem): void {
 }
 
 async function handleSave(): Promise<void> {
-  // 契约 code 必填（复合主键维度：码表 code + 检测项目）
-  if (!formCode.value.trim() || !formObject.value || !formName.value.trim()) return;
+  // code 留空走后端 coerce 生成（nextjs 同款；契约 CreateCatalogEntryRequest
+  // 的 code 必填由 coerce 兜住，弹窗不设前置守卫——三端 spec 不填代码字段）
+  if (!formObject.value || !formName.value.trim()) return;
   saving.value = true;
   errorMsg.value = null;
   try {
@@ -429,11 +430,11 @@ function dialogTitle(): string {
           </Select>
         </div>
         <div>
-          <Label class="mb-1 block text-xs text-muted-foreground"> 编码 * </Label>
+          <Label class="mb-1 block text-xs text-muted-foreground">编码</Label>
           <Input v-model="formCode" :disabled="!!editing" class="disabled:bg-muted" />
         </div>
         <div>
-          <Label class="mb-1 block text-xs text-muted-foreground"> 名称 * </Label>
+          <Label class="mb-1 block text-xs text-muted-foreground">名称</Label>
           <Input v-model="formName" />
         </div>
         <div>

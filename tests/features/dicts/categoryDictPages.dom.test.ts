@@ -432,7 +432,8 @@ describe("Phase 1.4 — CategoryDictList 弹窗 <Label> 原语回归", () => {
 
     const labels = lastWrapper.findAll("[data-teleport-stub] label");
     expect(labels.length).toBe(4);
-    expect(labels.map((l) => l.text())).toEqual(["检测项目", "编码 *", "名称 *", "备注"]);
+    // 2026-11-02 批：code 留空走后端 coerce 生成（nextjs 同款），编码/名称去 * 必填标记
+    expect(labels.map((l) => l.text())).toEqual(["检测项目", "编码", "名称", "备注"]);
     expect(labels[0].element.tagName).toBe("LABEL");
     // tailwind-merge：调用方 text-xs 压掉基类 text-sm
     expect(labels[0].classes()).toContain("text-xs");

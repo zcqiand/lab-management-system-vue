@@ -456,8 +456,8 @@ describe("Phase 2d-2 — ReceiptsList <Select> + <Label> 配对回归", () => {
     const wrapper = await mountAndOpenCreate();
 
     const labels = wrapper.findAll("label");
-    // 弹窗 7 个字段，每个一个 <Label>
-    expect(labels.length).toBe(7);
+    // 弹窗 8 个字段（2026-11-02 合同下拉+报告名称 Select 批）：每个一个 <Label>
+    expect(labels.length).toBe(8);
     for (const label of labels) {
       const target = label.attributes("for");
       // 悬空 for（指向不存在的 id）比没有更糟 —— 必须真实配对
@@ -531,9 +531,10 @@ describe("Phase 2e-3 — ReceiptsList 新建/编辑弹窗走 Dialog 底座", () 
     expect(headerBtn!.element.tagName).toBe("BUTTON");
     expect(headerBtn!.classes()).toContain("inline-flex");
 
-    // 弹窗内 form <Input> 5 个仍在弹窗子树里（Phase 2d-2 配对的 id 没被 Dialog 抽走）
+    // 弹窗内 form <Input> 4 个仍在弹窗子树（2026-11-02 批后：合同/检验类别/样品来源/
+    // 报告名称全是 Select，只剩 编号/日期/项目名称/委托单位 4 个 Input）
     const dialog = w.find('[role="dialog"]');
-    expect(dialog.findAll("input").length).toBeGreaterThanOrEqual(5);
+    expect(dialog.findAll("input").length).toBe(4);
     expect(dialog.find("#receipt-create-code").exists()).toBe(true);
     expect(dialog.find("#receipt-create-date").exists()).toBe(true);
   });
@@ -575,7 +576,7 @@ describe("Phase 2e-3 — ReceiptsList 新建/编辑弹窗走 Dialog 底座", () 
     expect(dialog.exists()).toBe(true);
 
     const labels = dialog.findAll("label");
-    expect(labels.length).toBe(7);
+    expect(labels.length).toBe(8);
     for (const label of labels) {
       const target = label.attributes("for");
       expect(target).toBeTruthy();
