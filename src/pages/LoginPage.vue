@@ -2,7 +2,7 @@
 // @entry M01.F05.I03
 // LoginPage — M01.F05.io（SSO OAuth 2.0 授权码流）纯 orchestrator，镜像 react 仓 /login。
 //
-// 对齐 nextjs 模型（2026-08-19 OAuth 2.0 收口）：登录全部委托 saas 身份平台走
+// 对齐 nextjs 模型（2026-08-19 OAuth 2.0 收口）：登录全部委托 SaaS 多租户多应用身份平台走
 // OAuth 2.0 授权码模式（RFC 6749），lab 后端 confidential client（持 client_secret）。
 // 两分支：
 //   1. URL 带 ?code=&state=（saas 已授权）→ 验 state（防 CSRF）→ POST /api/auth/sso/callback
@@ -154,7 +154,7 @@ async function startSsoFlow(): Promise<void> {
     }
 
     // 阶段 2：无回调参数 → 调 authorize 让 saas 跳过来
-    status.value = `未登录，正在跳 saas 身份平台（backend=${apiMode}）…`;
+    status.value = `未登录，正在跳 SaaS 多租户多应用身份平台（backend=${apiMode}）…`;
     const fromParam = from.value;
     const csrfState = generateOauthState();
     sessionStorage.setItem(SSO_STATE_STORAGE_KEY, csrfState);
@@ -212,7 +212,7 @@ watch(
         流程：lab /login → saas /authorize → saas 登录 → 带 code 回 lab /login → lab 后端换 token
       </p>
       <p class="text-muted-foreground/70 text-xs">
-        demo 后端：{{ apiMode }} · saas 身份平台：{{ env.saasBaseUrl }}
+        demo 后端：{{ apiMode }} · SaaS 多租户多应用身份平台：{{ env.saasBaseUrl }}
       </p>
     </div>
   </div>

@@ -106,7 +106,7 @@ sequenceDiagram
 - **shared 契约仓**（`../lab-management-system-shared`，唯一 API 面 SSOT）：`npm run gen:shared` 两步——① shared 仓 `emit:openapi` 产出 `generated/openapi/openapi.yaml`；② 本仓 `npx orval`（`orval.config.ts`：tags-split、`client: "vue-query"`、`clean` 整目录、exclude `frontend-bind-meta` tag）+ prettier 收形。产物 byte-idempotent。ADR-0026 marker 落 `.state/last-gen-shared.json`（同 sha 零写入；失败仅告警不阻塞）。prebuild hook 自动触发。
 - **家族其他仓**：react 仓是镜像来源（UI 设计 + 字段 schema，逐文件对齐）；contract-test 仓黑盒校验 API 行为；e2e 仓端到端。跨仓端口约定：vue→aspnetcore `:5204`（react→springboot `:5205`），dev 默认后端 nextjs `:5201`（2026-09-17 msw 仓剔除后；msw-http 曾在 `:5200`）。mock-friendly 铁律：`npm install && npm test` 无 Key、无 Docker、无网全绿（token/localStorage 读写全部 try/catch 静默降级）。
 - **测试面**：`VITE_*` 在单元测试可用 vitest 的 `import.meta.env` stub 注入；node 测试环境通过 `storageOf()` 介质探测兼容（`window.localStorage` → 裸全局 `localStorage` → null）。
-- **saas 身份平台**（`:5101`）：SSO 跳板需 `VITE_SAAS_BASE_URL` + `VITE_SAAS_CLIENT_ID`（须等于 saas `apps.client_id`，miss 返 401）；dev 期 vite proxy `/api/saas/* → /api/v1` 消 CORS；运行时菜单走 lab 后端 `/auth/menus` 快照，前端不直连 saas 查菜单。
+- **SaaS 多租户多应用身份平台**（`:5101`）：SSO 跳板需 `VITE_SAAS_BASE_URL` + `VITE_SAAS_CLIENT_ID`（须等于 saas `apps.client_id`，miss 返 401）；dev 期 vite proxy `/api/saas/* → /api/v1` 消 CORS；运行时菜单走 lab 后端 `/auth/menus` 快照，前端不直连 saas 查菜单。
 - **外部**：无直连 DB、无第三方服务；IdP 面由后端代理。CI/容器构建时需可 clone shared 仓（GitHub）。
 
 ## 6. 配置与部署

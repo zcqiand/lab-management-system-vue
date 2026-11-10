@@ -1,4 +1,4 @@
-# PLAN — 实验室管理系统 · Vue 前端
+# PLAN — 建筑工程实验室管理系统 · Vue 前端
 
 > 待办与迭代方向。详细上下文见 `.state/session.json` 与 `docs/adr/`。
 

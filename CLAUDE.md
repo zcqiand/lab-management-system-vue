@@ -1,11 +1,11 @@
-# CLAUDE.md — 实验室管理系统Vue前端
+# CLAUDE.md — 建筑工程实验室管理系统Vue前端
 
 > 书稿配套仓 + harness 门禁仓双身份。入口，不是手册。L0 门强制上限 60 行。
 > 本仓为《（书稿信息待补）》案例（待补）的可运行配套工程，是书稿代码块的 **source of truth**。
 
 ## 1. 项目定位
 
-实验室管理系统的 Vue 前端（前端 only 镜像仓）：react 仓先实现、vue 仓翻译，**不实现 `/api` route**。
+建筑工程实验室管理系统的 Vue 前端（前端 only 镜像仓）：react 仓先实现、vue 仓翻译，**不实现 `/api` route**。
 后端由 msw / nextjs / springboot / aspnetcore 提供（跨仓约定：react→springboot :5205，vue→aspnetcore :5204）。
 
 ## 2. 铁律
