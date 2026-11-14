@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- chore(templates): 批H 模板 parity 回放——IP-0554 并入 IP-0006（shared 单源
+  assets/templates 同步，4 处 param 标签）。shared 侧详单见 shared/nextjs CHANGELOG 同日批H 条。
 - chore(rename): 系统显示名统一（suite 全家族批）——「实验室管理系统」→「建筑工程实验室管理系统」；「身份平台」名称位（标题/品牌/包描述/UI 标签）→「SaaS 多租户多应用身份平台」，行文短称保留。同批兄弟仓同节奏提交。
 
 ## [0.3.51] — 2026-09-05
