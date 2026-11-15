@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+- feat(inspection): 技术要求列表展示序——检测参数→规格→型号→等级→牌号（M06.F06.I01，
+  2026-11-15 用户裁定）。比较器抽纯函数 `techReqSort.ts`（null 排尾，语义镜像
+  nextjs TwoLevelObjectStandardTree）+ 纯单测 6 例（红→绿）；4 维筛选 computed
+  出口接线。后端 V020 稳定兜底序不动。gate L0-L5 exit 0。同步清单：react 同批
+  已提交（techReqSort 同款镜像）；nextjs sortBy 2026-11-14 已达标无改动。
 - chore(templates): 批H 模板 parity 回放——IP-0554 并入 IP-0006（shared 单源
   assets/templates 同步，4 处 param 标签）。shared 侧详单见 shared/nextjs CHANGELOG 同日批H 条。
 - chore(rename): 系统显示名统一（suite 全家族批）——「实验室管理系统」→「建筑工程实验室管理系统」；「身份平台」名称位（标题/品牌/包描述/UI 标签）→「SaaS 多租户多应用身份平台」，行文短称保留。同批兄弟仓同节奏提交。

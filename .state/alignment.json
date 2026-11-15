@@ -4,55 +4,291 @@
   "functions": {
     "modules": 7,
     "features": 26,
-    "items": 136
+    "items": 160
   },
-  "warnings_total": 30,
+  "warnings_total": 236,
   "warnings": {
     "已上线但无设计映射": [
+      "M00.F01.I01",
       "M00.F02.I01",
+      "M01.F05.I05",
+      "M01.F05.I06",
+      "M02.F01.I05",
+      "M03.F01.I06",
       "M03.F01.I08",
       "M03.F02.I05",
+      "M03.F03.I04",
+      "M03.F03.I06",
+      "M03.F03.I07",
+      "M03.F03.I08",
+      "M03.F03.I09",
+      "M03.F03.I10",
+      "M03.F03.I11",
       "M03.F03.I12",
       "M03.F05.I07",
       "M03.F06.I05",
       "M03.F07.I05",
       "M03.F08.I05",
+      "M04.F06.I03",
+      "M04.F07.I03",
+      "M04.F08.I03",
       "M04.F09.I04",
-      "M06.F06.I04"
+      "M06.F01.I02",
+      "M06.F01.I03",
+      "M06.F01.I04",
+      "M06.F01.I05",
+      "M06.F01.I06",
+      "M06.F02.I03",
+      "M06.F02.I04",
+      "M06.F02.I05",
+      "M06.F02.I06",
+      "M06.F02.I07",
+      "M06.F02.I08",
+      "M06.F03.I03",
+      "M06.F03.I04",
+      "M06.F03.I05",
+      "M06.F03.I06",
+      "M06.F03.I07",
+      "M06.F04.I03",
+      "M06.F04.I04",
+      "M06.F04.I05",
+      "M06.F04.I06",
+      "M06.F04.I07",
+      "M06.F05.I02",
+      "M06.F05.I03",
+      "M06.F05.I04",
+      "M06.F05.I05",
+      "M06.F06.I03",
+      "M06.F06.I04",
+      "M06.F07.I03",
+      "M06.F07.I04",
+      "M06.F07.I05",
+      "M06.F07.I06",
+      "M06.F07.I07",
+      "M06.F07.I08",
+      "M06.F08.I02",
+      "M06.F08.I03",
+      "M06.F08.I04",
+      "M06.F08.I05",
+      "M06.F08.I06"
     ],
     "已上线但无测试引用": [
-      "M03.F02.I02",
+      "M01.F05.I05",
       "M03.F02.I05",
+      "M03.F03.I04",
+      "M03.F03.I07",
+      "M03.F03.I09",
+      "M03.F03.I10",
+      "M03.F03.I11",
       "M03.F03.I12",
       "M03.F05.I07",
       "M03.F06.I05",
       "M03.F07.I05",
       "M03.F08.I05",
       "M04.F09.I04",
-      "M06.F06.I04"
+      "M06.F01.I02",
+      "M06.F01.I03",
+      "M06.F01.I04",
+      "M06.F01.I05",
+      "M06.F01.I06",
+      "M06.F02.I06",
+      "M06.F02.I07",
+      "M06.F02.I08",
+      "M06.F03.I03",
+      "M06.F03.I04",
+      "M06.F03.I06",
+      "M06.F03.I07",
+      "M06.F04.I03",
+      "M06.F04.I04",
+      "M06.F04.I05",
+      "M06.F04.I06",
+      "M06.F04.I07",
+      "M06.F05.I02",
+      "M06.F06.I03",
+      "M06.F06.I04",
+      "M06.F07.I03",
+      "M06.F07.I06",
+      "M06.F07.I07",
+      "M06.F07.I08",
+      "M06.F08.I02",
+      "M06.F08.I03",
+      "M06.F08.I04",
+      "M06.F08.I05"
     ],
     "已上线但不在任何流程且非孤儿白名单": [
+      "M00.F01.I01",
       "M00.F02.I01",
+      "M01.F04.I01",
+      "M01.F04.I02",
+      "M01.F05.I02",
+      "M01.F05.I03",
+      "M01.F05.I04",
+      "M01.F05.I05",
+      "M01.F05.I06",
+      "M02.F01.I01",
+      "M02.F01.I02",
+      "M02.F01.I03",
+      "M02.F01.I05",
+      "M03.F01.I01",
+      "M03.F01.I02",
+      "M03.F01.I03",
+      "M03.F01.I04",
+      "M03.F01.I06",
+      "M03.F01.I07",
       "M03.F01.I08",
+      "M03.F02.I01",
       "M03.F02.I05",
+      "M03.F03.I01",
+      "M03.F03.I02",
+      "M03.F03.I03",
+      "M03.F03.I04",
+      "M03.F03.I06",
+      "M03.F03.I07",
+      "M03.F03.I08",
+      "M03.F03.I09",
+      "M03.F03.I10",
+      "M03.F03.I11",
       "M03.F03.I12",
+      "M03.F05.I02",
       "M03.F05.I07",
+      "M03.F06.I02",
       "M03.F06.I05",
+      "M03.F07.I02",
       "M03.F07.I05",
+      "M03.F08.I02",
       "M03.F08.I05",
-      "M05.F01.I03",
-      "M05.F01.I04"
+      "M03.F09.I01",
+      "M03.F09.I03",
+      "M04.F06.I01",
+      "M04.F06.I02",
+      "M04.F06.I03",
+      "M04.F06.I04",
+      "M04.F07.I01",
+      "M04.F07.I02",
+      "M04.F07.I03",
+      "M04.F07.I04",
+      "M04.F08.I01",
+      "M04.F08.I02",
+      "M04.F08.I03",
+      "M04.F08.I04",
+      "M04.F09.I01",
+      "M04.F09.I02",
+      "M04.F09.I03",
+      "M04.F09.I04",
+      "M05.F01.I06",
+      "M06.F01.I01",
+      "M06.F01.I02",
+      "M06.F01.I03",
+      "M06.F01.I04",
+      "M06.F01.I05",
+      "M06.F01.I06",
+      "M06.F02.I01",
+      "M06.F02.I02",
+      "M06.F02.I03",
+      "M06.F02.I04",
+      "M06.F02.I05",
+      "M06.F02.I06",
+      "M06.F02.I07",
+      "M06.F02.I08",
+      "M06.F03.I01",
+      "M06.F03.I02",
+      "M06.F03.I03",
+      "M06.F03.I04",
+      "M06.F03.I05",
+      "M06.F03.I06",
+      "M06.F03.I07",
+      "M06.F04.I01",
+      "M06.F04.I02",
+      "M06.F04.I03",
+      "M06.F04.I04",
+      "M06.F04.I05",
+      "M06.F04.I06",
+      "M06.F04.I07",
+      "M06.F05.I01",
+      "M06.F05.I02",
+      "M06.F05.I03",
+      "M06.F05.I04",
+      "M06.F05.I05",
+      "M06.F06.I01",
+      "M06.F06.I02",
+      "M06.F06.I03",
+      "M06.F06.I04",
+      "M06.F06.I05",
+      "M06.F07.I01",
+      "M06.F07.I02",
+      "M06.F07.I03",
+      "M06.F07.I04",
+      "M06.F07.I05",
+      "M06.F07.I06",
+      "M06.F07.I07",
+      "M06.F07.I08",
+      "M06.F08.I01",
+      "M06.F08.I02",
+      "M06.F08.I03",
+      "M06.F08.I04",
+      "M06.F08.I05",
+      "M06.F08.I06"
     ],
     "开发中但无需求文档引用": [
-      "M03.F03.I15"
+      "M01.F04.I03",
+      "M01.F04.I04",
+      "M02.F01.I04",
+      "M03.F01.I05",
+      "M03.F02.I04",
+      "M03.F03.I05",
+      "M03.F03.I15",
+      "M03.F05.I04",
+      "M03.F06.I04",
+      "M03.F07.I04",
+      "M03.F08.I04",
+      "M06.F01.I07",
+      "M06.F02.I09",
+      "M06.F02.I10",
+      "M06.F03.I08"
+    ],
+    "开发中但代码里无 UI 入口(用户还点不到)": [
+      "M01.F04.I04",
+      "M03.F02.I04",
+      "M03.F05.I04",
+      "M03.F06.I04",
+      "M03.F07.I04",
+      "M03.F08.I04"
     ]
   },
   "unreachable_shipped": [],
   "function_map": {
-    "M00.F02.I01": {
-      "name": "租户切换器（POST /auth/switch-tenant 换发新租户 token）",
+    "M00.F01.I01": {
+      "name": "当前会话",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "output\\lab-management-system-contract-test\\tests\\auth-me.test.ts:644 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\auth-write.test.ts:518 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\calculation-methods-write.test.ts:1133 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\calculation-methods.test.ts:2111 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:4881 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:1704 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:1836 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\param-interfaces.test.ts:2226 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces.test.ts:2450 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-names.test.ts:2696 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:734 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\samples.test.ts:2066 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\summary.test.ts:1977 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:1119 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\technical-requirements.test.ts:1996 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:810 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\test-records.test.ts:2104 (annot)"
+      ],
+      "entry": []
+    },
+    "M00.F02.I01": {
+      "name": "选租户换发",
+      "status": "已上线",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -64,9 +300,9 @@
       ]
     },
     "M01.F04.I01": {
-      "name": "动态菜单下发（GET /auth/menus）",
+      "name": "动态菜单",
       "status": "已上线",
-      "type": "查询",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -82,12 +318,13 @@
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:7980 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:3332 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:3710 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:1110 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:1248 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces-write.test.ts:1030 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:3716 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:2944 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:2321 (annot)",
         "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:2468 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:2177 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:2333 (annot)",
         "深色骨架：bg-slate-900 text-white + data-fn M01.F04.I01 + 主导航 aria"
       ],
       "entry": [
@@ -96,9 +333,9 @@
       ]
     },
     "M01.F04.I02": {
-      "name": "动态权限集（GET /auth/permissions）",
+      "name": "权限集",
       "status": "已上线",
-      "type": "查询",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -114,6 +351,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:2667 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:3022 (annot)",
         "output\\lab-management-system-contract-test\\tests\\param-interfaces.test.ts:3272 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces.test.ts:3398 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:2588 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:2295 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts.test.ts:2203 (annot)",
@@ -125,8 +363,8 @@
     },
     "M01.F04.I03": {
       "name": "路由守卫（未登录/无权限拦截）",
-      "status": "已上线",
-      "type": "接口",
+      "status": "开发中",
+      "type": "标签页",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -145,9 +383,9 @@
       ]
     },
     "M01.F04.I04": {
-      "name": "动态菜单",
-      "status": "规划",
-      "type": "接口",
+      "name": "动态菜单（lab 侧边栏）",
+      "status": "开发中",
+      "type": "标签页",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -155,9 +393,9 @@
       "entry": []
     },
     "M01.F05.I01": {
-      "name": "用户名+密码登录",
+      "name": "密码登录",
       "status": "已废弃",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -171,6 +409,7 @@
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog.test.ts:2678 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:2437 (annot)",
         "output\\lab-management-system-contract-test\\tests\\param-interfaces.test.ts:985 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces.test.ts:1274 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names.test.ts:1578 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts.test.ts:1011 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples.test.ts:920 (annot)",
@@ -181,7 +420,7 @@
       "entry": []
     },
     "M01.F05.I02": {
-      "name": "Token 注入与失效跳登录",
+      "name": "SSO 跳转",
       "status": "已上线",
       "type": "接口",
       "requirements": [],
@@ -199,17 +438,18 @@
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:8707 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog.test.ts:3496 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:2942 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:2285 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:2465 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces-write.test.ts:2212 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:4374 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:3538 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:2964 (annot)",
         "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:3165 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:2812 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:2978 (annot)"
       ],
       "entry": []
     },
     "M01.F05.I03": {
-      "name": "SSO OAuth 2.0 授权码流（client_secret 后端持 + state CSRF 防护）",
+      "name": "SSO 回调",
       "status": "已上线",
       "type": "接口",
       "requirements": [],
@@ -226,9 +466,9 @@
       ]
     },
     "M01.F05.I04": {
-      "name": "登出",
+      "name": "刷新 token",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -245,7 +485,7 @@
     },
     "M01.F05.I05": {
       "name": "登出",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -255,7 +495,7 @@
     },
     "M01.F05.I06": {
       "name": "原生登录",
-      "status": "开发中",
+      "status": "已上线",
       "type": "接口",
       "requirements": [
         "docs\\requirements\\REQ-2026-023-native-login-saas-proxy.md"
@@ -270,9 +510,9 @@
       "entry": []
     },
     "M02.F01.I01": {
-      "name": "合同列表（三态过滤）",
+      "name": "合同列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -287,9 +527,9 @@
       ]
     },
     "M02.F01.I02": {
-      "name": "新建/编辑合同",
+      "name": "合同详情",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -304,9 +544,9 @@
       ]
     },
     "M02.F01.I03": {
-      "name": "删除合同",
+      "name": "创建合同",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -320,10 +560,34 @@
         "src/features/contracts/ContractsList.vue"
       ]
     },
-    "M03.F01.I01": {
-      "name": "接样单列表（flowStatus 三态过滤）",
+    "M02.F01.I04": {
+      "name": "更新合同",
+      "status": "开发中",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:166 (annot)"
+      ],
+      "entry": []
+    },
+    "M02.F01.I05": {
+      "name": "删除合同",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:189 (annot)"
+      ],
+      "entry": []
+    },
+    "M03.F01.I01": {
+      "name": "接样单列表",
+      "status": "已上线",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -339,9 +603,9 @@
       ]
     },
     "M03.F01.I02": {
-      "name": "新建/编辑接样单",
+      "name": "接样单详情",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -355,9 +619,9 @@
       ]
     },
     "M03.F01.I03": {
-      "name": "删除接样单",
+      "name": "创建接样单",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -371,9 +635,9 @@
       ]
     },
     "M03.F01.I04": {
-      "name": "提交接样单（receiving → task_assignment）",
+      "name": "更新接样单",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -386,9 +650,19 @@
         "src/features/receipts/ReceiptsList.vue"
       ]
     },
+    "M03.F01.I05": {
+      "name": "删除接样单",
+      "status": "开发中",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
     "M03.F01.I06": {
       "name": "接样单流程历史",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -452,9 +726,9 @@
       "entry": []
     },
     "M03.F02.I01": {
-      "name": "任务分配队列",
+      "name": "任务分配",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -469,8 +743,8 @@
       ]
     },
     "M03.F02.I02": {
-      "name": "安排/取消检测人员与计划日期",
-      "status": "已上线",
+      "name": "任务编辑（客户端视角 anchor）",
+      "status": "已废弃",
       "type": "按钮",
       "requirements": [],
       "flows": [],
@@ -484,8 +758,8 @@
     },
     "M03.F02.I03": {
       "name": "任务取消（清空分配）",
-      "status": "规划",
-      "type": "接口",
+      "status": "已废弃",
+      "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -494,8 +768,8 @@
     },
     "M03.F02.I04": {
       "name": "任务分配三态过滤器",
-      "status": "规划",
-      "type": "接口",
+      "status": "开发中",
+      "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -533,9 +807,9 @@
       "entry": []
     },
     "M03.F03.I01": {
-      "name": "样品 + 检测数据录入页",
+      "name": "样品列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -569,9 +843,9 @@
       ]
     },
     "M03.F03.I02": {
-      "name": "保存检测记录",
+      "name": "样品详情",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -588,9 +862,9 @@
       ]
     },
     "M03.F03.I03": {
-      "name": "人工改判 verdict",
+      "name": "创建样品",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -609,7 +883,17 @@
     },
     "M03.F03.I04": {
       "name": "更新样品",
-      "status": "规划",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F03.I05": {
+      "name": "删除样品",
+      "status": "开发中",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -619,7 +903,7 @@
     },
     "M03.F03.I06": {
       "name": "检测记录列表",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -631,7 +915,7 @@
     },
     "M03.F03.I07": {
       "name": "检测记录详情",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -641,7 +925,7 @@
     },
     "M03.F03.I08": {
       "name": "创建检测记录",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -653,7 +937,27 @@
     },
     "M03.F03.I09": {
       "name": "更新检测记录",
-      "status": "规划",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F03.I10": {
+      "name": "删除检测记录",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M03.F03.I11": {
+      "name": "检测记录改判",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -704,9 +1008,9 @@
       ]
     },
     "M03.F05.I01": {
-      "name": "审核队列（review 阶段）",
-      "status": "已上线",
-      "type": "页面",
+      "name": "审核队列",
+      "status": "已废弃",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -720,7 +1024,7 @@
       ]
     },
     "M03.F05.I02": {
-      "name": "审核通过/驳回（submit/return）",
+      "name": "报告审核-查看详情",
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
@@ -736,7 +1040,7 @@
       ]
     },
     "M03.F05.I03": {
-      "name": "报告审核-通过/退回",
+      "name": "报告审核-通过/退回（act 共端点）",
       "status": "已废弃",
       "type": "接口",
       "requirements": [],
@@ -747,8 +1051,8 @@
     },
     "M03.F05.I04": {
       "name": "报告审核三态过滤器",
-      "status": "规划",
-      "type": "接口",
+      "status": "开发中",
+      "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -756,7 +1060,7 @@
       "entry": []
     },
     "M03.F05.I05": {
-      "name": "报告审核-批量提交（已废）",
+      "name": "报告审核-批量提交",
       "status": "已废弃",
       "type": "接口",
       "requirements": [],
@@ -766,7 +1070,7 @@
       "entry": []
     },
     "M03.F05.I06": {
-      "name": "报告审核-批量退回（已废）",
+      "name": "报告审核-批量退回",
       "status": "已废弃",
       "type": "接口",
       "requirements": [],
@@ -806,9 +1110,9 @@
       "entry": []
     },
     "M03.F06.I01": {
-      "name": "批准队列（approval 阶段）",
-      "status": "已上线",
-      "type": "页面",
+      "name": "报告阶段审批推进",
+      "status": "已废弃",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -822,7 +1126,7 @@
       ]
     },
     "M03.F06.I02": {
-      "name": "批准/驳回",
+      "name": "报告批准-查看详情",
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
@@ -838,7 +1142,7 @@
       ]
     },
     "M03.F06.I03": {
-      "name": "报告批准-批准/退回",
+      "name": "报告批准-批准/退回（act 共端点）",
       "status": "已废弃",
       "type": "接口",
       "requirements": [],
@@ -849,8 +1153,8 @@
     },
     "M03.F06.I04": {
       "name": "报告批准三态过滤器",
-      "status": "规划",
-      "type": "接口",
+      "status": "开发中",
+      "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -888,9 +1192,9 @@
       "entry": []
     },
     "M03.F07.I01": {
-      "name": "发放队列（issuance 阶段）",
-      "status": "已上线",
-      "type": "页面",
+      "name": "报告发放队列",
+      "status": "已废弃",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -904,7 +1208,7 @@
       ]
     },
     "M03.F07.I02": {
-      "name": "发放（生成报告编号）",
+      "name": "报告发放-查看详情",
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
@@ -920,7 +1224,7 @@
       ]
     },
     "M03.F07.I03": {
-      "name": "报告发放-发放/退回",
+      "name": "报告发放-发放/退回（act 共端点）",
       "status": "已废弃",
       "type": "接口",
       "requirements": [],
@@ -931,8 +1235,8 @@
     },
     "M03.F07.I04": {
       "name": "报告发放三态过滤器",
-      "status": "规划",
-      "type": "接口",
+      "status": "开发中",
+      "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -970,9 +1274,9 @@
       "entry": []
     },
     "M03.F08.I01": {
-      "name": "归档队列（archived 阶段）",
-      "status": "已上线",
-      "type": "页面",
+      "name": "报告归档队列",
+      "status": "已废弃",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -986,7 +1290,7 @@
       ]
     },
     "M03.F08.I02": {
-      "name": "归档完成",
+      "name": "报告归档-查看详情",
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
@@ -1002,7 +1306,7 @@
       ]
     },
     "M03.F08.I03": {
-      "name": "报告归档-归档/退回",
+      "name": "报告归档-归档/退回（act 共端点）",
       "status": "已废弃",
       "type": "接口",
       "requirements": [],
@@ -1013,8 +1317,8 @@
     },
     "M03.F08.I04": {
       "name": "报告归档三态过滤器",
-      "status": "规划",
-      "type": "接口",
+      "status": "开发中",
+      "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -1052,9 +1356,9 @@
       "entry": []
     },
     "M03.F09.I01": {
-      "name": "接样单详情页",
+      "name": "接样单详情聚合",
       "status": "已上线",
-      "type": "页面",
+      "type": "按钮",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1068,9 +1372,9 @@
       ]
     },
     "M03.F09.I02": {
-      "name": "流程历史时间线",
-      "status": "已上线",
-      "type": "查询",
+      "name": "详情页",
+      "status": "已废弃",
+      "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1084,7 +1388,7 @@
       ]
     },
     "M03.F09.I03": {
-      "name": "报告预览",
+      "name": "报告预览（详情页）",
       "status": "已上线",
       "type": "按钮",
       "requirements": [],
@@ -1100,9 +1404,9 @@
       ]
     },
     "M04.F06.I01": {
-      "name": "型号列表（按专项过滤 + 拖拽排序）",
+      "name": "型号列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1116,9 +1420,9 @@
       ]
     },
     "M04.F06.I02": {
-      "name": "新建/编辑型号",
+      "name": "创建型号",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1128,26 +1432,28 @@
         "[M04.F06.I02] 型号维护：新建按钮开弹窗（标题『新建型号』）",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:4260 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:4367 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:2959 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:3139 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces-write.test.ts:2910 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names.test.ts:3566 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts.test.ts:3250 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:3427 (annot)"
+        "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:3593 (annot)"
       ],
       "entry": [
         "src/pages/ModelsPage.vue"
       ]
     },
     "M04.F06.I03": {
-      "name": "删除型号（引用保护）",
-      "status": "已废弃",
-      "type": "按钮",
+      "name": "更新型号",
+      "status": "已上线",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
       "tests": [
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:5030 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:5553 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:3581 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:3761 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces-write.test.ts:3566 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names.test.ts:4662 (annot)"
       ],
       "entry": [
@@ -1155,9 +1461,9 @@
       ]
     },
     "M04.F06.I04": {
-      "name": "删除型号（引用保护）",
+      "name": "删除型号",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1167,7 +1473,8 @@
         "[M04.F06.I04] 型号维护：行内删除按钮开确认弹窗",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:5695 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:6223 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:4519 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\param-interfaces-write.test.ts:4699 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\report-name-interfaces-write.test.ts:4524 (annot)",
         "output\\lab-management-system-contract-test\\tests\\report-names.test.ts:5800 (annot)"
       ],
       "entry": [
@@ -1177,7 +1484,7 @@
     "M04.F07.I01": {
       "name": "规格列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1191,9 +1498,9 @@
       ]
     },
     "M04.F07.I02": {
-      "name": "新建/编辑规格",
+      "name": "创建规格",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1210,9 +1517,9 @@
       ]
     },
     "M04.F07.I03": {
-      "name": "删除规格",
-      "status": "已废弃",
-      "type": "按钮",
+      "name": "更新规格",
+      "status": "已上线",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -1228,7 +1535,7 @@
     "M04.F07.I04": {
       "name": "删除规格",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1246,7 +1553,7 @@
     "M04.F08.I01": {
       "name": "等级列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1260,9 +1567,9 @@
       ]
     },
     "M04.F08.I02": {
-      "name": "新建/编辑等级",
+      "name": "创建等级",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1279,9 +1586,9 @@
       ]
     },
     "M04.F08.I03": {
-      "name": "删除等级",
-      "status": "已废弃",
-      "type": "按钮",
+      "name": "更新等级",
+      "status": "已上线",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -1297,7 +1604,7 @@
     "M04.F08.I04": {
       "name": "删除等级",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1315,7 +1622,7 @@
     "M04.F09.I01": {
       "name": "牌号列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1329,9 +1636,9 @@
       ]
     },
     "M04.F09.I02": {
-      "name": "新建/编辑牌号",
+      "name": "创建牌号",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1345,9 +1652,9 @@
       ]
     },
     "M04.F09.I03": {
-      "name": "删除牌号",
+      "name": "更新牌号",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [
         "docs\\requirements\\REQ-2026-034-m06f06-i04-mirror.md"
       ],
@@ -1363,9 +1670,9 @@
       ]
     },
     "M04.F09.I04": {
-      "name": "删除牌号（引用保护）",
+      "name": "删除牌号",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [
         "docs\\requirements\\REQ-2026-034-m06f06-i04-mirror.md"
       ],
@@ -1377,8 +1684,8 @@
       ]
     },
     "M05.F01.I01": {
-      "name": "报告汇总表（按报告类别汇总）",
-      "status": "已上线",
+      "name": "报告汇总",
+      "status": "规划",
       "type": "查询",
       "requirements": [],
       "flows": [],
@@ -1395,9 +1702,9 @@
       ]
     },
     "M05.F01.I02": {
-      "name": "仪表盘统计",
-      "status": "已上线",
-      "type": "查询",
+      "name": "仪表盘容器",
+      "status": "规划",
+      "type": "页面",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1413,7 +1720,7 @@
     },
     "M05.F01.I03": {
       "name": "核心指标卡",
-      "status": "已上线",
+      "status": "规划",
       "type": "查询",
       "requirements": [
         "docs\\requirements\\REQ-2026-020-m05f01-dashboard.md"
@@ -1434,7 +1741,7 @@
     },
     "M05.F01.I04": {
       "name": "任务状态漏斗",
-      "status": "已上线",
+      "status": "规划",
       "type": "报表",
       "requirements": [
         "docs\\requirements\\REQ-2026-020-m05f01-dashboard.md"
@@ -1479,9 +1786,9 @@
       ]
     },
     "M06.F01.I01": {
-      "name": "检测专项列表 + CRUD",
+      "name": "专项列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1497,7 +1804,7 @@
     },
     "M06.F01.I02": {
       "name": "创建专项",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1507,7 +1814,47 @@
     },
     "M06.F01.I03": {
       "name": "更新专项",
-      "status": "规划",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F01.I04": {
+      "name": "删除专项",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F01.I05": {
+      "name": "项目↔标准 link",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F01.I06": {
+      "name": "项目↔标准 unlink",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F01.I07": {
+      "name": "项目↔标准 列表",
+      "status": "开发中",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1516,9 +1863,9 @@
       "entry": []
     },
     "M06.F02.I01": {
-      "name": "检测项目列表（按专项过滤）",
+      "name": "项目列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1533,9 +1880,9 @@
       ]
     },
     "M06.F02.I02": {
-      "name": "项目↔专项/参数关联",
+      "name": "创建项目",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1553,7 +1900,7 @@
     },
     "M06.F02.I03": {
       "name": "更新项目",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1567,7 +1914,7 @@
     },
     "M06.F02.I04": {
       "name": "删除项目",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1579,7 +1926,7 @@
     },
     "M06.F02.I05": {
       "name": "专项↔项目 link",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1591,7 +1938,7 @@
     },
     "M06.F02.I06": {
       "name": "专项↔项目 unlink",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1601,7 +1948,37 @@
     },
     "M06.F02.I07": {
       "name": "项目↔参数 link",
-      "status": "规划",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F02.I08": {
+      "name": "项目↔参数 unlink",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F02.I09": {
+      "name": "专项↔项目 列表",
+      "status": "开发中",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F02.I10": {
+      "name": "项目↔参数 列表",
+      "status": "开发中",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1610,9 +1987,9 @@
       "entry": []
     },
     "M06.F03.I01": {
-      "name": "检测参数列表 + CRUD",
+      "name": "参数列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1626,9 +2003,9 @@
       ]
     },
     "M06.F03.I02": {
-      "name": "参数↔标准关联",
+      "name": "创建参数",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1646,7 +2023,59 @@
     },
     "M06.F03.I03": {
       "name": "更新参数",
-      "status": "规划",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F03.I04": {
+      "name": "删除参数",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F03.I05": {
+      "name": "标准↔参数 link",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "output\\lab-management-system-contract-test\\tests\\inspection-dictionary.test.ts:6070 (annot)"
+      ],
+      "entry": []
+    },
+    "M06.F03.I06": {
+      "name": "标准↔参数 unlink",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F03.I07": {
+      "name": "参数↔界面 unlink",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F03.I08": {
+      "name": "标准↔参数 列表",
+      "status": "开发中",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1655,9 +2084,9 @@
       "entry": []
     },
     "M06.F04.I01": {
-      "name": "检测标准列表（状态过滤）",
+      "name": "标准列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1672,9 +2101,9 @@
       ]
     },
     "M06.F04.I02": {
-      "name": "标准 CRUD",
+      "name": "创建标准",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1690,7 +2119,7 @@
     },
     "M06.F04.I03": {
       "name": "更新标准",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1700,7 +2129,37 @@
     },
     "M06.F04.I04": {
       "name": "删除标准",
-      "status": "规划",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F04.I05": {
+      "name": "项目↔报告名称 unlink",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F04.I06": {
+      "name": "报告名称↔参数 unlink",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [],
+      "entry": []
+    },
+    "M06.F04.I07": {
+      "name": "报告名称↔标准 unlink",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1709,9 +2168,9 @@
       "entry": []
     },
     "M06.F05.I01": {
-      "name": "计算方法维护",
+      "name": "计算方法列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1727,7 +2186,7 @@
     },
     "M06.F05.I02": {
       "name": "计算方法详情",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1737,7 +2196,7 @@
     },
     "M06.F05.I03": {
       "name": "创建计算方法",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1747,10 +2206,34 @@
       ],
       "entry": []
     },
-    "M06.F06.I01": {
-      "name": "技术要求列表（多维过滤）",
+    "M06.F05.I04": {
+      "name": "更新计算方法",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:16943 (annot)"
+      ],
+      "entry": []
+    },
+    "M06.F05.I05": {
+      "name": "删除计算方法",
+      "status": "已上线",
+      "type": "接口",
+      "requirements": [],
+      "flows": [],
+      "designs": [],
+      "tests": [
+        "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:18509 (annot)"
+      ],
+      "entry": []
+    },
+    "M06.F06.I01": {
+      "name": "技术要求列表",
+      "status": "已上线",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1765,9 +2248,9 @@
       ]
     },
     "M06.F06.I02": {
-      "name": "新建/编辑技术要求",
+      "name": "技术要求详情",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1781,9 +2264,9 @@
       ]
     },
     "M06.F06.I03": {
-      "name": "删除技术要求（引用保护）",
-      "status": "已废弃",
-      "type": "按钮",
+      "name": "创建技术要求",
+      "status": "已上线",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [],
@@ -1808,9 +2291,9 @@
       ]
     },
     "M06.F06.I05": {
-      "name": "删除技术要求（引用保护）",
+      "name": "删除技术要求",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1824,9 +2307,9 @@
       ]
     },
     "M06.F07.I01": {
-      "name": "报告名称列表 + extFields 模板",
+      "name": "报告名称列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1842,9 +2325,9 @@
       ]
     },
     "M06.F07.I02": {
-      "name": "报告名称↔标准/参数关联",
+      "name": "报告名称详情",
       "status": "已上线",
-      "type": "按钮",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1861,7 +2344,7 @@
     },
     "M06.F07.I03": {
       "name": "创建报告名称",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1871,7 +2354,7 @@
     },
     "M06.F07.I04": {
       "name": "更新报告名称",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1883,7 +2366,7 @@
     },
     "M06.F07.I05": {
       "name": "删除报告名称",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1895,7 +2378,7 @@
     },
     "M06.F07.I06": {
       "name": "项目↔报告名称 link",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1905,7 +2388,7 @@
     },
     "M06.F07.I07": {
       "name": "报告名称↔标准 link",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1915,7 +2398,7 @@
     },
     "M06.F07.I08": {
       "name": "报告名称↔参数 link",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1924,9 +2407,9 @@
       "entry": []
     },
     "M06.F08.I01": {
-      "name": "参数界面维护 + link",
+      "name": "参数界面列表",
       "status": "已上线",
-      "type": "页面",
+      "type": "接口",
       "requirements": [],
       "flows": [],
       "designs": [
@@ -1943,7 +2426,7 @@
     },
     "M06.F08.I02": {
       "name": "参数界面详情",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1953,7 +2436,7 @@
     },
     "M06.F08.I03": {
       "name": "创建参数界面",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1963,7 +2446,7 @@
     },
     "M06.F08.I04": {
       "name": "更新参数界面",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1973,7 +2456,7 @@
     },
     "M06.F08.I05": {
       "name": "删除参数界面",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],
@@ -1983,7 +2466,7 @@
     },
     "M06.F08.I06": {
       "name": "参数↔界面 link",
-      "status": "规划",
+      "status": "已上线",
       "type": "接口",
       "requirements": [],
       "flows": [],

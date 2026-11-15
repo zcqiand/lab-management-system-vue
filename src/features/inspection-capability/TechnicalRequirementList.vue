@@ -20,6 +20,7 @@ import type {
   TechnicalRequirement,
   UpdateTechnicalRequirementRequest,
 } from "@/api/endpoints/model";
+import { sortTechReqRows } from "@/features/inspection-capability/techReqSort";
 import PageHeader from "@/components/app/PageHeader.vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
@@ -97,15 +98,19 @@ const modelFilter = ref("");
 const gradeFilter = ref("");
 const specFilter = ref("");
 
-// 契约 list 端点无 brand/model/grade/spec 参数 → 4 维筛选客户端过滤
+// 契约 list 端点无 brand/model/grade/spec 参数 → 4 维筛选客户端过滤；
+// 展示序：检测参数→规格→型号→等级→牌号（2026-11-15 用户裁定；后端 V020
+// 返回的是稳定兜底序，展示序归前端层，nextjs sortBy 同款）
 const items = computed<TechReq[]>(() =>
-  allItems.value.filter((it) => {
-    if (brandFilter.value && (it.brand ?? "") !== brandFilter.value) return false;
-    if (modelFilter.value && (it.model ?? "") !== modelFilter.value) return false;
-    if (gradeFilter.value && (it.grade ?? "") !== gradeFilter.value) return false;
-    if (specFilter.value && (it.spec ?? "") !== specFilter.value) return false;
-    return true;
-  }),
+  sortTechReqRows(
+    allItems.value.filter((it) => {
+      if (brandFilter.value && (it.brand ?? "") !== brandFilter.value) return false;
+      if (modelFilter.value && (it.model ?? "") !== modelFilter.value) return false;
+      if (gradeFilter.value && (it.grade ?? "") !== gradeFilter.value) return false;
+      if (specFilter.value && (it.spec ?? "") !== specFilter.value) return false;
+      return true;
+    }),
+  ),
 );
 
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; item: TechReq };
