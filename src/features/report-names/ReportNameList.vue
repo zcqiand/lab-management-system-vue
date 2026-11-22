@@ -1,8 +1,10 @@
 <script setup lang="ts">
-// M06.F07 报告名称维护 — 列表 + Dialog 弹窗（基础信息 + extFields 模板）
+// M06.F07 报告名称维护 — 列表 + Dialog 弹窗（基础信息）
 //
 // 镜像 react 仓 src/features/report-names/ReportNameList.tsx（vue 翻译规则 4 条）。
-// 简化版：单 Tab 而非 5 Tab；extFields JSON 数组走 textarea 字符串，提交时 JSON.parse。
+// 2026-11-10 人裁：InspectionReportName.extFields（含 ExtFieldDef 族）随契约退役——
+// 样品信息扩展属性的采集结构移交 ReportNameInterface（schema 驱动，ParamInterface 同构），
+// 本维护面不再含 extFields 编辑。
 //
 // 功能 ID：
 //   M06.F07.I01 列表（行 data-fn + 新建/编辑按钮 data-fn）
@@ -16,7 +18,6 @@ import {
 } from "@/api/endpoints/report-names/report-names";
 import type {
   CreateInspectionReportNameRequest,
-  ExtFieldDef,
   InspectionReportName,
   UpdateInspectionReportNameRequest,
 } from "@/api/endpoints/model";
@@ -31,7 +32,6 @@ import DialogTitle from "@/components/ui/DialogTitle.vue";
 import Input from "@/components/ui/Input.vue";
 import Label from "@/components/ui/Label.vue";
 import Table from "@/components/ui/Table.vue";
-import Textarea from "@/components/ui/Textarea.vue";
 import TableBody from "@/components/ui/TableBody.vue";
 import TableCell from "@/components/ui/TableCell.vue";
 import TableHead from "@/components/ui/TableHead.vue";
@@ -53,7 +53,6 @@ interface FormState {
   templatePath: string;
   description: string;
   sortOrder: number;
-  extFieldsText: string;
 }
 
 const EMPTY_FORM: FormState = {
@@ -63,7 +62,6 @@ const EMPTY_FORM: FormState = {
   templatePath: "",
   description: "",
   sortOrder: 0,
-  extFieldsText: "[]",
 };
 
 const items = ref<InspectionReportName[]>([]);
@@ -115,7 +113,6 @@ function openEdit(r: InspectionReportName): void {
     templatePath: r.templatePath ?? "",
     description: r.description ?? "",
     sortOrder: r.sortOrder,
-    extFieldsText: JSON.stringify(r.extFields ?? [], null, 2),
   });
   mode.value = { kind: "edit", code: r.code };
 }
@@ -128,24 +125,7 @@ function alertError(msg: string): void {
   globalThis.alert(msg);
 }
 
-function parseExtFields(
-  text: string,
-): { ok: true; value: ExtFieldDef[] } | { ok: false; error: string } {
-  try {
-    const v: unknown = JSON.parse(text);
-    if (!Array.isArray(v)) return { ok: false, error: "extFields 必须是 JSON 数组" };
-    return { ok: true, value: v as ExtFieldDef[] };
-  } catch (e) {
-    return { ok: false, error: (e as Error).message };
-  }
-}
-
 async function submitForm(): Promise<void> {
-  const parsed = parseExtFields(form.extFieldsText);
-  if (!parsed.ok) {
-    alertError(`extFields 解析失败：${parsed.error}`);
-    return;
-  }
   try {
     if (mode.value.kind === "create") {
       const body: CreateInspectionReportNameRequest = {
@@ -155,7 +135,6 @@ async function submitForm(): Promise<void> {
         templatePath: form.templatePath || undefined,
         description: form.description || undefined,
         sortOrder: form.sortOrder,
-        extFields: parsed.value,
       };
       await reportNamesCreateReportName(body);
     } else if (mode.value.kind === "edit") {
@@ -166,7 +145,6 @@ async function submitForm(): Promise<void> {
         templatePath: form.templatePath || undefined,
         description: form.description || undefined,
         sortOrder: form.sortOrder,
-        extFields: parsed.value,
       };
       await reportNamesUpdateReportName(code, body);
     }
@@ -194,7 +172,7 @@ async function handleDeleteConfirm(): Promise<void> {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else>
-    <PageHeader title="报告名称维护" description="报告名称与 extFields 录入模板">
+    <PageHeader title="报告名称维护" description="报告名称与关联维护">
       <template #actions>
         <!-- @entry M06.F07.I01 新建报告名称按钮 -->
         <Button data-fn="M06.F07.I01" @click="openCreate"> 新建报告名称 </Button>
@@ -224,10 +202,7 @@ async function handleDeleteConfirm(): Promise<void> {
           <DialogTitle>
             {{ mode.kind === "create" ? "新建报告名称" : `编辑报告名称 ${editing?.code ?? ""}` }}
           </DialogTitle>
-          <DialogDescription>
-            创建一条报告名称记录。extFields 为 JSON 数组格式，例如
-            <code>[{`{key:"x",label:"X"}`}]</code>。
-          </DialogDescription>
+          <DialogDescription>创建一条报告名称记录。</DialogDescription>
         </DialogHeader>
         <div class="px-6 py-4 max-h-[60vh] overflow-y-auto">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -254,10 +229,6 @@ async function handleDeleteConfirm(): Promise<void> {
             <div class="md:col-span-2">
               <Label>描述</Label>
               <Input v-model="form.description" />
-            </div>
-            <div class="md:col-span-2">
-              <Label>扩展属性 extFields（JSON 数组）</Label>
-              <Textarea v-model="form.extFieldsText" class="h-32 font-mono" />
             </div>
           </div>
         </div>

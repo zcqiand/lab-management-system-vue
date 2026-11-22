@@ -83,15 +83,13 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
       </div>
       <div>
         <Label class="block text-xs text-muted-foreground mb-0.5">技术要求</Label>
+        <!-- ADR-0056：requirementCode 退役——选择器 value/回显都走 requirement 文本
+             （nextjs DynamicFormRenderer 通用卡同款口径） -->
         <Select
-          :model-value="rec?.requirementCode || NONE"
+          :model-value="rec?.requirement || NONE"
           :disabled="readOnly"
           @update:model-value="
-            (v: string | number) => {
-              const sv = v === NONE ? '' : String(v);
-              const found = reqOptions.find((r) => r.id === sv);
-              onChange({ requirementCode: sv, requirement: found ? requirementLabel(found) : '' });
-            }
+            (v: string | number) => onChange({ requirement: v === NONE ? '' : String(v) })
           "
         >
           <SelectTrigger aria-label="技术要求" class="w-full h-8 px-2 text-sm">
@@ -99,7 +97,7 @@ function requirementLabel(r: (typeof reqOptions.value)[number]): string {
           </SelectTrigger>
           <SelectContent>
             <SelectItem :value="NONE">—</SelectItem>
-            <SelectItem v-for="r in reqOptions" :key="r.id" :value="r.id ?? ''">
+            <SelectItem v-for="r in reqOptions" :key="r.id" :value="requirementLabel(r)">
               {{ requirementLabel(r) }}
             </SelectItem>
           </SelectContent>

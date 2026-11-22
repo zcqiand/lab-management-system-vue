@@ -151,7 +151,7 @@ describe("Phase 1.2a — ParamInterfaceList <Button> 原语回归", () => {
 
 // Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
 // 锁：搜索 <Input> 渲染真实 <input> + @keydown.enter 落到 DOM；
-// 弹窗 3 个 form <Input>：编辑模式 :disabled 落到真实 <input>，type=number 落到 DOM。
+// 弹窗 1 个 form <Input>（编码）：componentPath/sortOrder 已随契约退役（维护面收敛 code CRUD）。
 describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归", () => {
   it("搜索框 <Input class=max-w-sm>：渲染 <input>，v-model 双向写回", async () => {
     const { default: ParamInterfaceList } =
@@ -161,7 +161,7 @@ describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归",
     await new Promise((r) => setTimeout(r, 50));
     await flushPromises();
 
-    const search = lastWrapper.find('input[placeholder="按编码 / 组件路径搜索"]');
+    const search = lastWrapper.find('input[placeholder="按编码搜索"]');
     expect(search.exists()).toBe(true);
     expect(search.classes()).toContain("max-w-sm");
     expect(search.classes()).toContain("h-9");
@@ -169,7 +169,7 @@ describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归",
     expect((search.element as HTMLInputElement).value).toBe("default");
   });
 
-  it("弹窗 3 个 form <Input>：编辑模式 :disabled 落到真实 <input>，type=number 落 DOM", async () => {
+  it("弹窗 1 个 form <Input>（编码）：新建模式落真实 <input> 不 disabled", async () => {
     const { default: ParamInterfaceList } =
       await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
@@ -182,16 +182,9 @@ describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归",
     await createBtn!.trigger("click");
     await flushPromises();
 
-    // 弹窗内的 3 个 <Input>：编码 + 组件路径 + 排序
+    // 弹窗内的 1 个 <Input>：仅编码（componentPath/sortOrder 随契约退役）
     const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
-    expect(dialogInputs.length).toBe(3);
-
-    // type=number 仅排序 1 个
-    const numInput = lastWrapper.find('[data-teleport-stub] input[type="number"]');
-    expect(numInput.exists()).toBe(true);
-    expect(numInput.attributes("type")).toBe("number");
-    await numInput.setValue("42");
-    expect((numInput.element as HTMLInputElement).value).toBe("42");
+    expect(dialogInputs.length).toBe(1);
 
     // 新建模式下，编码不应 disabled
     const codeInput = dialogInputs[0];
@@ -200,9 +193,9 @@ describe("Phase 1.3b — ParamInterfaceList 列表/表单 <Input> 原语回归",
 });
 
 // Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
-// 锁：表单 3 个 <Label> 落成真实 <label>，Label 基类活着。
+// 锁：表单 1 个 <Label> 落成真实 <label>，Label 基类活着（组件路径/排序 label 随契约退役）。
 describe("Phase 1.4 — ParamInterfaceList 表单 <Label> 原语回归", () => {
-  it("新建弹窗 3 个 <Label> 落成真实 <label>，文本 编码/组件路径/排序", async () => {
+  it("新建弹窗 1 个 <Label> 落成真实 <label>，文本 编码 *", async () => {
     const { default: ParamInterfaceList } =
       await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
@@ -215,8 +208,8 @@ describe("Phase 1.4 — ParamInterfaceList 表单 <Label> 原语回归", () => {
     await flushPromises();
 
     const labels = lastWrapper.findAll("label");
-    expect(labels.length).toBe(3);
-    expect(labels.map((l) => l.text())).toEqual(["编码 *", "组件路径 *", "排序"]);
+    expect(labels.length).toBe(1);
+    expect(labels[0].text()).toBe("编码 *");
     expect(labels[0].element.tagName).toBe("LABEL");
     expect(labels[0].classes()).toContain("font-medium");
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
@@ -224,10 +217,10 @@ describe("Phase 1.4 — ParamInterfaceList 表单 <Label> 原语回归", () => {
 });
 
 // Phase 2a-2 Table 迁移回归锚（不挂功能 ID，工程设施测试）。
-// 锁 3 件事：<Table> 渲染 div[role=table] / 4 <TableHead> 文本顺序 /
+// 锁 3 件事：<Table> 渲染 div[role=table] / 2 <TableHead> 文本顺序（组件路径/排序列随契约退役）/
 // 3 fixture 行 data-fn 落到 div[role=row]。
 describe("Phase 2a-2 — ParamInterfaceList 列表 <Table> 原语回归", () => {
-  it("<Table> 渲染 div[role=table]；4 <TableHead> 文本顺序 编码/组件路径/排序/操作", async () => {
+  it("<Table> 渲染 div[role=table]；2 <TableHead> 文本顺序 编码/操作", async () => {
     const { default: ParamInterfaceList } =
       await import("@/features/param-interfaces/ParamInterfaceList.vue");
     lastWrapper = mountWithProviders(ParamInterfaceList, { global: MOUNT_GLOBAL });
@@ -238,8 +231,8 @@ describe("Phase 2a-2 — ParamInterfaceList 列表 <Table> 原语回归", () => 
     const table = lastWrapper.find('[role="table"]');
     expect(table.exists()).toBe(true);
     const heads = lastWrapper.findAll('[role="columnheader"]');
-    expect(heads.length).toBe(4);
-    expect(heads.map((h) => h.text())).toEqual(["编码", "组件路径", "排序", "操作"]);
+    expect(heads.length).toBe(2);
+    expect(heads.map((h) => h.text())).toEqual(["编码", "操作"]);
   });
 
   it("3 fixture 行：行级 data-fn 落到 div[role=row]，且在 rowgroup[1]（TableBody）", async () => {

@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+- chore(gen-shared): gen-shared marker 刷新批（shared 413cb67，141 commit 契约累积漂移
+  收口，消费侧 mirror 同步按家族治理免批）。契约演进适配：`requirementCode`→`requirement`
+  文本（ADR-0056）；`Sample.age/curingCondition`→`Sample.ext`（camelCase key）；
+  `CalculationMethod.specimenCount` 摘除（组数由界面 schema rows 驱动）；`ParamInterface`
+  componentPath/isOfficial/sortOrder 摘除；`ParamInterfaceLink.config` 摘除；
+  `InspectionReportName.extFields`/`ExtFieldDef` 摘除（采集结构移交 ReportNameInterface，
+  新增 report-name-interfaces 端点面）；新增 `RetestMode`（sample_receipts.retest_mode，
+  DB default 'none'）。手写面 5 个 SFC（DefaultParamCard/StrengthCardBase/
+  CalculationMethodList/ParamInterfaceList/ReportNameList）+ reportTemplateData.ts 随
+  契约字段演进适配；陈旧 dom 测试 3 件按新契约形状改写（弹窗 Input/Label/TableHead
+  计数随退役字段收敛）。gate L0-L5 exit 0。同步清单：react/aspnetcore/springboot 同批
+  同节奏提交（marker 全家族统一 413cb67）。
 - feat(inspection): 技术要求列表展示序——检测参数→规格→型号→等级→牌号（M06.F06.I01，
   2026-11-15 用户裁定）。比较器抽纯函数 `techReqSort.ts`（null 排尾，语义镜像
   nextjs TwoLevelObjectStandardTree）+ 纯单测 6 例（红→绿）；4 维筛选 computed

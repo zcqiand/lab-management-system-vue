@@ -268,7 +268,7 @@
         "output\\lab-management-system-contract-test\\tests\\auth-me.test.ts:644 (annot)",
         "output\\lab-management-system-contract-test\\tests\\auth-write.test.ts:518 (annot)",
         "output\\lab-management-system-contract-test\\tests\\calculation-methods-write.test.ts:1133 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\calculation-methods.test.ts:2111 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\calculation-methods.test.ts:2806 (annot)",
         "output\\lab-management-system-contract-test\\tests\\contracts.test.ts:4881 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-catalog-write.test.ts:1704 (annot)",
         "output\\lab-management-system-contract-test\\tests\\inspection-dictionary-write.test.ts:1836 (annot)",
@@ -279,7 +279,8 @@
         "output\\lab-management-system-contract-test\\tests\\samples.test.ts:2066 (annot)",
         "output\\lab-management-system-contract-test\\tests\\summary.test.ts:1977 (annot)",
         "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:1119 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\technical-requirements.test.ts:1996 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:5574 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\technical-requirements.test.ts:2910 (annot)",
         "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:810 (annot)",
         "output\\lab-management-system-contract-test\\tests\\test-records.test.ts:2104 (annot)"
       ],
@@ -323,7 +324,7 @@
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:3716 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:2944 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:2321 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:2468 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:2497 (annot)",
         "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:2333 (annot)",
         "深色骨架：bg-slate-900 text-white + data-fn M01.F04.I01 + 主导航 aria"
       ],
@@ -443,7 +444,7 @@
         "output\\lab-management-system-contract-test\\tests\\report-names-write.test.ts:4374 (annot)",
         "output\\lab-management-system-contract-test\\tests\\sample-receipts-write.test.ts:3538 (annot)",
         "output\\lab-management-system-contract-test\\tests\\samples-write.test.ts:2964 (annot)",
-        "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:3165 (annot)",
+        "output\\lab-management-system-contract-test\\tests\\technical-requirements-write.test.ts:3194 (annot)",
         "output\\lab-management-system-contract-test\\tests\\test-records-write.test.ts:2978 (annot)"
       ],
       "entry": []
@@ -2316,7 +2317,7 @@
         "docs\\design\\design-function-map.md"
       ],
       "tests": [
-        "[M06.F07.I01] 报告名称：新建按钮开弹窗（带 extFields 文本域）",
+        "[M06.F07.I01] 报告名称：新建按钮开弹窗",
         "[M06.F07.I01] 报告名称：渲染标题 + 列表行（fixture 真数据穿透）",
         "[M06.F07.I01] 报告名称：行内删除按钮开确认弹窗"
       ],

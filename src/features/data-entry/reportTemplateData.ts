@@ -223,8 +223,10 @@ export function assembleConcreteReport(input: AssembleInput): ConcreteReportData
       gccm: s.specification ?? "",
       cxrq: s.arrivalDate ?? "",
       jcrq: receipt.testEndDate ?? "",
-      lq: s.age ?? "",
-      yhtj: s.curingCondition ?? "",
+      // 2026-11-10 人裁：samples age/curing_condition 列删除，按报告名称移入 Sample.ext
+      //（key 即 ExtFieldDef.field，camelCase；shared seeds/samples.json 同形状）
+      lq: s.ext?.age ?? "",
+      yhtj: s.ext?.curingCondition ?? "",
       kyqd0: ks[0] !== undefined ? fmtNum(ks[0]) : fallback,
       kyqd1: ks[1] !== undefined ? fmtNum(ks[1]) : fallback,
       kyqd2: ks[2] !== undefined ? fmtNum(ks[2]) : fallback,

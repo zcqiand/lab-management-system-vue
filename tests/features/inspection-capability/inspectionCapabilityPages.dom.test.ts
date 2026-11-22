@@ -487,7 +487,7 @@ describe("Phase 1.3a — TechnicalRequirementList 4 维筛选 <Input> 原语回�
 
 // Phase 1.3b Input 迁移回归锚（不挂功能 ID，工程设施测试）。
 // 锁：搜索 <Input> 渲染真实 <input> + placeholder 落到 DOM；
-// 弹窗 3 个 form <Input>：specimenCount type=number / roundingRule 字符串 / remark 字符串。
+// 弹窗 2 个 form <Input>：roundingRule / remark（specimenCount 已随契约退役，组数由界面 schema rows 驱动）。
 describe("Phase 1.3b — CalculationMethodList 搜索/表单 <Input> 原语回归", () => {
   it("搜索框 <Input class=max-w-sm>：渲染 <input>，placeholder 落到真实 DOM", async () => {
     lastWrapper = mountWithProviders(CalculationMethodList);
@@ -503,7 +503,7 @@ describe("Phase 1.3b — CalculationMethodList 搜索/表单 <Input> 原语回�
     expect((search.element as HTMLInputElement).value).toBe("OBJ-1");
   });
 
-  it("弹窗 3 个 form <Input>：type=number 落 DOM + placeholder 转发 + v-model 写回", async () => {
+  it("弹窗 2 个 form <Input>：placeholder 转发 + v-model 写回（试件数量已随契约退役）", async () => {
     lastWrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -514,16 +514,9 @@ describe("Phase 1.3b — CalculationMethodList 搜索/表单 <Input> 原语回�
     await createBtn!.trigger("click");
     await flushPromises();
 
-    // 弹窗内的 3 个 <Input>：试件数量(type=number) + 修约规则 + 备注
+    // 弹窗内的 2 个 <Input>：修约规则 + 备注
     const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
-    expect(dialogInputs.length).toBe(3);
-
-    // type=number 仅试件数量 1 个
-    const numInput = lastWrapper.find('[data-teleport-stub] input[type="number"]');
-    expect(numInput.exists()).toBe(true);
-    expect(numInput.attributes("type")).toBe("number");
-    await numInput.setValue("3");
-    expect((numInput.element as HTMLInputElement).value).toBe("3");
+    expect(dialogInputs.length).toBe(2);
 
     // roundingRule placeholder 落到真实 DOM
     const roundInput = lastWrapper.find('input[placeholder="如 修约到 0.1"]');
@@ -587,7 +580,7 @@ describe("Phase 1.4 — TechnicalRequirementList 表单 <Label> 原语回归", (
 });
 
 describe("Phase 1.4 — CalculationMethodList 表单 <Label> 原语回归", () => {
-  it("新建弹窗 7 个 <Label> 落成真实 <label>，首个文本「检测项目」", async () => {
+  it("新建弹窗 6 个 <Label> 落成真实 <label>，首个文本「检测项目」（试件数量 label 已退役）", async () => {
     lastWrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -598,7 +591,7 @@ describe("Phase 1.4 — CalculationMethodList 表单 <Label> 原语回归", () =
     await flushPromises();
 
     const labels = lastWrapper.findAll("label");
-    expect(labels.length).toBe(7);
+    expect(labels.length).toBe(6);
     expect(labels[0].text()).toBe("检测项目");
     expect(labels[0].classes()).toContain("font-medium");
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
@@ -652,7 +645,7 @@ describe("Phase 2a-2 — InspectionCapabilityList <Table> 原语回归", () => {
 });
 
 describe("Phase 2a-2 — CalculationMethodList <Table> 原语回归", () => {
-  it("<Table> 渲染 div[role=table]；7 <TableHead>（项目/参数/判定标准/算法类型/试件数量/备注 + 操作）", async () => {
+  it("<Table> 渲染 div[role=table]；6 <TableHead>（项目/参数/判定标准/算法类型/备注 + 操作，试件数量列已退役）", async () => {
     lastWrapper = mountWithProviders(CalculationMethodList);
     await flushPromises();
     await new Promise((r) => setTimeout(r, 50));
@@ -661,13 +654,12 @@ describe("Phase 2a-2 — CalculationMethodList <Table> 原语回归", () => {
     const table = lastWrapper.find('[role="table"]');
     expect(table.exists()).toBe(true);
     const heads = lastWrapper.findAll('[role="columnheader"]');
-    expect(heads.length).toBe(7);
+    expect(heads.length).toBe(6);
     expect(heads.map((h) => h.text())).toEqual([
       "检测项目",
       "检测参数",
       "判定标准",
       "算法类型",
-      "试件数量",
       "备注",
       "操作",
     ]);

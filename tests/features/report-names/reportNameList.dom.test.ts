@@ -81,7 +81,7 @@ describe("M06.F07 报告名称维护", () => {
     expect(wrapper.text()).toContain("RN-002");
   });
 
-  fnTest(["M06.F07.I01"], "报告名称：新建按钮开弹窗（带 extFields 文本域）", async () => {
+  fnTest(["M06.F07.I01"], "报告名称：新建按钮开弹窗", async () => {
     const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
     const wrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -93,8 +93,6 @@ describe("M06.F07 报告名称维护", () => {
     await flushPromises();
     const h2 = wrapper.findAll("h2").find((h) => h.text().includes("新建报告名称"));
     expect(h2).toBeTruthy();
-    // textarea 在 form 内
-    expect(wrapper.find("textarea").exists()).toBe(true);
   });
 
   fnTest(["M06.F07.I01"], "报告名称：行内删除按钮开确认弹窗", async () => {
@@ -184,7 +182,7 @@ describe("Phase 1.3b — ReportNameList 列表/表单 <Input> 原语回归", () 
     await createBtn!.trigger("click");
     await flushPromises();
 
-    // 弹窗内的 6 个 <Input>（不含 textarea 扩展属性）
+    // 弹窗内的 6 个 <Input>（extFields 文本域已随契约退役，采集结构移交 ReportNameInterface）
     const dialogInputs = lastWrapper.findAll('[data-teleport-stub] input:not([type="checkbox"])');
     // 编码/简称/全称/模板路径/排序/描述 = 6
     expect(dialogInputs.length).toBe(6);
@@ -199,9 +197,9 @@ describe("Phase 1.3b — ReportNameList 列表/表单 <Input> 原语回归", () 
 });
 
 // Phase 1.4 Label 迁移回归锚（不挂功能 ID，工程设施测试）。
-// 锁：表单 7 个 <Label> 落成真实 <label>，Label 基类活着。
+// 锁：表单 6 个 <Label> 落成真实 <label>，Label 基类活着（扩展属性 label 随契约退役）。
 describe("Phase 1.4 — ReportNameList 表单 <Label> 原语回归", () => {
-  it("新建弹窗 7 个 <Label> 落成真实 <label>，首个文本「编码 *」带 Label 基类", async () => {
+  it("新建弹窗 6 个 <Label> 落成真实 <label>，首个文本「编码 *」带 Label 基类", async () => {
     const { default: ReportNameList } = await import("@/features/report-names/ReportNameList.vue");
     lastWrapper = mountWithProviders(ReportNameList, { global: MOUNT_GLOBAL });
     await flushPromises();
@@ -213,19 +211,11 @@ describe("Phase 1.4 — ReportNameList 表单 <Label> 原语回归", () => {
     await flushPromises();
 
     const labels = lastWrapper.findAll("label");
-    expect(labels.length).toBe(7);
+    expect(labels.length).toBe(6);
     expect(labels[0].element.tagName).toBe("LABEL");
     expect(labels[0].text()).toBe("编码 *");
     expect(labels[0].classes()).toContain("font-medium");
     expect(labels[0].classes()).toContain("peer-disabled:opacity-70");
-    // extFields 的 <textarea> 已迁 <Textarea> 原语（Phase 2c），它的 label 仍是原语
-    expect(labels[6].text()).toContain("扩展属性");
-    // Textarea 原语渲染为真实 <textarea>，且基类在
-    const textarea = lastWrapper.find("textarea");
-    expect(textarea.exists()).toBe(true);
-    expect(textarea.element.tagName).toBe("TEXTAREA");
-    expect(textarea.classes()).toContain("min-h-[60px]");
-    expect(textarea.classes()).toContain("rounded-md");
   });
 });
 

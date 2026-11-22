@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // M06.F05 计算方法维护 — 列表 + Dialog 弹窗（镜像 react 仓）。
 //
+// 2026-11-17 人裁（specimen_count 迁移 Phase 3）：specimenCount 随契约删列退役——
+// 组数由参数界面 schema rows 驱动，本维护面不再采集/展示。
+//
 // 契约复合主键：PUT/DELETE /api/calculation-methods/{inspectionObjectCode}/{inspectionParameterCode}。
 // 契约 list 无 keyword/page 参数（只支持按两个主键维度过滤）→ 搜索框走客户端过滤（GAP 见迁移报告）。
 import { computed, onMounted, reactive, ref } from "vue";
@@ -73,7 +76,6 @@ const EMPTY_FORM: Record<string, string> = {
   inspectionParameterCode: "",
   testingStandardCode: "",
   algorithmType: "manual",
-  specimenCount: "1",
   roundingRule: "",
   remark: "",
 };
@@ -170,7 +172,6 @@ function openEdit(row: CalcRule): void {
     inspectionParameterCode: row.inspectionParameterCode,
     testingStandardCode: row.testingStandardCode ?? "",
     algorithmType: row.algorithmType,
-    specimenCount: String(row.specimenCount ?? 1),
     roundingRule: row.roundingRule ?? "",
     remark: row.remark ?? "",
   });
@@ -199,7 +200,6 @@ async function submitForm(): Promise<void> {
         inspectionParameterCode: paramVal && paramVal !== "__none__" ? paramVal : "",
         testingStandardCode: stdVal && stdVal !== "__none__" ? stdVal : undefined,
         algorithmType: algo,
-        specimenCount: Number(form.specimenCount) || 1,
         roundingRule: form.roundingRule || undefined,
         remark: form.remark || undefined,
       };
@@ -209,7 +209,6 @@ async function submitForm(): Promise<void> {
       const payload: UpdateCalculationMethodRequest = {
         testingStandardCode: stdVal && stdVal !== "__none__" ? stdVal : undefined,
         algorithmType: algo,
-        specimenCount: Number(form.specimenCount) || 1,
         roundingRule: form.roundingRule || undefined,
         remark: form.remark || undefined,
       };
@@ -259,10 +258,7 @@ async function confirmDelete(): Promise<void> {
   <!-- B6 加载态：首载未到齐整页 PageLoading，不渲染空壳 -->
   <PageLoading v-if="showPageLoading" />
   <div v-else data-fn="M06.F05.I01" class="space-y-4">
-    <PageHeader
-      title="计算方法维护"
-      description="算法类型、试件数量与修约规则（按检测项目 + 检测参数）"
-    >
+    <PageHeader title="计算方法维护" description="算法类型与修约规则（按检测项目 + 检测参数）">
       <template #actions>
         <Button data-fn="M06.F05.I01" @click="openCreate"> 新建计算方法 </Button>
       </template>
@@ -290,7 +286,6 @@ async function confirmDelete(): Promise<void> {
           <TableHead class="px-4 py-2 text-left">检测参数</TableHead>
           <TableHead class="px-4 py-2 text-left">判定标准</TableHead>
           <TableHead class="px-4 py-2 text-left">算法类型</TableHead>
-          <TableHead class="px-4 py-2 text-left">试件数量</TableHead>
           <TableHead class="px-4 py-2 text-left">备注</TableHead>
           <TableHead class="px-4 py-2 text-left w-32">操作</TableHead>
         </TableRow>
@@ -323,7 +318,6 @@ async function confirmDelete(): Promise<void> {
               ALGO_LABEL[row.algorithmType] ?? row.algorithmType
             }}</span>
           </TableCell>
-          <TableCell class="px-4 py-2">{{ row.specimenCount }}</TableCell>
           <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{
             row.remark ?? "-"
           }}</TableCell>
@@ -416,7 +410,7 @@ async function confirmDelete(): Promise<void> {
               </SelectContent>
             </Select>
           </div>
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-2 gap-3">
             <div>
               <Label for="algorithmType">算法类型</Label>
               <Select v-model="form.algorithmType">
@@ -429,10 +423,6 @@ async function confirmDelete(): Promise<void> {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            <div>
-              <Label>试件数量</Label>
-              <Input v-model="form.specimenCount" type="number" />
             </div>
             <div>
               <Label>修约规则</Label>

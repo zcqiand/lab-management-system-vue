@@ -68,8 +68,12 @@ watch(
 const reqOptions = computed(() =>
   (techReqs as ParamTechReq[]).filter((r) => r.verificationStatus === "verified"),
 );
+// ADR-0056：requirementCode 退役，记录只落 requirement 文本——回显按文本匹配选项 id，
+// 匹配不到回退首个 verified 项
 const reqId = ref<string>(
-  record?.requirementCode ?? (reqOptions.value[0] as ParamTechReq | undefined)?.id ?? "",
+  reqOptions.value.find((r) => requirementLabel(r) === record?.requirement)?.id ??
+    (reqOptions.value[0] as ParamTechReq | undefined)?.id ??
+    "",
 );
 const selectedReq = computed<ParamTechReq | undefined>(() =>
   (reqOptions.value as ParamTechReq[]).find((r) => r.id === reqId.value),
@@ -118,7 +122,6 @@ function emit(nextLoads: number[], nextReqId: string, manualVerdict?: string) {
   };
   if (reqOptions.value.length > 0) {
     patch.verdict = autoVerdict(res.mean, req as never);
-    patch.requirementCode = nextReqId;
     patch.requirement = req ? requirementLabel(req) : "";
   } else if (manualVerdict !== undefined) {
     patch.verdict = manualVerdict;

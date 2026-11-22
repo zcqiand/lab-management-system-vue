@@ -35,20 +35,18 @@ import PageLoading from "@/components/app/PageLoading.vue";
 import { unwrapListResponse } from "@/lib/responses";
 
 // 类型走 orval 生成物（src/api/endpoints/model）——SSOT 是 shared TypeSpec。
+// ADR-0056：componentPath 退役（动态渲染器按 config schema 渲染，不再按组件路由）；
+// 2026-11-10 追加裁定：sortOrder 退役（排序交前端/清单）。维护面收敛为 code 基础 CRUD。
 type ParamInterfaceRow = ParamInterface;
 
 type Mode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; code: string };
 
 interface FormState {
   code: string;
-  componentPath: string;
-  sortOrder: number;
 }
 
 const EMPTY_FORM: FormState = {
   code: "",
-  componentPath: "",
-  sortOrder: 0,
 };
 
 const items = ref<ParamInterfaceRow[]>([]);
@@ -93,8 +91,6 @@ function openCreate(): void {
 function openEdit(r: ParamInterfaceRow): void {
   Object.assign(form, {
     code: r.code,
-    componentPath: r.componentPath,
-    sortOrder: r.sortOrder,
   });
   mode.value = { kind: "edit", code: r.code };
 }
@@ -112,15 +108,10 @@ async function submitForm(): Promise<void> {
     if (mode.value.kind === "create") {
       await paramInterfacesCreateParamInterface({
         code: form.code,
-        componentPath: form.componentPath,
-        sortOrder: form.sortOrder,
       });
     } else if (mode.value.kind === "edit") {
       const code = (mode.value as { kind: "edit"; code: string }).code;
-      await paramInterfacesUpdateParamInterface(code, {
-        componentPath: form.componentPath,
-        sortOrder: form.sortOrder,
-      });
+      await paramInterfacesUpdateParamInterface(code, {});
     }
     closeDialog();
     await load();
@@ -142,12 +133,7 @@ async function submitForm(): Promise<void> {
     </PageHeader>
 
     <div class="mb-4 flex gap-2">
-      <Input
-        v-model="keyword"
-        class="max-w-sm"
-        placeholder="按编码 / 组件路径搜索"
-        @keydown.enter="load"
-      />
+      <Input v-model="keyword" class="max-w-sm" placeholder="按编码搜索" @keydown.enter="load" />
       <Button variant="outline" @click="load"> 搜索 </Button>
     </div>
 
@@ -175,14 +161,6 @@ async function submitForm(): Promise<void> {
                 :disabled="mode.kind === 'edit'"
                 class="disabled:bg-muted"
               />
-            </div>
-            <div>
-              <Label>组件路径 *</Label>
-              <Input v-model="form.componentPath" />
-            </div>
-            <div>
-              <Label>排序</Label>
-              <Input v-model.number="form.sortOrder" type="number" />
             </div>
           </div>
         </div>
@@ -221,14 +199,12 @@ async function submitForm(): Promise<void> {
         <TableHeader class="bg-muted text-xs uppercase text-muted-foreground">
           <TableRow>
             <TableHead class="px-4 py-2 text-left">编码</TableHead>
-            <TableHead class="px-4 py-2 text-left">组件路径</TableHead>
-            <TableHead class="px-4 py-2 text-left">排序</TableHead>
             <TableHead class="px-4 py-2 text-right whitespace-nowrap">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow v-if="items.length === 0 && !loading">
-            <TableCell colspan="4" class="px-4 py-8 text-center text-muted-foreground">
+            <TableCell colspan="2" class="px-4 py-8 text-center text-muted-foreground">
               （无数据）
             </TableCell>
           </TableRow>
@@ -239,8 +215,6 @@ async function submitForm(): Promise<void> {
             class="border-t hover:bg-muted"
           >
             <TableCell class="px-4 py-2 font-mono text-xs">{{ r.code }}</TableCell>
-            <TableCell class="px-4 py-2 font-mono text-xs">{{ r.componentPath }}</TableCell>
-            <TableCell class="px-4 py-2 text-xs text-muted-foreground">{{ r.sortOrder }}</TableCell>
             <TableCell class="px-4 py-2 text-right whitespace-nowrap">
               <Button size="sm" variant="outline" @click="openEdit(r)"> 编辑 </Button>
               <Button
