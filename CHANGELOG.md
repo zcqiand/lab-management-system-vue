@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- chore(gen-shared): gen-shared marker 刷新——api_synced_sha 413cb67→8c95025（shared calc 契约段 REQ-2026-043），消费侧同步免批——orval 产物零 diff，仅 marker 落盘。兄弟仓刷新批 nextjs/react/springboot 同批；aspnetcore 护栏拒刷挂账 R5（2026-11-23 人批）。
+
 - chore(gen-shared): gen-shared marker 刷新批（shared 413cb67，141 commit 契约累积漂移
   收口，消费侧 mirror 同步按家族治理免批）。契约演进适配：`requirementCode`→`requirement`
   文本（ADR-0056）；`Sample.age/curingCondition`→`Sample.ext`（camelCase key）；
